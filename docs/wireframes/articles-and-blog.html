@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ohworks wireframes: blog index and article page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--paper:#f6f5f2;--raised:#fff;--sunken:#ecebe6;--ink:#101c30;--muted:#56606f;--hair:#d9d8d2;--hair2:#aeb3bb;--navy7:#1d3a66;--ctl:57px}
+*{box-sizing:border-box}
+body{margin:0;background:#dedcd5;color:var(--ink);font:15px/23px Archivo,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--navy7)}
+button,input{font:inherit}
+figure{margin:0}
+[hidden]{display:none!important}
+
+/* Viewer chrome: not part of the wireframe */
+.ctl{position:sticky;top:0;z-index:20;background:var(--ink);color:var(--paper);display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:10px 16px}
+.ctl b{font-weight:800;font-stretch:106%;letter-spacing:-.02em;font-size:16px}
+.grp{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.grp>span{font:500 11px/16px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em;opacity:.75;margin-right:2px}
+.ctl button{min-height:36px;padding:0 12px;border-radius:999px;border:1px solid rgba(246,245,242,.4);background:transparent;color:var(--paper);cursor:pointer;font-weight:500;font-size:14px}
+.ctl button[aria-pressed="true"]{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.ctl button:focus-visible{outline:2px solid #c9d6ea;outline-offset:2px}
+.about{max-width:1280px;margin:16px auto 0;padding:0 16px}
+.about article{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.3fr);gap:12px 28px;background:var(--raised);border:1px solid var(--hair);border-radius:12px;padding:16px 20px}
+.about h2{margin:0;font-weight:750;font-stretch:108%;font-size:22px;line-height:1.15;letter-spacing:-.02em}
+.about h3{margin:0 0 4px;font-weight:600;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.about p{margin:0}
+.about .sub{margin-top:4px;color:var(--muted)}
+.rec{display:inline-block;margin-top:8px;padding:2px 8px;border-radius:2px;background:#dcf2e6;color:#1c7a4c;font-weight:500;font-size:13px;line-height:19px}
+@media (max-width:860px){.about article{grid-template-columns:minmax(0,1fr)}}
+.stage{padding:16px 16px 64px}
+.frame{width:100%;max-width:1280px;margin:0 auto;background:var(--paper);border:1px solid var(--hair2);container-type:inline-size;container-name:frame}
+body[data-width="820"] .frame{max-width:820px}
+body[data-width="390"] .frame{max-width:390px}
+
+/* Wireframe parts */
+.wrap{max-width:1200px;margin:0 auto;padding:0 40px}
+.nav{position:sticky;top:var(--ctl);z-index:5;background:var(--paper);border-bottom:1px solid var(--hair)}
+.navin{min-height:64px;display:flex;align-items:center;gap:24px}
+.wm{font-weight:800;font-stretch:106%;font-size:24px;letter-spacing:-.03em;color:var(--ink);text-decoration:none}
+.navlinks{display:flex;gap:24px}
+.navlinks a{color:var(--ink);text-decoration:none;font-weight:500}
+.navlinks a.cur{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:8px}
+.grow{flex:1}
+.signin{font-weight:600;text-decoration:none}
+.menu{display:none;font-weight:600;text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:6px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);text-decoration:none;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn.sec{background:var(--raised);color:var(--ink);border-color:var(--hair2)}
+.btn.sm{min-height:36px;padding:0 12px;font-size:14px}
+.tag{display:inline-block;font:500 11px/16px "IBM Plex Mono",monospace;color:var(--muted);background:var(--sunken);border:1px solid var(--hair);border-radius:2px;padding:1px 6px}
+.eye{font-weight:600;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.meta{font-size:13px;line-height:19px;color:var(--muted)}
+.mono{font:400 14px/20px "IBM Plex Mono",monospace}
+.muted{color:var(--muted)}
+.ph{background:var(--sunken);border:1px solid var(--hair);border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font:500 12px/16px "IBM Plex Mono",monospace;color:var(--muted)}
+.r169{aspect-ratio:16/9}.r32{aspect-ratio:3/2}.r11{aspect-ratio:1}.r219{aspect-ratio:21/9}
+.flat{border:0;border-bottom:1px solid var(--hair);border-radius:0}
+.card{background:var(--raised);border:1px solid var(--hair);border-radius:12px}
+.clip{overflow:hidden}
+.pad{padding:20px}
+.cb{padding:16px;display:flex;flex-direction:column;gap:6px}
+.h1{margin:0;font-weight:800;font-stretch:110%;font-size:48px;line-height:1;letter-spacing:-.03em;text-wrap:balance}
+.lead{margin:0;font-weight:800;font-stretch:110%;font-size:40px;line-height:1.02;letter-spacing:-.03em;text-wrap:balance}
+.h2{margin:0;font-weight:750;font-stretch:108%;font-size:28px;line-height:1.1;letter-spacing:-.02em}
+.h3{margin:0;font-weight:700;font-size:20px;line-height:1.2}
+.h4{margin:0;font-weight:700;font-size:17px;line-height:1.25}
+.lede{margin:0;font-size:18px;line-height:28px;color:var(--muted)}
+.wf{padding:40px 0 56px}
+.stack{display:flex;flex-direction:column}
+.g6{gap:6px}.g8{gap:8px}.g12{gap:12px}.g16{gap:16px}.g24{gap:24px}.g40{gap:40px}
+.split{display:flex;flex-wrap:wrap;gap:40px}
+.split>.main{flex:999 1 560px;min-width:0}
+.split>.rail{flex:1 1 300px;min-width:0}
+.between{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px}
+.chips{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.chip{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--hair2);background:var(--raised);color:var(--ink);text-decoration:none;font-weight:500;font-size:14px;white-space:nowrap}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip.sm{min-height:36px;padding:0 12px;font-size:13px}
+.rule{border-top:1px solid var(--hair);padding-top:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.rowcard{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px;padding:16px 0;border-top:1px solid var(--hair)}
+.rowcard p{margin:0;color:var(--muted)}
+.textrow{display:flex;flex-direction:column;gap:4px;padding:14px 0;border-top:1px solid var(--hair);color:var(--ink);text-decoration:none}
+.textrow b{font-weight:600;font-size:16px;line-height:22px}
+.band{background:var(--sunken);border:1px solid var(--hair);border-radius:12px;padding:24px;display:flex;flex-wrap:wrap;align-items:center;gap:24px}
+.band .tag{background:var(--paper)}
+.band>.t{flex:999 1 320px;min-width:0}
+.band>.f{flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.band p{margin:6px 0 0;color:var(--muted)}
+label{font-weight:600;font-size:14px;line-height:20px}
+.field{display:flex;flex-wrap:wrap;gap:8px}
+.input{flex:1 1 180px;min-width:0;min-height:44px;padding:0 12px;border-radius:6px;border:1px solid var(--hair2);background:var(--raised);color:var(--ink)}
+.pager{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--hair);padding-top:20px}
+.pg{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0 12px;border-radius:6px;border:1px solid var(--hair2);background:var(--raised);color:var(--ink);text-decoration:none;font-weight:600}
+.pg.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mini{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:center;color:var(--ink);text-decoration:none}
+.mini .ph{height:64px;border-radius:6px;padding:0}
+.mini b{display:block;font-weight:600}
+
+/* Article parts */
+.col{max-width:680px;margin-left:auto;margin-right:auto}
+.crumb{font-size:13px;line-height:19px;color:var(--muted)}
+.title{margin:0;font-weight:800;font-stretch:110%;font-size:48px;line-height:.98;letter-spacing:-.03em;text-wrap:balance}
+.by{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.av{width:48px;height:48px;border-radius:999px;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-weight:700;flex:none}
+.prose{display:flex;flex-direction:column;gap:24px;font-size:18px;line-height:28px}
+.prose p{margin:0;color:var(--muted)}
+.prose h2{margin:8px 0 -8px;font-weight:750;font-stretch:108%;font-size:28px;line-height:1.1;letter-spacing:-.02em;scroll-margin-top:150px}
+.fact{font:500 15px/24px "IBM Plex Mono",monospace;color:var(--ink);background:var(--raised);border:1px solid var(--hair);border-radius:2px;padding:1px 6px}
+.quote{margin:0;border-left:2px solid var(--ink);padding-left:20px}
+.quote p{font-weight:700;font-stretch:106%;font-size:24px;line-height:1.25;color:var(--ink)}
+.quote footer{margin-top:8px;font-size:13px;line-height:19px;color:var(--muted)}
+.bigq{margin:8px 0;text-align:center}
+.bigq p{font-weight:800;font-stretch:108%;font-size:34px;line-height:1.1;letter-spacing:-.02em;color:var(--ink)}
+.bigq footer{margin-top:12px;font-size:13px;line-height:19px;color:var(--muted)}
+.callout{background:var(--sunken);border:1px solid var(--hair);border-radius:12px;padding:16px 20px;font-size:15px;line-height:23px;color:var(--ink)}
+figcaption{margin-top:8px;font-size:13px;line-height:19px;color:var(--muted)}
+.src{margin:0;padding:0;list-style:none;counter-reset:s}
+.src li{counter-increment:s;display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;padding:10px 0;border-top:1px solid var(--hair)}
+.src li::before{content:counter(s);font:400 14px/23px "IBM Plex Mono",monospace;color:var(--muted)}
+.author{display:flex;gap:16px;align-items:flex-start}
+.author p{margin:4px 0 0;color:var(--muted)}
+.progress{position:sticky;top:calc(var(--ctl) + 65px);z-index:4;height:3px;background:var(--hair)}
+.progress i{display:block;height:100%;width:38%;background:var(--ink)}
+.rails{display:grid;grid-template-columns:160px minmax(0,1fr) 256px;gap:32px;align-items:start}
+.toc{position:sticky;top:calc(var(--ctl) + 92px);display:flex;flex-direction:column;gap:2px}
+.toc a{display:block;padding:6px 0 6px 12px;border-left:2px solid var(--hair);color:var(--muted);text-decoration:none;font-size:14px;line-height:20px}
+.toc a.on{border-left-color:var(--ink);color:var(--ink);font-weight:600}
+.side{position:sticky;top:calc(var(--ctl) + 92px);display:flex;flex-direction:column;gap:20px}
+.kf{display:flex;flex-direction:column;gap:2px;padding:12px 0;border-top:1px solid var(--hair)}
+.kf b{font:500 26px/32px "IBM Plex Mono",monospace}
+.bleed{border-radius:0;border-left:0;border-right:0;border-top:0}
+.hero3{height:520px}
+.over{position:relative;max-width:880px;margin:-96px auto 0;padding:40px}
+.foot{border-top:1px solid var(--hair)}
+.footin{display:flex;flex-wrap:wrap;gap:40px;padding-top:40px;padding-bottom:24px}
+.footin>div{flex:1 1 140px;display:flex;flex-direction:column;gap:8px}
+.footin>div:first-child{flex:2 1 280px}
+.footin a{color:var(--ink);text-decoration:none}
+.footin p{margin:4px 0 0;color:var(--muted);max-width:36ch}
+.fine{padding-bottom:32px;font-size:13px;line-height:19px;color:var(--muted)}
+
+/* The frame is a container, so these apply to the chosen width, not the window */
+@container frame (max-width: 900px){
+  .rails{grid-template-columns:minmax(0,1fr)}
+  .toc{position:static;flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px;border:1px solid var(--hair);border-radius:12px;background:var(--raised)}
+  .toc a,.toc a.on{border:1px solid var(--hair2);border-radius:999px;padding:6px 12px}
+  .toc a.on{border-color:var(--ink)}
+  .side{position:static}
+  .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero3{height:380px}
+}
+@container frame (max-width: 640px){
+  .wrap{padding:0 16px}
+  .navlinks,.signin,.nav .tag{display:none}
+  .menu{display:inline-flex}
+  .navin{gap:12px;min-height:56px}
+  .wm{font-size:22px}
+  .nav .btn{min-height:40px;padding:0 12px;font-size:14px}
+  .wf{padding:24px 0 40px}
+  .h1{font-size:34px}.lead{font-size:28px}.title{font-size:32px;line-height:1.02}.h2{font-size:24px}
+  .lede{font-size:16px;line-height:26px}
+  .prose{font-size:16px;line-height:26px;gap:20px}
+  .prose h2{font-size:24px}
+  .split{gap:24px}
+  .grid3,.grid2{grid-template-columns:minmax(0,1fr)}
+  .rowcard{grid-template-columns:88px minmax(0,1fr);gap:12px}
+  .scroll{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+  .strip{display:flex;overflow-x:auto;gap:12px;scroll-snap-type:x mandatory;padding-bottom:4px}
+  .strip>*{flex:0 0 78%;scroll-snap-align:start}
+  .hero3{height:240px}
+  .over{margin-top:-40px;padding:20px}
+  .bigq p{font-size:24px}
+  .quote p{font-size:20px}
+  .band{padding:16px}
+  .progress{top:calc(var(--ctl) + 57px)}
+}
+</style>
+</head>
+<body data-width="1280">
+
+<div class="ctl">
+  <b>ohworks wireframes</b>
+  <div class="grp"><span>Blog index</span>
+    <button type="button" data-v="a1">A1 Front page</button>
+    <button type="button" data-v="a2">A2 Stream</button>
+    <button type="button" data-v="a3">A3 Magazine grid</button>
+  </div>
+  <div class="grp"><span>Article page</span>
+    <button type="button" data-v="b1">B1 Reading column</button>
+    <button type="button" data-v="b2">B2 Column with rails</button>
+    <button type="button" data-v="b3">B3 Immersive lead</button>
+  </div>
+  <div class="grp"><span>Width</span>
+    <button type="button" data-w="1280">Desktop</button>
+    <button type="button" data-w="820">Tablet</button>
+    <button type="button" data-w="390">Phone</button>
+  </div>
+</div>
+
+<div class="about">
+  <article data-for="a1">
+    <div><h2>A1 Front page</h2><p class="sub">One lead story, a text list of the latest, then sections with a rail for data and live sites.</p><span class="rec">Recommended for the index</span></div>
+    <div><h3>Best at</h3><p>Daily news next to slower analysis and guides. The newsletter and the price index get a fixed place. Only the lead needs a photo, so it works from the first week. Folds into a single stream on a phone.</p></div>
+    <div><h3>Costs</h3><p>An editor picks the lead each day. More parts to build than a plain list.</p></div>
+  </article>
+  <article data-for="a2" hidden>
+    <div><h2>A2 Stream</h2><p class="sub">One column, newest first, every pillar mixed, with filters for section and place.</p></div>
+    <div><h3>Best at</h3><p>Speed and simplicity. Ideal on a phone, easy to paginate, works from the first article.</p></div>
+    <div><h3>Costs</h3><p>No hierarchy. A week of research scrolls away as fast as a two-line news item, and the data has no home.</p></div>
+  </article>
+  <article data-for="a3" hidden>
+    <div><h2>A3 Magazine grid</h2><p class="sub">One large feature, then a grid of photo cards.</p></div>
+    <div><h3>Best at</h3><p>Showcase and campaign coverage, where the picture is the story.</p></div>
+    <div><h3>Costs</h3><p>Every piece needs a real, credited photo, which our no-stock rule makes expensive early on. Fewer stories per screen, and regulation or pricing news rarely has a picture.</p></div>
+  </article>
+  <article data-for="b1" hidden>
+    <div><h2>B1 Reading column</h2><p class="sub">One centred column: title, photo, body, sources, author, related.</p></div>
+    <div><h3>Best at</h3><p>News and short pieces. Quickest to build and identical on a phone.</p></div>
+    <div><h3>Costs</h3><p>On a long guide the reader has no map, and the live sites sit far down the page.</p></div>
+  </article>
+  <article data-for="b2" hidden>
+    <div><h2>B2 Column with rails</h2><p class="sub">Contents on the left, the body in the middle, key facts and live sites on the right.</p><span class="rec">Recommended for articles</span></div>
+    <div><h3>Best at</h3><p>Guides, analysis and data. The contents, the sourced figures and the sites stay in view while reading. On a phone the rails fold into the column. With the rails switched off for short news it becomes B1, so it is one template.</p></div>
+    <div><h3>Costs</h3><p>More parts to build. Rails look empty on a 300-word item, so they hide below a set length.</p></div>
+  </article>
+  <article data-for="b3" hidden>
+    <div><h2>B3 Immersive lead</h2><p class="sub">A full-width photo, the title on a card over it, wide pictures through the body.</p></div>
+    <div><h3>Best at</h3><p>Showcase pieces and flagship features.</p></div>
+    <div><h3>Costs</h3><p>Needs strong real photography every time. The first paragraph starts below the fold, and the photo becomes the slowest thing to load. Better as an option on B2 than as the default.</p></div>
+  </article>
+</div>
+
+<div class="stage"><div class="frame">
+
+<header class="nav"><div class="wrap navin">
+  <a class="wm" href="#">ohworks</a>
+  <nav class="navlinks" aria-label="Primary"><a href="#">Find sites</a><a href="#" class="cur">News</a><a href="#">For owners</a></nav>
+  <span class="grow"></span>
+  <span class="tag">Sticky bar</span>
+  <a href="#" class="signin">Sign in</a>
+  <a href="#" class="btn">List your sites</a>
+  <a href="#" class="menu">Menu</a>
+</div></header>
+
+<!-- A1 Front page -->
+<section class="wf" id="a1"><div class="wrap stack g40">
+  <div class="stack g16">
+    <div class="between" style="align-items:flex-end">
+      <div><h1 class="h1">Newsroom</h1><p class="muted" style="margin:12px 0 0;max-width:62ch">[One line that says what this is: independent news, analysis and data on out-of-home advertising.]</p></div>
+      <a href="#" style="font-weight:600">Feeds and newsletter</a>
+    </div>
+    <nav class="chips scroll rule" aria-label="Sections"><a href="#" class="chip on">All</a><a href="#" class="chip">News</a><a href="#" class="chip">Analysis</a><a href="#" class="chip">Guides</a><a href="#" class="chip">Owner academy</a><a href="#" class="chip">Data</a><a href="#" class="chip">Showcase</a></nav>
+  </div>
+
+  <div class="split">
+    <article class="main stack g16">
+      <span class="tag" style="align-self:flex-start">Lead story, chosen by the editor</span>
+      <div class="ph r169">Photo 16:9, real and credited</div>
+      <div class="eye">[Pillar] · [Place]</div>
+      <h2 class="lead">[Headline of the lead story, two lines at most]</h2>
+      <p class="lede" style="max-width:62ch">[Standfirst: the key fact with its source and date, in one or two sentences.]</p>
+      <div class="meta">[Author] · [Date] · [Read time]</div>
+    </article>
+    <aside class="rail stack">
+      <div class="between" style="align-items:center;padding-bottom:12px"><h2 class="h3" style="font-size:22px">Latest</h2><span class="tag">Text only, newest first</span></div>
+      <a href="#" class="textrow"><span class="eye">[News] · [Place]</span><b>[Headline, up to two lines, says what happened]</b><span class="meta">[2 hours ago]</span></a>
+      <a href="#" class="textrow"><span class="eye">[News] · [Place]</span><b>[Headline, up to two lines, says what happened]</b><span class="meta">[5 hours ago]</span></a>
+      <a href="#" class="textrow"><span class="eye">[Analysis] · [Place]</span><b>[Headline, up to two lines, says the finding]</b><span class="meta">[Yesterday]</span></a>
+      <a href="#" class="textrow"><span class="eye">[News] · [Place]</span><b>[Headline, up to two lines, says what happened]</b><span class="meta">[Yesterday]</span></a>
+      <a href="#" class="textrow"><span class="eye">[Owner academy]</span><b>[Headline, up to two lines, names the task]</b><span class="meta">[2 days ago]</span></a>
+      <a href="#" class="textrow" style="font-weight:600;color:var(--navy7)">All news</a>
+    </aside>
+  </div>
+
+  <section class="band">
+    <div class="t"><span class="tag">Newsletter, in the page, never a pop-up</span><h2 class="h2" style="margin-top:8px">The daily briefing</h2><p>[What you get and when: the day's out-of-home news in five minutes, every weekday morning.]</p></div>
+    <div class="f"><label for="a1e">Work email</label><div class="field"><input id="a1e" class="input" type="email" placeholder="you@company.com"><button type="button" class="btn">Get the briefing</button></div></div>
+  </section>
+
+  <div class="split">
+    <div class="main stack g40">
+      <section class="stack">
+        <div class="between" style="padding-bottom:16px"><h2 class="h2">Analysis</h2><a href="#" style="font-weight:600">All analysis</a></div>
+        <article class="rowcard"><div class="ph r11">1:1</div><div class="stack g6"><div class="eye">[Analysis] · [Place]</div><h3 class="h3">[Headline, up to two lines, says the finding]</h3><p>[Standfirst in one line, with the key figure and its date.]</p><div class="meta">[Author] · [Date] · [Read time]</div></div></article>
+        <article class="rowcard"><div class="ph r11">1:1</div><div class="stack g6"><div class="eye">[Analysis] · [Place]</div><h3 class="h3">[Headline, up to two lines, says the finding]</h3><p>[Standfirst in one line, with the key figure and its date.]</p><div class="meta">[Author] · [Date] · [Read time]</div></div></article>
+      </section>
+      <section class="stack g16">
+        <div class="between"><h2 class="h2">Guides</h2><a href="#" style="font-weight:600">All guides</a></div>
+        <div class="grid3">
+          <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Guide] · [City]</div><h3 class="h4">[What a hoarding costs in this city]</h3><div class="meta">[Figures refreshed, date]</div></div></article>
+          <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Guide] · [Format]</div><h3 class="h4">[How to compare two formats before you ask]</h3><div class="meta">[Figures refreshed, date]</div></div></article>
+          <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Owner academy]</div><h3 class="h4">[How to get a licence in this city, step by step]</h3><div class="meta">[Author] · [Read time]</div></div></article>
+        </div>
+      </section>
+    </div>
+    <aside class="rail stack g24">
+      <section class="card pad stack g12">
+        <span class="tag" style="align-self:flex-start">Our own data, quarterly</span>
+        <h2 class="h3" style="font-size:22px">Price index</h2>
+        <div class="ph" style="height:150px;border-radius:6px">Line chart, rate by city</div>
+        <p class="mono" style="margin:0">[Median rate] · [City, format] · [Quarter]</p>
+        <a href="#" style="font-weight:600">Read the report</a>
+      </section>
+      <section class="card pad stack g12">
+        <span class="tag" style="align-self:flex-start">Live listings, when they exist</span>
+        <h2 class="h3" style="font-size:22px">Sites in the news</h2>
+        <a href="#" class="mini"><span class="ph"></span><span><b>[Format, size, road]</b><span class="mono muted">[Price, or on request]</span></span></a>
+        <a href="#" class="mini"><span class="ph"></span><span><b>[Format, size, road]</b><span class="mono muted">[Price, or on request]</span></span></a>
+        <a href="#" style="font-weight:600">Find sites</a>
+      </section>
+    </aside>
+  </div>
+
+  <nav class="pager" aria-label="Pages"><span class="mono muted">Page 1 of [n] · real links, no endless scroll</span><div class="chips"><a href="#" class="pg on">1</a><a href="#" class="pg">2</a><a href="#" class="pg">3</a><a href="#" class="pg">Older stories</a></div></nav>
+</div></section>
+
+<!-- A2 Stream -->
+<section class="wf" id="a2" hidden><div class="wrap stack g40">
+  <div class="stack g12">
+    <h1 class="h1">Newsroom</h1>
+    <p class="muted" style="margin:0;max-width:62ch">[One line that says what this is: independent news, analysis and data on out-of-home advertising.]</p>
+    <nav class="chips scroll rule" aria-label="Sections"><a href="#" class="chip on">All</a><a href="#" class="chip">News</a><a href="#" class="chip">Analysis</a><a href="#" class="chip">Guides</a><a href="#" class="chip">Owner academy</a><a href="#" class="chip">Data</a><a href="#" class="chip">Showcase</a></nav>
+    <nav class="chips scroll" aria-label="Places"><span class="eye" style="margin-right:4px">Place</span><a href="#" class="chip sm on">All places</a><a href="#" class="chip sm">India</a><a href="#" class="chip sm">Bengaluru</a><a href="#" class="chip sm">Mumbai</a><a href="#" class="chip sm">Delhi NCR</a><a href="#" class="chip sm">More</a></nav>
+  </div>
+  <div class="split">
+    <div class="main stack">
+      <span class="tag" style="align-self:flex-start;margin-bottom:12px">One column, newest first, every pillar mixed</span>
+      <article class="rowcard"><div class="ph r11">1:1</div><div class="stack g6"><div class="eye">[News] · [Place]</div><h2 class="h3">[Headline, up to two lines, says what happened]</h2><p>[Standfirst in one line, with the key figure and its date.]</p><div class="meta">[Author] · [2 hours ago] · [Read time]</div></div></article>
+      <article class="rowcard"><div class="ph r11">1:1</div><div class="stack g6"><div class="eye">[Analysis] · [Place]</div><h2 class="h3">[Headline, up to two lines, says the finding]</h2><p>[Standfirst in one line, with the key figure and its date.]</p><div class="meta">[Author] · [Yesterday] · [Read time]</div></div></article>
+      <article class="rowcard"><div class="ph r11">1:1</div><div class="stack g6"><div class="eye">[News] · [Place]</div><h2 class="h3">[Headline, up to two lines, says what happened]</h2><p>[Standfirst in one line, with the key figure and its date.]</p><div class="meta">[Author] · [Yesterday] · [Read time]</div></div></article>
+      <section class="band" style="margin:8px 0 24px">
+        <div class="t"><span class="tag">Newsletter, after the third story</span><h2 class="h2" style="margin-top:8px">The daily briefing</h2></div>
+        <div class="f"><label for="a2e">Work email</label><div class="field"><input id="a2e" class="input" type="email" placeholder="you@company.com"><button type="button" class="btn">Get the briefing</button></div></div>
+      </section>
+      <article class="rowcard"><div class="ph r11">1:1</div><div class="stack g6"><div class="eye">[Guide] · [City]</div><h2 class="h3">[What a hoarding costs in this city]</h2><p>[Standfirst in one line, with the key figure and its date.]</p><div class="meta">[Figures refreshed, date]</div></div></article>
+      <article class="rowcard"><div class="ph r11">1:1</div><div class="stack g6"><div class="eye">[Owner academy]</div><h2 class="h3">[How to get a licence in this city, step by step]</h2><p>[Standfirst in one line that names who it is for.]</p><div class="meta">[Author] · [3 days ago] · [Read time]</div></div></article>
+      <article class="rowcard"><div class="ph r11">1:1</div><div class="stack g6"><div class="eye">[Showcase]</div><h2 class="h3">[Campaign of the week, and the sites it ran on]</h2><p>[Standfirst in one line.]</p><div class="meta">[Author] · [4 days ago] · [Read time]</div></div></article>
+    </div>
+    <aside class="rail stack g24">
+      <section class="card pad stack g12"><h2 class="h3" style="font-size:22px">Topics</h2><div class="chips"><a href="#" class="chip sm">Regulation</a><a href="#" class="chip sm">Pricing</a><a href="#" class="chip sm">Programmatic</a><a href="#" class="chip sm">Permits</a><a href="#" class="chip sm">Contracts</a><a href="#" class="chip sm">People moves</a></div></section>
+      <section class="card pad stack g12"><span class="tag" style="align-self:flex-start">Our own data, quarterly</span><h2 class="h3" style="font-size:22px">Price index</h2><div class="ph" style="height:130px;border-radius:6px">Line chart, rate by city</div><a href="#" style="font-weight:600">Read the report</a></section>
+      <section class="card pad stack g8"><h2 class="h3" style="font-size:22px">Follow a city</h2><p class="muted" style="margin:0">[Hear when a new story or a new site appears.]</p><label for="a2c">Work email</label><input id="a2c" class="input" style="flex:none" type="email" placeholder="you@company.com"><button type="button" class="btn sec">Follow</button></section>
+    </aside>
+  </div>
+  <nav class="pager" aria-label="Pages"><span class="mono muted">Page 1 of [n] · real links, no endless scroll</span><div class="chips"><a href="#" class="pg on">1</a><a href="#" class="pg">2</a><a href="#" class="pg">3</a><a href="#" class="pg">Older stories</a></div></nav>
+</div></section>
+
+<!-- A3 Magazine grid -->
+<section class="wf" id="a3" hidden><div class="wrap stack g40">
+  <div class="stack g16">
+    <div><h1 class="h1">Newsroom</h1><p class="muted" style="margin:12px 0 0;max-width:62ch">[One line that says what this is: independent news, analysis and data on out-of-home advertising.]</p></div>
+    <nav class="chips scroll rule" aria-label="Sections"><a href="#" class="chip on">All</a><a href="#" class="chip">News</a><a href="#" class="chip">Analysis</a><a href="#" class="chip">Guides</a><a href="#" class="chip">Owner academy</a><a href="#" class="chip">Data</a><a href="#" class="chip">Showcase</a></nav>
+  </div>
+  <article class="stack g16">
+    <span class="tag" style="align-self:flex-start">Feature, one large photo</span>
+    <div class="ph r219">Photo 21:9, real and credited</div>
+    <div class="eye">[Pillar] · [Place]</div>
+    <h2 class="lead">[Headline of the feature, two lines at most]</h2>
+    <p class="lede" style="max-width:62ch">[Standfirst: the key fact with its source and date, in one or two sentences.]</p>
+    <div class="meta">[Author] · [Date] · [Read time]</div>
+  </article>
+  <section class="stack g16">
+    <div class="between" style="align-items:center"><h2 class="h2">More stories</h2><span class="tag">Every card needs a real photo</span></div>
+    <div class="grid3">
+      <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[News] · [Place]</div><h3 class="h4">[Headline, up to two lines, says what happened]</h3><div class="meta">[Author] · [Date]</div></div></article>
+      <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Analysis] · [Place]</div><h3 class="h4">[Headline, up to two lines, says the finding]</h3><div class="meta">[Author] · [Date]</div></div></article>
+      <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Showcase]</div><h3 class="h4">[Campaign of the week, and the sites it ran on]</h3><div class="meta">[Author] · [Date]</div></div></article>
+      <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Guide] · [City]</div><h3 class="h4">[What a hoarding costs in this city]</h3><div class="meta">[Figures refreshed, date]</div></div></article>
+      <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[News] · [Place]</div><h3 class="h4">[Headline, up to two lines, says what happened]</h3><div class="meta">[Author] · [Date]</div></div></article>
+      <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Owner academy]</div><h3 class="h4">[How to get a licence in this city, step by step]</h3><div class="meta">[Author] · [Date]</div></div></article>
+    </div>
+  </section>
+  <section class="band">
+    <div class="t"><span class="tag">Newsletter, in the page, never a pop-up</span><h2 class="h2" style="margin-top:8px">The daily briefing</h2><p>[What you get and when.]</p></div>
+    <div class="f"><label for="a3e">Work email</label><div class="field"><input id="a3e" class="input" type="email" placeholder="you@company.com"><button type="button" class="btn">Get the briefing</button></div></div>
+  </section>
+  <nav class="pager" aria-label="Pages"><span class="mono muted">Page 1 of [n] · real links, no endless scroll</span><div class="chips"><a href="#" class="pg on">1</a><a href="#" class="pg">2</a><a href="#" class="pg">3</a><a href="#" class="pg">Older stories</a></div></nav>
+</div></section>
+
+<!-- B1 Reading column -->
+<section class="wf" id="b1" hidden><div class="wrap">
+  <div class="col stack g16">
+    <div class="crumb">Newsroom › [Pillar] › [Place]</div>
+    <div class="eye">[Pillar] · [Place]</div>
+    <h1 class="title">[Article title, two lines, says the finding plainly]</h1>
+    <p class="lede">[Standfirst: one or two sentences with the key fact, its source and its date.]</p>
+    <div class="by"><span class="av" aria-hidden="true">A</span><div><div style="font-weight:600">[Author name]</div><div class="meta">[Role and credentials] · [Date] · [Read time]</div></div></div>
+    <div class="chips"><span class="eye" style="margin-right:4px">Share</span><a href="#" class="chip sm">Copy link</a><a href="#" class="chip sm">Email</a><a href="#" class="chip sm">LinkedIn</a><a href="#" class="chip sm">WhatsApp</a></div>
+    <figure style="margin-top:8px"><div class="ph r169">Photo 16:9, real and credited</div><figcaption>[Caption that says where this is] · Photo: [credit]</figcaption></figure>
+  </div>
+  <div class="col prose" style="margin-top:32px">
+    <p>[Opening paragraph: the key fact with its source and date in the first two sentences. This is the passage answer engines quote.]</p>
+    <p>[Body paragraph: 18 px on a 28 px line, 60 to 70 characters wide. Short sentences, active voice, specific nouns.]</p>
+    <h2>[Section heading]</h2>
+    <p>[A sourced figure sits inside the sentence:] <span class="fact">[figure] [unit] · [source], [date]</span> [and the sentence carries on around it. No figure appears without its source.]</p>
+    <blockquote class="quote"><p>[Pull quote, one or two lines, from a named person.]</p><footer>[Name], [role]</footer></blockquote>
+    <p>[Body paragraph.]</p>
+    <h2>[Section heading]</h2>
+    <section class="stack g12">
+      <div class="between" style="align-items:center"><h3 class="h3">Sites in this area</h3><span class="tag">Live listings, when they exist</span></div>
+      <div class="grid2 strip">
+        <article class="card clip"><div class="ph r32 flat">Approach photo 3:2</div><div class="cb"><h4 class="h4">[Format, size, road]</h4><div class="meta">[Locality, city] · [lighting]</div><div class="between" style="align-items:center;margin-top:4px"><span class="mono">[Price a month]</span><a href="#" class="btn sec sm">Enquire</a></div></div></article>
+        <article class="card clip"><div class="ph r32 flat">Approach photo 3:2</div><div class="cb"><h4 class="h4">[Format, size, road]</h4><div class="meta">[Locality, city] · [lighting]</div><div class="between" style="align-items:center;margin-top:4px"><span class="mono">[Price on request]</span><a href="#" class="btn sec sm">Enquire</a></div></div></article>
+      </div>
+    </section>
+    <div class="callout"><b>[Callout.]</b> [A definition, a warning, or the charter line.]</div>
+    <p>[Closing paragraph.]</p>
+  </div>
+  <div class="col stack g24" style="margin-top:40px">
+    <section class="stack g12"><h2 class="h2">Sources</h2>
+      <ol class="src"><li>[Report title], [publisher], [published date]</li><li>[Official notice], [authority], [date]</li><li>[Interview with name, role], [date]</li><li>[ohworks listing data], [period and method]</li></ol>
+      <p class="meta" style="margin:0">[Correction, date: what was wrong and what it says now.]</p>
+    </section>
+    <section class="card pad author"><span class="av" aria-hidden="true">A</span><div><div style="font-weight:600">[Author name]</div><div class="meta">[Role] · [Verified contributor, if checked]</div><p>[Two-line bio with real credentials, and a link to all their pieces.]</p></div></section>
+    <section class="band">
+      <div class="t"><span class="tag">Newsletter, at the end of the piece</span><h2 class="h2" style="margin-top:8px">The daily briefing</h2></div>
+      <div class="f"><label for="b1e">Work email</label><div class="field"><input id="b1e" class="input" type="email" placeholder="you@company.com"><button type="button" class="btn">Get the briefing</button></div></div>
+    </section>
+    <section class="stack"><h2 class="h2" style="margin-bottom:12px">Related</h2>
+      <a href="#" class="textrow"><span class="eye">[Pillar] · [Place]</span><b>[Related headline, by shared topic or place]</b><span class="meta">[Author] · [Date]</span></a>
+      <a href="#" class="textrow"><span class="eye">[Pillar] · [Place]</span><b>[Related headline, by shared topic or place]</b><span class="meta">[Author] · [Date]</span></a>
+      <a href="#" class="textrow"><span class="eye">[Guide] · [City]</span><b>[The cost guide for this place]</b><span class="meta">[Figures refreshed, date]</span></a>
+    </section>
+  </div>
+</div></section>
+
+<!-- B2 Column with rails -->
+<section class="wf" id="b2" hidden style="padding-top:0">
+  <div class="progress" aria-hidden="true"><i></i></div>
+  <div class="wrap" style="padding-top:40px">
+    <div class="stack g16" style="max-width:860px">
+      <div class="crumb">Newsroom › [Pillar] › [Place]</div>
+      <div class="eye">[Pillar] · [Place]</div>
+      <h1 class="title">[Article title, two lines, says the finding plainly]</h1>
+      <p class="lede">[Standfirst: one or two sentences with the key fact, its source and its date.]</p>
+      <div class="between" style="align-items:center">
+        <div class="by"><span class="av" aria-hidden="true">A</span><div><div style="font-weight:600">[Author name]</div><div class="meta">[Role and credentials] · [Date] · [Read time]</div></div></div>
+        <div class="chips"><a href="#" class="chip sm">Copy link</a><a href="#" class="chip sm">Email</a><a href="#" class="chip sm">LinkedIn</a><a href="#" class="chip sm">WhatsApp</a></div>
+      </div>
+    </div>
+    <figure style="margin-top:24px"><div class="ph r219">Photo, the full width of the page, real and credited</div><figcaption>[Caption that says where this is] · Photo: [credit]</figcaption></figure>
+
+    <div class="rails" style="margin-top:32px">
+      <nav class="toc" aria-label="On this page">
+        <span class="eye" style="margin-bottom:6px">On this page</span>
+        <a class="on" href="#b2-s1">[Section one]</a><a href="#b2-s2">[Section two]</a><a href="#b2-s3">[Section three]</a><a href="#b2-src">Sources</a>
+      </nav>
+      <div class="prose">
+        <p>[Opening paragraph: the key fact with its source and date in the first two sentences. This is the passage answer engines quote.]</p>
+        <h2 id="b2-s1">[Section one]</h2>
+        <p>[Body paragraph: 18 px on a 28 px line, 60 to 70 characters wide. Short sentences, active voice, specific nouns.]</p>
+        <p>[A sourced figure sits inside the sentence:] <span class="fact">[figure] [unit] · [source], [date]</span> [and the sentence carries on around it.]</p>
+        <h2 id="b2-s2">[Section two]</h2>
+        <p>[Body paragraph.]</p>
+        <blockquote class="quote"><p>[Pull quote, one or two lines, from a named person.]</p><footer>[Name], [role]</footer></blockquote>
+        <p>[Body paragraph.]</p>
+        <h2 id="b2-s3">[Section three]</h2>
+        <p>[Body paragraph.]</p>
+        <div class="callout"><b>[Callout.]</b> [A definition, a warning, or the charter line.]</div>
+        <p>[Closing paragraph.]</p>
+      </div>
+      <aside class="side">
+        <section class="card pad stack">
+          <span class="tag" style="align-self:flex-start;margin-bottom:12px">Key facts, each with its source</span>
+          <div class="kf"><b>[figure]</b><span>[What it measures]</span><span class="meta">[Source], [date]</span></div>
+          <div class="kf"><b>[figure]</b><span>[What it measures]</span><span class="meta">[Source], [date]</span></div>
+          <div class="kf"><b>[figure]</b><span>[What it measures]</span><span class="meta">[Source], [date]</span></div>
+        </section>
+        <section class="card pad stack g12">
+          <span class="tag" style="align-self:flex-start">Live listings, when they exist</span>
+          <h2 class="h3">Sites in this area</h2>
+          <a href="#" class="mini"><span class="ph"></span><span><b>[Format, size, road]</b><span class="mono muted">[Price, or on request]</span></span></a>
+          <a href="#" class="mini"><span class="ph"></span><span><b>[Format, size, road]</b><span class="mono muted">[Price, or on request]</span></span></a>
+          <a href="#" style="font-weight:600">See all sites here</a>
+        </section>
+      </aside>
+    </div>
+
+    <div class="grid2" style="margin-top:48px;gap:40px">
+      <section class="stack g12" id="b2-src" style="scroll-margin-top:150px"><h2 class="h2">Sources</h2>
+        <ol class="src"><li>[Report title], [publisher], [published date]</li><li>[Official notice], [authority], [date]</li><li>[Interview with name, role], [date]</li><li>[ohworks listing data], [period and method]</li></ol>
+        <p class="meta" style="margin:0">[Correction, date: what was wrong and what it says now.]</p>
+      </section>
+      <div class="stack g24">
+        <section class="card pad author"><span class="av" aria-hidden="true">A</span><div><div style="font-weight:600">[Author name]</div><div class="meta">[Role] · [Verified contributor, if checked]</div><p>[Two-line bio with real credentials, and a link to all their pieces.]</p></div></section>
+        <section class="band" style="padding:20px">
+          <div class="t"><span class="tag">Newsletter</span><h2 class="h3" style="margin-top:8px">The daily briefing</h2></div>
+          <div class="f"><label for="b2e">Work email</label><div class="field"><input id="b2e" class="input" type="email" placeholder="you@company.com"><button type="button" class="btn">Get the briefing</button></div></div>
+        </section>
+      </div>
+    </div>
+
+    <section class="stack g16" style="margin-top:48px"><h2 class="h2">Related</h2>
+      <div class="grid3">
+        <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Pillar] · [Place]</div><h3 class="h4">[Related headline, by shared topic or place]</h3><div class="meta">[Author] · [Date]</div></div></article>
+        <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Pillar] · [Place]</div><h3 class="h4">[Related headline, by shared topic or place]</h3><div class="meta">[Author] · [Date]</div></div></article>
+        <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Guide] · [City]</div><h3 class="h4">[The cost guide for this place]</h3><div class="meta">[Figures refreshed, date]</div></div></article>
+      </div>
+    </section>
+  </div>
+</section>
+
+<!-- B3 Immersive lead -->
+<section class="wf" id="b3" hidden style="padding-top:0">
+  <div class="ph bleed hero3">Photo, edge to edge. Night shots and campaigns, always real and credited</div>
+  <div class="wrap">
+    <div class="card over stack g16">
+      <div class="eye">[Showcase] · [Place]</div>
+      <h1 class="title">[Feature title, two lines, says the finding plainly]</h1>
+      <p class="lede">[Standfirst: one or two sentences with the key fact, its source and its date.]</p>
+      <div class="by"><span class="av" aria-hidden="true">A</span><div><div style="font-weight:600">[Author name]</div><div class="meta">[Role and credentials] · [Date] · [Read time]</div></div></div>
+    </div>
+    <p class="meta" style="max-width:880px;margin:12px auto 0">[Caption that says where this is] · Photo: [credit]</p>
+
+    <div class="col prose" style="margin-top:32px">
+      <p>[Opening paragraph: the key fact with its source and date in the first two sentences.]</p>
+      <p>[Body paragraph: 18 px on a 28 px line, 60 to 70 characters wide.]</p>
+      <h2>[Section heading]</h2>
+      <p>[A sourced figure sits inside the sentence:] <span class="fact">[figure] [unit] · [source], [date]</span> [and the sentence carries on around it.]</p>
+    </div>
+    <figure style="margin:32px 0"><div class="ph r219">Second photo, wider than the text</div><figcaption>[Caption] · Photo: [credit]</figcaption></figure>
+    <div class="col prose">
+      <p>[Body paragraph.]</p>
+      <blockquote class="bigq"><p>[Large pull quote, centred, two or three lines.]</p><footer>[Name], [role]</footer></blockquote>
+      <p>[Body paragraph.]</p>
+      <h2>[Section heading]</h2>
+    </div>
+    <section class="stack g12" style="margin:32px 0">
+      <div class="between" style="align-items:center"><h3 class="h3">Sites this campaign ran on</h3><span class="tag">Live listings, when they exist</span></div>
+      <div class="grid3 strip">
+        <article class="card clip"><div class="ph r32 flat">Approach photo 3:2</div><div class="cb"><h4 class="h4">[Format, size, road]</h4><div class="meta">[Locality, city] · [lighting]</div><div class="between" style="align-items:center;margin-top:4px"><span class="mono">[Price a month]</span><a href="#" class="btn sec sm">Enquire</a></div></div></article>
+        <article class="card clip"><div class="ph r32 flat">Approach photo 3:2</div><div class="cb"><h4 class="h4">[Format, size, road]</h4><div class="meta">[Locality, city] · [lighting]</div><div class="between" style="align-items:center;margin-top:4px"><span class="mono">[Price on request]</span><a href="#" class="btn sec sm">Enquire</a></div></div></article>
+        <article class="card clip"><div class="ph r32 flat">Approach photo 3:2</div><div class="cb"><h4 class="h4">[Format, size, road]</h4><div class="meta">[Locality, city] · [lighting]</div><div class="between" style="align-items:center;margin-top:4px"><span class="mono">[Price a month]</span><a href="#" class="btn sec sm">Enquire</a></div></div></article>
+      </div>
+    </section>
+    <div class="col prose">
+      <p>[Body paragraph.]</p>
+      <div class="callout"><b>[Callout.]</b> [A definition, a warning, or the charter line.]</div>
+      <p>[Closing paragraph.]</p>
+    </div>
+    <div class="col stack g24" style="margin-top:40px">
+      <section class="stack g12"><h2 class="h2">Sources</h2>
+        <ol class="src"><li>[Report title], [publisher], [published date]</li><li>[Interview with name, role], [date]</li><li>[ohworks listing data], [period and method]</li></ol>
+      </section>
+      <section class="card pad author"><span class="av" aria-hidden="true">A</span><div><div style="font-weight:600">[Author name]</div><div class="meta">[Role] · [Verified contributor, if checked]</div><p>[Two-line bio with real credentials, and a link to all their pieces.]</p></div></section>
+    </div>
+    <section class="stack g16" style="margin-top:48px"><h2 class="h2">Related</h2>
+      <div class="grid3">
+        <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Showcase]</div><h3 class="h4">[Related headline, by shared topic or place]</h3><div class="meta">[Author] · [Date]</div></div></article>
+        <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Pillar] · [Place]</div><h3 class="h4">[Related headline, by shared topic or place]</h3><div class="meta">[Author] · [Date]</div></div></article>
+        <article class="card clip"><div class="ph r32 flat">Photo 3:2</div><div class="cb"><div class="eye">[Guide] · [City]</div><h3 class="h4">[The cost guide for this place]</h3><div class="meta">[Figures refreshed, date]</div></div></article>
+      </div>
+    </section>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap footin">
+    <div><div class="wm" style="font-size:22px">ohworks</div><p>The open map of out-of-home advertising, where the owner is always the seller.</p></div>
+    <div><div class="eye">Product</div><a href="#">Find sites</a><a href="#">Guides</a><a href="#">News</a><a href="#">The charter</a></div>
+    <div><div class="eye">Sections</div><a href="#">Analysis</a><a href="#">Owner academy</a><a href="#">Data</a><a href="#">Showcase</a></div>
+    <div><div class="eye">Newsroom</div><a href="#">About and masthead</a><a href="#">Corrections</a><a href="#">Feeds</a><a href="#">Contact</a></div>
+  </div>
+  <div class="wrap fine">ohworks never sells media or takes a media margin. Owners set prices and keep their clients.</div>
+</footer>
+
+</div></div>
+
+<script>
+(function () {
+  var ids = ["a1", "a2", "a3", "b1", "b2", "b3"];
+  var ctl = document.querySelector(".ctl");
+  function setCtl() { document.documentElement.style.setProperty("--ctl", ctl.offsetHeight + "px"); }
+  function show(v, keepScroll) {
+    document.querySelectorAll(".wf").forEach(function (el) { el.hidden = el.id !== v; });
+    document.querySelectorAll("[data-for]").forEach(function (el) { el.hidden = el.dataset.for !== v; });
+    document.querySelectorAll("[data-v]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.v === v)); });
+    history.replaceState(null, "", "#" + v);
+    if (!keepScroll) window.scrollTo(0, 0);
+  }
+  function width(w) {
+    document.body.dataset.width = w;
+    document.querySelectorAll("[data-w]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.w === w)); });
+    setCtl();
+  }
+  document.querySelectorAll("[data-v]").forEach(function (b) { b.addEventListener("click", function () { show(b.dataset.v); }); });
+  document.querySelectorAll("[data-w]").forEach(function (b) { b.addEventListener("click", function () { width(b.dataset.w); }); });
+  document.querySelector(".frame").addEventListener("click", function (e) {
+    var a = e.target.closest('a[href="#"]');
+    if (a) e.preventDefault();
+  });
+  window.addEventListener("resize", setCtl);
+  var h = location.hash.slice(1);
+  var first = ids.filter(function (i) { return h === i || h.indexOf(i + "-") === 0; })[0] || "a1";
+  setCtl(); width("1280"); show(first, true);
+})();
+</script>
+</body>
+</html>

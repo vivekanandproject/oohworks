@@ -146,3 +146,12 @@ Marketplace work (M1 data layer onwards) starts in parallel from week 3, so the 
 3. Newsletter sender name and domain, for example "ohworks briefing" from news.ohworks.com.
 4. The first editor: in-house or a contracted trade journalist for India.
 5. Whether the price index launches with partial data labelled as such, or waits for a full quarter.
+
+## 12. Wireframes (10 Oct 2026)
+
+`docs/wireframes/articles-and-blog.html` holds six wireframes to choose from before week 2 is built. Open the file in a browser; the bar at the top switches layout and width.
+
+- Blog index: A1 Front page (recommended), A2 Stream, A3 Magazine grid.
+- Article page: B1 Reading column, B2 Column with rails (recommended), B3 Immersive lead.
+- Recommendation: A1 for the index, and B2 as the one article template, with its rails off for short news (which is B1) and B3's full-width photo as an option for showcase pieces.
+- Open point: the working name of the combined index is "Newsroom".
