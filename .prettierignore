@@ -4,3 +4,5 @@ dist
 .turbo
 pnpm-lock.yaml
 docs/*.md
+apps/web/src/payload-types.ts
+apps/web/src/app/(payload)/admin/importMap.js

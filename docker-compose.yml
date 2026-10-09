@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: ohworks
       POSTGRES_DB: ohworks
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -35,15 +35,6 @@ services:
       - "8108:8108"
     volumes:
       - tsdata:/data
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "exec 3<>/dev/tcp/127.0.0.1/8108 && echo -e 'GET /health HTTP/1.0\r\n\r\n' >&3 && grep -q ok <&3",
-        ]
-      interval: 5s
-      timeout: 3s
-      retries: 10
 
   inngest:
     image: inngest/inngest:latest

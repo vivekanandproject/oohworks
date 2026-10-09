@@ -5,7 +5,7 @@ export default defineConfig({
   schema: "./src/schema/index.ts",
   out: "./migrations",
   dbCredentials: {
-    url: process.env.DATABASE_URL ?? "postgres://ohworks:ohworks@localhost:5432/ohworks",
+    url: process.env.DATABASE_URL ?? "postgres://ohworks:ohworks@localhost:5433/ohworks",
   },
   extensionsFilters: ["postgis"],
   strict: true,

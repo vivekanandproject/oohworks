@@ -1,0 +1,5 @@
+/* Admin overrides: paper background and the brand ink, nothing else. */
+:root {
+  --theme-bg: #f6f5f2;
+  --theme-elevation-0: #f6f5f2;
+}

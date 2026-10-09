@@ -9,7 +9,7 @@ Docs live in `docs/`: strategy, architecture, build plan and design system.
 ```bash
 corepack enable                # pnpm from package.json
 pnpm install
-cp .env.example .env
+cp .env.example .env && ln -s ../../.env apps/web/.env   # Next reads env from the app folder
 pnpm db:up                     # Postgres+PostGIS, Redis, Typesense, Inngest dev, Mailpit
 pnpm db:migrate && pnpm db:seed
 pnpm dev                       # http://localhost:3000
