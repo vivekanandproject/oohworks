@@ -56,10 +56,3 @@ export const CHARTER = [
     body: "Audience figures carry a named source and date, and anything paid is labelled “paid placement”.",
   },
 ] as const;
-
-export const HERO_FACT = {
-  text: "Global OOH spend was $54.2 bn in 2025, up 15% on the year.",
-  source: "WOO Global OOH Expenditure Report 2026",
-  href: "https://www.worldooh.org/news/woo-global-ooh-expenditure-report-2026",
-  asOf: "Oct 2026",
-};

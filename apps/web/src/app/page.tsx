@@ -14,7 +14,7 @@ import {
 } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { SiteSheet } from "@/components/SiteSheet";
-import { CHARTER, HERO_FACT } from "@/lib/site";
+import { CHARTER } from "@/lib/site";
 import { JsonLd, SITE_NAME, alternates, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -93,16 +93,6 @@ export default function HomePage() {
               <div className="mt-8">
                 <SearchField />
               </div>
-              <p className="t-small text-ink-muted mt-5 max-w-[60ch]">
-                <span className="text-ink font-mono" style={{ fontVariantNumeric: "tabular-nums" }}>
-                  {HERO_FACT.text}
-                </span>{" "}
-                Source:{" "}
-                <a href={HERO_FACT.href} className="oh-link" rel="noopener">
-                  {HERO_FACT.source}
-                </a>
-                , as of {HERO_FACT.asOf}.
-              </p>
             </div>
             <div className="lg:w-full lg:justify-self-end">
               <SiteSheet />
