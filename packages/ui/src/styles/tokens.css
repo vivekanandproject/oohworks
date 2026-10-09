@@ -64,7 +64,7 @@
 
 @theme inline {
   --font-*: initial;
-  --font-display: var(--font-bricolage), "IBM Plex Sans", system-ui, sans-serif;
+  --font-display: var(--font-archivo), "Archivo", "IBM Plex Sans", system-ui, sans-serif;
   --font-sans:
     var(--font-plex-sans), "IBM Plex Sans Devanagari", "IBM Plex Sans Arabic", system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;

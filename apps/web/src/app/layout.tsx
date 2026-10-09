@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { bricolage, plexMono, plexSans } from "./fonts";
+import { archivo, plexMono, plexSans } from "./fonts";
 import { SITE_NAME, siteUrl } from "@/lib/seo";
 import "./globals.css";
 
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${plexSans.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${archivo.variable} ${plexSans.variable} ${plexMono.variable}`}>
       <body className="bg-paper text-ink min-h-screen">{children}</body>
     </html>
   );

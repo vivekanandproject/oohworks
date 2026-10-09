@@ -58,8 +58,8 @@ export default function HomePage() {
           <div className="grid items-center gap-10 lg:grid-cols-[11fr_9fr] lg:gap-14">
             <div>
               <p className="t-label text-ink-muted">The open map of out-of-home</p>
-              <h1 className="text-ink t-display-xl mt-3">Every billboard, findable.</h1>
-              <p className="text-ink-muted t-body-lg mt-5 max-w-[52ch]">
+              <h1 className="text-ink t-display-xl mt-4">Every billboard, findable.</h1>
+              <p className="text-ink-muted t-body-xl mt-6 max-w-[46ch]">
                 ohworks is the open map of out-of-home advertising. Search any site, see the owner,
                 ask in one step. The owner always sells.
               </p>

@@ -16,9 +16,9 @@ const LINKS: { key: NonNullable<NavBarProps["active"]>; href: string; label: str
 export function NavBar({ active, signedIn = false }: NavBarProps) {
   return (
     <header className="border-hairline bg-paper border-b">
-      <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center gap-6 px-4 lg:px-10">
+      <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center gap-3 px-4 sm:gap-6 lg:px-10">
         <a href="/" aria-label="ohworks home" className="shrink-0 rounded-sm">
-          <Wordmark size={30} />
+          <Wordmark size={28} />
         </a>
         <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex">
           {LINKS.map((l) => (
@@ -43,7 +43,7 @@ export function NavBar({ active, signedIn = false }: NavBarProps) {
           List your sites
         </a>
         <details className="relative lg:hidden">
-          <summary className="oh-btn ghost sm cursor-pointer list-none select-none [&::-webkit-details-marker]:hidden">
+          <summary className="oh-btn ghost sm cursor-pointer list-none px-2! select-none [&::-webkit-details-marker]:hidden">
             Menu
           </summary>
           <nav

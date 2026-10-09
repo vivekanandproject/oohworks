@@ -1,16 +1,19 @@
-import { Bricolage_Grotesque, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 
-/** Display face: titles only. Preloaded because the H1 is the LCP element. */
-export const bricolage = Bricolage_Grotesque({
+/**
+ * Display face: titles only. Archivo's width axis lets headings sit semi-expanded at a heavy
+ * weight, the lettering of a painted signboard. Preloaded and "optional": it is the LCP text,
+ * and it is either ready at first paint or never swapped in, so the hero never reflows.
+ */
+export const archivo = Archivo({
   subsets: ["latin"],
-  axes: ["opsz"],
-  variable: "--font-bricolage",
-  // "optional" so a late font never reflows the hero; it is preloaded and self-hosted, so it is late only on a cold, slow first visit.
+  axes: ["wdth"],
+  variable: "--font-archivo",
   display: "optional",
   preload: true,
 });
 
-/** Interface and body. Preloaded and "optional": ready at first paint or never swapped in, so no reflow. */
+/** Interface and body. Preloaded and "optional": ready at first paint or never swapped in. */
 export const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600"],

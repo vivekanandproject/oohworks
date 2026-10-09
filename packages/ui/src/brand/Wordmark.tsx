@@ -16,8 +16,13 @@ export function Wordmark({ onDark = false, size = 32, className }: WordmarkProps
     >
       <Mark size={size} onDark={onDark} />
       <span
-        className="font-display leading-none font-bold"
-        style={{ fontSize: Math.round(size * 0.78), letterSpacing: "-0.015em" }}
+        className="font-display leading-none"
+        style={{
+          fontSize: Math.round(size * 0.78),
+          fontWeight: 800,
+          fontStretch: "106%",
+          letterSpacing: "-0.03em",
+        }}
       >
         ohworks
       </span>

@@ -1,50 +1,75 @@
-/* Named type styles. Display for titles only; sans for everything else; mono for anything measured. */
+/*
+ * Named type styles. Display for titles only; sans for everything else; mono for anything measured.
+ * Display is Archivo on its width axis: semi-expanded and heavy, like signboard lettering.
+ */
 @utility t-display-xl {
   font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: 112%;
   font-size: 44px;
-  line-height: 0.98;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  line-height: 0.96;
+  letter-spacing: -0.03em;
   text-wrap: balance;
   @media (width >= 640px) {
-    font-size: 56px;
-    line-height: 0.96;
+    font-size: 60px;
+    line-height: 0.94;
+    letter-spacing: -0.035em;
   }
   @media (width >= 1024px) {
-    font-size: 64px;
-    line-height: 0.95;
+    font-size: 76px;
+    line-height: 0.92;
+    letter-spacing: -0.04em;
   }
 }
 @utility t-display-lg {
   font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: 110%;
   font-size: 34px;
-  line-height: 1.02;
-  font-weight: 700;
-  letter-spacing: -0.015em;
+  line-height: 1;
+  letter-spacing: -0.025em;
   text-wrap: balance;
   @media (width >= 640px) {
-    font-size: 44px;
-    line-height: 1;
+    font-size: 48px;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
   }
 }
 @utility t-display-md {
   font-family: var(--font-display);
-  font-size: 26px;
-  line-height: 1.12;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-weight: 750;
+  font-stretch: 108%;
+  font-size: 27px;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
   text-wrap: balance;
   @media (width >= 640px) {
-    font-size: 30px;
-    line-height: 1.1;
+    font-size: 34px;
+    line-height: 1.06;
+    letter-spacing: -0.025em;
   }
 }
 @utility t-display-sm {
   font-family: var(--font-display);
-  font-size: 22px;
-  line-height: 1.2;
-  font-weight: 600;
+  font-weight: 700;
+  font-stretch: 106%;
+  font-size: 21px;
+  line-height: 1.16;
+  letter-spacing: -0.015em;
   text-wrap: balance;
+  @media (width >= 640px) {
+    font-size: 23px;
+  }
+}
+@utility t-body-xl {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 400;
+  @media (width >= 1024px) {
+    font-size: 20px;
+    line-height: 30px;
+  }
 }
 @utility t-body-lg {
   font-family: var(--font-sans);
@@ -75,7 +100,7 @@
   font-size: 12px;
   line-height: 16px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 @utility t-data-lg {

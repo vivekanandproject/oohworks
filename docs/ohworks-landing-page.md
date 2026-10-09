@@ -126,3 +126,4 @@ Checked by Playwright and Lighthouse CI on every PR.
 - The display font loads with `font-display: optional` so a late font never reflows the hero.
 - UI primitives in `packages/ui` use plain anchors so they stay framework-agnostic; pages in `apps/web` use Next `Link` for internal navigation.
 - The "new sites" and "newsroom" sections render only when real data exists; they are wired to empty arrays until M2 and M5.
+- Display face changed from Bricolage Grotesque to Archivo (variable, width axis, 800 weight, 106 to 112% width) on 9 Oct 2026 at the founder's request for a stronger headline. The design system artifact still names Bricolage and should be updated; `packages/ui/src/styles/typography.css` holds the live scale.
