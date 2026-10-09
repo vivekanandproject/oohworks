@@ -16,11 +16,12 @@ export function Wordmark({ onDark = false, size = 32, className }: WordmarkProps
     >
       <Mark size={size} onDark={onDark} />
       <span
-        className="font-display leading-none"
+        className="font-display leading-none max-[379px]:sr-only"
         style={{
           fontSize: Math.round(size * 0.78),
           fontWeight: 800,
           fontStretch: "106%",
+          fontVariationSettings: '"wdth" 106',
           letterSpacing: "-0.03em",
         }}
       >

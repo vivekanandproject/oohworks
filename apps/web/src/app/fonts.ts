@@ -1,9 +1,10 @@
-import { Archivo, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 
 /**
- * Display face: titles only. Archivo's width axis lets headings sit semi-expanded at a heavy
- * weight, the lettering of a painted signboard. Preloaded and "optional": it is the LCP text,
- * and it is either ready at first paint or never swapped in, so the hero never reflows.
+ * The primary face for everything that is not measured data: Archivo, a variable grotesque with
+ * weight and width axes. Body sits at normal width; titles sit semi-expanded and heavy, the
+ * lettering of a painted signboard. One file, preloaded, "optional": ready at first paint or never
+ * swapped in, so nothing reflows.
  */
 export const archivo = Archivo({
   subsets: ["latin"],
@@ -13,16 +14,7 @@ export const archivo = Archivo({
   preload: true,
 });
 
-/** Interface and body. Preloaded and "optional": ready at first paint or never swapped in. */
-export const plexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-plex-sans",
-  display: "optional",
-  preload: true,
-});
-
-/** Anything measured or identified. */
+/** Anything measured or identified: coordinates, IDs, dimensions, prices, timestamps. */
 export const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],

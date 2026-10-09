@@ -39,8 +39,7 @@ export function SiteSheet() {
           <text
             x="26"
             y="33"
-            className="fill-ink font-mono"
-            fontSize="13"
+            className="fill-ink sheet-md font-mono"
             style={{ fontVariantNumeric: "tabular-nums", ...d(60) }}
             data-fade
           >
@@ -50,8 +49,7 @@ export function SiteSheet() {
             x="544"
             y="33"
             textAnchor="end"
-            className="fill-ink-muted font-sans"
-            fontSize="11"
+            className="fill-ink-muted sheet-xs font-sans"
             fontWeight={600}
             letterSpacing="0.06em"
             data-fade
@@ -108,8 +106,7 @@ export function SiteSheet() {
             x="280"
             y="64"
             textAnchor="middle"
-            className="fill-ink font-mono"
-            fontSize="12"
+            className="fill-ink sheet-sm font-mono"
             data-fade
             style={d(320)}
           >
@@ -157,8 +154,7 @@ export function SiteSheet() {
             x="280"
             y="166"
             textAnchor="middle"
-            className="fill-ink-muted font-sans"
-            fontSize="12"
+            className="fill-ink-muted sheet-sm font-sans"
             data-fade
             style={d(480)}
           >
@@ -199,21 +195,13 @@ export function SiteSheet() {
             data-draw
             style={d(420)}
           />
-          <text
-            x="446"
-            y="152"
-            className="fill-ink font-mono"
-            fontSize="12"
-            data-fade
-            style={d(440)}
-          >
+          <text x="446" y="152" className="fill-ink sheet-sm font-mono" data-fade style={d(440)}>
             10 ft
           </text>
           <text
             x="446"
             y="168"
-            className="fill-ink-muted font-mono"
-            fontSize="11"
+            className="fill-ink-muted sheet-xs font-mono"
             data-fade
             style={d(460)}
           >
@@ -301,8 +289,7 @@ export function SiteSheet() {
             x="66"
             y="290"
             textAnchor="middle"
-            className="fill-ink-muted font-sans"
-            fontSize="10"
+            className="fill-ink-muted sheet-xs font-sans"
             fontWeight={600}
             data-fade
             style={d(620)}
@@ -334,14 +321,7 @@ export function SiteSheet() {
           />
           <polygon points="45,333 48,323 55,330" className="fill-navy" data-fade style={d(760)} />
           <circle cx="66" cy="312" r="2.5" className="fill-navy" data-fade style={d(640)} />
-          <text
-            x="16"
-            y="358"
-            className="fill-ink font-mono"
-            fontSize="12"
-            data-fade
-            style={d(800)}
-          >
+          <text x="16" y="358" className="fill-ink sheet-sm font-mono" data-fade style={d(800)}>
             Facing 225° SW
           </text>
 
@@ -350,8 +330,7 @@ export function SiteSheet() {
             x="544"
             y="342"
             textAnchor="end"
-            className="fill-ink font-mono"
-            fontSize="13"
+            className="fill-ink sheet-md font-mono"
             style={{ fontVariantNumeric: "tabular-nums", ...d(820) }}
             data-fade
           >
@@ -361,8 +340,7 @@ export function SiteSheet() {
             x="544"
             y="360"
             textAnchor="end"
-            className="fill-ink-muted font-sans"
-            fontSize="12"
+            className="fill-ink-muted sheet-sm font-sans"
             data-fade
             style={d(860)}
           >

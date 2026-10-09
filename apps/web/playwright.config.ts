@@ -18,5 +18,10 @@ export default defineConfig({
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "phone", use: { ...devices["Pixel 7"] } },
+    { name: "webkit-phone", use: { ...devices["iPhone 14"] } },
+    // Playwright's Firefox build does not launch on macOS 27 yet; CI (Linux) always runs it.
+    ...(process.env.CI || process.env.PW_FIREFOX
+      ? [{ name: "firefox-desktop", use: { ...devices["Desktop Firefox"] } }]
+      : []),
   ],
 });

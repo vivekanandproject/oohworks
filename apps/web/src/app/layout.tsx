@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { archivo, plexMono, plexSans } from "./fonts";
+import { archivo, plexMono } from "./fonts";
 import { SITE_NAME, siteUrl } from "@/lib/seo";
 import "./globals.css";
 
@@ -13,9 +13,17 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#f6f5f2",
+  colorScheme: "light",
+};
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${plexSans.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${archivo.variable} ${plexMono.variable}`}>
       <head>
         <noscript>
           <style>{`[data-reveal],[data-stagger-item],[data-draw],[data-fade]{opacity:1!important;transform:none!important;stroke-dashoffset:0!important}`}</style>

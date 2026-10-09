@@ -127,3 +127,6 @@ Checked by Playwright and Lighthouse CI on every PR.
 - UI primitives in `packages/ui` use plain anchors so they stay framework-agnostic; pages in `apps/web` use Next `Link` for internal navigation.
 - The "new sites" and "newsroom" sections render only when real data exists; they are wired to empty arrays until M2 and M5.
 - Display face changed from Bricolage Grotesque to Archivo (variable, width axis, 800 weight, 106 to 112% width) on 9 Oct 2026 at the founder's request for a stronger headline. The design system artifact still names Bricolage and should be updated; `packages/ui/src/styles/typography.css` holds the live scale.
+- Primary font is Archivo for display and body (one variable file with weight and width axes); IBM Plex Mono stays for measured data. Plex Sans is no longer loaded.
+- Browser baseline is Tailwind v4's: Chrome 111+, Safari 16.4+, Firefox 128+. Width is set through `font-variation-settings` as well as `font-stretch`; cross-document view transitions degrade to an instant change where unsupported.
+- Responsive contract: `apps/web/e2e/responsive.e2e.ts` loads every page at 320, 360, 390, 414, 640, 768, 834, 1024, 1280, 1440 and 1920 px and fails on any horizontal overflow. The suite runs in Chromium (desktop and Pixel 7), WebKit (iPhone 14) and, in CI, Firefox.

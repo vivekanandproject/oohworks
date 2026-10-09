@@ -65,7 +65,7 @@ export function Footer() {
               <ul className="mt-3 flex flex-col gap-2">
                 {c.links.map((l) => (
                   <li key={l.href + l.label}>
-                    <a href={l.href} className="text-ink hover:text-navy-700">
+                    <a href={l.href} className="text-ink hover:text-navy-700 inline-block py-1">
                       {l.label}
                     </a>
                   </li>

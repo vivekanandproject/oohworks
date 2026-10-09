@@ -292,3 +292,52 @@
     }
   }
 }
+
+/* Cross-browser form controls: no native search styling in WebKit, no iOS zoom on focus. */
+@layer components {
+  .oh-input,
+  .oh-btn {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .oh-input[type="search"]::-webkit-search-decoration,
+  .oh-input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  @media (width < 640px) {
+    .oh-input {
+      font-size: 16px;
+    }
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary {
+    list-style: none;
+  }
+  svg text {
+    font-feature-settings: "tnum";
+  }
+  .sheet-xs {
+    font-size: 11px;
+  }
+  .sheet-sm {
+    font-size: 12px;
+  }
+  .sheet-md {
+    font-size: 13px;
+  }
+  @media (width < 640px) {
+    /* The sheet scales with its box; annotations get larger user units so they stay legible on phones. */
+    .sheet-xs {
+      font-size: 15px;
+    }
+    .sheet-sm {
+      font-size: 16px;
+    }
+    .sheet-md {
+      font-size: 17px;
+    }
+  }
+}

@@ -1,17 +1,19 @@
 /*
- * Named type styles. Display for titles only; sans for everything else; mono for anything measured.
- * Display is Archivo on its width axis: semi-expanded and heavy, like signboard lettering.
+ * Named type styles. One primary family, Archivo, on its weight and width axes: body at normal
+ * width, titles semi-expanded and heavy like signboard lettering. Mono for anything measured.
+ * Width is set through font-variation-settings as well as font-stretch so every engine applies it.
  */
 @utility t-display-xl {
   font-family: var(--font-display);
   font-weight: 800;
   font-stretch: 112%;
-  font-size: 44px;
+  font-variation-settings: "wdth" 112;
+  font-size: clamp(38px, 9.5vw + 8px, 60px);
   line-height: 0.96;
   letter-spacing: -0.03em;
   text-wrap: balance;
+  overflow-wrap: anywhere;
   @media (width >= 640px) {
-    font-size: 60px;
     line-height: 0.94;
     letter-spacing: -0.035em;
   }
@@ -25,10 +27,12 @@
   font-family: var(--font-display);
   font-weight: 800;
   font-stretch: 110%;
-  font-size: 34px;
+  font-variation-settings: "wdth" 110;
+  font-size: clamp(30px, 7vw + 6px, 34px);
   line-height: 1;
   letter-spacing: -0.025em;
   text-wrap: balance;
+  overflow-wrap: anywhere;
   @media (width >= 640px) {
     font-size: 48px;
     line-height: 0.98;
@@ -39,6 +43,7 @@
   font-family: var(--font-display);
   font-weight: 750;
   font-stretch: 108%;
+  font-variation-settings: "wdth" 108;
   font-size: 27px;
   line-height: 1.08;
   letter-spacing: -0.02em;
@@ -53,6 +58,7 @@
   font-family: var(--font-display);
   font-weight: 700;
   font-stretch: 106%;
+  font-variation-settings: "wdth" 106;
   font-size: 21px;
   line-height: 1.16;
   letter-spacing: -0.015em;
