@@ -6,6 +6,7 @@
   html {
     color-scheme: light only;
     scroll-behavior: smooth;
+    scroll-padding-top: 80px;
   }
   body {
     background: var(--color-paper);

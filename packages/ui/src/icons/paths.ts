@@ -24,10 +24,8 @@ export const ICON_PATHS = {
     '<circle cx="8" cy="14" r="0.6"/>',
     '<circle cx="16" cy="14" r="0.6"/>',
   ],
-  verified: [
-    '<path d="M12 2.5l2.4 1.7 2.9-.3 1.1 2.7 2.6 1.4-.7 2.8.7 2.8-2.6 1.4-1.1 2.7-2.9-.3L12 21.5l-2.4-1.7-2.9.3-1.1-2.7L3 16l.7-2.8L3 10.4l2.6-1.4 1.1-2.7 2.9.3z"/>',
-    '<path d="M8.5 12.2l2.3 2.3 4.7-4.8"/>',
-  ],
+  // Verified: a circle with a centred tick. The scalloped seal in the asset group blurs at 16px.
+  verified: ['<circle cx="12" cy="12" r="8.75"/>', '<path d="M8.25 12.25l2.5 2.5 5-5.25"/>'],
   permit: ['<path d="M6 3h9l4 4v14H6z"/>', '<path d="M15 3v4h4M9 12h6M9 16h6"/>'],
   fresh: ['<circle cx="12" cy="12" r="8.5"/>', '<path d="M12 7.5V12l3 2"/>'],
   responsive: ['<path d="M4 5h16v10H9l-5 4z"/>', '<path d="M8 10h8"/>'],

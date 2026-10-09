@@ -139,3 +139,33 @@ test.describe("motion", () => {
     expect(stillHidden).toBe(0);
   });
 });
+
+test.describe("navigation", () => {
+  test("the bar stays at the top while scrolling", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => window.scrollTo({ top: 1600, behavior: "instant" }));
+    await page.waitForTimeout(100);
+    expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
+    const box = await page.locator("header").first().boundingBox();
+    expect(Math.round(box!.y)).toBe(0);
+    await expect(page.getByRole("link", { name: "List your sites" }).first()).toBeInViewport();
+  });
+
+  test("Guides is in the footer, not the bar", async ({ page }) => {
+    await page.goto("/");
+    await expect(
+      page.locator("header").getByRole("link", { name: "Guides", exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      page.locator("footer").getByRole("link", { name: "Guides", exact: true }),
+    ).toHaveCount(1);
+  });
+
+  test("anchor targets clear the sticky bar", async ({ page }) => {
+    await page.goto("/for-owners/#badges");
+    await page.waitForTimeout(900);
+    const top = await page.locator("#badges").evaluate((el) => el.getBoundingClientRect().top);
+    expect(top).toBeGreaterThanOrEqual(56);
+    expect(top).toBeLessThanOrEqual(140);
+  });
+});

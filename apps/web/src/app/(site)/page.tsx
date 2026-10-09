@@ -121,7 +121,7 @@ export default function HomePage() {
             <div>
               <Reveal>
                 <p className="t-label text-ink-muted">How it works</p>
-                <h2 className="t-display-md mt-3">Three steps, no middleman</h2>
+                <h2 className="t-display-md mt-3">Three steps</h2>
               </Reveal>
               <Reveal stagger>
                 <ol className="mt-8 flex flex-col gap-7">

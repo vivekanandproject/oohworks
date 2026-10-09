@@ -6,7 +6,7 @@ export function Shell({
   active,
 }: {
   children: ReactNode;
-  active?: "find" | "guides" | "news" | "owners" | undefined;
+  active?: "find" | "news" | "owners" | undefined;
 }) {
   return (
     <>

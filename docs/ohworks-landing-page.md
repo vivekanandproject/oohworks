@@ -130,3 +130,6 @@ Checked by Playwright and Lighthouse CI on every PR.
 - Primary font is Archivo for display and body (one variable file with weight and width axes); IBM Plex Mono stays for measured data. Plex Sans is no longer loaded.
 - Browser baseline is Tailwind v4's: Chrome 111+, Safari 16.4+, Firefox 128+. Width is set through `font-variation-settings` as well as `font-stretch`; cross-document view transitions degrade to an instant change where unsupported.
 - Responsive contract: `apps/web/e2e/responsive.e2e.ts` loads every page at 320, 360, 390, 414, 640, 768, 834, 1024, 1280, 1440 and 1920 px and fails on any horizontal overflow. The suite runs in Chromium (desktop and Pixel 7), WebKit (iPhone 14) and, in CI, Firefox.
+- Verified icon changed to a circle with a centred tick (10 Oct 2026): the asset group's scalloped seal blurred at badge size. `packages/ui/assets/icons/verified.svg` is updated; the design system artifact should follow.
+- Guides moved out of the top navigation into the footer only (10 Oct 2026, founder's request). The bar is now Find sites, News, For owners, Sign in, List your sites; this differs from the design system's NavBar spec.
+- The navigation bar is sticky at the top on every page (10 Oct 2026). It is 64px, under the design system's 25% limit even on a landscape phone; `scroll-padding-top: 80px` keeps anchor targets clear of it.

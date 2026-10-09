@@ -1,21 +1,20 @@
 import { Wordmark } from "../brand/Wordmark";
 
 export interface NavBarProps {
-  active?: "find" | "guides" | "news" | "owners" | undefined;
+  active?: "find" | "news" | "owners" | undefined;
   signedIn?: boolean | undefined;
 }
 
 const LINKS: { key: NonNullable<NavBarProps["active"]>; href: string; label: string }[] = [
   { key: "find", href: "/search/", label: "Find sites" },
-  { key: "guides", href: "/guides/", label: "Guides" },
   { key: "news", href: "/news/", label: "News" },
   { key: "owners", href: "/for-owners/", label: "For owners" },
 ];
 
-/** The same bar on every page. On phones the four links sit behind "Menu"; "List your sites" stays visible. */
+/** The same bar on every page. On phones the links sit behind "Menu"; "List your sites" stays visible. Guides live in the footer. */
 export function NavBar({ active, signedIn = false }: NavBarProps) {
   return (
-    <header className="border-hairline bg-paper border-b">
+    <header className="border-hairline bg-paper sticky top-0 z-30 border-b">
       <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center gap-3 px-4 sm:gap-6 lg:px-10">
         <a href="/" aria-label="ohworks home" className="shrink-0 rounded-sm">
           <Wordmark size={28} />

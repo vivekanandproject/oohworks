@@ -27,7 +27,7 @@ const PILLARS = [
 
 export default function GuidesPage() {
   return (
-    <Shell active="guides">
+    <Shell>
       <Container className="py-10 lg:py-14">
         <h1 className="t-display-lg">Guides</h1>
         <p className="text-ink-muted t-body-lg mt-3 max-w-[60ch]">
