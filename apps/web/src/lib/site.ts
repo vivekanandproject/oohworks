@@ -1,11 +1,3 @@
-import type { Edition } from "@ohworks/ui";
-
-/** Editions that exist today. The India edition joins this list when /in/ goes live. */
-export const EDITIONS: Edition[] = [
-  { code: "global", label: "Global edition", current: true },
-  { code: "in", label: "India edition opens soon" },
-];
-
 export interface LaunchCity {
   slug: string;
   name: string;

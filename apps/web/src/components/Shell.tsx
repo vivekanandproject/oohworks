@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-import { EditionStrip, Footer, NavBar } from "@ohworks/ui";
-import { EDITIONS } from "@/lib/site";
+import { Footer, NavBar } from "@ohworks/ui";
 
 export function Shell({
   children,
@@ -17,7 +16,6 @@ export function Shell({
       >
         Skip to content
       </a>
-      <EditionStrip editions={EDITIONS} />
       <NavBar active={active} />
       <main id="main">{children}</main>
       <Footer />
