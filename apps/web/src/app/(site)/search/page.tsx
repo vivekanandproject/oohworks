@@ -78,7 +78,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   if (parsed.facets.area)
     understood.push({ key: "area", label: `Near ${titleCase(parsed.facets.area)}`, remove: here });
 
-  const what = [formatLabel(format)?.toLowerCase() ?? "sites", city ? `in ${cityLabel(city)}` : ""]
+  const what = [plainLabel(formatLabel(format)) ?? "sites", city ? `in ${cityLabel(city)}` : ""]
     .filter(Boolean)
     .join(" ");
   const emptyTitle =
@@ -223,6 +223,14 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       </Container>
     </Shell>
   );
+}
+
+/** Lower-cases a format label for use mid-sentence, keeping acronyms such as LED. */
+function plainLabel(label: string | undefined): string | undefined {
+  return label
+    ?.split(" ")
+    .map((w) => (w === w.toUpperCase() && w.length <= 4 ? w : w.toLowerCase()))
+    .join(" ");
 }
 
 function stripFacet(q: string, slug: string): string {

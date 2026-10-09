@@ -37,7 +37,7 @@ test.describe("search page", () => {
     await page.locator("[data-section='cities']").getByRole("link", { name: "Mumbai" }).click();
     await expect(page).toHaveURL(/\/search\/\?city=mumbai&format=led-screen$/);
     await expect(page.locator("[data-section='results']")).toContainText(
-      "No led screens in Mumbai yet",
+      "No LED screens in Mumbai yet",
     );
     expect(await page.locator('meta[name="robots"]').getAttribute("content")).toContain("noindex");
   });
