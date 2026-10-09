@@ -13,7 +13,7 @@ import {
 } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { SiteSheet } from "@/components/SiteSheet";
-import { CHARTER, HERO_FACT, LAUNCH_CITIES } from "@/lib/site";
+import { CHARTER, HERO_FACT } from "@/lib/site";
 import { JsonLd, SITE_NAME, alternates, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -165,63 +165,6 @@ export default function HomePage() {
           </Container>
         </section>
       ) : null}
-
-      {/* Launch cities */}
-      <section className="border-hairline border-b" data-section="cities">
-        <Container className="py-12 lg:py-16">
-          <div className="max-w-[60ch]">
-            <p className="t-label text-ink-muted">India first</p>
-            <h2 className="t-display-md mt-3">Six cities, one open map</h2>
-            <p className="text-ink-muted t-body mt-4">
-              City pages open the moment a city holds 25 verified, photographed sites. Until then,
-              the first owners in each city are founding owners.
-            </p>
-          </div>
-          <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
-            {LAUNCH_CITIES.map((c) => {
-              const open = c.indexableFaces >= c.hubThreshold;
-              const inner = (
-                <>
-                  <h3 className="t-display-sm">{c.name}</h3>
-                  <p className="text-ink-muted t-small mt-1">{c.region}</p>
-                  <p
-                    className="text-ink t-data mt-4 font-mono"
-                    style={{ fontVariantNumeric: "tabular-nums" }}
-                  >
-                    {c.indexableFaces} listed
-                  </p>
-                  <p className="text-ink-muted t-small mt-1">
-                    {open ? "Browse sites" : "Opens with the first owners"}
-                  </p>
-                </>
-              );
-              return (
-                <li key={c.slug}>
-                  {open ? (
-                    <a
-                      href={`/in/${c.slug}/`}
-                      className="border-hairline bg-paper-raised hover:border-hairline-strong block h-full rounded-md border p-4 transition-colors duration-[120ms]"
-                    >
-                      {inner}
-                    </a>
-                  ) : (
-                    <div className="border-hairline bg-paper-raised h-full rounded-md border p-4">
-                      {inner}
-                    </div>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-          <p className="text-ink-muted t-small mt-6">
-            Own sites in one of these cities?{" "}
-            <Link href="/for-owners/" className="oh-link">
-              Join as a founding owner
-            </Link>
-            .
-          </p>
-        </Container>
-      </section>
 
       {/* For media owners */}
       <section className="bg-navy text-on-navy" data-section="owners">
