@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { bricolage, plexMono, plexSans } from "./fonts";
+import { SITE_NAME, siteUrl } from "@/lib/seo";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "ohworks", template: "%s · ohworks" },
-  description: "The open map of out-of-home, where the owner is always the seller.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(siteUrl()),
+  title: { default: `${SITE_NAME}: every billboard, findable.`, template: `%s · ${SITE_NAME}` },
+  description:
+    "Search billboards, hoardings and digital screens, see the verified owner and ask in one step. Owners list free and always sell direct. No media margin, ever.",
+  applicationName: SITE_NAME,
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-white text-neutral-900 antialiased dark:bg-neutral-950 dark:text-neutral-100">
-        {children}
-      </body>
+    <html lang="en" className={`${bricolage.variable} ${plexSans.variable} ${plexMono.variable}`}>
+      <body className="bg-paper text-ink min-h-screen">{children}</body>
     </html>
   );
 }

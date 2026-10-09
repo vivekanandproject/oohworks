@@ -1,6 +1,6 @@
 # ohworks.com landing page: plan, style and SEO contract
 
-Date: 9 Oct 2026. Builds on `ohworks-architecture.md` (rendering and SEO rules), the strategy report (location SEO architecture) and the design system (`ohworks-design-system.md`). SEO shaped every decision below; where SEO and visual preference conflicted, SEO won.
+Date: 9 Oct 2026. Status: built and verified on 9 Oct 2026 (32 Playwright checks, Lighthouse budgets in CI). Builds on `ohworks-architecture.md` (rendering and SEO rules), the strategy report (location SEO architecture) and the design system (`ohworks-design-system.md`). SEO shaped every decision below; where SEO and visual preference conflicted, SEO won.
 
 ## 1. Why the homepage matters for SEO
 
@@ -18,7 +18,7 @@ What the homepage must never do: link to a hub that returns 404 (wastes crawl bu
 | --- | --- | --- |
 | 1 | Edition strip: "Global edition · India edition" links, always rendered, fixed height | Replaces IP redirects; zero CLS because it is static and always present |
 | 2 | Nav bar: wordmark, Find sites, Guides, News, For owners, Sign in, List your sites | Site-wide links to the four crawl entry points |
-| 3 | Hero: H1, one-sentence standfirst, search box, dated sourced fact | H1 is the LCP element (text, not image); the fact is the quotable sentence |
+| 3 | Hero: H1, one-sentence standfirst, search box, dated sourc ed fact | H1 is the LCP element (text, not image); the fact is the quotable sentence |
 | 4 | How ohworks works: Find, Enquire, Hear back | Substantive copy; answers "how does ohworks work" |
 | 5 | The charter: five rules | Unique content no competitor has; strong E-E-A-T signal |
 | 6 | New sites: up to 8 ListingCards from the newest indexable faces | The "new sites module" the strategy names; links straight to unit pages. Hidden until the first indexable face exists |
@@ -118,3 +118,11 @@ Checked by Playwright and Lighthouse CI on every PR.
 - **Edition banner:** a static strip shown to everyone, no geo-IP, no redirect. Zero CLS, fully cacheable, honours the no-IP-redirect rule.
 - **Search target:** free text to `/search/?q=`, which is `noindex` and robots-blocked. Search results never compete with hubs for rankings.
 - **Headline:** the H1 stays "Every billboard, findable." The `<title>` carries the category words ("out-of-home advertising") so the brand query and the category query are both covered without stuffing the H1.
+
+## 9. Build notes (9 Oct 2026)
+
+- Pages live: `/`, `/charter/`, `/for-owners/`, `/guides/`, `/news/`, `/search/` (noindex), `/sign-in/` (noindex), `/robots.txt`, `/sitemap.xml`.
+- Design system deviation to resolve upstream: `on-survey` is set to ink (#101c30) instead of white. White on survey measures 3.63:1 and fails WCAG AA at button sizes; ink measures 4.7:1, the figure the system quotes.
+- The display font loads with `font-display: optional` so a late font never reflows the hero.
+- UI primitives in `packages/ui` use plain anchors so they stay framework-agnostic; pages in `apps/web` use Next `Link` for internal navigation.
+- The "new sites" and "newsroom" sections render only when real data exists; they are wired to empty arrays until M2 and M5.

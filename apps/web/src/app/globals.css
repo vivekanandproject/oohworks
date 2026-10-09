@@ -1,5 +1,29 @@
 @import "tailwindcss";
+@import "@ohworks/ui/styles.css";
+@source "../../../../packages/ui/src";
 
-:root {
-  color-scheme: light dark;
+@layer base {
+  html {
+    color-scheme: light only;
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 23px;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
 }

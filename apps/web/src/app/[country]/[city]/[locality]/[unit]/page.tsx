@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { permanentIdFromSlug, unitPath } from "@ohworks/core";
 import { findFace } from "@/lib/fixtures";
+import { Shell } from "@/components/Shell";
 
 interface Params {
   country: string;
@@ -71,40 +72,42 @@ export default async function UnitPage({ params }: { params: Promise<Params> }) 
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <nav aria-label="Breadcrumb" className="text-sm text-neutral-500">
-        {face.country.toUpperCase()} / {face.city} / {face.locality}
-      </nav>
-      <h1 className="mt-2 text-2xl font-semibold">{face.name}</h1>
-      <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-        <dt className="text-neutral-500">Format</dt>
-        <dd>{face.format}</dd>
-        <dt className="text-neutral-500">Size</dt>
-        <dd>
-          {widthFt} × {heightFt} ft
-        </dd>
-        <dt className="text-neutral-500">Lighting</dt>
-        <dd>{face.illumination}</dd>
-        <dt className="text-neutral-500">Owner</dt>
-        <dd>{face.owner.name}</dd>
-        <dt className="text-neutral-500">Price</dt>
-        <dd>
-          {face.priceDisplay === "on_request"
-            ? "On request"
-            : `${face.priceDisplay === "from" ? "From " : ""}₹${face.ratePerMonthInr?.toLocaleString("en-IN")} a month`}
-        </dd>
-        <dt className="text-neutral-500">Location</dt>
-        <dd>
-          {face.lat.toFixed(5)}, {face.lng.toFixed(5)} · facing {face.facingDeg}°
-        </dd>
-      </dl>
-      <p className="mt-8 text-xs text-neutral-500">
-        Unit {face.permanentId}. Day-one fixture; replaced by live data in M2.
-      </p>
-    </main>
+    <Shell>
+      <div className="mx-auto max-w-3xl px-4 py-12">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <nav aria-label="Breadcrumb" className="text-sm text-neutral-500">
+          {face.country.toUpperCase()} / {face.city} / {face.locality}
+        </nav>
+        <h1 className="mt-2 text-2xl font-semibold">{face.name}</h1>
+        <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          <dt className="text-neutral-500">Format</dt>
+          <dd>{face.format}</dd>
+          <dt className="text-neutral-500">Size</dt>
+          <dd>
+            {widthFt} × {heightFt} ft
+          </dd>
+          <dt className="text-neutral-500">Lighting</dt>
+          <dd>{face.illumination}</dd>
+          <dt className="text-neutral-500">Owner</dt>
+          <dd>{face.owner.name}</dd>
+          <dt className="text-neutral-500">Price</dt>
+          <dd>
+            {face.priceDisplay === "on_request"
+              ? "On request"
+              : `${face.priceDisplay === "from" ? "From " : ""}₹${face.ratePerMonthInr?.toLocaleString("en-IN")} a month`}
+          </dd>
+          <dt className="text-neutral-500">Location</dt>
+          <dd>
+            {face.lat.toFixed(5)}, {face.lng.toFixed(5)} · facing {face.facingDeg}°
+          </dd>
+        </dl>
+        <p className="mt-8 text-xs text-neutral-500">
+          Unit {face.permanentId}. Day-one fixture; replaced by live data in M2.
+        </p>
+      </div>
+    </Shell>
   );
 }

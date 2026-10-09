@@ -1,7 +1,5 @@
 {
   "extends": "@ohworks/config/tsconfig/library.json",
-  "include": ["src"],
-  "compilerOptions": {
-    "types": ["node"]
-  }
+  "compilerOptions": { "jsx": "react-jsx", "types": ["node"] },
+  "include": ["src"]
 }

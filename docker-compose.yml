@@ -36,7 +36,11 @@ services:
     volumes:
       - tsdata:/data
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:8108/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "exec 3<>/dev/tcp/127.0.0.1/8108 && echo -e 'GET /health HTTP/1.0\r\n\r\n' >&3 && grep -q ok <&3",
+        ]
       interval: 5s
       timeout: 3s
       retries: 10

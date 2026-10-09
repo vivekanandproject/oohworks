@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "test:e2e": "playwright test",
+    "test:e2e:visual": "playwright test visual.e2e.ts --project=desktop --project=phone"
   },
   "dependencies": {
     "@ohworks/core": "workspace:*",
@@ -21,6 +23,7 @@
   },
   "devDependencies": {
     "@ohworks/config": "workspace:*",
+    "@playwright/test": "^1.64.0",
     "@tailwindcss/postcss": "^4.1.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.1.0",

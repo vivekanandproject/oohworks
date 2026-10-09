@@ -1,14 +1,18 @@
 import type { MetadataRoute } from "next";
+import { absolute } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   return {
     rules: [
-      // Filtered and sorted views are never indexed.
-      { userAgent: "*", allow: "/", disallow: ["/*?*", "/api/", "/admin/", "/owner/", "/buyer/"] },
-      { userAgent: "OAI-SearchBot", allow: "/" },
-      { userAgent: "PerplexityBot", allow: "/" },
+      // Filtered, sorted and search views are never indexed; hubs and unit pages are.
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/*?*", "/search/", "/sign-in/", "/api/", "/admin/", "/owner/", "/buyer/"],
+      },
+      { userAgent: "OAI-SearchBot", allow: "/", disallow: ["/search/", "/api/"] },
+      { userAgent: "PerplexityBot", allow: "/", disallow: ["/search/", "/api/"] },
     ],
-    sitemap: `${base}/sitemap-index.xml`,
+    sitemap: absolute("/sitemap.xml"),
   };
 }

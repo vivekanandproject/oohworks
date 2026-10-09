@@ -1,0 +1,41 @@
+/** Path data copied verbatim from the design system's Icons asset group (24px grid, 1.75 stroke). */
+export const ICON_PATHS = {
+  hoarding: [
+    '<rect x="3" y="4" width="18" height="10" rx="1"/>',
+    '<path d="M8 14v7M16 14v7M6 21h4M14 21h4"/>',
+  ],
+  unipole: ['<rect x="4" y="3" width="16" height="9" rx="1"/>', '<path d="M12 12v9M9 21h6"/>'],
+  gantry: [
+    '<path d="M4 21V7h16v14M4 7V5M20 7V5"/>',
+    '<rect x="7" y="8" width="10" height="6" rx="1"/>',
+  ],
+  "bus-shelter": [
+    '<path d="M3 6h18M4 6v15M20 6v15"/>',
+    '<rect x="7" y="9" width="6" height="9" rx="1"/>',
+    '<path d="M16 11h2M16 14h2"/>',
+  ],
+  "led-screen": [
+    '<rect x="3" y="4" width="18" height="11" rx="1"/>',
+    '<path d="M7 8h2M11 8h2M15 8h2M7 11h2M11 11h2M15 11h2M12 15v6M9 21h6"/>',
+  ],
+  transit: [
+    '<rect x="4" y="3" width="16" height="14" rx="2"/>',
+    '<path d="M4 11h16M8 17v3M16 17v3M8 7h8"/>',
+    '<circle cx="8" cy="14" r="0.6"/>',
+    '<circle cx="16" cy="14" r="0.6"/>',
+  ],
+  verified: [
+    '<path d="M12 2.5l2.4 1.7 2.9-.3 1.1 2.7 2.6 1.4-.7 2.8.7 2.8-2.6 1.4-1.1 2.7-2.9-.3L12 21.5l-2.4-1.7-2.9.3-1.1-2.7L3 16l.7-2.8L3 10.4l2.6-1.4 1.1-2.7 2.9.3z"/>',
+    '<path d="M8.5 12.2l2.3 2.3 4.7-4.8"/>',
+  ],
+  permit: ['<path d="M6 3h9l4 4v14H6z"/>', '<path d="M15 3v4h4M9 12h6M9 16h6"/>'],
+  fresh: ['<circle cx="12" cy="12" r="8.5"/>', '<path d="M12 7.5V12l3 2"/>'],
+  responsive: ['<path d="M4 5h16v10H9l-5 4z"/>', '<path d="M8 10h8"/>'],
+  pin: [
+    '<path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/>',
+    '<rect x="8.5" y="7" width="7" height="5" rx="1"/>',
+  ],
+  enquiry: ['<path d="M3 6h18v12H3z"/>', '<path d="M3 7l9 6 9-6"/>'],
+} as const;
+
+export type IconName = keyof typeof ICON_PATHS;
