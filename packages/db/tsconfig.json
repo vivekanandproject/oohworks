@@ -1,0 +1,7 @@
+{
+  "extends": "@ohworks/config/tsconfig/library.json",
+  "include": ["src", "drizzle.config.ts"],
+  "compilerOptions": {
+    "types": ["node"]
+  }
+}

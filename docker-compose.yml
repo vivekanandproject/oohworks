@@ -1,0 +1,61 @@
+name: ohworks
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: ohworks
+      POSTGRES_PASSWORD: ohworks
+      POSTGRES_DB: ohworks
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ohworks -d ohworks"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  typesense:
+    image: typesense/typesense:27.1
+    command: ["--data-dir", "/data", "--api-key", "local-dev-key", "--enable-cors"]
+    ports:
+      - "8108:8108"
+    volumes:
+      - tsdata:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8108/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  inngest:
+    image: inngest/inngest:latest
+    command:
+      ["inngest", "dev", "-u", "http://host.docker.internal:3000/api/inngest", "--no-discovery"]
+    ports:
+      - "8288:8288"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  pgdata:
+  tsdata:

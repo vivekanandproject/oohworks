@@ -1,0 +1,31 @@
+{
+  "name": "@ohworks/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@ohworks/core": "workspace:*",
+    "@ohworks/db": "workspace:*",
+    "@ohworks/ui": "workspace:*",
+    "next": "^15.5.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@ohworks/config": "workspace:*",
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "eslint-config-next": "^15.5.0",
+    "tailwindcss": "^4.1.0"
+  }
+}
