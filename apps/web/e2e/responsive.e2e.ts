@@ -18,6 +18,18 @@ test.describe("responsive: no horizontal overflow at any width", () => {
             if (r.width === 0 || r.height === 0) continue;
             const cs = getComputedStyle(el);
             if (cs.visibility === "hidden" || cs.position === "fixed") continue;
+            // Children of an intentional horizontal scroller may extend past the viewport.
+            let scroller: HTMLElement | null = el.parentElement;
+            let insideScroller = false;
+            while (scroller && scroller !== document.body) {
+              const o = getComputedStyle(scroller).overflowX;
+              if (o === "auto" || o === "scroll") {
+                insideScroller = true;
+                break;
+              }
+              scroller = scroller.parentElement;
+            }
+            if (insideScroller) continue;
             if (r.right > vw + 1 || r.left < -1) {
               offenders.push(
                 `${el.tagName.toLowerCase()}${el.className && typeof el.className === "string" ? "." + el.className.split(" ").slice(0, 3).join(".") : ""} right=${Math.round(r.right)} left=${Math.round(r.left)}`,

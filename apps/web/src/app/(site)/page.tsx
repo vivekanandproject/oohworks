@@ -14,6 +14,7 @@ import {
 } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { SiteSheet } from "@/components/SiteSheet";
+import { ReferenceSites } from "@/components/ReferenceSites";
 import { CHARTER } from "@/lib/site";
 import { JsonLd, SITE_NAME, alternates, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 
@@ -79,62 +80,75 @@ export default function HomePage() {
     <Shell>
       <JsonLd data={[organizationJsonLd(), webSiteJsonLd()]} />
 
-      {/* Hero: the H1 is the LCP element and is never inside a reveal */}
+      {/* Hero: centred. The H1 is the LCP element and is never inside a reveal */}
       <section className="border-hairline border-b" data-section="hero">
-        <Container className="py-12 lg:py-16">
-          <div className="grid items-center gap-10 lg:grid-cols-[11fr_9fr] lg:gap-14">
-            <div>
-              <p className="t-label text-ink-muted">The open map of out-of-home</p>
-              <h1 className="t-display-xl text-ink mt-4">Every billboard, findable.</h1>
-              <p className="t-body-xl text-ink-muted mt-6 max-w-[46ch]">
-                ohworks is the open map of out-of-home advertising. Search any site, see the owner,
-                ask in one step. The owner always sells.
-              </p>
-              <div className="mt-8">
-                <SearchField />
-              </div>
+        <Container className="py-14 lg:py-20">
+          <div className="mx-auto flex max-w-[800px] flex-col items-center text-center">
+            <p className="t-label text-ink-muted">The open map of out-of-home</p>
+            <h1 className="t-display-xl text-ink mt-4">Every billboard, findable.</h1>
+            <p className="t-body-xl text-ink-muted mt-6 max-w-[46ch]">
+              Search any billboard, hoarding or screen in the world, see who owns it, and ask in one
+              step. The owner always sells.
+            </p>
+            <div className="mt-8 w-full max-w-[680px]">
+              <SearchField />
             </div>
-            <div className="lg:w-full lg:justify-self-end">
-              <SiteSheet />
-            </div>
+            <p className="t-small text-ink-muted mt-4">
+              Try{" "}
+              <a href="/search/?q=hoardings+in+Bengaluru" className="oh-link">
+                hoardings in Bengaluru
+              </a>
+              ,{" "}
+              <a href="/search/?q=LED+screens+in+Mumbai" className="oh-link">
+                LED screens in Mumbai
+              </a>{" "}
+              or{" "}
+              <a href="/search/?q=20x10+near+Silk+Board" className="oh-link">
+                20 × 10 ft near Silk Board
+              </a>
+              .
+            </p>
           </div>
         </Container>
       </section>
 
-      {/* How it works */}
+      <ReferenceSites />
+
+      {/* How it works, with the site sheet as the illustration */}
       <section className="border-hairline border-b" data-section="how-it-works">
         <Container className="py-12 lg:py-16">
-          <Reveal>
-            <h2 className="t-display-md">Three steps, no middleman</h2>
-          </Reveal>
-          <Reveal stagger>
-            <ol className="mt-8 grid gap-8 sm:grid-cols-3 sm:gap-6">
-              {STEPS.map((s, i) => (
-                <li
-                  key={s.title}
-                  className="flex gap-4 sm:flex-col"
-                  data-stagger-item
-                  style={at(i)}
-                >
-                  <div className="bg-paper-sunken text-ink flex h-12 w-12 shrink-0 items-center justify-center rounded-sm">
-                    <Icon name={s.icon} size={24} />
-                  </div>
-                  <div>
-                    <h3 className="t-display-sm">
-                      <span
-                        className="text-ink-muted mr-2 font-mono"
-                        style={{ fontVariantNumeric: "tabular-nums" }}
-                      >
-                        0{i + 1}
-                      </span>
-                      {s.title}
-                    </h3>
-                    <p className="t-body text-ink-muted mt-2 max-w-[44ch]">{s.body}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </Reveal>
+          <div className="grid items-center gap-10 lg:grid-cols-[6fr_6fr] lg:gap-14">
+            <div>
+              <Reveal>
+                <p className="t-label text-ink-muted">How it works</p>
+                <h2 className="t-display-md mt-3">Three steps, no middleman</h2>
+              </Reveal>
+              <Reveal stagger>
+                <ol className="mt-8 flex flex-col gap-7">
+                  {STEPS.map((s, i) => (
+                    <li key={s.title} className="flex gap-4" data-stagger-item style={at(i)}>
+                      <div className="bg-paper-sunken text-ink flex h-12 w-12 shrink-0 items-center justify-center rounded-sm">
+                        <Icon name={s.icon} size={24} />
+                      </div>
+                      <div>
+                        <h3 className="t-display-sm">
+                          <span
+                            className="text-ink-muted mr-2 font-mono"
+                            style={{ fontVariantNumeric: "tabular-nums" }}
+                          >
+                            0{i + 1}
+                          </span>
+                          {s.title}
+                        </h3>
+                        <p className="t-body text-ink-muted mt-2 max-w-[48ch]">{s.body}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </Reveal>
+            </div>
+            <SiteSheet />
+          </div>
         </Container>
       </section>
 

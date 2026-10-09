@@ -76,6 +76,7 @@ export interface Config {
     tags: Tag;
     media: Media;
     issues: Issue;
+    follows: Follow;
     corrections: Correction;
     users: User;
     'payload-kv': PayloadKv;
@@ -94,6 +95,7 @@ export interface Config {
     tags: TagsSelect<false> | TagsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     issues: IssuesSelect<false> | IssuesSelect<true>;
+    follows: FollowsSelect<false> | FollowsSelect<true>;
     corrections: CorrectionsSelect<false> | CorrectionsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -637,6 +639,34 @@ export interface Issue {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "follows".
+ */
+export interface Follow {
+  id: number;
+  email: string;
+  /**
+   * City slug, e.g. bengaluru
+   */
+  city?: string | null;
+  /**
+   * Format slug, e.g. hoarding
+   */
+  format?: string | null;
+  /**
+   * What they searched for
+   */
+  query?: string | null;
+  source: 'search' | 'hub' | 'guide';
+  /**
+   * Double opt-in lands with the newsletter build
+   */
+  confirmed?: boolean | null;
+  unsubscribedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Public. Shown on the piece and on the corrections page.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -724,6 +754,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'issues';
         value: number | Issue;
+      } | null)
+    | ({
+        relationTo: 'follows';
+        value: number | Follow;
       } | null)
     | ({
         relationTo: 'corrections';
@@ -1059,6 +1093,21 @@ export interface IssuesSelect<T extends boolean = true> {
         opens?: T;
         clicks?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "follows_select".
+ */
+export interface FollowsSelect<T extends boolean = true> {
+  email?: T;
+  city?: T;
+  format?: T;
+  query?: T;
+  source?: T;
+  confirmed?: T;
+  unsubscribedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

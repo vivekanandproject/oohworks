@@ -13,3 +13,6 @@ export { ListingCard, type ListingCardProps } from "./components/ListingCard";
 export { ArticleCard, type ArticleCardProps } from "./components/ArticleCard";
 export { EmptyState } from "./components/EmptyState";
 export { Reveal } from "./components/Reveal";
+export { Chip } from "./components/Chip";
+export { WORLD_DOTS, WORLD_VIEWBOX, projectWorld } from "./components/world-dots";
+export { WorldMap, type WorldPin } from "./components/WorldMap";

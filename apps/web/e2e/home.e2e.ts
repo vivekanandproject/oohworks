@@ -129,9 +129,10 @@ test.describe("motion", () => {
     expect(hidden).toBe(0);
   });
 
-  test("the site sheet draws in after load", async ({ page }) => {
+  test("the site sheet draws in once it is in view", async ({ page }) => {
     await page.goto("/");
-    await page.waitForTimeout(1600);
+    await page.locator("[data-section='site-sheet']").scrollIntoViewIfNeeded();
+    await page.waitForTimeout(1800);
     const stillHidden = await page
       .locator("[data-section='site-sheet'] [data-fade]")
       .evaluateAll((els) => els.filter((el) => getComputedStyle(el).opacity !== "1").length);
