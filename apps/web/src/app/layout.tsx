@@ -16,6 +16,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${archivo.variable} ${plexSans.variable} ${plexMono.variable}`}>
+      <head>
+        <noscript>
+          <style>{`[data-reveal],[data-stagger-item],[data-draw],[data-fade]{opacity:1!important;transform:none!important;stroke-dashoffset:0!important}`}</style>
+        </noscript>
+      </head>
       <body className="bg-paper text-ink min-h-screen">{children}</body>
     </html>
   );

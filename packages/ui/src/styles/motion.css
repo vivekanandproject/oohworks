@@ -1,0 +1,148 @@
+/*
+ * Motion. Fast and quiet: 120ms hover and focus, 200ms menus, 320ms reveals, 480ms for a drawing
+ * stroke. One easing. Nothing bounces, nothing loops. Reduced motion turns all of it off, and a
+ * noscript rule lifts every hidden state so content never depends on a script to be seen.
+ */
+@layer components {
+  :root {
+    --ease-oh: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  /* Cross-document crossfade between pages. Every internal link is a real navigation. */
+  @view-transition {
+    navigation: auto;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 200ms;
+    animation-timing-function: var(--ease-oh);
+  }
+
+  a,
+  .oh-link,
+  .oh-nav-link {
+    transition:
+      color 120ms var(--ease-oh),
+      background-color 120ms var(--ease-oh),
+      border-color 120ms var(--ease-oh),
+      text-decoration-color 120ms var(--ease-oh);
+  }
+  .oh-input {
+    transition:
+      border-color 120ms var(--ease-oh),
+      box-shadow 120ms var(--ease-oh);
+  }
+  .oh-input:hover {
+    border-color: var(--color-ink-muted);
+  }
+  .oh-input:focus {
+    border-color: var(--color-navy-700);
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--color-paper),
+      0 0 0 4px var(--color-focus);
+  }
+  .oh-btn {
+    transition:
+      background-color 120ms var(--ease-oh),
+      border-color 120ms var(--ease-oh),
+      color 120ms var(--ease-oh),
+      transform 120ms var(--ease-oh);
+  }
+  .oh-btn:active {
+    transform: translateY(1px);
+  }
+  .oh-panel {
+    transition: border-color 120ms var(--ease-oh);
+  }
+  .oh-panel:hover {
+    border-color: var(--color-hairline-strong);
+  }
+
+  /* Phone menu */
+  details.oh-menu > nav {
+    animation: oh-menu 200ms var(--ease-oh) both;
+    transform-origin: top right;
+  }
+  @keyframes oh-menu {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* Fade-up reveal */
+    [data-reveal][data-reveal-mode="fade"]:not([data-stagger]) {
+      transition:
+        opacity 320ms var(--ease-oh),
+        transform 320ms var(--ease-oh);
+    }
+    [data-reveal="pending"][data-reveal-mode="fade"]:not([data-stagger]) {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+
+    /* Staggered children: each carries --i */
+    [data-reveal][data-stagger] [data-stagger-item] {
+      transition:
+        opacity 320ms var(--ease-oh),
+        transform 320ms var(--ease-oh);
+      transition-delay: calc(var(--i, 0) * 70ms);
+    }
+    [data-reveal="pending"][data-stagger] [data-stagger-item] {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    /* Drawing: strokes with pathLength=1 draw in; fills and text fade in; each carries --d in ms */
+    [data-reveal][data-reveal-mode="draw"] [data-draw] {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+    }
+    [data-reveal][data-reveal-mode="draw"] [data-fade] {
+      opacity: 0;
+    }
+    [data-reveal="visible"][data-reveal-mode="draw"] [data-draw] {
+      animation: oh-draw 480ms var(--ease-oh) forwards;
+      animation-delay: calc(var(--d, 0) * 1ms);
+    }
+    [data-reveal="visible"][data-reveal-mode="draw"] [data-fade] {
+      animation: oh-fade 240ms var(--ease-oh) forwards;
+      animation-delay: calc(var(--d, 0) * 1ms);
+    }
+  }
+  @keyframes oh-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes oh-fade {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition {
+      navigation: none;
+    }
+    details.oh-menu > nav {
+      animation: none;
+    }
+    [data-reveal],
+    [data-stagger-item],
+    [data-draw],
+    [data-fade] {
+      opacity: 1 !important;
+      transform: none !important;
+      animation: none !important;
+      transition: none !important;
+      stroke-dashoffset: 0 !important;
+    }
+  }
+}

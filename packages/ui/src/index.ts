@@ -12,3 +12,4 @@ export { Footer, NEUTRALITY_LINE } from "./components/Footer";
 export { ListingCard, type ListingCardProps } from "./components/ListingCard";
 export { ArticleCard, type ArticleCardProps } from "./components/ArticleCard";
 export { EmptyState } from "./components/EmptyState";
+export { Reveal } from "./components/Reveal";

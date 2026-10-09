@@ -98,3 +98,43 @@ test.describe("landing page SEO contract", () => {
     });
   }
 });
+
+test.describe("motion", () => {
+  test("hero headline is never hidden by a reveal", async ({ page }) => {
+    await page.goto("/");
+    const opacity = await page.locator("h1").evaluate((el) => getComputedStyle(el).opacity);
+    expect(opacity).toBe("1");
+    expect(await page.locator("[data-reveal] h1").count()).toBe(0);
+  });
+
+  test("every reveal block becomes visible after scrolling", async ({ page }) => {
+    await page.goto("/");
+    const total = await page.locator("[data-reveal]").count();
+    expect(total).toBeGreaterThan(5);
+    const height = await page.evaluate(() => document.body.scrollHeight);
+    for (let y = 0; y <= height; y += 400) {
+      await page.evaluate((top) => window.scrollTo(0, top), y);
+      await page.waitForTimeout(60);
+    }
+    await expect(page.locator('[data-reveal="visible"]')).toHaveCount(total);
+    await expect(page.locator('[data-reveal="pending"]')).toHaveCount(0);
+  });
+
+  test("reduced motion shows everything without scrolling", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    const hidden = await page
+      .locator("[data-stagger-item], [data-fade], [data-reveal]")
+      .evaluateAll((els) => els.filter((el) => getComputedStyle(el).opacity !== "1").length);
+    expect(hidden).toBe(0);
+  });
+
+  test("the site sheet draws in after load", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForTimeout(1600);
+    const stillHidden = await page
+      .locator("[data-section='site-sheet'] [data-fade]")
+      .evaluateAll((els) => els.filter((el) => getComputedStyle(el).opacity !== "1").length);
+    expect(stillHidden).toBe(0);
+  });
+});

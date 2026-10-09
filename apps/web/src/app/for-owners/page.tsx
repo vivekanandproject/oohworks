@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Badge, Button, Container, Icon } from "@ohworks/ui";
+import type { CSSProperties } from "react";
+import { Badge, Button, Container, Icon, Reveal } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { alternates } from "@/lib/seo";
 
@@ -9,6 +10,8 @@ export const metadata: Metadata = {
     "List every billboard, hoarding and screen free. Set your own price, get enquiries straight to you, keep your client. ohworks never takes a media margin.",
   alternates: alternates("/for-owners/"),
 };
+
+const at = (i: number) => ({ "--i": i }) as CSSProperties;
 
 const STEPS = [
   {
@@ -33,6 +36,34 @@ const STEPS = [
   },
 ];
 
+const BADGES = [
+  {
+    kind: "verified" as const,
+    label: "Verified owner",
+    d: "Company documents and contact details checked.",
+  },
+  {
+    kind: "verified" as const,
+    label: "Verified location",
+    d: "Coordinates match Street View or a GPS-stamped site photo.",
+  },
+  {
+    kind: "permit" as const,
+    label: "Permit on file",
+    d: "Permit or licence number, issuing authority and expiry date recorded.",
+  },
+  {
+    kind: "fresh" as const,
+    label: "Updated 3 days ago",
+    d: "Availability or photos updated within the last 30 days.",
+  },
+  {
+    kind: "responsive" as const,
+    label: "Replies in under a day",
+    d: "Your median reply time to enquiries is under 24 hours.",
+  },
+];
+
 export default function ForOwnersPage() {
   return (
     <Shell active="owners">
@@ -42,7 +73,7 @@ export default function ForOwnersPage() {
           <h1 className="t-display-xl mt-3 max-w-[18ch]">
             Your sites, found by every buyer, at no cost.
           </h1>
-          <p className="text-ink-muted t-body-lg mt-5 max-w-[56ch]">
+          <p className="t-body-lg text-ink-muted mt-5 max-w-[56ch]">
             List every face free. Set your own price, or none. Enquiries come straight to you by
             email and WhatsApp, and you keep the client. We never sell media or take a media margin.
           </p>
@@ -57,7 +88,7 @@ export default function ForOwnersPage() {
               Read the charter
             </Button>
           </div>
-          <p className="text-ink-muted t-small mt-4 max-w-[60ch]">
+          <p className="t-small text-ink-muted mt-4 max-w-[60ch]">
             Online sign-up opens with the Bengaluru launch. Until then, email owners@ohworks.com and
             we list your sites for you.
           </p>
@@ -66,79 +97,68 @@ export default function ForOwnersPage() {
 
       <section className="border-hairline border-b" id="assisted">
         <Container className="py-12 lg:py-16">
-          <h2 className="t-display-md">Assisted onboarding, in five steps</h2>
-          <ol className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-            {STEPS.map((s, i) => (
-              <li key={s.t}>
-                <span className="t-data-lg text-ink-faint">0{i + 1}</span>
-                <h3 className="t-body-strong mt-2">{s.t}</h3>
-                <p className="text-ink-muted t-body mt-1">{s.d}</p>
-              </li>
-            ))}
-          </ol>
+          <Reveal>
+            <h2 className="t-display-md">Assisted onboarding, in five steps</h2>
+          </Reveal>
+          <Reveal stagger>
+            <ol className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+              {STEPS.map((s, i) => (
+                <li key={s.t} data-stagger-item style={at(i)}>
+                  <span className="t-data-lg text-ink-faint">0{i + 1}</span>
+                  <h3 className="t-body-strong mt-2">{s.t}</h3>
+                  <p className="t-body text-ink-muted mt-1">{s.d}</p>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
         </Container>
       </section>
 
       <section className="border-hairline border-b" id="badges">
         <Container className="py-12 lg:py-16">
-          <h2 className="t-display-md">Badges you earn, and what we check</h2>
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              {
-                kind: "verified" as const,
-                label: "Verified owner",
-                d: "Company documents and contact details checked.",
-              },
-              {
-                kind: "verified" as const,
-                label: "Verified location",
-                d: "Coordinates match Street View or a GPS-stamped site photo.",
-              },
-              {
-                kind: "permit" as const,
-                label: "Permit on file",
-                d: "Permit or licence number, issuing authority and expiry date recorded.",
-              },
-              {
-                kind: "fresh" as const,
-                label: "Updated 3 days ago",
-                d: "Availability or photos updated within the last 30 days.",
-              },
-              {
-                kind: "responsive" as const,
-                label: "Replies in under a day",
-                d: "Your median reply time to enquiries is under 24 hours.",
-              },
-            ].map((b) => (
-              <li key={b.label} className="border-hairline bg-paper-raised rounded-md border p-4">
-                <Badge kind={b.kind}>{b.label}</Badge>
-                <p className="text-ink-muted t-body mt-3">{b.d}</p>
-              </li>
-            ))}
-          </ul>
+          <Reveal>
+            <h2 className="t-display-md">Badges you earn, and what we check</h2>
+          </Reveal>
+          <Reveal stagger>
+            <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {BADGES.map((b, i) => (
+                <li
+                  key={b.label}
+                  className="oh-panel border-hairline bg-paper-raised rounded-md border p-4"
+                  data-stagger-item
+                  style={at(i)}
+                >
+                  <Badge kind={b.kind}>{b.label}</Badge>
+                  <p className="t-body text-ink-muted mt-3">{b.d}</p>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
         </Container>
       </section>
 
       <section className="bg-navy text-on-navy">
         <Container className="py-12 lg:py-16">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="max-w-[56ch]">
-              <p className="t-label opacity-80">Founding owners</p>
-              <h2 className="t-display-md mt-3">
-                The first 100 verified owners get Pro free for a year
-              </h2>
-              <p className="t-body mt-3 opacity-90">
-                And a permanent founding badge on your storefront. Pro adds full analytics, a
-                WhatsApp leads inbox, availability sync and priority support.
-              </p>
+          <Reveal>
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="max-w-[56ch]">
+                <p className="t-label opacity-80">Founding owners</p>
+                <h2 className="t-display-md mt-3">
+                  The first 100 verified owners get Pro free for a year
+                </h2>
+                <p className="t-body mt-3 opacity-90">
+                  And a permanent founding badge on your storefront. Pro adds full analytics, a
+                  WhatsApp leads inbox, availability sync and priority support.
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <Icon name="pin" size={24} />
+                <Button href="mailto:owners@ohworks.com?subject=Founding%20owner" variant="on-navy">
+                  Claim a founding place
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Icon name="pin" size={24} />
-              <Button href="mailto:owners@ohworks.com?subject=Founding%20owner" variant="on-navy">
-                Claim a founding place
-              </Button>
-            </div>
-          </div>
+          </Reveal>
         </Container>
       </section>
     </Shell>

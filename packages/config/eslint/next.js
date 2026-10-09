@@ -10,6 +10,9 @@ export default [
   {
     rules: {
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      // Internal links are plain anchors on purpose: every navigation is a document navigation,
+      // so the native cross-document view transition gives one consistent crossfade.
+      "@next/next/no-html-link-for-pages": "off",
     },
   },
 ];

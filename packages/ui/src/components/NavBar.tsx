@@ -42,7 +42,7 @@ export function NavBar({ active, signedIn = false }: NavBarProps) {
         <a href="/for-owners/" className="oh-btn primary sm">
           List your sites
         </a>
-        <details className="relative lg:hidden">
+        <details className="oh-menu relative lg:hidden">
           <summary className="oh-btn ghost sm cursor-pointer list-none px-2! select-none [&::-webkit-details-marker]:hidden">
             Menu
           </summary>
