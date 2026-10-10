@@ -142,7 +142,11 @@ test.describe("find sites: results", () => {
     await expect(page.locator(".maplibregl-canvas")).toHaveCount(0);
     await page.getByRole("button", { name: "Show the live map" }).click();
     await expect(page.locator(".maplibregl-canvas")).toBeVisible({ timeout: 15_000 });
-    await expect(page.locator(".oh-mappin")).toHaveCount(16);
+    await expect(page.locator("[data-section='live-map']")).toHaveAttribute(
+      "data-map-state",
+      "ready",
+      { timeout: 20_000 },
+    );
   });
 
   test("the all-filters panel works as a page, keeps its place and closes", async ({

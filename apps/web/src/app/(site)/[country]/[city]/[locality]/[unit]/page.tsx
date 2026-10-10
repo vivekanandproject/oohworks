@@ -3,7 +3,10 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { permanentIdFromSlug } from "@ohworks/core";
 import { Badge, Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
+import { BasketEnhance } from "@/components/sites/Basket";
+import { ListToggle } from "@/components/sites/ListToggle";
 import { MapPanel } from "@/components/sites/MapPanel";
+import { QuickView } from "@/components/sites/QuickView";
 import { SiteCard } from "@/components/sites/SiteCard";
 import {
   Calendar,
@@ -19,6 +22,7 @@ import { StillMap } from "@/components/sites/StillMap";
 import { picture } from "@/lib/editorial/media";
 import { absolute, alternates, JsonLd } from "@/lib/seo";
 import { monthView } from "@/lib/sites/calendar";
+import { readLists } from "@/lib/sites/lists-server";
 import { getSite, similarSites } from "@/lib/sites/queries";
 import { cityDef, lightingDef } from "@/lib/sites/taxonomy";
 import {
@@ -100,6 +104,8 @@ export default async function SitePage({
   const badges = badgesOf(site, owner, now);
   const price = priceOf(site);
   const similar = await similarSites(site, 3);
+  const lists = await readLists();
+  const unitId = site.permanentId ?? "";
   const city = cityDef(site.city)?.label ?? site.city;
   const point = {
     id: site.permanentId ?? "site",
@@ -164,6 +170,8 @@ export default async function SitePage({
   return (
     <Shell active="find">
       {site.sample ? null : <JsonLd data={jsonLd} />}
+      <BasketEnhance />
+      <QuickView />
       <Container className="pt-6 pb-12 lg:pb-16">
         <nav aria-label="Breadcrumb" className="t-small text-ink-muted" data-section="breadcrumb">
           <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -232,6 +240,32 @@ export default async function SitePage({
             data-section="aside"
           >
             <PriceBlock site={site} owner={owner} availability={availability} />
+            <div className="flex flex-wrap items-center gap-2" data-section="keep">
+              <ListToggle
+                list="saved"
+                id={unitId}
+                title={site.title ?? "this site"}
+                on={lists.saved.includes(unitId)}
+                back={canonical}
+              />
+              <ListToggle
+                list="compare"
+                id={unitId}
+                title={site.title ?? "this site"}
+                on={lists.compare.includes(unitId)}
+                back={canonical}
+              />
+              <button type="button" className="oh-btn secondary sm" data-copy={canonical}>
+                Copy link
+              </button>
+              <a
+                href="/shortlist/"
+                rel="nofollow"
+                className="oh-link t-body ml-auto inline-flex min-h-9 items-center"
+              >
+                View shortlist
+              </a>
+            </div>
             {owner ? <OwnerCard owner={owner} siteCount={ownerSiteCount} /> : null}
           </aside>
 
@@ -344,6 +378,8 @@ export default async function SitePage({
                   key={card.site.id}
                   card={card}
                   now={now}
+                  lists={lists}
+                  back={canonical}
                   level={3}
                   distance={away(card.km)}
                 />

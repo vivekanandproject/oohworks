@@ -22,6 +22,8 @@ export interface Listing {
   widthMm: number;
   heightMm: number;
   priceShown: boolean;
+  /** The shown price is a "from" price: a floor, not the rate. */
+  priceFrom: boolean;
   rate: number | null;
   bookedUntil: number | null;
   confirmedOn: number | null;
@@ -41,6 +43,7 @@ export interface Listing {
 
 export type Facet =
   | "city"
+  | "bbox"
   | "locality"
   | "format"
   | "type"
@@ -73,9 +76,18 @@ function near(actualMm: number, feet: number): boolean {
   return Math.abs(actualMm - want) <= want * 0.1;
 }
 
+/** Whether a point lies inside a map area given as west, south, east, north. */
+export function inBox(
+  p: { lat: number; lng: number },
+  box: readonly [number, number, number, number],
+): boolean {
+  return p.lng >= box[0] && p.lat >= box[1] && p.lng <= box[2] && p.lat <= box[3];
+}
+
 /** Whether a site passes every filter. `skip` leaves one out, which is how each option's count is worked out. */
 export function matches(l: Listing, s: SearchState, now: number, skip?: Facet): boolean {
   if (skip !== "city" && s.city && l.city !== s.city) return false;
+  if (skip !== "bbox" && s.bbox && !inBox(l, s.bbox)) return false;
   if (
     skip !== "locality" &&
     skip !== "city" &&
@@ -245,6 +257,7 @@ export function widen(all: Listing[], s: SearchState, now: number, current: numb
   if (s.priced)
     tries.push({ label: "Include sites with price on request", next: { ...base, priced: false } });
   if (s.q) tries.push({ label: `Without “${s.q}”`, next: { ...base, q: "" } });
+  if (s.bbox) tries.push({ label: "Outside this map area", next: without(base, "bbox") });
   if (s.city) tries.push({ label: "Every city", next: without(base, "city", "localities") });
   return tries
     .map((t) => ({ label: t.label, url: toUrl(t.next), add: total(t.next) - current }))

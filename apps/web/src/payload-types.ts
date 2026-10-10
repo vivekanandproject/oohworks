@@ -879,7 +879,11 @@ export interface Follow {
    * What they searched for
    */
   query?: string | null;
-  source: 'search' | 'hub' | 'guide';
+  /**
+   * The search they asked to be told about, as its address on the site
+   */
+  search?: string | null;
+  source: 'search' | 'saved_search' | 'hub' | 'guide';
   /**
    * Double opt-in lands with the newsletter build
    */
@@ -1506,6 +1510,7 @@ export interface FollowsSelect<T extends boolean = true> {
   city?: T;
   format?: T;
   query?: T;
+  search?: T;
   source?: T;
   confirmed?: T;
   unsubscribedAt?: T;

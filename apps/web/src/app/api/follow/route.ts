@@ -52,6 +52,9 @@ export async function POST(req: Request) {
   const city = String(form.get("city") ?? "").slice(0, 40);
   const format = String(form.get("format") ?? "").slice(0, 40);
   const query = String(form.get("q") ?? "").slice(0, 200);
+  // A saved search is kept as its own address on this site, and nothing else.
+  const asked = String(form.get("search") ?? "").slice(0, 400);
+  const search = /^\/search\/(\?[^#\s]*)?$/.test(asked) ? asked : "";
 
   const payload = await getPayload({ config });
   const existing = await payload.find({
@@ -61,6 +64,7 @@ export async function POST(req: Request) {
         { email: { equals: email } },
         { city: { equals: city } },
         { format: { equals: format } },
+        { search: search ? { equals: search } : { exists: false } },
       ],
     },
     limit: 1,
@@ -69,7 +73,14 @@ export async function POST(req: Request) {
   if (existing.totalDocs === 0) {
     await payload.create({
       collection: "follows",
-      data: { email, city, format, query, source: "search" },
+      data: {
+        email,
+        city,
+        format,
+        query,
+        source: search ? "saved_search" : "search",
+        ...(search ? { search } : {}),
+      },
       overrideAccess: true,
     });
   }

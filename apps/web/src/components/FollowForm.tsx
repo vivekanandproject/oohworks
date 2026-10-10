@@ -7,10 +7,22 @@ export interface FollowFormProps {
   /** Where to return after submitting. */
   returnTo: string;
   what: string;
+  /** The search to watch, as its address, when the buyer is following a search that already has results. */
+  search?: string | undefined;
+  /** The words on the button. */
+  label?: string | undefined;
 }
 
 /** A plain form: works without JavaScript, posts to /api/follow, comes back with a message. */
-export function FollowForm({ city, format, query, returnTo, what }: FollowFormProps) {
+export function FollowForm({
+  city,
+  format,
+  query,
+  returnTo,
+  what,
+  search,
+  label,
+}: FollowFormProps) {
   return (
     <form
       method="post"
@@ -22,6 +34,7 @@ export function FollowForm({ city, format, query, returnTo, what }: FollowFormPr
       <input type="hidden" name="format" value={format ?? ""} />
       <input type="hidden" name="q" value={query ?? ""} />
       <input type="hidden" name="return" value={returnTo} />
+      {search ? <input type="hidden" name="search" value={search} /> : null}
       <input
         type="text"
         name="company"
@@ -43,7 +56,7 @@ export function FollowForm({ city, format, query, returnTo, what }: FollowFormPr
         autoComplete="email"
       />
       <Button variant="primary" type="submit">
-        Tell me when {what} are listed
+        {label ?? `Tell me when ${what} are listed`}
       </Button>
     </form>
   );

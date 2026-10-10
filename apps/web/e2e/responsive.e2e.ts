@@ -14,6 +14,9 @@ const PAGES = [
   "/in/bengaluru/indiranagar/led-screen-cmh-road-ows0006/",
   "/enquire/ows0001/",
   "/how-results-are-ordered/",
+  "/shortlist/?sites=ows0001,ows0003,ows0002,ows0017&from=2027-01-01&to=2027-01-31",
+  "/compare/?sites=ows0001,ows0002,ows0006,ows0017",
+  "/quick/ows0001/",
   "/sign-in/",
   "/newsroom/",
   "/newsroom/all/",
@@ -32,6 +35,22 @@ test.describe("responsive: no horizontal overflow at any width", () => {
       for (const width of WIDTHS) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(path);
+        // An entrance animation is not an overflow: let panels finish sliding in before measuring.
+        await page.evaluate(() =>
+          Promise.race([
+            Promise.all(
+              document
+                .getAnimations()
+                .filter(
+                  (x) =>
+                    x.playState === "running" &&
+                    x.effect?.getComputedTiming().iterations !== Infinity,
+                )
+                .map((x) => x.finished.catch(() => undefined)),
+            ),
+            new Promise((done) => setTimeout(done, 1000)),
+          ]),
+        );
         const result = await page.evaluate(() => {
           const vw = document.documentElement.clientWidth;
           const docOverflow = document.documentElement.scrollWidth - vw;

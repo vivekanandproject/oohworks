@@ -1,6 +1,6 @@
 # ohworks Find sites: plan
 
-Date: 10 Oct 2026. Status: step 1 is built (section 14). Steps 2 and 3 are planned and not started. Builds on the strategy report (Product blueprint 2), `ohworks-architecture.md`, the design system's marketplace components and the search page that existed before.
+Date: 10 Oct 2026. Status: steps 1 and 2 are built (sections 14 and 15). Step 3 is planned and not started. Builds on the strategy report (Product blueprint 2), `ohworks-architecture.md`, the design system's marketplace components and the search page that existed before.
 
 ## 1. What this page must achieve
 
@@ -270,7 +270,7 @@ Unit tests cover the search state and its addresses, filtering, counts, ordering
 
 ### Not in step 1
 
-- Shortlist, compare, plan, quick view, the clustered map synced with the list, and "search this area": step 2.
+- Shortlist, compare, plan, quick view, the clustered map synced with the list, and "search this area": built in step 2, section 15.
 - One enquiry across several owners, the reply thread, exports, indexable city and locality hubs, Typesense and Claude query parsing: step 3.
 - A taken-down site answers 404 today. The true "gone" (410) answer with similar sites needs a middleware lookup and is deferred.
 - Nearby landmarks with distances, and the street-level check, need a Google Maps key.
@@ -284,3 +284,74 @@ Unit tests cover the search state and its addresses, filtering, counts, ordering
 3. Add each face under Marketplace, Sites, with real dated photographs, and publish it.
 4. Set `RESEND_API_KEY` and `EMAIL_FROM` so enquiries are emailed, and `MAP_STYLE_URL` to a MapTiler style.
 5. Remove the samples before launch: delete the sample sites, then the sample owners, in the admin.
+
+## 15. What step 2 built (10 Oct 2026)
+
+Step 2 of the build order is done: the basket and the live map. The wireframes were `r1` (card actions, clustered map), `rq` (quick view), `b1` (compare) and `b2` (shortlist and summary).
+
+### Pages and controls
+
+| Where | What was added |
+| --- | --- |
+| Every site card | Save on the photo, and Compare, Quick view and Enquire along the foot |
+| Results page | A bar at the foot showing what is saved; the live map with counted clusters; "Search this area"; "Email me new sites for this search" |
+| Site page | Save, Compare, Copy link and a link to the shortlist, beside the price |
+| `/shortlist/` | Saved sites grouped by owner, with dates, an optional budget and a summary |
+| `/compare/` | Two to four sites side by side, fact by fact |
+| `/quick/{unit id}/` | The content of the quick view panel |
+
+### Shortlist
+
+- Save is a toggle on every card, in quick view and on the site page. The word changes from "Save" to "Saved" with the state.
+- The shortlist is kept in the buyer's own browser, in a cookie of unit ids. Nothing about it is stored on the server, and nobody sees it until the buyer enquires or shares it. It holds up to 50 sites.
+- The page groups sites by the owner who sells them, because each enquiry goes to one owner.
+- The summary counts sites and owners and adds up the monthly prices that owners show. A "from" price makes the sum a floor, and the page says so. Sites with price on request are counted and named, never estimated.
+- With dates, each row says "Free for your dates" or "Booked until", judged against the start date. With a budget, the summary says how far the shown prices sit under or over it.
+- Each row's Enquire link carries the dates into the enquiry form.
+- Sharing is a link, with buttons to copy it or send it by WhatsApp. The link carries the sites and the dates, never the budget. Whoever opens it sees "A shared shortlist" and can save the sites to their own.
+
+### Compare
+
+- Compare is a second toggle, limited to four sites. A fifth is refused with the reason.
+- The table rows are: size, lighting, facing, audience with its source, price a month, minimum period, printing and mounting, availability, owner and reply time, what was checked, distance from the first site, and an Enquire button for each.
+- A comparison can be shared as a link. On a phone the table scrolls sideways with its row labels held in place.
+
+### Quick view
+
+A side panel opened from a card or a map pin: photo area, title, badges, size, lighting, facing, audience, price, availability, owner, then Save, Compare, Open full page and the enquiry button. The list keeps its scroll position. The keyboard focus moves into the panel, stays there, and returns to the link that opened it. Without script the same link opens the full site page.
+
+### Live map
+
+- Nearby sites gather into a cluster showing their count. Pressing a cluster zooms in until it splits into pins.
+- Pointing at a card lights its pin, or the cluster holding it. Pointing at a pin lights its card. Choosing a pin turns it orange, names the site with its price, and offers quick view. One pin is chosen at a time.
+- After the buyer moves the map, "Search this area" searches what is in view. The area becomes the place: it replaces the city, appears as a "Map area" filter that can be removed, and lives in the address as `bbox`.
+- Once a buyer asks for the live map, it stays on for their next searches in that tab. On a phone it can go full screen.
+- If a browser cannot draw the map, the still drawing stays with a line saying so.
+
+**A fault found in step 1 and fixed here.** The live map drew pins on an empty background: the map library could not load its worker file once bundled. The worker is now copied into `public/vendor/` before every dev run and build, and the map loads it from the site itself. The map also records what it reports, and the browser test now fails if the worker does not load.
+
+### Saved searches
+
+A search that has results now offers "Email me new sites for this search". It stores the email with the search's own address in the Follows collection, marked "Saved search". **The job that sends those emails is not built.** Until it is, the team reads the Follows list in the admin. The same is true of the older "tell me when the first sites are listed" form.
+
+### How it works without script
+
+Save, Compare, Remove and Clear are plain forms that post and return to the same page. Filters were already links and forms. Quick view falls back to the site page. Script only makes these faster: it updates the page in place, one change at a time so two quick presses cannot undo each other.
+
+### What search engines see
+
+`/shortlist/`, `/compare/` and `/quick/` are `noindex` and closed in robots. A search by map area is a filtered search, so it is already kept out.
+
+### Checks
+
+Unit tests cover the lists, the summary sums, the budget line and map-area search. Browser tests cover saving in place and without script, the shortlist with dates and budget, a shared shortlist, the four-site limit, the compare table, quick view with its focus handling, saved searches, and the live map: worker loading, clusters, list and map lighting each other, choosing a pin, and searching an area. Lighthouse budgets run on the shortlist and compare pages.
+
+### Not in step 2
+
+- One enquiry for the whole shortlist, split into one request per owner, with a reply thread: step 3.
+- Exports to PDF, Excel and slides: step 3.
+- A shortlist that follows a buyer across devices: needs sign-in.
+- Plan names and several plans: not built; there is one shortlist per browser.
+- Sending the saved-search emails: needs the email service and a scheduled job.
+- A static map image with streets before the live map loads: needs a MapTiler key. The still drawing shows positions only.
+

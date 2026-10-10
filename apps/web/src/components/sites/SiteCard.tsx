@@ -1,9 +1,11 @@
 import { Badge, Icon, type IconName } from "@ohworks/ui";
 import { formatDate } from "@/lib/editorial/format";
 import { picture } from "@/lib/editorial/media";
+import type { Lists } from "@/lib/sites/lists-server";
 import type { Card } from "@/lib/sites/queries";
 import { formatDef } from "@/lib/sites/taxonomy";
 import { availabilityOf, badgesOf, metaLine, priceOf, type Availability } from "@/lib/sites/view";
+import { ListToggle } from "./ListToggle";
 
 const AVAIL_CLASS: Record<Availability["state"], string> = {
   free: "oh-badge verified",
@@ -26,11 +28,17 @@ export function AvailabilityChip({ availability }: { availability: Availability 
 export function SiteCard({
   card,
   now,
+  lists,
+  back,
   level = 2,
   distance,
 }: {
   card: Card;
   now: number;
+  /** What this buyer has saved and ticked for comparing, so each card shows its own state. */
+  lists: Lists;
+  /** The page the card is on: where a browser without script returns after saving. */
+  back: string;
   level?: 2 | 3;
   distance?: string;
 }) {
@@ -43,36 +51,49 @@ export function SiteCard({
   const count = site.photos?.length ?? 0;
   const icon = (formatDef(site.format)?.icon ?? "hoarding") as IconName;
   const H = level === 2 ? "h2" : "h3";
+  const id = site.permanentId ?? "";
+  const title = site.title ?? "this site";
   return (
     <article className="oh-card flex flex-col" data-site={site.permanentId}>
-      <a href={listing.url} className="photo" tabIndex={-1} aria-hidden="true">
-        {pic ? (
-          <img
-            src={pic.src}
-            alt=""
-            width={pic.width}
-            height={pic.height}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full object-cover"
+      <div className="relative">
+        <div className="absolute top-2 right-2 z-[1]">
+          <ListToggle
+            list="saved"
+            id={id}
+            title={title}
+            on={lists.saved.includes(id)}
+            back={back}
           />
-        ) : (
-          <span className="flex flex-col items-center gap-2">
-            <Icon name={icon} size={24} />
-            <span className="t-small">No photo yet</span>
-          </span>
-        )}
-        {pic && first ? (
-          <span className="t-data-sm bg-paper-raised text-ink absolute bottom-2 left-2 rounded-xs px-1.5 py-0.5">
-            Approach view · {formatDate(first.takenOn)}
-          </span>
-        ) : null}
-        {count > 1 ? (
-          <span className="t-data-sm bg-paper-raised text-ink absolute right-2 bottom-2 rounded-xs px-1.5 py-0.5">
-            {count} photos
-          </span>
-        ) : null}
-      </a>
+        </div>
+        <a href={listing.url} className="photo" tabIndex={-1} aria-hidden="true">
+          {pic ? (
+            <img
+              src={pic.src}
+              alt=""
+              width={pic.width}
+              height={pic.height}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <span className="flex flex-col items-center gap-2">
+              <Icon name={icon} size={24} />
+              <span className="t-small">No photo yet</span>
+            </span>
+          )}
+          {pic && first ? (
+            <span className="t-data-sm bg-paper-raised text-ink absolute bottom-2 left-2 rounded-xs px-1.5 py-0.5">
+              Approach view · {formatDate(first.takenOn)}
+            </span>
+          ) : null}
+          {count > 1 ? (
+            <span className="t-data-sm bg-paper-raised text-ink absolute right-2 bottom-2 rounded-xs px-1.5 py-0.5">
+              {count} photos
+            </span>
+          ) : null}
+        </a>
+      </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
         <H className="text-[16px] leading-[22px] font-semibold">
           <a href={listing.url} className="oh-rowlink">
@@ -109,11 +130,28 @@ export function SiteCard({
           </p>
           <AvailabilityChip availability={availability} />
         </div>
-        <div className="border-hairline flex items-center justify-between gap-3 border-t pt-3">
+        <div className="border-hairline flex flex-col gap-2 border-t pt-3">
           <span className="t-small text-ink-muted min-w-0 truncate">{owner?.name ?? "Owner"}</span>
-          <a className="oh-btn accent sm" href={`/enquire/${site.permanentId}/`} rel="nofollow">
-            Enquire
-          </a>
+          <div className="flex flex-wrap items-center gap-1">
+            <ListToggle
+              list="compare"
+              id={id}
+              title={title}
+              on={lists.compare.includes(id)}
+              back={back}
+              className="oh-btn ghost sm px-2"
+            />
+            <a className="oh-btn ghost sm px-2" href={listing.url} data-quick={id}>
+              Quick view<span className="sr-only">: {title}</span>
+            </a>
+            <a
+              className="oh-btn accent sm ml-auto"
+              href={`/enquire/${site.permanentId}/`}
+              rel="nofollow"
+            >
+              Enquire
+            </a>
+          </div>
         </div>
       </div>
     </article>

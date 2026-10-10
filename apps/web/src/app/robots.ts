@@ -5,6 +5,9 @@ export default function robots(): MetadataRoute.Robots {
   const closed = [
     "/search/",
     "/enquire/",
+    "/shortlist/",
+    "/compare/",
+    "/quick/",
     "/sign-in/",
     "/newsroom/subscribed/",
     "/api/",

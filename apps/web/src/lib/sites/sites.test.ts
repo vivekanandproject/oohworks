@@ -49,6 +49,7 @@ function listing(over: Partial<Listing>): Listing {
     widthMm: 6096,
     heightMm: 3048,
     priceShown: true,
+    priceFrom: false,
     rate: 85000,
     bookedUntil: null,
     confirmedOn: NOW - 2 * DAY,

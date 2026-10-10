@@ -1,7 +1,8 @@
 import next from "@ohworks/config/eslint/next";
 
 const config = [
-  { ignores: ["src/payload-types.ts", "src/app/(payload)/admin/importMap.js"] },
+  // public/vendor holds a file copied from node_modules (the map library's worker).
+  { ignores: ["src/payload-types.ts", "src/app/(payload)/admin/importMap.js", "public/vendor/**"] },
   ...next,
 ];
 

@@ -45,6 +45,7 @@ function toListing(site: Site, owner: Owner | undefined, now: number): Listing |
     widthMm: site.widthMm ?? 0,
     heightMm: site.heightMm ?? 0,
     priceShown: site.priceDisplay !== "on_request" && Boolean(site.rate),
+    priceFrom: site.priceDisplay === "from" && Boolean(site.rate),
     rate: site.priceDisplay !== "on_request" && site.rate ? site.rate : null,
     bookedUntil: time(site.bookedUntil),
     confirmedOn: time(site.availabilityConfirmedOn),
@@ -194,6 +195,25 @@ export async function searchSites(state: SearchState): Promise<SearchResult> {
     anySample: slice.some((l) => l.sample),
     catalogueSize: cat.listings.length,
   };
+}
+
+/** Sites by unit id, in the order asked for. Ids that match nothing, or a site taken down, are left out. */
+export async function listingsFor(ids: string[]): Promise<Listing[]> {
+  if (ids.length === 0) return [];
+  const cat = await catalogue();
+  const byId = new Map(cat.listings.map((l) => [l.permanentId, l]));
+  return ids.flatMap((id) => byId.get(id) ?? []);
+}
+
+/** The same, as full cards with owner and photograph. */
+export async function cardsFor(ids: string[]): Promise<Card[]> {
+  if (ids.length === 0) return [];
+  const cat = await catalogue();
+  const byId = new Map(cat.listings.map((l) => [l.permanentId, l]));
+  return toCards(
+    ids.flatMap((id) => byId.get(id) ?? []),
+    cat,
+  );
 }
 
 export interface SitePage {

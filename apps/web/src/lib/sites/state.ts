@@ -17,6 +17,8 @@ export interface SearchState {
   from?: string;
   to?: string;
   trust: TrustKey[];
+  /** A map area: west, south, east, north. Set by "Search this area". */
+  bbox?: [number, number, number, number];
   owner?: string;
   sort: SortKey;
   page: number;
@@ -48,6 +50,17 @@ const slugish = (v: string): string =>
     .toLowerCase()
     .replace(/[^a-z0-9-]/g, "")
     .slice(0, 60);
+
+/** "77.5800,12.9000,77.6500,12.9800": west, south, east, north, to four decimals (about 11 m). */
+export function readBox(value: string): [number, number, number, number] | undefined {
+  const n = value.split(",").map((x) => Number(Number(x).toFixed(4)));
+  const [w, s, e, north] = n;
+  if (n.length !== 4 || n.some((x) => !Number.isFinite(x))) return undefined;
+  if (w === undefined || s === undefined || e === undefined || north === undefined)
+    return undefined;
+  if (w < -180 || e > 180 || s < -90 || north > 90 || w >= e || s >= north) return undefined;
+  return [w, s, e, north];
+}
 
 export interface ReadResult {
   state: SearchState;
@@ -120,6 +133,8 @@ export function readState(raw: RawParams): ReadResult {
   const owner = slugish(one(raw.owner));
   if (owner) state.owner = owner;
   if (!state.city) state.localities = [];
+  const box = readBox(one(raw.bbox));
+  if (box) state.bbox = box;
 
   const understood = Boolean(f.city || f.format || f.size || f.budget || f.lighting || f.area);
   return { state, typed, understood };
@@ -132,6 +147,7 @@ export function toUrl(state: SearchState, change: Partial<SearchState> = {}): st
   if (s.q) p.set("q", s.q);
   if (s.city) p.set("city", s.city);
   if (s.city && s.localities.length) p.set("locality", [...s.localities].sort().join(","));
+  if (s.bbox) p.set("bbox", s.bbox.map((n) => n.toFixed(4)).join(","));
   if (s.formats.length) p.set("format", [...s.formats].sort().join(","));
   if (s.type) p.set("type", s.type);
   if (s.size) p.set("size", `${s.size.w}x${s.size.h}`);
@@ -160,6 +176,7 @@ export function toggle<T extends string>(values: T[], value: T): T[] {
 export function activeCount(s: SearchState): number {
   return (
     (s.city ? 1 : 0) +
+    (s.bbox ? 1 : 0) +
     s.localities.length +
     s.formats.length +
     (s.type ? 1 : 0) +

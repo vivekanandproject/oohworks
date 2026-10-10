@@ -100,7 +100,7 @@ function CityOptions({ state, facets }: { state: SearchState; facets: Facets }) 
           href={
             state.city === c.slug
               ? toUrl(without(state, "city", "localities"), firstPage)
-              : toUrl({ ...state, city: c.slug, localities: [] }, firstPage)
+              : toUrl(without({ ...state, city: c.slug, localities: [] }, "bbox"), firstPage)
           }
         />
       ))}
@@ -376,6 +376,20 @@ export function FilterBar({ state, facets }: { state: SearchState; facets: Facet
               </div>
             ) : null}
           </Drop>
+          {state.bbox ? (
+            <a
+              href={toUrl(without(state, "bbox"), firstPage)}
+              className="oh-chip set"
+              aria-label="Remove the map area"
+              rel="nofollow"
+              data-remove-area=""
+            >
+              Map area
+              <span className="x" aria-hidden="true">
+                ×
+              </span>
+            </a>
+          ) : null}
           <Drop name="format" set={state.formats.length > 0} label={formatLabel}>
             <ListOptions state={state} options={facets.formats} field="formats" />
           </Drop>
@@ -427,7 +441,7 @@ export function PhoneBar({ state }: { state: SearchState }) {
   const n = activeCount(state);
   return (
     <div
-      className="border-hairline bg-paper-raised sticky bottom-0 z-20 flex items-center gap-2 border-t px-4 py-2 sm:hidden"
+      className="border-hairline bg-paper-raised flex items-center gap-2 border-t px-4 py-2 sm:hidden"
       data-section="phonebar"
     >
       <a href={toUrl(state, { panel: true })} className="oh-btn secondary sm flex-1" rel="nofollow">
@@ -502,6 +516,17 @@ export function FilterPanel({
         </div>
         <div className="scroll">
           <Group title="Place">
+            {state.bbox ? (
+              <a
+                href={toUrl(without(state, "bbox"), firstPage)}
+                className="oh-opt on"
+                rel="nofollow"
+                aria-current="true"
+              >
+                <span className="box" aria-hidden="true" />
+                <span>Map area. Press to remove it</span>
+              </a>
+            ) : null}
             <CityOptions state={state} facets={facets} />
             {state.city && facets.localities.length ? (
               <>

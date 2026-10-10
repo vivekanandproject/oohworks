@@ -10,7 +10,9 @@
         "http://127.0.0.1:3200/analysis/most-billboards-cannot-be-found-online/",
         "http://127.0.0.1:3200/search/?city=bengaluru",
         "http://127.0.0.1:3200/in/bengaluru/koramangala/hoarding-80-feet-road-ows0001/",
-        "http://127.0.0.1:3200/enquire/ows0001/"
+        "http://127.0.0.1:3200/enquire/ows0001/",
+        "http://127.0.0.1:3200/shortlist/?sites=ows0001,ows0003,ows0002,ows0017",
+        "http://127.0.0.1:3200/compare/?sites=ows0001,ows0002,ows0006,ows0017"
       ],
       "numberOfRuns": 1,
       "settings": {
@@ -61,7 +63,7 @@
           }
         },
         {
-          "matchingUrlPattern": "^(?!.*(/search/|/enquire/|-ows[0-9]{4}/)).*$",
+          "matchingUrlPattern": "^(?!.*(/search/|/enquire/|/shortlist/|/compare/|-ows[0-9]{4}/)).*$",
           "assertions": {
             "categories:seo": [
               "error",

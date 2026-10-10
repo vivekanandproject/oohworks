@@ -3,6 +3,7 @@ import { Badge, Icon, type IconName } from "@ohworks/ui";
 import { formatDate } from "@/lib/editorial/format";
 import { picture } from "@/lib/editorial/media";
 import type { MonthView } from "@/lib/sites/calendar";
+import type { Card } from "@/lib/sites/queries";
 import { cityDef, ENVIRONMENTS, formatDef, lightingDef } from "@/lib/sites/taxonomy";
 import {
   coords,
@@ -510,5 +511,30 @@ export function EnquirySteps({ ownerName }: { ownerName: string }) {
         </li>
       ))}
     </ol>
+  );
+}
+
+/** A small 3:2 picture of a site for lists and tables. No photograph is said, never faked. */
+export function Thumb({ card, className = "" }: { card: Card; className?: string }) {
+  const pic = picture(card.photo, "thumb");
+  const icon = (formatDef(card.site.format)?.icon ?? "hoarding") as IconName;
+  return (
+    <span
+      className={`border-hairline bg-paper-sunken text-ink-muted grid aspect-[3/2] place-items-center overflow-hidden rounded-sm border ${className}`}
+    >
+      {pic ? (
+        <img
+          src={pic.src}
+          alt=""
+          width={pic.width}
+          height={pic.height}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <Icon name={icon} size={24} />
+      )}
+    </span>
   );
 }

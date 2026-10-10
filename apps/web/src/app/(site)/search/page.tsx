@@ -3,13 +3,18 @@ import { redirect } from "next/navigation";
 import { Button, Container, EmptyState, SearchField } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { FollowForm } from "@/components/FollowForm";
+import { BasketEnhance, ListSync } from "@/components/sites/Basket";
 import { FilterEnhance } from "@/components/sites/Enhance";
 import { FilterBar, FilterPanel, PhoneBar } from "@/components/sites/Filters";
 import { MapPanel } from "@/components/sites/MapPanel";
+import { PlanBar } from "@/components/sites/PlanBar";
+import { QuickView } from "@/components/sites/QuickView";
 import { SiteCard } from "@/components/sites/SiteCard";
 import { StillMap } from "@/components/sites/StillMap";
 import { formatDate } from "@/lib/editorial/format";
-import { searchSites } from "@/lib/sites/queries";
+import { readLists } from "@/lib/sites/lists-server";
+import { planText, summarise } from "@/lib/sites/plan";
+import { listingsFor, searchSites } from "@/lib/sites/queries";
 import {
   firstPage,
   readState,
@@ -42,7 +47,11 @@ function describe(state: SearchState, localityLabel: string | undefined, single 
     : "sites";
   const what = single ? (format ? format.inSentence : "site") : plural;
   const city = cityDef(state.city)?.label;
-  const where = city ? ` in ${localityLabel ? `${localityLabel}, ` : ""}${city}` : "";
+  const where = state.bbox
+    ? " in this map area"
+    : city
+      ? ` in ${localityLabel ? `${localityLabel}, ` : ""}${city}`
+      : "";
   return `${what}${where}`;
 }
 
@@ -131,6 +140,10 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const what = describe(state, onlyLocality);
   const here = toUrl(state, { panel: false });
   const showMap = state.map && result.total > 0;
+  const lists = await readLists();
+  const plan = planText(summarise(await listingsFor(lists.saved)));
+  // "Search this area" replaces the place: the map area becomes the place.
+  const areaBase = toUrl(without(state, "city", "localities", "bbox"), { page: 1, panel: false });
 
   const chips: { key: string; label: string; remove: string }[] = [];
   if (understood) {
@@ -175,6 +188,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   return (
     <Shell active="find">
       <FilterEnhance />
+      <BasketEnhance />
+      <ListSync />
+      <QuickView />
       <Container className="pt-8 pb-4">
         <SearchField
           defaultValue={typed || state.q}
@@ -250,7 +266,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <div>
               <div className="t">You are on the list.</div>
               <div className="d">
-                We will email you when the first {what} are listed. One email, then you choose.
+                {result.total > 0
+                  ? `We will email you when new ${what} are listed. One email, then you choose.`
+                  : `We will email you when the first ${what} are listed. One email, then you choose.`}
               </div>
             </div>
           </div>
@@ -276,7 +294,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <div className="min-w-0">
               <div className={`grid gap-5 sm:grid-cols-2 ${showMap ? "" : "lg:grid-cols-3"}`}>
                 {result.cards.map((card) => (
-                  <SiteCard key={card.site.id} card={card} now={now} />
+                  <SiteCard key={card.site.id} card={card} now={now} lists={lists} back={here} />
                 ))}
               </div>
               <Pages state={state} pages={result.pages} />
@@ -288,7 +306,13 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                 className="border-hairline bg-paper-sunken order-first h-[200px] scroll-mt-24 overflow-hidden rounded-md border sm:h-[300px] lg:sticky lg:top-[142px] lg:order-none lg:h-[640px]"
                 data-section="map"
               >
-                <MapPanel points={result.points} styleUrl={MAP_STYLE}>
+                <MapPanel
+                  points={result.points}
+                  styleUrl={MAP_STYLE}
+                  bbox={state.bbox}
+                  areaBase={areaBase}
+                  remember
+                >
                   <StillMap
                     points={result.points}
                     label={`Where the ${result.total} matching sites sit relative to each other. Open the live map for streets.`}
@@ -327,6 +351,31 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           </div>
         )}
 
+        {result.total > 0 && !followed ? (
+          <details
+            className="border-hairline bg-paper-raised mt-8 max-w-[760px] rounded-md border p-5"
+            data-section="save-search"
+            open={followInvalid}
+          >
+            <summary className="oh-link t-body-strong cursor-pointer">
+              Email me new sites for this search
+            </summary>
+            <p className="t-body text-ink-muted mt-2">
+              We keep the search and your email, and write when a new site matches it. One email,
+              then you choose.
+            </p>
+            <FollowForm
+              city={state.city}
+              format={state.formats[0]}
+              query={typed || state.q}
+              returnTo={here}
+              what={what}
+              search={here}
+              label={`Email me new ${what}`}
+            />
+          </details>
+        ) : null}
+
         {result.wider.length ? (
           <section
             className="border-hairline bg-paper-raised mt-8 max-w-[760px] rounded-md border p-5"
@@ -347,7 +396,11 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         ) : null}
       </Container>
 
-      <PhoneBar state={state} />
+      {/* One strip at the foot of the screen: what is saved, and on a phone the filter, sort and map controls. */}
+      <div className="sticky bottom-0 z-20">
+        <PlanBar text={plan} saved={lists.saved.length} compare={lists.compare.length} />
+        <PhoneBar state={state} />
+      </div>
       {state.panel ? (
         <FilterPanel state={state} facets={result.facets} total={result.total} />
       ) : null}
