@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { archivo, plexMono } from "./fonts";
 import { SITE_NAME, siteUrl } from "@/lib/seo";
+import { OWNER_BAR_COOKIE } from "@/lib/sites/enquiry";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,11 +24,19 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${plexMono.variable}`}>
+    // The script below adds data-bar to this element before React wakes up, which is expected.
+    <html lang="en" className={`${archivo.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <head>
         {/* The page crossfade is asked for here as well as in the stylesheet: a browser decides
             before the body is read, which can be before the stylesheet has arrived. */}
         <style>{`@media (prefers-reduced-motion:no-preference){@view-transition{navigation:auto}}`}</style>
+        {/* A signed-in owner's browser carries a marker. Reading it here, before anything is drawn,
+            lets the bar show "Your sites" on pages that are otherwise the same for everyone. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `if(/(?:^|; )${OWNER_BAR_COOKIE}=owner/.test(document.cookie))document.documentElement.dataset.bar="owner"`,
+          }}
+        />
         <noscript>
           <style>{`[data-reveal],[data-stagger-item],[data-draw],[data-fade]{opacity:1!important;transform:none!important;stroke-dashoffset:0!important}`}</style>
         </noscript>

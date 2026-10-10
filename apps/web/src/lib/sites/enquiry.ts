@@ -93,6 +93,12 @@ export function readEmail(
 }
 
 export const OWNER_COOKIE = "oh_owner";
+/**
+ * Says only "an owner is signed in on this browser", so the bar can show "Your sites" on pages that
+ * are the same for everyone and may be cached. It is readable by the page, proves nothing, and opens
+ * nothing: the owner's pages still ask for the signed cookie above.
+ */
+export const OWNER_BAR_COOKIE = "oh_bar";
 
 /** A signed note that this browser confirmed this email, so it is not asked for a code again for 30 days. */
 export function signBuyer(email: string, now: number = Date.now()): string {

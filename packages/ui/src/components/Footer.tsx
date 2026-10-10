@@ -5,7 +5,8 @@ export const NEUTRALITY_LINE =
 
 interface Col {
   title: string;
-  links: { href: string; label: string }[];
+  /** `when` ties a link to the bar's state: shown to a visitor, or to a signed-in owner. */
+  links: { href: string; label: string; when?: "out" | "owner" }[];
 }
 
 const COLS: Col[] = [
@@ -24,7 +25,8 @@ const COLS: Col[] = [
       { href: "/list-your-sites/", label: "List your sites" },
       { href: "/for-owners/#assisted", label: "Assisted onboarding" },
       { href: "/for-owners/#badges", label: "Verification badges" },
-      { href: "/sign-in/", label: "Sign in" },
+      { href: "/sign-in/", label: "Sign in", when: "out" },
+      { href: "/owner/", label: "Your sites", when: "owner" },
     ],
   },
   {
@@ -65,7 +67,7 @@ export function Footer() {
               <h2 className="t-label text-ink-muted">{c.title}</h2>
               <ul className="mt-3 flex flex-col gap-2">
                 {c.links.map((l) => (
-                  <li key={l.href + l.label}>
+                  <li key={l.href + l.label} data-bar-when={l.when}>
                     <a href={l.href} className="text-ink hover:text-navy-700 inline-block py-1">
                       {l.label}
                     </a>

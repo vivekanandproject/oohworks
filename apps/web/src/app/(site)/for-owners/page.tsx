@@ -16,11 +16,11 @@ const at = (i: number) => ({ "--i": i }) as CSSProperties;
 const STEPS = [
   {
     t: "Verify your company",
-    d: "Registration documents (GSTIN in India) and a phone or WhatsApp code. This earns the Verified owner badge.",
+    d: "A code to your work email, then your GSTIN and its certificate. Our team checks them, and that earns the Verified owner badge.",
   },
   {
     t: "Send your inventory",
-    d: "A spreadsheet, bulk photos, or just your PDF media kit. We turn it into listings and send you the links.",
+    d: "Our spreadsheet template, or just your PDF media kit. We turn a kit into listings, and you approve each one.",
   },
   {
     t: "Pin each face",

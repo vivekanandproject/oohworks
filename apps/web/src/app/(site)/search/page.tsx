@@ -367,7 +367,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               />
             ) : null}
             <div className="mt-4 flex flex-wrap gap-2">
-              <Button href="/for-owners/" variant="ghost" size="sm">
+              <Button href="/list-your-sites/" variant="ghost" size="sm">
                 Own sites here? List them free
               </Button>
               <Button href="/guides/" variant="ghost" size="sm">

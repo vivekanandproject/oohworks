@@ -6,6 +6,12 @@
     border-radius: var(--radius-sm);
   }
 
+  /* The bar carries the links for a visitor and for a signed-in owner. Only one set is shown. */
+  :root[data-bar="owner"] [data-bar-when="out"],
+  :root:not([data-bar="owner"]) [data-bar-when="owner"] {
+    display: none !important;
+  }
+
   .oh-btn {
     display: inline-flex;
     align-items: center;

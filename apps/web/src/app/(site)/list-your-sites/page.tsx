@@ -55,7 +55,7 @@ export default async function ListYourSitesPage({
   const error = ERRORS[one(q.error)];
 
   return (
-    <Shell active="owners">
+    <Shell active="owners" listHref={email ? undefined : "#owner-email"}>
       <Container className="py-10 lg:py-16">
         <div className="max-w-[720px]">
           <p className="t-label text-ink-muted">For media owners</p>
@@ -123,7 +123,9 @@ export default async function ListYourSitesPage({
                   autoComplete="email"
                   placeholder="you@yourcompany.com"
                   aria-describedby="owner-email-help"
-                  className="oh-input lg flex-1"
+                  // The bar's "List your sites" points here. The margin keeps the headline in view
+                  // when it does, so the page answers by focusing the box, not by jumping past it.
+                  className="oh-input lg flex-1 scroll-mt-[60vh]"
                 />
                 <button type="submit" className="oh-btn primary lg" data-action="start">
                   Send me a code

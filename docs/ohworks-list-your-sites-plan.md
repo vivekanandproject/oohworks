@@ -130,6 +130,7 @@ Step 1 of the build order is done: the door. An owner can now put their own site
 | --- | --- |
 | `/list-your-sites/` | The start: what listing is, and one email field. The "List your sites" button opens it |
 | `/list-your-sites/confirm/` | Enter the emailed code |
+| `/sign-in/` | The way back in for an owner: the same email and code, with no password. It also tells buyers they need no account |
 | `/owner/` | Your sites: every site with its state, how complete it is, and what to do next |
 | `/owner/company/` | The company, where enquiries go, and the GSTIN and document for the Verified owner badge |
 | `/owner/sites/new/` | Add one site, in five parts, with a pin on a map |
@@ -143,6 +144,16 @@ The start page is offered to search engines, because an owner searching how to l
 ### Signing in without an account
 
 An owner gives a work email and is sent a six-digit code, good for ten minutes and five tries. A right code remembers the browser for 30 days. Coming back is the same step. Only the code's hash is stored, one address can ask for five codes an hour, and the owner's note is separate from a buyer's, so one cannot stand in for the other.
+
+### The ways in, and knowing you are signed in
+
+Added on 10 Oct 2026, after the first build proved hard to find one's way around.
+
+- **Sign in is real.** It had been a holding page that said accounts were not open. It is now the owner's way back in. A signed-in owner who opens it goes straight to their sites.
+- **The bar shows where you stand.** Signed out it reads "Sign in" and "List your sites". Signed in it reads "Your sites", on every page, and the footer follows. Both sets of links are in every page, and a small script in the head chooses one before anything is drawn, from a marker cookie (`oh_bar`) set and cleared with the real one. So pages stay the same for everyone and can be cached. The marker proves nothing: the owner's pages still ask for the signed cookie.
+- **"List your sites" answers on its own page.** There it points at the email box, so pressing it puts the cursor in the box and keeps the headline in view. Before, it reloaded the page and looked like nothing had happened.
+- **Every "List your sites" leads to the start.** The buttons on the home page and under thin search results went to the page about listing.
+- **A way out before the company exists.** The company step shows the confirmed address with "Not you? Sign out".
 
 ### The company
 

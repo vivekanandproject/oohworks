@@ -4,9 +4,12 @@ import { Footer, NavBar } from "@ohworks/ui";
 export function Shell({
   children,
   active,
+  listHref,
 }: {
   children: ReactNode;
   active?: "find" | "news" | "owners" | undefined;
+  /** Where the bar's "List your sites" leads, when a page wants it to point at its own form. */
+  listHref?: string | undefined;
 }) {
   return (
     <>
@@ -16,7 +19,7 @@ export function Shell({
       >
         Skip to content
       </a>
-      <NavBar active={active} />
+      <NavBar active={active} listHref={listHref} />
       <main id="main">{children}</main>
       <Footer />
     </>

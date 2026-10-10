@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { OWNER_COOKIE, sameOrigin } from "@/lib/sites/enquiry";
+import { OWNER_BAR_COOKIE, OWNER_COOKIE, sameOrigin } from "@/lib/sites/enquiry";
 
 export const dynamic = "force-dynamic";
 
@@ -11,5 +11,6 @@ export async function POST(req: Request) {
     headers: { Location: "/list-your-sites/?out=1" },
   });
   res.cookies.set(OWNER_COOKIE, "", { httpOnly: true, sameSite: "lax", path: "/", maxAge: 0 });
+  res.cookies.set(OWNER_BAR_COOKIE, "", { sameSite: "lax", path: "/", maxAge: 0 });
   return res;
 }

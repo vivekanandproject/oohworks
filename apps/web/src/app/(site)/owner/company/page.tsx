@@ -51,7 +51,24 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
   return (
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
-        {owner ? <OwnerBar name={owner.name} email={maskEmail(email)} here="company" /> : null}
+        {owner ? (
+          <OwnerBar name={owner.name} email={maskEmail(email)} here="company" />
+        ) : (
+          // Before the company exists there is no owner's bar, so the way out is offered here.
+          <form
+            method="post"
+            action="/api/owner/signout/"
+            className="border-hairline t-small text-ink-muted flex flex-wrap items-center justify-end gap-3 border-b pb-4"
+            data-section="confirmed-as"
+          >
+            <span>
+              Confirmed as <span className="font-mono">{maskEmail(email)}</span>
+            </span>
+            <button type="submit" className="oh-link cursor-pointer">
+              Not you? Sign out
+            </button>
+          </form>
+        )}
         <div className="mt-6 max-w-[640px]">
           <p className="t-label text-ink-muted">
             {owner ? "Company details" : "List your sites · step 2 of 4"}

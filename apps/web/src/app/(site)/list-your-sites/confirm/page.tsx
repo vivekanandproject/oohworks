@@ -38,12 +38,15 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
   };
   const error = ERRORS[one(q.error)];
   const shown = await devOwnerCode(row.email);
+  const signIn = one(q.via) === "signin";
 
   return (
     <Shell active="owners">
       <Container className="py-10 lg:py-16">
         <div className="max-w-[560px]">
-          <p className="t-label text-ink-muted">List your sites · step 1 of 4</p>
+          <p className="t-label text-ink-muted">
+            {signIn ? "Sign in" : "List your sites · step 1 of 4"}
+          </p>
           <h1 className="t-display-md mt-2">Confirm it&rsquo;s you</h1>
           <p className="t-body text-ink-muted mt-2" data-section="code-sent-to">
             A code is on its way to{" "}
@@ -78,6 +81,7 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
             data-section="confirm-form"
           >
             <input type="hidden" name="t" value={token} />
+            {signIn ? <input type="hidden" name="via" value="signin" /> : null}
             <div>
               <label htmlFor="owner-code" className="oh-label block">
                 Six-digit code
@@ -107,6 +111,7 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
           </form>
           <form method="post" action="/api/owner/resend/" className="mt-4">
             <input type="hidden" name="t" value={token} />
+            {signIn ? <input type="hidden" name="via" value="signin" /> : null}
             <button type="submit" className="oh-btn ghost sm">
               Send the code again
             </button>

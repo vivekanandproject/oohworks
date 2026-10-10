@@ -226,7 +226,7 @@ export default async function HomePage() {
                 email and WhatsApp, and you keep the client.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button href="/for-owners/" variant="on-navy">
+                <Button href="/list-your-sites/" variant="on-navy">
                   List your sites
                 </Button>
                 <Button href="/for-owners/#assisted" variant="ghost-on-navy">

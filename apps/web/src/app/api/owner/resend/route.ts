@@ -7,9 +7,11 @@ export const dynamic = "force-dynamic";
 /** Sends a new code, which replaces the old one. At most one every half minute. */
 export async function POST(req: Request) {
   if (!sameOrigin(req)) return new Response("Forbidden", { status: 403 });
-  const token = String((await req.formData()).get("t") ?? "").trim();
+  const form = await req.formData();
+  const token = String(form.get("t") ?? "").trim();
+  const via = form.get("via") === "signin" ? "&via=signin" : "";
   const back = (query: string) =>
-    seeOther(req, `/list-your-sites/confirm/?t=${encodeURIComponent(token)}&${query}`);
+    seeOther(req, `/list-your-sites/confirm/?t=${encodeURIComponent(token)}${via}&${query}`);
   if (rateLimited(req, "owner-resend", 5)) return back("error=busy");
   const row = await findCode(token);
   if (!row || row.usedAt) return seeOther(req, "/list-your-sites/?error=again");

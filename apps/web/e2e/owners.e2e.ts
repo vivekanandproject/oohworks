@@ -24,6 +24,14 @@ test.afterEach(({ page }) => {
   baseExpect(scriptErrors.get(page) ?? [], "script errors on the owner's pages").toEqual([]);
 });
 
+// The forms allow one address ten starts a minute. Every test here would otherwise share one
+// address, the machine's own, and the busiest minute of a full run would be turned away.
+const visitor = () =>
+  `10.${1 + Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}.${1 + Math.floor(Math.random() * 250)}`;
+test.beforeEach(async ({ context }) => {
+  await context.setExtraHTTPHeaders({ "x-forwarded-for": visitor() });
+});
+
 const day = (n: number) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
 const XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
@@ -232,6 +240,92 @@ test.describe("list your sites: the start", () => {
     expect(got.head).toHaveLength(37);
     expect(got.example).toBe("EXAMPLE");
     expect(got.guideRows).toBeGreaterThan(37);
+  });
+});
+
+test.describe("list your sites: the ways in", () => {
+  test.afterAll(async ({ request }) => removeOwners(request, "owner-bar-"));
+
+  test("on its own page, the bar's List your sites puts the cursor in the email box", async ({
+    page,
+  }) => {
+    await page.goto("/list-your-sites/");
+    const button = page.locator("header a:visible", { hasText: "List your sites" });
+    await expect(button).toHaveAttribute("href", "#owner-email");
+    await button.click();
+    await expect(page.locator("#owner-email")).toBeFocused();
+    // The page answers without jumping past its own headline.
+    await expect(page.locator("h1")).toBeInViewport();
+    await expect(page.locator("#owner-email")).toBeInViewport();
+  });
+
+  test("Sign in is a real way back in, and the bar then leads to the owner's sites", async ({
+    page,
+    request,
+  }, testInfo) => {
+    const email = `owner-bar-${testInfo.project.name}-${Date.now()}@example.org`;
+    // By role and exact name: only what is shown counts, and "Your sites" is not "List your sites".
+    const bar = page.locator("header");
+    const list = bar.getByRole("link", { name: "List your sites", exact: true });
+    const yours = bar.getByRole("link", { name: "Your sites", exact: true });
+    await page.goto("/");
+    await expect(list).toHaveCount(1);
+    await expect(yours).toHaveCount(0);
+
+    await page.goto("/sign-in/");
+    await expect(page.locator("h1")).toHaveText("Sign in");
+    await expect(page.locator("main")).not.toContainText("accounts open");
+    await expect(page.locator("[data-section='signin-buyers']")).toContainText(
+      "You need no account",
+    );
+    expect(await page.locator('meta[name="robots"]').getAttribute("content")).toContain("noindex");
+    await page.locator("#signin-email").fill(email);
+    await page.locator("[data-action='signin']").click();
+    await expect(page).toHaveURL(/\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}&via=signin$/);
+    await expect(page.locator("main p.t-label").first()).toHaveText("Sign in");
+    // A wrong code keeps the visitor on the sign-in wording.
+    await page.locator("#owner-code").fill("000000");
+    await page.locator("[data-action='confirm']").click();
+    await expect(page.locator("[data-section='confirm-error']")).toContainText("did not match");
+    await expect(page).toHaveURL(/via=signin/);
+    const code =
+      /\b\d{6}\b/.exec((await mails(request, email, "owner_code"))[0]?.text ?? "")?.[0] ?? "";
+    await page.locator("#owner-code").fill(code);
+    await page.locator("[data-action='confirm']").click();
+    await expect(page).toHaveURL(/\/owner\/company\/$/);
+
+    // Signed in: every page's bar now leads to the owner's sites, including pages built once for all.
+    for (const path of ["/", "/search/", "/for-owners/"]) {
+      await page.goto(path);
+      await expect(yours, `the bar on ${path}`).toHaveAttribute("href", "/owner/");
+      await expect(list, `the bar on ${path}`).toHaveCount(0);
+      await expect(bar.getByRole("link", { name: "Sign in", exact: true })).toHaveCount(0);
+    }
+    const footer = page.locator("footer");
+    await expect(footer.getByRole("link", { name: "Your sites", exact: true })).toHaveCount(1);
+    await expect(footer.getByRole("link", { name: "Sign in", exact: true })).toHaveCount(0);
+    // Sign in has nothing to ask a signed-in owner.
+    await page.goto("/sign-in/");
+    await expect(page).toHaveURL(/\/owner\/company\/$/);
+
+    await page.locator("form[action='/api/owner/signout/'] button").first().click();
+    await expect(page.locator("[data-section='signed-out']")).toBeVisible();
+    await expect(list).toHaveCount(1);
+    await page.goto("/");
+    await expect(yours).toHaveCount(0);
+    await expect(list).toHaveCount(1);
+  });
+
+  test("a mistake on Sign in comes back to Sign in", async ({ request, baseURL }) => {
+    const res = await request.post("/api/owner/start/", {
+      form: { via: "signin", email: "not-an-email" },
+      headers: { origin: baseURL ?? "", "x-forwarded-for": visitor() },
+      maxRedirects: 0,
+    });
+    expect(res.status()).toBe(303);
+    expect(res.headers()["location"]).toBe("/sign-in/?error=email");
+    const page = await request.get("/sign-in/?error=email");
+    expect(await page.text()).toContain("That email did not look right.");
   });
 });
 

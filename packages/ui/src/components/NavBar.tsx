@@ -2,7 +2,8 @@ import { Wordmark } from "../brand/Wordmark";
 
 export interface NavBarProps {
   active?: "find" | "news" | "owners" | undefined;
-  signedIn?: boolean | undefined;
+  /** Where "List your sites" leads. The start page points it at its own email box. */
+  listHref?: string | undefined;
 }
 
 const LINKS: { key: NonNullable<NavBarProps["active"]>; href: string; label: string }[] = [
@@ -11,8 +12,15 @@ const LINKS: { key: NonNullable<NavBarProps["active"]>; href: string; label: str
   { key: "owners", href: "/for-owners/", label: "For owners" },
 ];
 
-/** The same bar on every page. On phones the links sit behind "Menu"; "List your sites" stays visible. Guides live in the footer. */
-export function NavBar({ active, signedIn = false }: NavBarProps) {
+/**
+ * The same bar on every page. On phones the links sit behind "Menu"; "List your sites" stays visible.
+ * Guides live in the footer.
+ *
+ * Both the signed-out and the signed-in owner's links are in the page. Which pair shows is decided by
+ * `data-bar` on the html element, set before first paint from a marker cookie, so a page can be the
+ * same for everyone, and cached, and still show an owner the way to their sites.
+ */
+export function NavBar({ active, listHref = "/list-your-sites/" }: NavBarProps) {
   return (
     <header className="border-hairline bg-paper sticky top-0 z-30 border-b">
       <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center gap-3 px-4 sm:gap-6 lg:px-10">
@@ -32,14 +40,14 @@ export function NavBar({ active, signedIn = false }: NavBarProps) {
           ))}
         </nav>
         <span className="flex-1" />
-        <a
-          href={signedIn ? "/dashboard/" : "/sign-in/"}
-          className="oh-btn ghost sm hidden sm:inline-flex"
-        >
-          {signedIn ? "Dashboard" : "Sign in"}
+        <a href="/sign-in/" className="oh-btn ghost sm hidden sm:inline-flex" data-bar-when="out">
+          Sign in
         </a>
-        <a href="/list-your-sites/" className="oh-btn primary sm">
+        <a href={listHref} className="oh-btn primary sm" data-bar-when="out">
           List your sites
+        </a>
+        <a href="/owner/" className="oh-btn primary sm" data-bar-when="owner">
+          Your sites
         </a>
         <details className="oh-menu relative lg:hidden">
           <summary className="oh-btn ghost sm cursor-pointer list-none px-2! select-none [&::-webkit-details-marker]:hidden">
@@ -61,6 +69,7 @@ export function NavBar({ active, signedIn = false }: NavBarProps) {
             <a
               href="/sign-in/"
               className="text-ink hover:bg-navy-200 rounded-sm px-3 py-2.5 font-medium sm:hidden"
+              data-bar-when="out"
             >
               Sign in
             </a>

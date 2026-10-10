@@ -52,9 +52,14 @@ test.describe("newsroom front page", () => {
 
   test("every internal link resolves without redirect or error", async ({ page, request }) => {
     await page.goto("/newsroom/");
+    // Links shown only to a signed-in owner are left out: they rightly send a stranger to the start.
     const hrefs = await page
       .locator('a[href^="/"]')
-      .evaluateAll((as) => as.map((a) => (a as HTMLAnchorElement).getAttribute("href")!));
+      .evaluateAll((as) =>
+        as
+          .filter((a) => !a.closest("[data-bar-when='owner']"))
+          .map((a) => (a as HTMLAnchorElement).getAttribute("href")!),
+      );
     const unique = [...new Set(hrefs.map((h) => h.split("#")[0]!))].filter(Boolean);
     expect(unique.length).toBeGreaterThan(15);
     for (const href of unique) {
