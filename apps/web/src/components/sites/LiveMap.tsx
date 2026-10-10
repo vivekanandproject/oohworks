@@ -1,17 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import {
-  LngLatBounds,
-  Map as LiveMapGl,
-  Marker,
-  NavigationControl,
-  Popup,
-  getVersion,
-  setWorkerUrl,
-} from "maplibre-gl";
+import { LngLatBounds, Map as LiveMapGl, Marker, NavigationControl, Popup } from "maplibre-gl";
 import Supercluster from "supercluster";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { loadOwnWorker } from "./mapWorker";
 
 export interface MapPoint {
   id: string;
@@ -30,14 +23,6 @@ interface Drawn {
   el: HTMLButtonElement;
   /** The sites this marker stands for: one for a pin, several for a cluster. */
   ids: string[];
-}
-
-/** The worker is served from this site (see scripts/copy-map-worker.mjs), not from beside the bundled library. */
-let workerSet = false;
-function loadOwnWorker() {
-  if (workerSet) return;
-  workerSet = true;
-  setWorkerUrl(`/vendor/maplibre-gl-worker.mjs?v=${getVersion()}`);
 }
 
 const emit = (name: string, id: string | null) =>

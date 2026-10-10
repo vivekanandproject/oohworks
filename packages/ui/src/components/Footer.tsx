@@ -21,7 +21,7 @@ const COLS: Col[] = [
   {
     title: "For owners",
     links: [
-      { href: "/for-owners/", label: "List your sites" },
+      { href: "/list-your-sites/", label: "List your sites" },
       { href: "/for-owners/#assisted", label: "Assisted onboarding" },
       { href: "/for-owners/#badges", label: "Verification badges" },
       { href: "/sign-in/", label: "Sign in" },

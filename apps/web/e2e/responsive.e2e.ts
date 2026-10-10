@@ -17,6 +17,7 @@ const PAGES = [
   "/shortlist/?sites=ows0001,ows0003,ows0002,ows0017&from=2027-01-01&to=2027-01-31",
   "/compare/?sites=ows0001,ows0002,ows0006,ows0017",
   "/quick/ows0001/",
+  "/list-your-sites/",
   "/in/bengaluru/",
   "/in/bengaluru/hoardings/",
   "/enquire/plan/?sites=ows0001,ows0003,ows0017",

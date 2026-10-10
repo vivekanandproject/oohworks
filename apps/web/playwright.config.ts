@@ -5,6 +5,7 @@ const PORT = 3100;
 export default defineConfig({
   testDir: "./e2e",
   testMatch: "**/*.e2e.ts",
+  globalSetup: "./e2e/global-setup.ts",
   fullyParallel: true,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",

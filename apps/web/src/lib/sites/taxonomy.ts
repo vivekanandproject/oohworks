@@ -43,6 +43,16 @@ export const CITIES = [
 ] as const;
 export type CitySlug = (typeof CITIES)[number]["slug"];
 
+/** Where a map opens for each city, as longitude then latitude, before an owner has placed a pin. */
+export const CITY_CENTRE: Record<CitySlug, [number, number]> = {
+  bengaluru: [77.5946, 12.9716],
+  mumbai: [72.8777, 19.076],
+  "delhi-ncr": [77.209, 28.6139],
+  hyderabad: [78.4867, 17.385],
+  pune: [73.8567, 18.5204],
+  chennai: [80.2707, 13.0827],
+};
+
 export const LIGHTING = [
   { slug: "front-lit", label: "Front-lit" },
   { slug: "back-lit", label: "Back-lit" },

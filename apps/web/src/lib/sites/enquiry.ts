@@ -58,6 +58,42 @@ export function sameHash(a: string, b: string): boolean {
   return x.length === y.length && timingSafeEqual(x, y);
 }
 
+/**
+ * A signed note that this browser confirmed an email for one purpose. A note signed for a buyer is no
+ * use as an owner's, and the reverse.
+ */
+export function signEmail(
+  scope: "buyer" | "owner",
+  email: string,
+  now: number = Date.now(),
+): string {
+  const body = Buffer.from(JSON.stringify({ e: email, x: now + THIRTY_DAYS })).toString(
+    "base64url",
+  );
+  return `${body}.${mac(`${scope}:${body}`)}`;
+}
+
+export function readEmail(
+  scope: "buyer" | "owner",
+  value: string | undefined,
+  now: number = Date.now(),
+): string | null {
+  if (!value) return null;
+  const [body, sig] = value.split(".");
+  if (!body || !sig || !sameHash(sig, mac(`${scope}:${body}`))) return null;
+  try {
+    const data = JSON.parse(Buffer.from(body, "base64url").toString()) as {
+      e?: unknown;
+      x?: unknown;
+    };
+    return typeof data.e === "string" && typeof data.x === "number" && data.x > now ? data.e : null;
+  } catch {
+    return null;
+  }
+}
+
+export const OWNER_COOKIE = "oh_owner";
+
 /** A signed note that this browser confirmed this email, so it is not asked for a code again for 30 days. */
 export function signBuyer(email: string, now: number = Date.now()): string {
   const body = Buffer.from(JSON.stringify({ e: email, x: now + THIRTY_DAYS })).toString(

@@ -23,3 +23,6 @@ apps/web/media/
 
 # Copied from node_modules before dev and build (the map library's worker)
 apps/web/public/vendor/
+
+# Private files from owners: documents, spreadsheets, media kits
+apps/web/owner-files/

@@ -24,6 +24,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
   pages.push({
+    url: absolute("/list-your-sites/"),
+    lastModified: fixed,
+    changeFrequency: "monthly",
+    priority: 0.8,
+  });
+  pages.push({
     url: absolute("/how-results-are-ordered/"),
     lastModified: fixed,
     changeFrequency: "yearly",

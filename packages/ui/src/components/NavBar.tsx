@@ -38,7 +38,7 @@ export function NavBar({ active, signedIn = false }: NavBarProps) {
         >
           {signedIn ? "Dashboard" : "Sign in"}
         </a>
-        <a href="/for-owners/" className="oh-btn primary sm">
+        <a href="/list-your-sites/" className="oh-btn primary sm">
           List your sites
         </a>
         <details className="oh-menu relative lg:hidden">

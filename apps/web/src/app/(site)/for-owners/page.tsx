@@ -78,19 +78,16 @@ export default function ForOwnersPage() {
             email and WhatsApp, and you keep the client. We never sell media or take a media margin.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button
-              href="mailto:owners@ohworks.com?subject=List%20my%20sites%20on%20ohworks"
-              variant="primary"
-            >
-              Send us your media kit
+            <Button href="/list-your-sites/" variant="primary">
+              List your sites
             </Button>
             <Button href="/charter/" variant="ghost">
               Read the charter
             </Button>
           </div>
           <p className="t-small text-ink-muted mt-4 max-w-[60ch]">
-            Online sign-up opens with the Bengaluru launch. Until then, email owners@ohworks.com and
-            we list your sites for you.
+            It starts with your work email and takes a few minutes. Add sites one at a time, upload
+            a spreadsheet, or send your media kit and we enter them for you.
           </p>
         </Container>
       </section>

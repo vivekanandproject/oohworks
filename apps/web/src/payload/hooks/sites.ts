@@ -1,5 +1,6 @@
 import { randomInt } from "node:crypto";
-import { APIError, type CollectionBeforeChangeHook } from "payload";
+import { APIError, type CollectionAfterChangeHook, type CollectionBeforeChangeHook } from "payload";
+import { deliverMail } from "../mailer";
 import { formatDef } from "../../lib/sites/taxonomy";
 import { slugify } from "./index";
 
@@ -16,6 +17,9 @@ const MM = { ft: 304.8, m: 1000 } as const;
 
 interface SiteData {
   [key: string]: unknown;
+  _status?: "draft" | "published";
+  review?: "draft" | "submitted" | "changes" | "approved" | null;
+  reviewNote?: string | null;
   format?: string;
   width?: number;
   height?: number;
@@ -82,6 +86,15 @@ export const siteBeforeChange: CollectionBeforeChangeHook = async ({
     );
   }
 
+  if (d.review === "changes" && !String(merged.reviewNote ?? "").trim()) {
+    throw new APIError(
+      "Write the reason for the owner before returning a site. They read your exact words.",
+      400,
+    );
+  }
+  // Publishing is the approval. A site cannot be live and still waiting.
+  if (d._status === "published") d.review = "approved";
+
   const unit = merged.sizeUnit ?? "ft";
   if (merged.width && merged.height) {
     d.widthMm = Math.round(merged.width * MM[unit]);
@@ -100,6 +113,7 @@ export const siteBeforeChange: CollectionBeforeChangeHook = async ({
         collection: "sites",
         where: { permanentId: { equals: id } },
         overrideAccess: true,
+        req,
       });
       if (taken.totalDocs === 0) {
         d.permanentId = id;
@@ -124,6 +138,7 @@ export const siteBeforeChange: CollectionBeforeChangeHook = async ({
         id: ownerId,
         overrideAccess: true,
         depth: 0,
+        req,
       });
       ownerVerified = Boolean(owner?.verified);
     } catch {
@@ -132,4 +147,63 @@ export const siteBeforeChange: CollectionBeforeChangeHook = async ({
   }
   d.qualityScore = qualityScore(merged, ownerVerified);
   return d;
+};
+
+const base = (): string =>
+  (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+
+/**
+ * Tells an owner who listed their own site what the team decided: that it is live, or that it has come
+ * back and why. Owners whose sites the team entered are not written to. A failed email never undoes the save.
+ */
+export const siteAfterChange: CollectionAfterChangeHook = async ({ doc, previousDoc, req }) => {
+  const wentLive = doc._status === "published" && previousDoc?._status !== "published";
+  const returned = doc.review === "changes" && previousDoc?.review !== "changes";
+  if (!wentLive && !returned) return doc;
+  try {
+    const ownerId = typeof doc.owner === "object" && doc.owner !== null ? doc.owner.id : doc.owner;
+    const owner = await req.payload.findByID({
+      collection: "owners",
+      id: ownerId,
+      overrideAccess: true,
+      depth: 0,
+      req,
+    });
+    if (!owner?.loginEmail) return doc;
+    const page = `${base()}/in/${doc.city}/${doc.localitySlug ?? "area"}/${doc.slug ?? "site"}-${doc.permanentId}/`;
+    const manage = `${base()}/owner/sites/${doc.permanentId}/`;
+    await deliverMail(
+      req.payload,
+      wentLive
+        ? {
+            kind: "owner_notice",
+            to: owner.loginEmail,
+            subject: `Your site is live: ${doc.title}`,
+            text: [
+              `${doc.title} is now live on ohworks.`,
+              "",
+              `See it as a buyer does: ${page}`,
+              `Change its price or availability at any time: ${manage}`,
+              "",
+              "Enquiries come straight to you. ohworks never sells media or takes a media margin.",
+            ].join("\n"),
+          }
+        : {
+            kind: "owner_notice",
+            to: owner.loginEmail,
+            subject: `One thing to fix before this site can go live: ${doc.title}`,
+            text: [
+              `We checked ${doc.title} and it needs a change before it can go live.`,
+              "",
+              `What the reviewer wrote: ${String(doc.reviewNote ?? "").trim()}`,
+              "",
+              `Fix it and send it again: ${manage}`,
+            ].join("\n"),
+          },
+      req,
+    );
+  } catch (error) {
+    req.payload.logger.error({ err: error }, "Could not email the owner about their site");
+  }
+  return doc;
 };

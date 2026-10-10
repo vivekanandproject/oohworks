@@ -5,6 +5,7 @@ import { s3Storage } from "@payloadcms/storage-s3";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 import {
+  AccessCodes,
   Articles,
   Companies,
   Corrections,
@@ -15,6 +16,7 @@ import {
   Media,
   Messages,
   Outbox,
+  OwnerFiles,
   Owners,
   People,
   Reports,
@@ -74,6 +76,8 @@ export default buildConfig({
     Subscribers,
     Corrections,
     Outbox,
+    OwnerFiles,
+    AccessCodes,
     Users,
   ],
   editor: editorialEditor,

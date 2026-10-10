@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { isAdmin, isOps, publishedOrStaff } from "../access";
-import { siteBeforeChange } from "../hooks/sites";
+import { siteAfterChange, siteBeforeChange } from "../hooks/sites";
 import {
   CITY_SELECT,
   ENVIRONMENT_SELECT,
@@ -14,12 +14,12 @@ export const Sites: CollectionConfig = {
   admin: {
     useAsTitle: "title",
     group: "Marketplace",
-    defaultColumns: ["title", "city", "owner", "priceDisplay", "qualityScore", "_status"],
+    defaultColumns: ["title", "city", "owner", "review", "submittedAt", "qualityScore", "_status"],
     description: "One record per physical face. The id and address never change once published.",
   },
   versions: { drafts: true, maxPerDoc: 20 },
   access: { read: publishedOrStaff, create: isOps, update: isOps, delete: isAdmin },
-  hooks: { beforeChange: [siteBeforeChange] },
+  hooks: { beforeChange: [siteBeforeChange], afterChange: [siteAfterChange] },
   fields: [
     {
       name: "title",
@@ -27,6 +27,57 @@ export const Sites: CollectionConfig = {
       admin: { readOnly: true, description: "Built from the size, format and road" },
     },
     { name: "slug", type: "text", index: true, admin: { readOnly: true, position: "sidebar" } },
+    {
+      name: "review",
+      type: "select",
+      index: true,
+      options: [
+        { label: "Draft, still with the owner", value: "draft" },
+        { label: "In review: waiting for us", value: "submitted" },
+        { label: "Needs changes: returned to the owner", value: "changes" },
+        { label: "Approved", value: "approved" },
+      ],
+      admin: {
+        position: "sidebar",
+        description:
+          "Filter the list by “In review” to see what is waiting. Publishing a site approves it and emails the owner.",
+      },
+    },
+    {
+      name: "reviewNote",
+      type: "textarea",
+      admin: {
+        position: "sidebar",
+        description: "Required when returning a site. The owner reads these exact words.",
+      },
+    },
+    { name: "submittedAt", type: "date", admin: { position: "sidebar", readOnly: true } },
+    {
+      name: "duplicateNote",
+      type: "text",
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        description: "Set when another site sits within 25 m, facing the same way",
+      },
+    },
+    {
+      name: "ownerRef",
+      type: "text",
+      index: true,
+      admin: { position: "sidebar", description: "The owner's own code for this site" },
+    },
+    {
+      name: "source",
+      type: "select",
+      defaultValue: "team",
+      options: [
+        { label: "Entered by the team", value: "team" },
+        { label: "The owner's form", value: "form" },
+        { label: "The owner's spreadsheet", value: "sheet" },
+      ],
+      admin: { position: "sidebar" },
+    },
     {
       name: "permanentId",
       type: "text",

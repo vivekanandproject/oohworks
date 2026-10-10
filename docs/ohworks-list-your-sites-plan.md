@@ -1,6 +1,6 @@
 # ohworks List your sites: plan
 
-Date: 11 Oct 2026. Status: plan and wireframes written; step 1 is being built on the defaults in section 10. Builds on the strategy report (owner onboarding, verification badges), `ohworks-architecture.md`, milestone M3 of `ohworks-build-plan.md`, and Find sites, which is complete on sample sites.
+Date: 11 Oct 2026. Status: step 1 is built (section 12), on the defaults in section 10, after the founder said to go ahead. Steps 2 and 3 are planned and not started. Builds on the strategy report (owner onboarding, verification badges), `ohworks-architecture.md`, milestone M3 of `ohworks-build-plan.md`, and Find sites, which is complete on sample sites.
 
 ## 1. What this must achieve
 
@@ -119,3 +119,98 @@ These are the recommended options. Each can be changed.
 ## 11. Wireframes
 
 `docs/wireframes/list-your-sites.html` holds eight views: the start page, confirm and company, the owner's sites, add one site, the spreadsheet, the media kit, the states of a site, and what the team sees. Open the file in a browser; the bar at the top switches view and width.
+
+## 12. What step 1 built (10 Oct 2026)
+
+Step 1 of the build order is done: the door. An owner can now put their own sites on ohworks, and the team can check and publish them.
+
+### Pages
+
+| Address | What it is |
+| --- | --- |
+| `/list-your-sites/` | The start: what listing is, and one email field. The "List your sites" button opens it |
+| `/list-your-sites/confirm/` | Enter the emailed code |
+| `/owner/` | Your sites: every site with its state, how complete it is, and what to do next |
+| `/owner/company/` | The company, where enquiries go, and the GSTIN and document for the Verified owner badge |
+| `/owner/sites/new/` | Add one site, in five parts, with a pin on a map |
+| `/owner/sites/{unit id}/` | One site: its state, photographs, what buyers will see, and quick changes once live |
+| `/owner/sites/{unit id}/edit/` | Change a site that is not yet live |
+| `/owner/import/` | The spreadsheet template, the upload, and the report |
+| `/owner/kit/` | Send a media kit for the team to enter |
+
+The start page is offered to search engines, because an owner searching how to list should find it. Everything under `/owner/` is `noindex` and closed in robots.
+
+### Signing in without an account
+
+An owner gives a work email and is sent a six-digit code, good for ten minutes and five tries. A right code remembers the browser for 30 days. Coming back is the same step. Only the code's hash is stored, one address can ask for five codes an hour, and the owner's note is separate from a buyer's, so one cannot stand in for the other.
+
+### The company
+
+Company name, city, contact person, phone and the address enquiries go to. A GSTIN is optional. When given, it is checked for its shape and its check character, which catches a mistyped number; the team still checks it against the document. The document is stored privately: only staff can open it, and it is never shown.
+
+### Three ways to add sites
+
+- **One at a time.** Five parts: what it is, where it is, price and terms, availability, then audience, permit and artwork. A mistake comes back beside its field with everything else kept. The position can be pressed on a map, pasted as coordinates or a Google Maps link, or typed.
+- **A spreadsheet.** The template has 37 columns, of which ten are needed. It has drop-downs where there is a fixed choice, an example row, and a second sheet that explains every column. A row that is right becomes a draft. A row that is not is reported with its row, its column and what to fix, and creates nothing. A row whose "Your reference" matches a site the owner already has updates it, so uploading twice never doubles a site.
+- **A media kit.** The file goes to the team with the owner's note. The team enters the sites as drafts under that owner, who checks them before sending them for review.
+
+Up to six photographs a site, each with the view it shows and the date it was taken.
+
+### What is refused, and why
+
+- A price set to show with no rate.
+- An audience figure with no source or no date.
+- A position outside India, which is almost always latitude and longitude swapped.
+- A file of the wrong kind or size, and a PDF that is damaged.
+- A second listing of what looks like the same face: within 25 metres and facing within 30 degrees. This is a warning to the owner and a flag to the team, not a refusal, because two faces back to back are two sites.
+
+### States and the team's check
+
+A site is a draft, in review, needs changes, or live. The owner sends drafts for review in one step. In the admin, the Sites list shows the review state and the date sent; filter it by "In review" to see what is waiting.
+
+- **Publishing a site approves it** and emails the owner that it is live, with its address.
+- **Returning a site needs a written reason**, and the admin refuses to save without one. The owner reads those exact words by email and on the site's page.
+- Ticking "Verified owner" on the owner, and "Verified location" on the site, is what puts those badges in front of buyers.
+
+A site published for an owner who is not yet verified is live for buyers and held back from search engines, as the content bar says.
+
+### After it is live
+
+The owner can change the price, how it shows, and availability at once, with no review. Saving also confirms availability as of that day. What the site is and where it is cannot be edited once live, because that is what the badges vouch for. The owner can withdraw a site at any time, and it comes off ohworks at once.
+
+### What the owner sees about quality
+
+Each site has a completeness score out of 100, and a list of what would raise it with the points each adds: a photograph, an audience figure with its source, a shown price, a permit number, the owner's verification, the artwork size, a landmark. The list uses the same weights as the score. Paying is not on it.
+
+### Emails
+
+| When | To | What |
+| --- | --- | --- |
+| Starting, or coming back | The owner | The code |
+| Sites sent for review | The team | How many, from whom, any flagged as possible duplicates, and a link to the queue |
+| Sites sent for review | The owner | That they are with the team |
+| A media kit arrives | The team | The file and the owner's note |
+| A site is published | The owner | That it is live, with its address |
+| A site is returned | The owner | The reviewer's reason |
+
+Without an email service these are written to the Outbox in the admin. On a development machine the confirm page also shows the code.
+
+### Checks
+
+Unit tests cover the GSTIN check, reading a pasted position, the duplicate rule, every refusal in the site checks, dates as written in India, the spreadsheet reader, the states and the improvement list. Browser tests on three engines walk the whole journey: code, company, a site with a mistake then right, a photograph, review, a return with a reason, publishing, the public page, a quick change, and withdrawal. Further tests cover one owner being unable to see or change another's site, the spreadsheet with its report and its no-doubling rule, the media kit and its privacy, and every endpoint refusing a stranger.
+
+### A demonstration owner on this machine
+
+To look around without listing anything, start at `/list-your-sites/` with `demo-owner@example.com`. The code is shown on the confirm page. It has one live site, one returned with a reason, and a media kit. It is labelled as a sample and is not part of the seeds.
+
+### Not in step 1
+
+- A code by WhatsApp or SMS: needs WhatsApp Business access.
+- A street-level picture beside the pin: needs a Google Maps key.
+- Reading the date and position from a photograph, and matching many photographs to sites at once: step 2.
+- The public owner page at `/owners/{name}`: step 2.
+- Editing a live site with a second review: step 2. Today the owner writes to the team.
+- Reading a PDF media kit into drafts automatically: needs an Anthropic key. Today the team enters them.
+- A leads inbox, figures per site, an availability calendar, team seats: step 3.
+- Cities beyond the six launch cities. A site elsewhere is refused with the list of cities that are open.
+

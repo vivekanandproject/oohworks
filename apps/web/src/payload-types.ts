@@ -84,6 +84,8 @@ export interface Config {
     subscribers: Subscriber;
     corrections: Correction;
     outbox: Outbox;
+    'owner-files': OwnerFile;
+    'access-codes': AccessCode;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -109,6 +111,8 @@ export interface Config {
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     corrections: CorrectionsSelect<false> | CorrectionsSelect<true>;
     outbox: OutboxSelect<false> | OutboxSelect<true>;
+    'owner-files': OwnerFilesSelect<false> | OwnerFilesSelect<true>;
+    'access-codes': AccessCodesSelect<false> | AccessCodesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -162,6 +166,24 @@ export interface Site {
    */
   title?: string | null;
   slug?: string | null;
+  /**
+   * Filter the list by “In review” to see what is waiting. Publishing a site approves it and emails the owner.
+   */
+  review?: ('draft' | 'submitted' | 'changes' | 'approved') | null;
+  /**
+   * Required when returning a site. The owner reads these exact words.
+   */
+  reviewNote?: string | null;
+  submittedAt?: string | null;
+  /**
+   * Set when another site sits within 25 m, facing the same way
+   */
+  duplicateNote?: string | null;
+  /**
+   * The owner's own code for this site
+   */
+  ownerRef?: string | null;
+  source?: ('team' | 'form' | 'sheet') | null;
   /**
    * Assigned once. Never changes.
    */
@@ -318,6 +340,23 @@ export interface Owner {
    * Shown on the site only when a buyer asks to see it
    */
   phone?: string | null;
+  /**
+   * The person who listed. Never shown on the site.
+   */
+  contactName?: string | null;
+  /**
+   * Check it against the document before ticking “Verified owner”. Never shown on the site.
+   */
+  gstin?: string | null;
+  /**
+   * The address this owner confirms, by code, to manage their own sites
+   */
+  loginEmail?: string | null;
+  source?: ('team' | 'self') | null;
+  /**
+   * When the owner first sent sites for review
+   */
+  submittedAt?: string | null;
   verified?: boolean | null;
   verifiedOn?: string | null;
   /**
@@ -992,7 +1031,66 @@ export interface Outbox {
   to: string;
   subject: string;
   text: string;
-  kind: 'code' | 'owner_enquiry' | 'buyer_confirmation' | 'owner_reply' | 'buyer_message';
+  kind:
+    | 'code'
+    | 'owner_enquiry'
+    | 'buyer_confirmation'
+    | 'owner_reply'
+    | 'buyer_message'
+    | 'owner_code'
+    | 'owner_notice'
+    | 'team_notice';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Company documents, spreadsheets and media kits from owners. Private: staff only.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "owner-files".
+ */
+export interface OwnerFile {
+  id: number;
+  owner: number | Owner;
+  kind: 'document' | 'media_kit' | 'sheet';
+  /**
+   * What the owner wrote with the file
+   */
+  note?: string | null;
+  handled?: boolean | null;
+  report?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "access-codes".
+ */
+export interface AccessCode {
+  id: number;
+  email: string;
+  token: string;
+  codeHash: string;
+  expiresAt: string;
+  attempts?: number | null;
+  usedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1089,6 +1187,14 @@ export interface PayloadLockedDocument {
         value: number | Outbox;
       } | null)
     | ({
+        relationTo: 'owner-files';
+        value: number | OwnerFile;
+      } | null)
+    | ({
+        relationTo: 'access-codes';
+        value: number | AccessCode;
+      } | null)
+    | ({
         relationTo: 'users';
         value: number | User;
       } | null);
@@ -1141,6 +1247,12 @@ export interface PayloadMigration {
 export interface SitesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  review?: T;
+  reviewNote?: T;
+  submittedAt?: T;
+  duplicateNote?: T;
+  ownerRef?: T;
+  source?: T;
   permanentId?: T;
   qualityScore?: T;
   sample?: T;
@@ -1228,6 +1340,11 @@ export interface OwnersSelect<T extends boolean = true> {
   about?: T;
   contactEmail?: T;
   phone?: T;
+  contactName?: T;
+  gstin?: T;
+  loginEmail?: T;
+  source?: T;
+  submittedAt?: T;
   verified?: T;
   verifiedOn?: T;
   medianReplyHours?: T;
@@ -1620,6 +1737,42 @@ export interface OutboxSelect<T extends boolean = true> {
   subject?: T;
   text?: T;
   kind?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "owner-files_select".
+ */
+export interface OwnerFilesSelect<T extends boolean = true> {
+  owner?: T;
+  kind?: T;
+  note?: T;
+  handled?: T;
+  report?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "access-codes_select".
+ */
+export interface AccessCodesSelect<T extends boolean = true> {
+  email?: T;
+  token?: T;
+  codeHash?: T;
+  expiresAt?: T;
+  attempts?: T;
+  usedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

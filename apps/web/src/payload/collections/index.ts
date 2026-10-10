@@ -16,3 +16,5 @@ export { Sites } from "./Sites";
 export { Enquiries } from "./Enquiries";
 export { Messages } from "./Messages";
 export { Outbox } from "./Outbox";
+export { AccessCodes } from "./AccessCodes";
+export { OwnerFiles } from "./OwnerFiles";

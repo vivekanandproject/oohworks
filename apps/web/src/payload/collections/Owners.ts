@@ -10,7 +10,7 @@ export const Owners: CollectionConfig = {
   admin: {
     useAsTitle: "name",
     group: "Marketplace",
-    defaultColumns: ["name", "city", "verified", "medianReplyHours"],
+    defaultColumns: ["name", "city", "verified", "source", "submittedAt"],
     description: "Media owners. The owner is always the seller.",
   },
   access: { read: () => true, create: isOps, update: isOps, delete: isAdmin },
@@ -38,6 +38,52 @@ export const Owners: CollectionConfig = {
       name: "phone",
       type: "text",
       admin: { description: "Shown on the site only when a buyer asks to see it" },
+    },
+    {
+      name: "contactName",
+      type: "text",
+      access: { read: staffOnly },
+      admin: { description: "The person who listed. Never shown on the site." },
+    },
+    {
+      name: "gstin",
+      type: "text",
+      access: { read: staffOnly },
+      admin: {
+        description:
+          "Check it against the document before ticking “Verified owner”. Never shown on the site.",
+      },
+    },
+    {
+      name: "loginEmail",
+      type: "email",
+      unique: true,
+      index: true,
+      access: { read: staffOnly },
+      admin: {
+        readOnly: true,
+        position: "sidebar",
+        description: "The address this owner confirms, by code, to manage their own sites",
+      },
+    },
+    {
+      name: "source",
+      type: "select",
+      defaultValue: "team",
+      options: [
+        { label: "Entered by the team", value: "team" },
+        { label: "Listed by the owner", value: "self" },
+      ],
+      admin: { position: "sidebar" },
+    },
+    {
+      name: "submittedAt",
+      type: "date",
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        description: "When the owner first sent sites for review",
+      },
     },
     {
       name: "verified",

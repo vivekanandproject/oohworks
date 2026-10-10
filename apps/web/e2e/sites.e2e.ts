@@ -1,4 +1,5 @@
 import { expect, test, type APIRequestContext } from "@playwright/test";
+import { adminHeaders } from "./helpers/admin";
 
 /** These run against the labelled sample sites loaded by `pnpm --filter @ohworks/web seed:sites`. */
 const SITE = "/in/bengaluru/koramangala/hoarding-80-feet-road-ows0001/";
@@ -186,17 +187,10 @@ test.describe("site page", () => {
 });
 
 async function lastCode(request: APIRequestContext, email: string): Promise<string> {
-  const login = await request.post("/api/users/login", {
-    data: {
-      email: "admin@ohworks.local",
-      password: process.env.SEED_ADMIN_PASSWORD ?? "ohworks-admin-local",
-    },
-  });
-  expect(login.ok(), "the seeded admin can sign in").toBeTruthy();
-  const { token } = (await login.json()) as { token: string };
+  const { Authorization } = await adminHeaders(request);
   const res = await request.get(
     `/api/outbox?where[to][equals]=${encodeURIComponent(email)}&where[kind][equals]=code&sort=-createdAt&limit=1`,
-    { headers: { Authorization: `JWT ${token}` } },
+    { headers: { Authorization } },
   );
   const body = (await res.json()) as { docs: { subject: string; text: string }[] };
   const code = /\b\d{6}\b/.exec(body.docs[0]?.text ?? "")?.[0];
@@ -209,16 +203,10 @@ async function mails(
   to: string,
   kind: string,
 ): Promise<{ subject: string; text: string }[]> {
-  const login = await request.post("/api/users/login", {
-    data: {
-      email: "admin@ohworks.local",
-      password: process.env.SEED_ADMIN_PASSWORD ?? "ohworks-admin-local",
-    },
-  });
-  const { token } = (await login.json()) as { token: string };
+  const { Authorization } = await adminHeaders(request);
   const res = await request.get(
     `/api/outbox?where[to][equals]=${encodeURIComponent(to)}&where[kind][equals]=${kind}&sort=-createdAt&limit=20`,
-    { headers: { Authorization: `JWT ${token}` } },
+    { headers: { Authorization } },
   );
   return ((await res.json()) as { docs: { subject: string; text: string }[] }).docs;
 }

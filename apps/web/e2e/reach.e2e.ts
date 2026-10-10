@@ -1,32 +1,8 @@
-import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+import { mails } from "./helpers/admin";
 
 /** These run against the labelled sample sites loaded by `pnpm --filter @ohworks/web seed:sites`. */
 const day = (n: number) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
-
-interface Mail {
-  subject: string;
-  text: string;
-}
-
-async function adminToken(request: APIRequestContext): Promise<string> {
-  const login = await request.post("/api/users/login", {
-    data: {
-      email: "admin@ohworks.local",
-      password: process.env.SEED_ADMIN_PASSWORD ?? "ohworks-admin-local",
-    },
-  });
-  expect(login.ok(), "the seeded admin can sign in").toBeTruthy();
-  return ((await login.json()) as { token: string }).token;
-}
-
-/** Emails written to the outbox, newest first. Nothing is really sent on a machine with no email service. */
-async function mails(request: APIRequestContext, to: string, kind: string): Promise<Mail[]> {
-  const res = await request.get(
-    `/api/outbox?where[to][equals]=${encodeURIComponent(to)}&where[kind][equals]=${kind}&sort=-createdAt&limit=40`,
-    { headers: { Authorization: `JWT ${await adminToken(request)}` } },
-  );
-  return ((await res.json()) as { docs: Mail[] }).docs;
-}
 
 /** The path and key of a link in an email, whatever host the email was written for. */
 const linkIn = (text: string, start: "reply" | "enquiries"): string => {

@@ -1,4 +1,5 @@
 import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
+import { adminHeaders } from "./helpers/admin";
 
 /** These run against the labelled sample sites loaded by `pnpm --filter @ohworks/web seed:sites`. */
 const RESULTS = "/search/?city=bengaluru";
@@ -354,16 +355,10 @@ async function follows(
   request: APIRequestContext,
   email: string,
 ): Promise<{ search?: string; source: string; city?: string }[]> {
-  const login = await request.post("/api/users/login", {
-    data: {
-      email: "admin@ohworks.local",
-      password: process.env.SEED_ADMIN_PASSWORD ?? "ohworks-admin-local",
-    },
-  });
-  const { token } = (await login.json()) as { token: string };
+  const { Authorization } = await adminHeaders(request);
   const res = await request.get(
     `/api/follows?where[email][equals]=${encodeURIComponent(email)}&limit=5`,
-    { headers: { Authorization: `JWT ${token}` } },
+    { headers: { Authorization } },
   );
   return ((await res.json()) as { docs: { search?: string; source: string; city?: string }[] })
     .docs;
