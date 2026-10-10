@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ohworks wireframes: Find sites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--paper:#f6f5f2;--raised:#fff;--sunken:#ecebe6;--ink:#101c30;--muted:#56606f;--hair:#d9d8d2;--hair2:#aeb3bb;--navy7:#1d3a66;--ok:#1c7a4c;--okt:#dcf2e6;--lit:#8a5d00;--litt:#fbeccb;--ctl:57px}
+*{box-sizing:border-box}
+body{margin:0;background:#dedcd5;color:var(--ink);font:15px/23px Archivo,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--navy7)}
+button,input,select,textarea{font:inherit;color:inherit}
+figure{margin:0}
+[hidden]{display:none!important}
+
+/* Viewer chrome: not part of the wireframe */
+.ctl{position:sticky;top:0;z-index:30;background:var(--ink);color:var(--paper);display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:10px 16px}
+.ctl b{font-weight:800;font-stretch:106%;letter-spacing:-.02em;font-size:16px}
+.grp{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.grp>span{font:500 11px/16px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em;opacity:.75;margin-right:2px}
+.ctl button{min-height:36px;padding:0 12px;border-radius:999px;border:1px solid rgba(246,245,242,.4);background:transparent;color:var(--paper);cursor:pointer;font-weight:500;font-size:14px}
+.ctl button[aria-pressed="true"]{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.ctl button:focus-visible{outline:2px solid #c9d6ea;outline-offset:2px}
+.about{max-width:1280px;margin:16px auto 0;padding:0 16px}
+.about article{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.3fr);gap:12px 28px;background:var(--raised);border:1px solid var(--hair);border-radius:12px;padding:16px 20px}
+.about h2{margin:0;font-weight:750;font-stretch:108%;font-size:22px;line-height:1.15;letter-spacing:-.02em}
+.about h3{margin:0 0 4px;font-weight:600;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.about p{margin:0}
+.about .sub{margin-top:4px;color:var(--muted)}
+.rec{display:inline-block;margin-top:8px;padding:2px 8px;border-radius:2px;background:var(--okt);color:var(--ok);font-weight:500;font-size:13px;line-height:19px}
+.stepn{display:inline-block;margin-top:8px;padding:2px 8px;border-radius:2px;background:var(--sunken);color:var(--muted);font-weight:500;font-size:13px;line-height:19px}
+@media (max-width:860px){.about article{grid-template-columns:minmax(0,1fr)}}
+.stage{padding:16px 16px 64px}
+.frame{width:100%;max-width:1280px;margin:0 auto;background:var(--paper);border:1px solid var(--hair2);container-type:inline-size;container-name:frame}
+body[data-width="820"] .frame{max-width:820px}
+body[data-width="390"] .frame{max-width:390px}
+
+/* Shared wireframe parts */
+.wrap{max-width:1200px;margin:0 auto;padding:0 40px}
+.nav{position:sticky;top:var(--ctl);z-index:6;background:var(--paper);border-bottom:1px solid var(--hair)}
+.navin{min-height:64px;display:flex;align-items:center;gap:24px}
+.wm{font-weight:800;font-stretch:106%;font-size:24px;letter-spacing:-.03em;color:var(--ink);text-decoration:none}
+.navlinks{display:flex;gap:24px}
+.navlinks a{color:var(--ink);text-decoration:none;font-weight:500}
+.navlinks a.cur{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:8px}
+.grow{flex:1}
+.signin{font-weight:600;text-decoration:none}
+.menu{display:none;font-weight:600;text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:6px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);text-decoration:none;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn.sec{background:var(--raised);color:var(--ink);border-color:var(--hair2)}
+.btn.sm{min-height:36px;padding:0 12px;font-size:14px}
+.btn.wide{width:100%}
+.tag{display:inline-block;font:500 11px/16px "IBM Plex Mono",monospace;color:var(--muted);background:var(--sunken);border:1px solid var(--hair);border-radius:2px;padding:1px 6px}
+.eye{font-weight:600;font-size:12px;line-height:16px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.meta{font-size:13px;line-height:19px;color:var(--muted)}
+.mono{font:400 14px/20px "IBM Plex Mono",monospace}
+.muted{color:var(--muted)}
+.ph{background:var(--sunken);border:1px solid var(--hair);border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font:500 12px/16px "IBM Plex Mono",monospace;color:var(--muted)}
+.r169{aspect-ratio:16/9}.r32{aspect-ratio:3/2}.r11{aspect-ratio:1}
+.flat{border:0;border-bottom:1px solid var(--hair);border-radius:0}
+.card{background:var(--raised);border:1px solid var(--hair);border-radius:12px}
+.clip{overflow:hidden}
+.pad{padding:20px}
+.cb{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px}
+.h1{margin:0;font-weight:800;font-stretch:110%;font-size:44px;line-height:1;letter-spacing:-.03em;text-wrap:balance}
+.h2{margin:0;font-weight:750;font-stretch:108%;font-size:26px;line-height:1.1;letter-spacing:-.02em}
+.h3{margin:0;font-weight:700;font-size:20px;line-height:1.2}
+.h4{margin:0;font-weight:700;font-size:16px;line-height:22px}
+.wf{padding:0 0 56px}
+.stack{display:flex;flex-direction:column}
+.g4{gap:4px}.g6{gap:6px}.g8{gap:8px}.g12{gap:12px}.g16{gap:16px}.g24{gap:24px}.g40{gap:40px}
+.between{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--hair2);background:var(--raised);color:var(--ink);text-decoration:none;font-weight:500;font-size:14px;white-space:nowrap}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+label{font-weight:600;font-size:14px;line-height:20px}
+.input{width:100%;min-height:44px;padding:0 12px;border-radius:6px;border:1px solid var(--hair2);background:var(--raised)}
+textarea.input{padding:10px 12px;min-height:96px}
+.aff{display:flex}
+.aff span{display:flex;align-items:center;padding:0 12px;border:1px solid var(--hair2);border-right:0;border-radius:6px 0 0 6px;background:var(--sunken);color:var(--muted);font-family:"IBM Plex Mono",monospace}
+.aff .input{border-radius:0 6px 6px 0}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.help{font-size:13px;line-height:19px;color:var(--muted)}
+.foot{border-top:1px solid var(--hair)}
+.fine{padding:24px 40px 32px;font-size:13px;line-height:19px;color:var(--muted)}
+
+/* Results */
+.searchrow{display:flex;flex-wrap:wrap;gap:8px;padding-top:24px}
+.searchrow .input{flex:1 1 320px;min-height:52px;font-size:16px}
+.fbar{position:sticky;top:calc(var(--ctl) + 65px);z-index:5;background:var(--paper);border-bottom:1px solid var(--hair)}
+.fbarin{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:10px;padding-bottom:10px}
+.dd{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--hair2);background:var(--raised);color:var(--ink);font-weight:500;font-size:14px;white-space:nowrap;text-decoration:none}
+.dd.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.dd i{font-style:normal;font-size:10px;opacity:.7}
+.rhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;padding:20px 0 16px}
+.rsplit{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:24px;align-items:start}
+.cards2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.cards3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.shot{position:relative}
+.shot .tl,.shot .tr,.shot .bl,.shot .br{position:absolute;font:500 11px/16px "IBM Plex Mono",monospace;background:var(--raised);border:1px solid var(--hair);border-radius:2px;padding:1px 6px;color:var(--ink)}
+.shot .tl{left:8px;top:8px}.shot .tr{right:8px;top:8px}.shot .bl{left:8px;bottom:8px}.shot .br{right:8px;bottom:8px}
+.shot button.tr{cursor:pointer;min-height:28px;font-family:Archivo,system-ui,sans-serif;font-weight:600;font-size:12px}
+.bdgs{display:flex;flex-wrap:wrap;gap:4px}
+.bdg{display:inline-flex;align-items:center;padding:1px 7px;border-radius:2px;font-size:12px;line-height:18px;font-weight:500;background:var(--sunken);border:1px solid var(--hair);color:var(--muted);white-space:nowrap}
+.bdg.ok{background:var(--okt);border-color:transparent;color:var(--ok)}
+.bdg.lit{background:var(--litt);border-color:transparent;color:var(--lit)}
+.price{font:500 18px/24px "IBM Plex Mono",monospace}
+.price small{font:13px/19px Archivo,system-ui,sans-serif;color:var(--muted)}
+.acts{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--hair);padding-top:10px;margin-top:2px}
+.ck{display:inline-flex;align-items:center;gap:6px;font-weight:500;font-size:13px;color:var(--muted)}
+.ck input{width:16px;height:16px;margin:0}
+.mapbox{position:sticky;top:calc(var(--ctl) + 65px + 61px + 16px);height:640px;border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:var(--sunken)}
+.mapbox svg{display:block;width:100%;height:100%}
+.mapbox .ctlz{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:4px}
+.mapbox .ctlz span{width:36px;height:36px;display:grid;place-items:center;background:var(--raised);border:1px solid var(--hair2);border-radius:6px;font-weight:700}
+.mapbox .area{position:absolute;left:50%;top:12px;transform:translateX(-50%)}
+.mapbox .note{position:absolute;left:12px;bottom:12px}
+.pop{position:absolute;left:38%;top:36%;width:210px;background:var(--raised);border:1px solid var(--hair);border-radius:6px;box-shadow:0 8px 24px rgba(16,28,48,.14);padding:10px;display:flex;flex-direction:column;gap:4px}
+.pager{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--hair);padding-top:20px;margin-top:24px}
+.pg{display:inline-flex;align-items:center;justify-content:center;min-width:40px;min-height:40px;padding:0 12px;border-radius:6px;border:1px solid var(--hair2);background:var(--raised);color:var(--ink);text-decoration:none;font-weight:600}
+.pg.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mbar{display:none}
+
+/* Drawers */
+.drawerwrap{display:grid;grid-template-columns:minmax(0,1fr) 440px;align-items:start}
+.dim{opacity:.4;padding:24px 40px;pointer-events:none}
+.drawer{background:var(--raised);border-left:1px solid var(--hair2);box-shadow:0 24px 64px rgba(16,28,48,.24);display:flex;flex-direction:column;min-height:100%}
+.dh{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--hair)}
+.dbody{padding:20px;display:flex;flex-direction:column;gap:24px}
+.dfoot{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 20px;background:var(--raised);border-top:1px solid var(--hair)}
+.fg{display:flex;flex-direction:column;gap:10px;padding-bottom:20px;border-bottom:1px solid var(--hair)}
+.fg:last-child{border-bottom:0;padding-bottom:0}
+.opt{display:flex;align-items:center;gap:8px;font-weight:400;font-size:15px;line-height:23px}
+.opt input{width:18px;height:18px;margin:0}
+.opt .n{margin-left:auto;font:400 13px/19px "IBM Plex Mono",monospace;color:var(--muted)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.hist{height:44px;display:flex;align-items:flex-end;gap:3px}
+.hist i{flex:1;background:var(--hair2);border-radius:2px 2px 0 0}
+
+/* Site page */
+.gallery{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:8px}
+.thumbs{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:8px}
+.thumbs .ph{border-radius:8px}
+.kfacts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid var(--hair);border-radius:12px;background:var(--raised);overflow:hidden}
+.kfacts>div{padding:12px 16px;border-right:1px solid var(--hair);min-width:0}
+.kfacts>div:last-child{border-right:0}
+.site{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:40px;align-items:start}
+.sticky{position:sticky;top:calc(var(--ctl) + 65px + 16px)}
+.spec{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:var(--raised)}
+.spec>div{padding:12px 16px;border-bottom:1px solid var(--hair);border-right:1px solid var(--hair);min-width:0}
+.spec .v{font:400 14px/20px "IBM Plex Mono",monospace;margin-top:2px}
+.spec .s{display:block;font-size:12px;line-height:16px;color:var(--muted)}
+.amount{font:500 28px/32px "IBM Plex Mono",monospace}
+.amount small{font:400 15px/23px Archivo,system-ui,sans-serif;color:var(--muted)}
+.terms{display:flex;flex-direction:column;gap:2px;font-size:13px;line-height:19px;color:var(--muted)}
+.neutral{border-top:1px solid var(--hair);padding-top:12px;font-size:13px;line-height:19px;color:var(--muted)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal b{font:600 11px/16px Archivo,system-ui,sans-serif;letter-spacing:.06em;color:var(--muted);text-align:center}
+.cal span{aspect-ratio:1;display:grid;place-items:center;border-radius:2px;font:12px/1 "IBM Plex Mono",monospace;background:var(--okt);color:var(--ok)}
+.cal span.bk{background:var(--sunken);color:var(--muted);text-decoration:line-through}
+.cal span.hd{background:var(--litt);color:var(--lit)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin-right:4px}
+.owner{display:flex;gap:12px;align-items:flex-start}
+.av{width:48px;height:48px;border-radius:999px;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-weight:700;flex:none}
+.steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.num{font:500 22px/28px "IBM Plex Mono",monospace;color:var(--muted)}
+.bbar{display:none}
+.statecard{display:flex;flex-direction:column;gap:10px}
+
+/* Basket */
+.xscroll{overflow-x:auto;border:1px solid var(--hair);border-radius:12px;background:var(--raised)}
+.cmp{border-collapse:collapse;width:100%;min-width:860px}
+.cmp th,.cmp td{padding:10px 14px;border-bottom:1px solid var(--hair);border-right:1px solid var(--hair);text-align:left;vertical-align:top;font-weight:400}
+.cmp tr:last-child th,.cmp tr:last-child td{border-bottom:0}
+.cmp th:first-child{position:sticky;left:0;background:var(--sunken);font-weight:600;font-size:12px;line-height:16px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);width:150px}
+.cmp td:last-child{border-right:0}
+.plan{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:40px;align-items:start}
+.prow{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--hair)}
+.prow .ph{height:48px;border-radius:6px;padding:0}
+.sumrow{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--hair)}
+.toast{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-radius:6px;background:var(--raised);border:1px solid var(--hair)}
+.toast i{width:10px;height:10px;border-radius:50%;margin-top:7px;flex:0 0 10px;background:var(--ok)}
+.code{display:flex;gap:8px}
+.code span{width:44px;height:52px;border:1px solid var(--hair2);border-radius:6px;background:var(--raised);display:grid;place-items:center;font:500 20px/1 "IBM Plex Mono",monospace}
+
+@container frame (max-width: 900px){
+  .rsplit,.site,.plan{grid-template-columns:minmax(0,1fr)}
+  .mapbox{position:relative;top:auto;height:300px;order:-1}
+  .cards3,.grid3,.steps3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sticky{position:static}
+  .drawerwrap{grid-template-columns:minmax(0,1fr)}
+  .dim{display:none}
+  .drawer{border-left:0;box-shadow:none}
+  .pop{left:30%;top:26%}
+}
+@container frame (max-width: 640px){
+  .wrap{padding:0 16px}
+  .navlinks,.signin,.nav .tag,.nav .short{display:none}
+  .menu{display:inline-flex}
+  .navin{gap:12px;min-height:56px}
+  .wm{font-size:22px}
+  .nav .btn{min-height:40px;padding:0 12px;font-size:14px}
+  .h1{font-size:30px}.h2{font-size:22px}
+  .fbar{top:calc(var(--ctl) + 57px)}
+  .fbarin{flex-wrap:nowrap;overflow-x:auto}
+  .cards2,.cards3,.grid2,.grid3,.steps3,.two{grid-template-columns:minmax(0,1fr)}
+  .mapbox{height:200px}
+  .pop,.mapbox .ctlz{display:none}
+  .kfacts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kfacts>div{border-bottom:1px solid var(--hair)}
+  .gallery{grid-template-columns:minmax(0,1fr)}
+  .thumbs{grid-template-rows:none;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .thumbs .ph{aspect-ratio:3/2}
+  .mbar{display:flex;position:sticky;bottom:0;z-index:7;gap:8px;padding:8px 16px;background:var(--raised);border-top:1px solid var(--hair)}
+  .mbar .btn{flex:1}
+  .bbar{display:flex;position:sticky;bottom:0;z-index:7;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:var(--raised);border-top:1px solid var(--hair)}
+  .fine{padding:24px 16px 32px}
+  .dbody{padding:16px}
+  .prow{grid-template-columns:56px minmax(0,1fr)}
+  .prow>:last-child{grid-column:2}
+}
+</style>
+</head>
+<body data-width="1280">
+
+<div class="ctl">
+  <b>ohworks wireframes: Find sites</b>
+  <div class="grp"><span>Results</span>
+    <button type="button" data-v="r1">List + map</button>
+    <button type="button" data-v="r2">List first</button>
+    <button type="button" data-v="rf">All filters</button>
+    <button type="button" data-v="rq">Quick view</button>
+    <button type="button" data-v="re">Few or none</button>
+  </div>
+  <div class="grp"><span>Site page</span>
+    <button type="button" data-v="s1">Site page</button>
+    <button type="button" data-v="s2">States</button>
+  </div>
+  <div class="grp"><span>Basket</span>
+    <button type="button" data-v="b1">Compare</button>
+    <button type="button" data-v="b2">Plan</button>
+    <button type="button" data-v="e1">Enquiry</button>
+  </div>
+  <div class="grp"><span>Width</span>
+    <button type="button" data-w="1280">Desktop</button>
+    <button type="button" data-w="820">Tablet</button>
+    <button type="button" data-w="390">Phone</button>
+  </div>
+</div>
+
+<div class="about">
+  <article data-for="r1">
+    <div><h2>Results: list beside a map</h2><p class="sub">Filters across the top, cards on the left, a map that stays in view on the right.</p><span class="rec">Chosen layout · step 1, map live in step 2</span></div>
+    <div><h3>What to check</h3><p>Does a card answer the first questions: what, where, what it looks like, price, free or booked, and who sells? Are the five filters in the bar the right five?</p></div>
+    <div><h3>On a phone</h3><p>Switch the width to Phone. The map becomes a strip above the list, and a bar at the bottom holds Filters, Sort and Map.</p></div>
+  </article>
+  <article data-for="r2" hidden>
+    <div><h2>Results: list first</h2><p class="sub">Three columns of cards, with the map one tap away.</p><span class="stepn">Alternative, shown for comparison</span></div>
+    <div><h3>Best at</h3><p>More sites on a screen. Suits a buyer who already knows the area and compares on facts and price.</p></div>
+    <div><h3>Costs</h3><p>Place is the first thing an out-of-home buyer judges, and here it is hidden until asked for. I would offer this as the "Hide map" setting of the chosen layout, not as the default.</p></div>
+  </article>
+  <article data-for="rf" hidden>
+    <div><h2>All filters</h2><p class="sub">Every filter in one panel, each option with the number of sites it would leave.</p><span class="stepn">Step 1</span></div>
+    <div><h3>What to check</h3><p>Seven groups: place, site, commercial, audience, trust, digital and seller. Are any missing, and are any not worth building yet?</p></div>
+    <div><h3>How it behaves</h3><p>Counts update as filters combine, so no choice leads to an empty page. On a phone it is a full-height sheet with the same footer.</p></div>
+  </article>
+  <article data-for="rq" hidden>
+    <div><h2>Quick view</h2><p class="sub">A side panel with the essentials of one site, opened from a card or a pin.</p><span class="stepn">Step 2</span></div>
+    <div><h3>Why</h3><p>A buyer can look at ten sites without leaving the list or losing their filters. The full page is one tap further for anyone who wants every detail.</p></div>
+    <div><h3>What to check</h3><p>Is this enough to decide whether to open the full page: photos, key facts, price, availability, owner?</p></div>
+  </article>
+  <article data-for="re" hidden>
+    <div><h2>Few results, and none</h2><p class="sub">What the page says when supply is thin, which it will be at launch.</p><span class="stepn">Step 1</span></div>
+    <div><h3>Few</h3><p>Real sites only. Then one-tap ways to widen the search, each showing how many sites it would add.</p></div>
+    <div><h3>None</h3><p>The follow form that exists today: leave an email and hear the day a matching site is listed. Every empty search also tells us where owners are needed.</p></div>
+  </article>
+  <article data-for="s1" hidden>
+    <div><h2>Site page</h2><p class="sub">Everything a buyer needs before asking, on one page.</p><span class="rec">Step 1 · the page that earns the enquiry</span></div>
+    <div><h3>What to check</h3><p>Walk the ten questions from the plan: what, where, what it looks like, who sees it, cost, when it is free, who sells it, whether it is legitimate, what to supply, and what happens next.</p></div>
+    <div><h3>On a phone</h3><p>One column, with a bar fixed at the bottom: the price on the left, Send enquiry on the right.</p></div>
+  </article>
+  <article data-for="s2" hidden>
+    <div><h2>Site page states</h2><p class="sub">The wording for every situation that is not the happy path.</p><span class="stepn">Step 1</span></div>
+    <div><h3>Why it matters</h3><p>A private price, a booked site or a missing figure is normal, not a failure. Each state says what is true and what to do next.</p></div>
+    <div><h3>What to check</h3><p>Is the tone right for owners as well as buyers? An owner who hides a price should not feel penalised.</p></div>
+  </article>
+  <article data-for="b1" hidden>
+    <div><h2>Compare</h2><p class="sub">Up to four sites side by side on the facts that decide a booking.</p><span class="stepn">Step 2</span></div>
+    <div><h3>What to check</h3><p>Are these the right rows? Audience shows its source on every cell, and a missing figure says so.</p></div>
+    <div><h3>On a phone</h3><p>The table scrolls sideways inside its box, with the row labels held in place.</p></div>
+  </article>
+  <article data-for="b2" hidden>
+    <div><h2>Plan</h2><p class="sub">The basket: shortlisted sites with dates and a budget, grouped by owner.</p><span class="stepn">Step 2, enquiry split in step 3</span></div>
+    <div><h3>What to check</h3><p>One enquiry goes out as one request per owner. Each owner sees only their own sites, never the rest of the plan.</p></div>
+    <div><h3>For agencies</h3><p>Share by link or WhatsApp, and export a site sheet as PDF or Excel.</p></div>
+  </article>
+  <article data-for="e1" hidden>
+    <div><h2>Enquiry</h2><p class="sub">One form, a code to confirm it is you, then a clear confirmation.</p><span class="rec">Step 1 · no account needed</span></div>
+    <div><h3>What to check</h3><p>Are these the fields an owner needs to reply at once: dates, brand and category, budget, creative status?</p></div>
+    <div><h3>Verification</h3><p>A code by email, as chosen. Owners only ever receive verified enquiries.</p></div>
+  </article>
+</div>
+
+<div class="stage"><div class="frame">
+
+<header class="nav"><div class="wrap navin">
+  <a class="wm" href="#">ohworks</a>
+  <nav class="navlinks" aria-label="Primary"><a href="#" class="cur">Find sites</a><a href="#">Newsroom</a><a href="#">For owners</a></nav>
+  <span class="grow"></span>
+  <a href="#" class="short" style="font-weight:600;text-decoration:none">Shortlist <span class="mono">[3]</span></a>
+  <a href="#" class="signin">Sign in</a>
+  <a href="#" class="btn">List your sites</a>
+  <a href="#" class="menu">Menu</a>
+</div></header>
+
+<!-- R1 List + map -->
+<section class="wf" id="r1">
+  <div class="wrap">
+    <div class="searchrow"><input class="input" aria-label="Search" value="20 × 10 ft hoardings in Bengaluru under ₹ 1 lakh"><a href="#" class="btn" style="min-height:52px">Find sites</a></div>
+    <div class="row" style="padding:12px 0 16px"><span class="meta">Understood as</span><span class="chip on">Bengaluru ×</span><span class="chip on">Hoardings ×</span><span class="chip on">20 × 10 ft ×</span><span class="chip on">Under ₹ 1 lakh a month ×</span></div>
+  </div>
+  <div class="fbar"><div class="wrap fbarin">
+    <a href="#" class="dd on">Place: Bengaluru <i>▼</i></a><a href="#" class="dd on">Format: Hoardings <i>▼</i></a><a href="#" class="dd on">Size <i>▼</i></a><a href="#" class="dd on">Price <i>▼</i></a><a href="#" class="dd">Dates <i>▼</i></a>
+    <a href="#" class="dd">All filters <span class="mono">[4]</span></a>
+    <span class="grow"></span>
+    <a href="#" class="dd">Sort: Best match <i>▼</i></a><a href="#" class="dd">Hide map</a>
+  </div></div>
+  <div class="wrap">
+    <div class="rhead">
+      <div><h1 class="h2">[42] hoardings in Bengaluru</h1><p class="meta" style="margin:4px 0 0">[Median 20 × 10 ft rate, ₹ X a month · ohworks data, Oct 2026] <span class="tag">Shown only when we have the data</span></p></div>
+      <a href="#">How results are ordered</a>
+    </div>
+    <div class="rsplit">
+      <div>
+        <div class="cards2">
+          <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="bl">[2 Oct 2026]</span><span class="br">3 photos</span><button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[20 × 10 ft hoarding, 80 Feet Road]</h2><div class="meta">[Koramangala, Bengaluru] · front-lit · faces north-bound</div><div class="bdgs"><span class="bdg ok">Verified owner</span><span class="bdg ok">Permit on file</span><span class="bdg lit">Updated 3 days ago</span></div><div class="between" style="align-items:center"><span class="price">[₹ 85,000] <small>/ month</small></span><span class="bdg ok">Available now</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+          <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="tl">Featured · paid placement</span><span class="bl">[28 Sep 2026]</span><span class="br">5 photos</span><button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[Digital LED, Silk Board junction]</h2><div class="meta">[HSR Layout, Bengaluru] · 10 s slots · 6 advertisers</div><div class="bdgs"><span class="bdg ok">Verified owner</span><span class="bdg">Digital</span><span class="bdg lit">Updated today</span></div><div class="between" style="align-items:center"><span class="price">[From ₹ 1,20,000] <small>/ month</small></span><span class="bdg ok">Available now</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+          <article class="card clip"><div class="shot ph r32 flat">Format icon · No photo yet<button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[40 × 20 ft unipole, Outer Ring Road]</h2><div class="meta">[Marathahalli, Bengaluru] · back-lit · faces east-bound</div><div class="bdgs"><span class="bdg ok">Verified owner</span></div><div class="between" style="align-items:center"><span class="price" style="font-size:16px">Price on request</span><span class="bdg">Booked until 14 Nov</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+          <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="bl">[19 Sep 2026]</span><span class="br">2 photos</span><button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[Format, size, road]</h2><div class="meta">[Locality, city] · [lighting] · [facing]</div><div class="bdgs"><span class="bdg ok">Verified owner</span><span class="bdg ok">Verified location</span><span class="bdg">Replies in under a day</span></div><div class="between" style="align-items:center"><span class="price">[₹ 72,000] <small>/ month</small></span><span class="bdg ok">Available now</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+          <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="bl">[11 Aug 2026]</span><span class="br">3 photos</span><button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[Format, size, road]</h2><div class="meta">[Locality, city] · [lighting] · [facing]</div><div class="bdgs"><span class="bdg ok">Permit on file</span></div><div class="between" style="align-items:center"><span class="price">[₹ 64,000] <small>/ month</small></span><span class="bdg lit">Last confirmed 6 weeks ago</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+          <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="bl">[30 Sep 2026]</span><span class="br">4 photos</span><button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[Format, size, road]</h2><div class="meta">[Locality, city] · [lighting] · [facing]</div><div class="bdgs"><span class="bdg ok">Verified owner</span><span class="bdg ok">Permit on file</span></div><div class="between" style="align-items:center"><span class="price">[₹ 95,000] <small>/ month</small></span><span class="bdg ok">Available now</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+        </div>
+        <nav class="pager" aria-label="Pages"><span class="mono muted">Page 1 of [4] · real links</span><div class="row"><a href="#" class="pg on">1</a><a href="#" class="pg">2</a><a href="#" class="pg">3</a><a href="#" class="pg">Next</a></div></nav>
+      </div>
+      <aside class="mapbox" aria-label="Map of results">
+        <svg viewBox="0 0 500 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="500" height="640" fill="#ecebe6"/>
+          <path d="M340 0 C380 120 300 200 360 330 C410 440 380 560 430 640 L500 640 L500 0 Z" fill="#d6e4ef"/>
+          <g stroke="#aeb3bb" stroke-width="12" fill="none"><path d="M-10 180 L520 240"/><path d="M150 -10 L210 660"/></g>
+          <g stroke="#ffffff" stroke-width="8" fill="none"><path d="M-10 180 L520 240"/><path d="M150 -10 L210 660"/><path d="M-10 420 L330 380"/><path d="M40 -10 L20 660"/><path d="M-10 560 L300 600"/><path d="M270 60 L250 640"/></g>
+          <g fill="#101c30"><circle cx="110" cy="120" r="18"/><circle cx="300" cy="500" r="18"/></g>
+          <g fill="#f6f5f2" font-family="IBM Plex Mono, monospace" font-size="13" font-weight="600" text-anchor="middle"><text x="110" y="125">12</text><text x="300" y="505">7</text></g>
+          <g fill="#101c30"><rect x="52" y="290" width="22" height="14" rx="2"/><rect x="62" y="304" width="2" height="9"/><rect x="232" y="150" width="22" height="14" rx="2"/><rect x="242" y="164" width="2" height="9"/><rect x="96" y="470" width="22" height="14" rx="2"/><rect x="106" y="484" width="2" height="9"/><rect x="290" y="300" width="22" height="14" rx="2"/><rect x="300" y="314" width="2" height="9"/></g>
+          <g><circle cx="181" cy="246" r="20" fill="#c9d6ea"/><rect x="166" y="222" width="30" height="20" rx="3" fill="#101c30" stroke="#ffffff" stroke-width="2"/><rect x="179.5" y="242" width="3" height="12" fill="#101c30"/><circle cx="181" cy="232" r="3.5" fill="#ffffff"/></g>
+        </svg>
+        <span class="btn sec sm area">Search this area</span>
+        <div class="ctlz"><span>+</span><span>−</span></div>
+        <div class="pop"><span class="eye">Selected site</span><b style="font-weight:600">[20 × 10 ft hoarding, 80 Feet Road]</b><span class="price" style="font-size:15px">[₹ 85,000] <small>/ month</small></span><a href="#">Quick view</a></div>
+        <span class="tag note">Still image first, live map on first touch · hover a card to light its pin</span>
+      </aside>
+    </div>
+  </div>
+  <div class="mbar"><a href="#" class="btn sec sm">Filters <span class="mono">&nbsp;[4]</span></a><a href="#" class="btn sec sm">Sort</a><a href="#" class="btn sm">Map</a></div>
+</section>
+
+<!-- R2 List first -->
+<section class="wf" id="r2" hidden>
+  <div class="wrap">
+    <div class="searchrow"><input class="input" aria-label="Search" value="20 × 10 ft hoardings in Bengaluru under ₹ 1 lakh"><a href="#" class="btn" style="min-height:52px">Find sites</a></div>
+    <div class="row" style="padding:12px 0 16px"><span class="meta">Understood as</span><span class="chip on">Bengaluru ×</span><span class="chip on">Hoardings ×</span><span class="chip on">20 × 10 ft ×</span><span class="chip on">Under ₹ 1 lakh a month ×</span></div>
+  </div>
+  <div class="fbar"><div class="wrap fbarin">
+    <a href="#" class="dd on">Place: Bengaluru <i>▼</i></a><a href="#" class="dd on">Format: Hoardings <i>▼</i></a><a href="#" class="dd on">Size <i>▼</i></a><a href="#" class="dd on">Price <i>▼</i></a><a href="#" class="dd">Dates <i>▼</i></a><a href="#" class="dd">All filters <span class="mono">[4]</span></a>
+    <span class="grow"></span>
+    <a href="#" class="dd">Sort: Best match <i>▼</i></a><a href="#" class="dd">Show map</a>
+  </div></div>
+  <div class="wrap">
+    <div class="rhead"><h1 class="h2">[42] hoardings in Bengaluru</h1><a href="#">How results are ordered</a></div>
+    <div class="cards3">
+      <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="bl">[2 Oct 2026]</span><span class="br">3 photos</span><button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[Format, size, road]</h2><div class="meta">[Locality, city] · [lighting] · [facing]</div><div class="bdgs"><span class="bdg ok">Verified owner</span><span class="bdg ok">Permit on file</span></div><div class="between" style="align-items:center"><span class="price">[₹ 85,000] <small>/ month</small></span><span class="bdg ok">Available now</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+      <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="bl">[28 Sep 2026]</span><span class="br">5 photos</span><button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[Format, size, road]</h2><div class="meta">[Locality, city] · [lighting] · [facing]</div><div class="bdgs"><span class="bdg ok">Verified owner</span><span class="bdg lit">Updated today</span></div><div class="between" style="align-items:center"><span class="price">[₹ 72,000] <small>/ month</small></span><span class="bdg ok">Available now</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+      <article class="card clip"><div class="shot ph r32 flat">Format icon · No photo yet<button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[Format, size, road]</h2><div class="meta">[Locality, city] · [lighting] · [facing]</div><div class="bdgs"><span class="bdg ok">Verified owner</span></div><div class="between" style="align-items:center"><span class="price" style="font-size:16px">Price on request</span><span class="bdg">Booked until 14 Nov</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+      <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="bl">[19 Sep 2026]</span><span class="br">2 photos</span><button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[Format, size, road]</h2><div class="meta">[Locality, city] · [lighting] · [facing]</div><div class="bdgs"><span class="bdg ok">Verified location</span></div><div class="between" style="align-items:center"><span class="price">[₹ 64,000] <small>/ month</small></span><span class="bdg ok">Available now</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+      <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="bl">[11 Aug 2026]</span><span class="br">3 photos</span><button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[Format, size, road]</h2><div class="meta">[Locality, city] · [lighting] · [facing]</div><div class="bdgs"><span class="bdg ok">Permit on file</span></div><div class="between" style="align-items:center"><span class="price">[₹ 95,000] <small>/ month</small></span><span class="bdg lit">Last confirmed 6 weeks ago</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+      <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="bl">[30 Sep 2026]</span><span class="br">4 photos</span><button type="button" class="tr">Save</button></div><div class="cb"><h2 class="h4">[Format, size, road]</h2><div class="meta">[Locality, city] · [lighting] · [facing]</div><div class="bdgs"><span class="bdg ok">Verified owner</span><span class="bdg">Replies in under a day</span></div><div class="between" style="align-items:center"><span class="price">[₹ 58,000] <small>/ month</small></span><span class="bdg ok">Available now</span></div><div class="acts"><label class="ck"><input type="checkbox"> Compare</label><a href="#">Quick view</a><a href="#" class="btn sm">Enquire</a></div></div></article>
+    </div>
+    <nav class="pager" aria-label="Pages"><span class="mono muted">Page 1 of [4] · real links</span><div class="row"><a href="#" class="pg on">1</a><a href="#" class="pg">2</a><a href="#" class="pg">3</a><a href="#" class="pg">Next</a></div></nav>
+  </div>
+  <div class="mbar"><a href="#" class="btn sec sm">Filters <span class="mono">&nbsp;[4]</span></a><a href="#" class="btn sec sm">Sort</a><a href="#" class="btn sm">Map</a></div>
+</section>
+
+<!-- All filters -->
+<section class="wf" id="rf" hidden>
+  <div class="drawerwrap">
+    <div class="dim"><div class="ph" style="height:52px;border-radius:6px">Search</div><div class="ph" style="height:40px;margin-top:16px;border-radius:999px">Filter bar</div><div class="cards2" style="margin-top:24px"><div class="ph" style="height:300px">Card</div><div class="ph" style="height:300px">Card</div><div class="ph" style="height:300px">Card</div><div class="ph" style="height:300px">Card</div></div></div>
+    <aside class="drawer" aria-label="All filters">
+      <div class="dh"><h1 class="h3">All filters</h1><a href="#" style="font-weight:600">Close</a></div>
+      <div class="dbody">
+        <div class="fg"><span class="eye">Place</span>
+          <div class="field"><label for="f-city">City</label><select id="f-city" class="input"><option>Bengaluru</option></select></div>
+          <label class="opt"><input type="checkbox" checked> Koramangala <span class="n">[14]</span></label>
+          <label class="opt"><input type="checkbox"> HSR Layout <span class="n">[9]</span></label>
+          <label class="opt"><input type="checkbox"> Marathahalli <span class="n">[7]</span></label>
+          <a href="#">Show all [22] localities</a>
+          <div class="field"><label for="f-near">Near a landmark</label><input id="f-near" class="input" placeholder="e.g. Silk Board junction"><span class="help">Within <b>2 km</b> <span class="tag">Radius slider</span></span></div>
+        </div>
+        <div class="fg"><span class="eye">Site</span>
+          <label class="opt"><input type="checkbox" checked> Hoardings <span class="n">[28]</span></label>
+          <label class="opt"><input type="checkbox"> Unipoles <span class="n">[9]</span></label>
+          <label class="opt"><input type="checkbox"> LED screens <span class="n">[6]</span></label>
+          <label class="opt"><input type="checkbox"> Bus shelters <span class="n">[11]</span></label>
+          <div class="row"><span class="chip on">Static</span><span class="chip">Digital</span></div>
+          <div class="two"><div class="field"><label for="f-w">Width</label><div class="aff"><span>ft</span><input id="f-w" class="input mono" value="20"></div></div><div class="field"><label for="f-h">Height</label><div class="aff"><span>ft</span><input id="f-h" class="input mono" value="10"></div></div></div>
+          <div class="row"><span class="meta">Lighting</span><span class="chip">Front-lit</span><span class="chip">Back-lit</span><span class="chip">Not lit</span></div>
+          <div class="row"><span class="meta">Facing traffic</span><span class="chip">North-bound</span><span class="chip">South-bound</span><span class="chip">East</span><span class="chip">West</span></div>
+        </div>
+        <div class="fg"><span class="eye">Commercial</span>
+          <div class="hist" aria-hidden="true"><i style="height:20%"></i><i style="height:45%"></i><i style="height:80%"></i><i style="height:100%"></i><i style="height:70%"></i><i style="height:40%"></i><i style="height:25%"></i><i style="height:12%"></i></div>
+          <div class="two"><div class="field"><label for="f-min">From</label><div class="aff"><span>₹</span><input id="f-min" class="input mono" placeholder="No minimum"></div></div><div class="field"><label for="f-max">Up to</label><div class="aff"><span>₹</span><input id="f-max" class="input mono" value="1,00,000"></div></div></div>
+          <label class="opt"><input type="checkbox"> Only sites that show a price <span class="n">[31]</span></label>
+          <div class="two"><div class="field"><label for="f-from">Available from</label><input id="f-from" class="input" placeholder="1 Nov 2026"></div><div class="field"><label for="f-to">Until</label><input id="f-to" class="input" placeholder="30 Nov 2026"></div></div>
+        </div>
+        <div class="fg"><span class="eye">Audience</span>
+          <div class="field"><label for="f-aud">Weekly audience</label><select id="f-aud" class="input"><option>Any</option><option>Over 1 lakh</option><option>Over 5 lakh</option></select><span class="help">Counts only sites that give a figure with a named source.</span></div>
+        </div>
+        <div class="fg"><span class="eye">Trust</span>
+          <label class="opt"><input type="checkbox"> Verified owner <span class="n">[36]</span></label>
+          <label class="opt"><input type="checkbox"> Verified location <span class="n">[29]</span></label>
+          <label class="opt"><input type="checkbox"> Permit on file <span class="n">[21]</span></label>
+          <label class="opt"><input type="checkbox"> Updated in the last 30 days <span class="n">[33]</span></label>
+          <label class="opt"><input type="checkbox"> Replies in under a day <span class="n">[18]</span></label>
+        </div>
+        <div class="fg"><span class="eye">Digital screens</span>
+          <div class="two"><div class="field"><label for="f-spot">Spot length</label><select id="f-spot" class="input"><option>Any</option><option>10 s</option><option>15 s</option></select></div><div class="field"><label for="f-prog">Programmatic</label><select id="f-prog" class="input"><option>Any</option><option>Available via an exchange</option></select></div></div>
+        </div>
+        <div class="fg"><span class="eye">Seller</span>
+          <div class="field"><label for="f-own">Media owner</label><input id="f-own" class="input" placeholder="Type an owner's name"></div>
+        </div>
+      </div>
+      <div class="dfoot"><a href="#" style="font-weight:600">Clear all</a><a href="#" class="btn">Show [42] sites</a></div>
+    </aside>
+  </div>
+</section>
+
+<!-- Quick view -->
+<section class="wf" id="rq" hidden>
+  <div class="drawerwrap">
+    <div class="dim"><div class="ph" style="height:52px;border-radius:6px">Search</div><div class="ph" style="height:40px;margin-top:16px;border-radius:999px">Filter bar</div><div class="cards2" style="margin-top:24px"><div class="ph" style="height:300px;border:2px solid var(--ink)">The card you opened</div><div class="ph" style="height:300px">Card</div><div class="ph" style="height:300px">Card</div><div class="ph" style="height:300px">Card</div></div></div>
+    <aside class="drawer" aria-label="Quick view">
+      <div class="dh"><span class="eye">Quick view</span><a href="#" style="font-weight:600">Close</a></div>
+      <div class="dbody" style="gap:16px">
+        <div class="shot ph r169">Approach photo 16:9<span class="bl">[2 Oct 2026]</span><span class="br">1 of 3</span></div>
+        <div class="row"><div class="ph" style="width:72px;height:48px;border-radius:6px;border:2px solid var(--ink)">Approach</div><div class="ph" style="width:72px;height:48px;border-radius:6px">Day</div><div class="ph" style="width:72px;height:48px;border-radius:6px">Night</div></div>
+        <h1 class="h3">[20 × 10 ft hoarding, 80 Feet Road]</h1>
+        <div class="meta">[Koramangala, Bengaluru]</div>
+        <div class="bdgs"><span class="bdg ok">Verified owner</span><span class="bdg ok">Permit on file</span><span class="bdg lit">Updated 3 days ago</span></div>
+        <div class="spec" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div><div class="eye">Size</div><div class="v">[20 × 10 ft (6.1 × 3.0 m)]</div></div><div><div class="eye">Lighting</div><div class="v">[Front-lit, 6 pm to 11 pm]</div></div><div><div class="eye">Facing</div><div class="v">[225° SW, north-bound traffic]</div></div><div><div class="eye">Audience</div><div class="v">[4.2 lakh a week]<span class="s">[RoadStar, Sep 2026]</span></div></div></div>
+        <div class="between" style="align-items:center"><span class="amount" style="font-size:24px">[₹ 85,000] <small>/ month</small></span><span class="bdg ok">Available now</span></div>
+        <div class="meta">Owner rate · 3-month minimum · availability confirmed [2 Oct 2026]</div>
+        <div class="owner card pad" style="padding:12px"><span class="av">L</span><div><b style="font-weight:600">[Lakshmi Ads]</b><div class="meta">Verified owner · replies in under a day · [12] sites</div></div></div>
+      </div>
+      <div class="dfoot" style="flex-wrap:wrap"><div class="row"><a href="#" class="btn sec sm">Save</a><a href="#" class="btn sec sm">Compare</a></div><div class="row"><a href="#" style="font-weight:600">Open full page</a><a href="#" class="btn">Enquire</a></div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- Few or none -->
+<section class="wf" id="re" hidden><div class="wrap stack g40" style="padding-top:24px">
+  <div class="stack g16">
+    <span class="tag" style="align-self:flex-start">When only a few sites match</span>
+    <h1 class="h2">[2] hoardings in Koramangala under ₹ 50,000</h1>
+    <div class="cards3">
+      <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="bl">[2 Oct 2026]</span></div><div class="cb"><h2 class="h4">[Format, size, road]</h2><div class="meta">[Locality, city] · [lighting] · [facing]</div><div class="between" style="align-items:center"><span class="price">[₹ 45,000] <small>/ month</small></span><span class="bdg ok">Available now</span></div></div></article>
+      <article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2<span class="bl">[21 Sep 2026]</span></div><div class="cb"><h2 class="h4">[Format, size, road]</h2><div class="meta">[Locality, city] · [lighting] · [facing]</div><div class="between" style="align-items:center"><span class="price">[₹ 48,000] <small>/ month</small></span><span class="bdg ok">Available now</span></div></div></article>
+    </div>
+    <div class="card pad stack g12">
+      <h2 class="h3">Widen your search</h2>
+      <p class="muted" style="margin:0">Each change shows how many sites it would add. One tap applies it.</p>
+      <div class="row"><a href="#" class="chip">Raise the price limit to ₹ 1 lakh <span class="mono">+[14]</span></a><a href="#" class="chip">Include unipoles <span class="mono">+[9]</span></a><a href="#" class="chip">All of Bengaluru <span class="mono">+[31]</span></a><a href="#" class="chip">Include sites with price on request <span class="mono">+[6]</span></a></div>
+    </div>
+  </div>
+  <div class="stack g16" style="border-top:1px solid var(--hair);padding-top:32px">
+    <span class="tag" style="align-self:flex-start">When nothing matches</span>
+    <div class="card pad stack g12" style="max-width:760px;border-style:dashed;border-color:var(--hair2);text-align:center;align-items:center">
+      <div class="ph" style="width:48px;height:48px;border-radius:999px;padding:0">Pin</div>
+      <h2 class="h3">No hoardings in Koramangala yet</h2>
+      <p class="muted" style="margin:0;max-width:44ch">The first verified sites go live city by city. Leave your email and we will tell you the day hoardings in Koramangala appear.</p>
+    </div>
+    <div class="row" style="max-width:760px"><input class="input" style="flex:1 1 220px;width:auto" aria-label="Your email" placeholder="you@company.com"><a href="#" class="btn">Tell me when hoardings in Koramangala are listed</a></div>
+    <div class="row"><a href="#" style="font-weight:600">Own sites here? List them free</a><a href="#" style="font-weight:600">Read the cost guide for Bengaluru</a></div>
+  </div>
+</div></section>
+
+<!-- Site page -->
+<section class="wf" id="s1" hidden>
+  <div class="wrap stack g24" style="padding-top:24px">
+    <div class="stack g8">
+      <div class="meta">India › Bengaluru › Koramangala</div>
+      <h1 class="h1">[20 × 10 ft hoarding, 80 Feet Road]</h1>
+      <div class="bdgs"><span class="bdg ok">Verified owner</span><span class="bdg ok">Verified location</span><span class="bdg ok">Permit on file</span><span class="bdg lit">Updated 3 days ago</span><span class="bdg">Replies in under a day</span></div>
+    </div>
+    <div class="gallery">
+      <div class="shot ph r169">Approach photo 16:9, from the road at driver height<span class="bl">[2 Oct 2026] · GPS-stamped</span><span class="br">1 of 3</span></div>
+      <div class="thumbs"><div class="ph">Approach</div><div class="ph">Day, close</div><div class="ph">Night</div></div>
+    </div>
+    <div class="kfacts">
+      <div><div class="eye">Size</div><div class="mono">[20 × 10 ft]</div></div>
+      <div><div class="eye">Lighting</div><div class="mono">[Front-lit]</div></div>
+      <div><div class="eye">Facing</div><div class="mono">[225° SW]</div></div>
+      <div><div class="eye">Price</div><div class="mono">[₹ 85,000 / month]</div></div>
+      <div><div class="eye">Availability</div><div class="mono">[Available now]</div></div>
+    </div>
+    <div class="site">
+      <div class="stack g40">
+        <section class="stack g12"><h2 class="h2">Specifications</h2>
+          <div class="spec">
+            <div><div class="eye">Format</div><div class="v">[Hoarding, static]</div></div>
+            <div><div class="eye">Size</div><div class="v">[20 × 10 ft (6.1 × 3.0 m)]</div></div>
+            <div><div class="eye">Lighting</div><div class="v">[Front-lit, 6 pm to 11 pm]</div></div>
+            <div><div class="eye">Facing</div><div class="v">[225° SW]<span class="s">[north-bound traffic]</span></div></div>
+            <div><div class="eye">Coordinates</div><div class="v">[12.93512, 77.62214]<span class="s">[verified 2 Oct 2026]</span></div></div>
+            <div><div class="eye">Height above road</div><div class="v">[6 m]</div></div>
+            <div><div class="eye">Audience</div><div class="v">[4.2 lakh a week]<span class="s">[RoadStar, Sep 2026]</span></div></div>
+            <div><div class="eye">Permit</div><div class="v">[BBMP 2026/AD/1182]<span class="s">[valid to Mar 2027]</span></div></div>
+            <div><div class="eye">Unit ID</div><div class="v">[OW-8K3X2]</div></div>
+            <div><div class="eye">Last verified</div><div class="v">[2 Oct 2026]</div></div>
+          </div>
+          <span class="tag" style="align-self:flex-start">No value appears without its source. A missing one reads "Not provided yet · ask the owner".</span>
+        </section>
+        <section class="stack g12"><h2 class="h2">Where it is</h2>
+          <div class="ph" style="height:300px">Map with the pin, a facing arrow and nearby landmarks. Still image first, live on tap.</div>
+          <div class="between"><span class="mono">[80 Feet Road, opposite Sony Signal, Koramangala]</span><a href="#" style="font-weight:600">Open in Google Maps</a></div>
+          <div class="row"><span class="bdg">[Sony Signal · 40 m]</span><span class="bdg">[Forum Mall · 600 m]</span><span class="bdg">[Koramangala bus depot · 1.1 km]</span></div>
+        </section>
+        <section class="stack g12"><h2 class="h2">Who sees it</h2>
+          <div class="card pad stack g8"><div class="amount">[4.2 lakh] <small>people a week</small></div><div class="meta">[Metric: weekly impressions, adults 18+] · [Source: RoadStar] · [Method: traffic counts and visibility] · [Sep 2026]</div></div>
+        </section>
+        <section class="stack g12"><h2 class="h2">What you supply</h2>
+          <div class="spec"><div><div class="eye">Artwork size</div><div class="v">[20 × 10 ft at 30 dpi]</div></div><div><div class="eye">File type</div><div class="v">[PDF or TIFF, CMYK]</div></div><div><div class="eye">Lead time</div><div class="v">[7 days before start]</div></div><div><div class="eye">Printing and mounting</div><div class="v">[By the owner, ₹ X]</div></div><div><div class="eye">Minimum period</div><div class="v">[3 months]</div></div><div><div class="eye">Categories not accepted</div><div class="v">[Alcohol, tobacco]</div></div></div>
+        </section>
+        <section class="stack g12"><div class="between" style="align-items:center"><h2 class="h2">Campaigns that ran here</h2><span class="tag">Only when they exist</span></div>
+          <div class="grid2"><div class="card pad stack g6"><div class="eye">[Brand] · [Mar 2026]</div><b style="font-weight:600">[Case study headline]</b></div><div class="card pad stack g6"><div class="eye">[Brand] · [Nov 2025]</div><b style="font-weight:600">[Case study headline]</b></div></div>
+        </section>
+        <section class="stack g12"><h2 class="h2">What happens when you enquire</h2>
+          <div class="steps3"><div class="stack g6"><span class="num">01</span><b style="font-weight:600">It goes straight to the owner</b><span class="muted">[Lakshmi Ads] gets your dates, category and budget. Nobody sits in between.</span></div><div class="stack g6"><span class="num">02</span><b style="font-weight:600">They reply to you</b><span class="muted">Most owners answer within a day, here and by email.</span></div><div class="stack g6"><span class="num">03</span><b style="font-weight:600">You deal directly</b><span class="muted">Contract, invoice and payment stay between you and them. ohworks charges nothing.</span></div></div>
+        </section>
+      </div>
+      <aside class="sticky stack g16">
+        <section class="card pad stack g12">
+          <div class="amount">[₹ 85,000] <small>/ month</small></div>
+          <div class="terms"><span>Owner rate · updated [3 Oct 2026]</span><span>[3-month minimum]</span><span>[Printing and mounting ₹ X, once]</span><span>[Taxes extra]</span></div>
+          <a href="#" class="btn wide">Send enquiry</a>
+          <div class="row"><a href="#" class="btn sec sm" style="flex:1">Save</a><a href="#" class="btn sec sm" style="flex:1">Compare</a><a href="#" class="btn sec sm" style="flex:1">Share</a></div>
+          <div class="neutral">Goes straight to [Lakshmi Ads]. ohworks never sells media or takes a media margin. Owners set prices and keep their clients.</div>
+        </section>
+        <section class="card pad stack g12">
+          <div class="between" style="align-items:center"><h2 class="h3">Availability</h2><span class="meta">Confirmed [2 Oct 2026]</span></div>
+          <div class="between" style="align-items:center"><a href="#">Earlier</a><b style="font-weight:600">[November 2026]</b><a href="#">Later</a></div>
+          <div class="cal"><b>M</b><b>T</b><b>W</b><b>T</b><b>F</b><b>S</b><b>S</b><span class="bk">1</span><span class="bk">2</span><span class="bk">3</span><span class="bk">4</span><span class="bk">5</span><span class="bk">6</span><span class="bk">7</span><span class="bk">8</span><span class="bk">9</span><span class="bk">10</span><span class="bk">11</span><span class="bk">12</span><span class="bk">13</span><span class="bk">14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span class="hd">25</span><span class="hd">26</span><span class="hd">27</span><span>28</span></div>
+          <div class="legend"><span><i style="background:var(--okt)"></i>Free</span><span><i style="background:var(--sunken)"></i>Booked</span><span><i style="background:var(--litt)"></i>On hold</span></div>
+        </section>
+        <section class="card pad stack g12">
+          <div class="owner"><span class="av">L</span><div><b style="font-weight:600">[Lakshmi Ads]</b><div class="meta">[Bengaluru] · [12] sites on ohworks</div></div></div>
+          <div class="bdgs"><span class="bdg ok">Verified owner</span><span class="bdg">Replies in under a day</span></div>
+          <div class="row"><a href="#" class="btn sec sm">Show phone</a><a href="#" class="btn sec sm">See all their sites</a></div>
+        </section>
+      </aside>
+    </div>
+    <section class="stack g16"><h2 class="h2">Similar sites nearby</h2>
+      <div class="grid3"><article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2</div><div class="cb"><b class="h4">[Format, size, road]</b><div class="meta">[600 m away] · [lighting]</div><span class="price">[₹ 72,000] <small>/ month</small></span></div></article><article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2</div><div class="cb"><b class="h4">[Format, size, road]</b><div class="meta">[1.2 km away] · [lighting]</div><span class="price" style="font-size:16px">Price on request</span></div></article><article class="card clip"><div class="shot ph r32 flat">Approach photo 3:2</div><div class="cb"><b class="h4">[Format, size, road]</b><div class="meta">[1.8 km away] · [lighting]</div><span class="price">[₹ 95,000] <small>/ month</small></span></div></article></div>
+      <a href="#" class="meta">Something wrong with this listing? Tell us what you saw.</a>
+    </section>
+  </div>
+  <div class="bbar"><div><div class="price">[₹ 85,000] <small>/ month</small></div><div class="meta">Available now</div></div><a href="#" class="btn">Send enquiry</a></div>
+</section>
+
+<!-- States -->
+<section class="wf" id="s2" hidden><div class="wrap stack g24" style="padding-top:24px">
+  <h1 class="h2">How the site page words each situation</h1>
+  <div class="grid3">
+    <div class="card pad statecard"><span class="tag" style="align-self:flex-start">Price shown</span><div class="amount">₹ 85,000 <small>/ month</small></div><div class="terms"><span>Owner rate · updated 3 Oct 2026</span><span>3-month minimum</span></div></div>
+    <div class="card pad statecard"><span class="tag" style="align-self:flex-start">"From" price</span><div class="amount">From ₹ 85,000 <small>/ month</small></div><div class="terms"><span>The rate depends on dates and length. Ask for an exact figure.</span></div></div>
+    <div class="card pad statecard"><span class="tag" style="align-self:flex-start">Price kept private</span><div class="amount" style="font-size:22px">Price on request</div><div class="terms"><span>Ask the owner; most reply within a day.</span></div></div>
+    <div class="card pad statecard"><span class="tag" style="align-self:flex-start">Booked</span><span class="bdg" style="align-self:flex-start">Booked until 14 Nov 2026</span><div class="terms"><span>Free again from 15 Nov 2026. You can ask about later dates, or see similar sites nearby.</span></div></div>
+    <div class="card pad statecard"><span class="tag" style="align-self:flex-start">Availability not confirmed lately</span><span class="bdg lit" style="align-self:flex-start">Last confirmed 6 weeks ago</span><div class="terms"><span>Ask the owner to confirm before you plan around it.</span></div></div>
+    <div class="card pad statecard"><span class="tag" style="align-self:flex-start">A fact the owner has not given</span><div class="eye">Audience</div><div class="mono">Not provided yet</div><div class="terms"><span>We show an audience figure only with a named source. Ask the owner.</span></div></div>
+    <div class="card pad statecard"><span class="tag" style="align-self:flex-start">No photo</span><div class="ph r32">Format icon · No photo yet</div><div class="terms"><span>Never a stock image, and never a blank box.</span></div></div>
+    <div class="card pad statecard"><span class="tag" style="align-self:flex-start">Permit expired</span><span class="bdg" style="align-self:flex-start;background:#f9e0db;color:#b4321c;border-color:transparent">Permit expired Mar 2026</span><div class="terms"><span>Shown plainly. The listing drops in best match until the owner updates it.</span></div></div>
+    <div class="card pad statecard"><span class="tag" style="align-self:flex-start">Site removed</span><b style="font-weight:700;font-size:18px">This site has been taken down</b><div class="terms"><span>The page answers "gone" to search engines and lists similar sites nearby. It never silently redirects.</span></div></div>
+  </div>
+</div></section>
+
+<!-- Compare -->
+<section class="wf" id="b1" hidden><div class="wrap stack g16" style="padding-top:24px">
+  <div class="between" style="align-items:center"><h1 class="h2">Compare [4] sites</h1><div class="row"><a href="#" class="btn sec sm">Add all to plan</a><a href="#" class="btn sm">Enquire about all</a></div></div>
+  <div class="xscroll"><table class="cmp">
+    <tr><th>Site</th><td><div class="ph r32" style="border-radius:6px">Photo</div><b style="font-weight:600;display:block;margin-top:8px">[20 × 10 ft hoarding, 80 Feet Road]</b><a href="#" class="meta">Remove</a></td><td><div class="ph r32" style="border-radius:6px">Photo</div><b style="font-weight:600;display:block;margin-top:8px">[Digital LED, Silk Board]</b><a href="#" class="meta">Remove</a></td><td><div class="ph r32" style="border-radius:6px">Photo</div><b style="font-weight:600;display:block;margin-top:8px">[40 × 20 ft unipole, ORR]</b><a href="#" class="meta">Remove</a></td><td><div class="ph r32" style="border-radius:6px">No photo yet</div><b style="font-weight:600;display:block;margin-top:8px">[Format, size, road]</b><a href="#" class="meta">Remove</a></td></tr>
+    <tr><th>Size</th><td class="mono">[20 × 10 ft]</td><td class="mono">[16 × 9 ft]</td><td class="mono">[40 × 20 ft]</td><td class="mono">[20 × 10 ft]</td></tr>
+    <tr><th>Lighting</th><td>[Front-lit]</td><td>[Digital, 6 am to 11 pm]</td><td>[Back-lit]</td><td>[Not lit]</td></tr>
+    <tr><th>Facing</th><td>[North-bound]</td><td>[All approaches]</td><td>[East-bound]</td><td>[South-bound]</td></tr>
+    <tr><th>Audience</th><td><span class="mono">[4.2 lakh a week]</span><div class="meta">[RoadStar, Sep 2026]</div></td><td><span class="mono">[7.8 lakh a week]</span><div class="meta">[RoadStar, Sep 2026]</div></td><td><span class="mono">Not provided yet</span></td><td><span class="mono">Not provided yet</span></td></tr>
+    <tr><th>Price a month</th><td class="mono">[₹ 85,000]</td><td class="mono">[From ₹ 1,20,000]</td><td class="mono">Price on request</td><td class="mono">[₹ 64,000]</td></tr>
+    <tr><th>Minimum period</th><td>[3 months]</td><td>[1 week]</td><td>[6 months]</td><td>[1 month]</td></tr>
+    <tr><th>Printing and mounting</th><td class="mono">[₹ X, once]</td><td>Not needed</td><td class="mono">[₹ X, once]</td><td>[Buyer arranges]</td></tr>
+    <tr><th>Availability</th><td><span class="bdg ok">Available now</span></td><td><span class="bdg ok">Available now</span></td><td><span class="bdg">Booked until 14 Nov</span></td><td><span class="bdg lit">Confirmed 6 weeks ago</span></td></tr>
+    <tr><th>Owner</th><td>[Lakshmi Ads]<div class="meta">Replies in under a day</div></td><td>[Owner B]<div class="meta">Replies in under a day</div></td><td>[Owner C]<div class="meta">Replies in 2 days</div></td><td>[Lakshmi Ads]<div class="meta">Replies in under a day</div></td></tr>
+    <tr><th>Checked</th><td><div class="bdgs"><span class="bdg ok">Owner</span><span class="bdg ok">Location</span><span class="bdg ok">Permit</span></div></td><td><div class="bdgs"><span class="bdg ok">Owner</span><span class="bdg ok">Location</span></div></td><td><div class="bdgs"><span class="bdg ok">Owner</span></div></td><td><div class="bdgs"><span class="bdg ok">Permit</span></div></td></tr>
+    <tr><th>From the first site</th><td class="mono">This one</td><td class="mono">[3.4 km]</td><td class="mono">[6.1 km]</td><td class="mono">[0.6 km]</td></tr>
+    <tr><th></th><td><a href="#" class="btn sm">Enquire</a></td><td><a href="#" class="btn sm">Enquire</a></td><td><a href="#" class="btn sm">Enquire</a></td><td><a href="#" class="btn sm">Enquire</a></td></tr>
+  </table></div>
+</div></section>
+
+<!-- Plan -->
+<section class="wf" id="b2" hidden><div class="wrap stack g24" style="padding-top:24px">
+  <div class="stack g8"><div class="meta">Shortlist</div><h1 class="h1">Your plan</h1><div class="field" style="max-width:420px"><label for="p-name">Plan name</label><input id="p-name" class="input" value="[Diwali launch, Bengaluru]"></div></div>
+  <div class="plan">
+    <div class="stack g24">
+      <section class="stack"><div class="between" style="align-items:center;padding-bottom:8px"><h2 class="h3">[Lakshmi Ads] · 2 sites</h2><span class="bdg">Replies in under a day</span></div>
+        <div class="prow"><div class="ph">Photo</div><div><b style="font-weight:600">[20 × 10 ft hoarding, 80 Feet Road]</b><div class="meta">[Koramangala] · <span class="bdg ok">Free for your dates</span></div></div><div class="row"><span class="price">[₹ 85,000]</span><a href="#" class="meta">Remove</a></div></div>
+        <div class="prow"><div class="ph">Photo</div><div><b style="font-weight:600">[Format, size, road]</b><div class="meta">[Koramangala] · <span class="bdg">Booked until 14 Nov</span></div></div><div class="row"><span class="price">[₹ 64,000]</span><a href="#" class="meta">Remove</a></div></div>
+      </section>
+      <section class="stack"><div class="between" style="align-items:center;padding-bottom:8px"><h2 class="h3">[Owner B] · 1 site</h2><span class="bdg">Replies in under a day</span></div>
+        <div class="prow"><div class="ph">Photo</div><div><b style="font-weight:600">[Digital LED, Silk Board junction]</b><div class="meta">[HSR Layout] · <span class="bdg ok">Free for your dates</span></div></div><div class="row"><span class="price" style="font-size:15px">Price on request</span><a href="#" class="meta">Remove</a></div></div>
+      </section>
+      <span class="tag" style="align-self:flex-start">Kept in this browser without an account, and across devices once signed in</span>
+    </div>
+    <aside class="sticky card pad stack g12">
+      <h2 class="h3">Summary</h2>
+      <div class="two"><div class="field"><label for="p-from">From</label><input id="p-from" class="input" value="1 Nov 2026"></div><div class="field"><label for="p-to">Until</label><input id="p-to" class="input" value="30 Nov 2026"></div></div>
+      <div class="field"><label for="p-bud">Budget, optional</label><div class="aff"><span>₹</span><input id="p-bud" class="input mono" placeholder="3,00,000"></div></div>
+      <div><div class="sumrow"><span>Sites</span><span class="mono">[3]</span></div><div class="sumrow"><span>Owners</span><span class="mono">[2]</span></div><div class="sumrow"><span>Shown prices, a month</span><span class="mono">[₹ 1,49,000]</span></div><div class="sumrow"><span>On request</span><span class="mono">[1 site]</span></div></div>
+      <a href="#" class="btn wide">Send enquiry to 2 owners</a>
+      <div class="row"><a href="#" class="btn sec sm" style="flex:1">Share link</a><a href="#" class="btn sec sm" style="flex:1">WhatsApp</a><a href="#" class="btn sec sm" style="flex:1">Export</a></div>
+      <div class="neutral">One request goes to each owner. Each sees only their own sites, never the rest of your plan. ohworks never sells media or takes a media margin.</div>
+    </aside>
+  </div>
+</div></section>
+
+<!-- Enquiry -->
+<section class="wf" id="e1" hidden><div class="wrap stack g24" style="padding-top:24px">
+  <h1 class="h2">Enquiry, in three screens</h1>
+  <div class="grid3" style="align-items:start">
+    <section class="card pad stack g12">
+      <span class="tag" style="align-self:flex-start">1 · The form</span>
+      <div class="owner"><div class="ph" style="width:64px;height:44px;border-radius:6px;padding:0">Photo</div><div><b style="font-weight:600">[20 × 10 ft hoarding, 80 Feet Road]</b><div class="meta">Goes straight to [Lakshmi Ads]. ohworks never sells media.</div></div></div>
+      <div class="two"><div class="field"><label for="e-from">From</label><input id="e-from" class="input" placeholder="1 Nov 2026"></div><div class="field"><label for="e-to">Until</label><input id="e-to" class="input" placeholder="30 Nov 2026"></div></div>
+      <div class="field"><label for="e-brand">Brand and category</label><input id="e-brand" class="input" placeholder="e.g. Acme Sweets, food retail"><span class="help">Owners check this against what a site may carry.</span></div>
+      <div class="field"><label for="e-bud">Budget, optional</label><div class="aff"><span>₹</span><input id="e-bud" class="input mono" placeholder="1,00,000"></div></div>
+      <div class="field"><label for="e-cr">Artwork</label><select id="e-cr" class="input"><option>Ready</option><option>In progress</option><option>Not started</option></select></div>
+      <div class="field"><label for="e-msg">Message, optional</label><textarea id="e-msg" class="input" placeholder="Anything the owner should know"></textarea></div>
+      <div class="field"><label for="e-mail">Your work email</label><input id="e-mail" class="input" placeholder="you@company.com"><span class="help">We send a code to confirm it is you. Owners only see verified enquiries.</span></div>
+      <a href="#" class="btn wide">Send enquiry</a>
+    </section>
+    <section class="card pad stack g12">
+      <span class="tag" style="align-self:flex-start">2 · Confirm it is you</span>
+      <h2 class="h3">Confirm it's you</h2>
+      <p class="muted" style="margin:0">A code is on its way to [y··@company.com]. It works for ten minutes.</p>
+      <div class="code"><span>4</span><span>7</span><span>1</span><span></span><span></span><span></span></div>
+      <a href="#" class="btn wide">Confirm and send</a>
+      <a href="#">Send the code again</a>
+      <span class="help">Asked once. After that this browser is remembered for 30 days.</span>
+    </section>
+    <section class="card pad stack g12">
+      <span class="tag" style="align-self:flex-start">3 · Sent</span>
+      <div class="toast"><i></i><div><b style="font-weight:600">Sent to [Lakshmi Ads].</b><div class="meta">You'll get their reply here and by email.</div></div></div>
+      <div><div class="sumrow"><span>Typical reply</span><span class="mono">Under a day</span></div><div class="sumrow"><span>Your dates</span><span class="mono">[1 to 30 Nov 2026]</span></div><div class="sumrow"><span>Reference</span><span class="mono">[ENQ-4F7K2]</span></div></div>
+      <p class="muted" style="margin:0">Contract, invoice and payment are between you and the owner. ohworks charges nothing.</p>
+      <div class="row"><a href="#" class="btn sec sm">See similar sites nearby</a><a href="#" class="btn sec sm">Back to results</a></div>
+    </section>
+  </div>
+</div></section>
+
+<footer class="foot"><div class="fine">ohworks never sells media or takes a media margin. Owners set prices and keep their clients.</div></footer>
+
+</div></div>
+
+<script>
+(function () {
+  var ids = ["r1", "r2", "rf", "rq", "re", "s1", "s2", "b1", "b2", "e1"];
+  var ctl = document.querySelector(".ctl");
+  function setCtl() { document.documentElement.style.setProperty("--ctl", ctl.offsetHeight + "px"); }
+  function show(v, keepScroll) {
+    document.querySelectorAll(".wf").forEach(function (el) { el.hidden = el.id !== v; });
+    document.querySelectorAll("[data-for]").forEach(function (el) { el.hidden = el.dataset.for !== v; });
+    document.querySelectorAll("[data-v]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.v === v)); });
+    history.replaceState(null, "", "#" + v);
+    if (!keepScroll) window.scrollTo(0, 0);
+  }
+  function width(w) {
+    document.body.dataset.width = w;
+    document.querySelectorAll("[data-w]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.w === w)); });
+    setCtl();
+  }
+  document.querySelectorAll("[data-v]").forEach(function (b) { b.addEventListener("click", function () { show(b.dataset.v); }); });
+  document.querySelectorAll("[data-w]").forEach(function (b) { b.addEventListener("click", function () { width(b.dataset.w); }); });
+  document.querySelector(".frame").addEventListener("click", function (e) {
+    var a = e.target.closest('a[href="#"]');
+    if (a) e.preventDefault();
+  });
+  window.addEventListener("resize", setCtl);
+  var h = location.hash.slice(1);
+  setCtl(); width("1280"); show(ids.indexOf(h) >= 0 ? h : "r1", true);
+})();
+</script>
+</body>
+</html>

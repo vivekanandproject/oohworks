@@ -1,6 +1,6 @@
 # ohworks Find sites: plan
 
-Date: 10 Oct 2026. Status: plan, awaiting decisions. Nothing here is built yet. Builds on the strategy report (Product blueprint 2), `ohworks-architecture.md`, the design system's marketplace components and the search page that exists today.
+Date: 10 Oct 2026. Status: decisions taken and wireframes drawn on 10 Oct 2026; awaiting sign-off on the wireframes. Nothing here is built yet. Builds on the strategy report (Product blueprint 2), `ohworks-architecture.md`, the design system's marketplace components and the search page that exists today.
 
 ## 1. What this page must achieve
 
@@ -183,3 +183,21 @@ Before step 1, wireframes for the results page and the site page, opened locally
 3. **Buyer verification at enquiry.** An emailed code with no account, as recommended, or a full sign-in.
 4. **Shortlist, compare and plan.** In the second step, as planned, or pulled into the first.
 5. **Keys.** MapTiler first, since the map is the centre of this page. The others can follow.
+
+## 12. Decisions taken (10 Oct 2026)
+
+The founder chose the defaults:
+
+1. Results layout: the list beside a sticky map. "List first" becomes the "Hide map" setting of the same page.
+2. Inventory to build with: clearly labelled sample sites, with no photographs, until a real owner's sites can be loaded.
+3. Buyer verification: a code sent by email, no account needed.
+4. Shortlist, compare and plan: in step 2.
+5. Map: a keyless open tile source for local development until a MapTiler key exists.
+
+## 13. Wireframes
+
+`docs/wireframes/find-sites.html` holds ten views. Open the file in a browser; the bar at the top switches view and width.
+
+- Results: list beside a map, list first, all filters, quick view, few or no results.
+- Site page: the full page, and the wording for every state that is not the happy path.
+- Basket: compare, plan, and the enquiry in three screens.
