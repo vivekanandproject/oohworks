@@ -199,6 +199,16 @@ Without an email service these are written to the Outbox in the admin. On a deve
 
 Unit tests cover the GSTIN check, reading a pasted position, the duplicate rule, every refusal in the site checks, dates as written in India, the spreadsheet reader, the states and the improvement list. Browser tests on three engines walk the whole journey: code, company, a site with a mistake then right, a photograph, review, a return with a reason, publishing, the public page, a quick change, and withdrawal. Further tests cover one owner being unable to see or change another's site, the spreadsheet with its report and its no-doubling rule, the media kit and its privacy, and every endpoint refusing a stranger.
 
+### Three faults found while testing, all site-wide
+
+None was particular to the owner's pages. The first two showed only on a busy machine or a slow connection.
+
+1. **Typed text could be lost.** The copy of React inside Next.js 15.5 has a hydration bug. When a page's data arrived in pieces, React could report error 418 and draw the page again from scratch, which emptied anything typed into a form in the meantime. An owner's corrected GSTIN was lost this way in one test run. React 19.3 fixes it in seven lines, and those lines are now applied to the bundled copy by `patches/next@15.5.27.patch`. `patches/README.md` says what it does and when to remove it. Before the patch 13 of about 60 loaded runs hit the error. After it, none of 96 did.
+2. **The page crossfade could be dropped with a console error.** A browser decides whether to crossfade before it reads the body, which can be before the stylesheet has arrived. The request for the crossfade is now also in the head of every page, so it no longer depends on the stylesheet's timing.
+3. **The title, description, canonical link and robots tag could arrive in the body.** Next.js 15 sends these after the page for any visitor it does not list as a simple crawler, and Googlebot is not on that list. It happens when a page is ready before its metadata, so the quick pages were the ones affected, and `/list-your-sites/` was the first indexable one. A canonical link or a noindex outside the head can be ignored, which would undo the indexing rules. `htmlLimitedBots: /.*/` in `next.config.ts` now sends them in the head to everyone. Lighthouse found it: the page scored 91 for search until the fix.
+
+The owner tests now fail on any script error on a page, and a test reads the raw HTML of five pages as a browser and as Googlebot and requires the tags in the head, so none of the three can return unseen.
+
 ### A demonstration owner on this machine
 
 To look around without listing anything, start at `/list-your-sites/` with `demo-owner@example.com`. The code is shown on the confirm page. It has one live site, one returned with a reason, and a media kit. It is labelled as a sample and is not part of the seeds.

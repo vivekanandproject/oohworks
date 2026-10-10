@@ -25,6 +25,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${archivo.variable} ${plexMono.variable}`}>
       <head>
+        {/* The page crossfade is asked for here as well as in the stylesheet: a browser decides
+            before the body is read, which can be before the stylesheet has arrived. */}
+        <style>{`@media (prefers-reduced-motion:no-preference){@view-transition{navigation:auto}}`}</style>
         <noscript>
           <style>{`[data-reveal],[data-stagger-item],[data-draw],[data-fade]{opacity:1!important;transform:none!important;stroke-dashoffset:0!important}`}</style>
         </noscript>

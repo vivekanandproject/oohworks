@@ -80,6 +80,35 @@ test.describe("landing page SEO contract", () => {
     }
   });
 
+  test("the title, description and robots tag are sent in the head, never later in the body", async ({
+    request,
+  }) => {
+    // Pages made on request are the ones Next.js would otherwise finish in the body.
+    const pages = [
+      "/",
+      "/list-your-sites/",
+      "/search/?city=bengaluru",
+      "/in/bengaluru/",
+      "/in/bengaluru/koramangala/hoarding-80-feet-road-ows0001/",
+    ];
+    const agents = [
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+      "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+    ];
+    for (const path of pages)
+      for (const agent of agents) {
+        const html = await (await request.get(path, { headers: { "user-agent": agent } })).text();
+        const head = html.slice(0, html.indexOf("</head>"));
+        const where = `${path} as ${agent.includes("Googlebot") ? "Googlebot" : "a browser"}`;
+        expect(head, `title of ${where}`).toMatch(/<title>[^<]+<\/title>/);
+        expect(head, `description of ${where}`).toContain('<meta name="description"');
+        expect(head, `robots tag of ${where}`).toContain('<meta name="robots"');
+        expect(html.match(/<title>/g), `one title on ${where}`).toHaveLength(1);
+        if (html.includes('rel="canonical"'))
+          expect(head, `canonical link of ${where}`).toContain('rel="canonical"');
+      }
+  });
+
   test("robots.txt and sitemap.xml exist and agree", async ({ request }) => {
     const robots = await (await request.get("/robots.txt")).text();
     expect(robots).toContain("Disallow: /search/");

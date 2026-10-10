@@ -1,0 +1,84 @@
+diff --git a/dist/compiled/react-dom/cjs/react-dom-client.development.js b/dist/compiled/react-dom/cjs/react-dom-client.development.js
+index 4376913076151ad78dcc4059ad4152fad25478da..8d78eca32a55863f9af27fd30c66275deb97ab72 100644
+--- a/dist/compiled/react-dom/cjs/react-dom-client.development.js
++++ b/dist/compiled/react-dom/cjs/react-dom-client.development.js
+@@ -15776,6 +15776,16 @@
+           break;
+         case 5:
+           resetHooksOnUnwind(unitOfWork);
++          // Backport of the React 19.3 fix: a host element replayed while hydrating must
++          // claim the same server node again, not the one after it.
++          var fiber = unitOfWork;
++          fiber === hydrationParentFiber &&
++            (isHydrating
++              ? (popToNextHostParent(fiber),
++                5 === fiber.tag &&
++                  null != fiber.stateNode &&
++                  (nextHydratableInstance = fiber.stateNode))
++              : (popToNextHostParent(fiber), (isHydrating = !0)));
+         default:
+           unwindInterruptedWork(current, unitOfWork),
+             (unitOfWork = workInProgress =
+diff --git a/dist/compiled/react-dom/cjs/react-dom-client.production.js b/dist/compiled/react-dom/cjs/react-dom-client.production.js
+index 755076a5cf15273f024c18fdc6a8805f1e36860b..cde87309ea3bb4f1fc73fc8680cbf19cac77d9cd 100644
+--- a/dist/compiled/react-dom/cjs/react-dom-client.production.js
++++ b/dist/compiled/react-dom/cjs/react-dom-client.production.js
+@@ -11210,6 +11210,16 @@ function replaySuspendedUnitOfWork(unitOfWork) {
+       break;
+     case 5:
+       resetHooksOnUnwind(next);
++      // Backport of the React 19.3 fix: a host element replayed while hydrating must
++      // claim the same server node again, not the one after it.
++      var fiber = next;
++      fiber === hydrationParentFiber &&
++        (isHydrating
++          ? (popToNextHostParent(fiber),
++            5 === fiber.tag &&
++              null != fiber.stateNode &&
++              (nextHydratableInstance = fiber.stateNode))
++          : (popToNextHostParent(fiber), (isHydrating = !0)));
+     default:
+       unwindInterruptedWork(current, next),
+         (next = workInProgress =
+diff --git a/dist/compiled/react-dom/cjs/react-dom-profiling.development.js b/dist/compiled/react-dom/cjs/react-dom-profiling.development.js
+index 43d0363849598f796873fffaf33117d54b76de19..9f3ed4abe97a1ea5e479eec2a3b2ada5e66f757b 100644
+--- a/dist/compiled/react-dom/cjs/react-dom-profiling.development.js
++++ b/dist/compiled/react-dom/cjs/react-dom-profiling.development.js
+@@ -15784,6 +15784,16 @@
+           break;
+         case 5:
+           resetHooksOnUnwind(unitOfWork);
++          // Backport of the React 19.3 fix: a host element replayed while hydrating must
++          // claim the same server node again, not the one after it.
++          var fiber = unitOfWork;
++          fiber === hydrationParentFiber &&
++            (isHydrating
++              ? (popToNextHostParent(fiber),
++                5 === fiber.tag &&
++                  null != fiber.stateNode &&
++                  (nextHydratableInstance = fiber.stateNode))
++              : (popToNextHostParent(fiber), (isHydrating = !0)));
+         default:
+           unwindInterruptedWork(current, unitOfWork),
+             (unitOfWork = workInProgress =
+diff --git a/dist/compiled/react-dom/cjs/react-dom-profiling.profiling.js b/dist/compiled/react-dom/cjs/react-dom-profiling.profiling.js
+index 85185b07d38d122ada8ed308523b181da102ccad..753a3cf33e2a8c002e62be26022985bcf339e023 100644
+--- a/dist/compiled/react-dom/cjs/react-dom-profiling.profiling.js
++++ b/dist/compiled/react-dom/cjs/react-dom-profiling.profiling.js
+@@ -11814,6 +11814,16 @@ function replaySuspendedUnitOfWork(unitOfWork) {
+       break;
+     case 5:
+       resetHooksOnUnwind(next);
++      // Backport of the React 19.3 fix: a host element replayed while hydrating must
++      // claim the same server node again, not the one after it.
++      var fiber = next;
++      fiber === hydrationParentFiber &&
++        (isHydrating
++          ? (popToNextHostParent(fiber),
++            5 === fiber.tag &&
++              null != fiber.stateNode &&
++              (nextHydratableInstance = fiber.stateNode))
++          : (popToNextHostParent(fiber), (isHydrating = !0)));
+     default:
+       unwindInterruptedWork(current, next),
+         (next = workInProgress =

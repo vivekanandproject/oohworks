@@ -12,6 +12,18 @@ import { fileURLToPath } from "node:url";
 // each check is given longer to appear than a plain page load needs.
 const expect = baseExpect.configure({ timeout: 20_000 });
 
+// A script error on any of these pages fails the test that met it. A page that rebuilds itself after
+// such an error throws away what the owner has typed, which is how a corrected GSTIN was once lost.
+const scriptErrors = new WeakMap<Page, string[]>();
+test.beforeEach(({ page }) => {
+  const seen: string[] = [];
+  scriptErrors.set(page, seen);
+  page.on("pageerror", (error) => seen.push(`${error.message.slice(0, 200)} on ${page.url()}`));
+});
+test.afterEach(({ page }) => {
+  baseExpect(scriptErrors.get(page) ?? [], "script errors on the owner's pages").toEqual([]);
+});
+
 const day = (n: number) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
 const XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 

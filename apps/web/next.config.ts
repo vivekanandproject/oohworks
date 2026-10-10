@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@ohworks/core", "@ohworks/db", "@ohworks/ui"],
   trailingSlash: true,
   poweredByHeader: false,
+  // The title, description, canonical link and robots tag are always sent in the head. Left alone,
+  // Next.js sends them later, inside the body, to any visitor it does not list as a simple crawler,
+  // and that includes Googlebot. A canonical link or a noindex in the body can be ignored.
+  htmlLimitedBots: /.*/,
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [{ protocol: "https", hostname: "**.ohworks.com" }],
