@@ -2,12 +2,14 @@ import type { MetadataRoute } from "next";
 import { PILLARS, PILLAR_KEYS } from "@/lib/editorial/pillars";
 import { allPieces, authorsOf, pillarCounts } from "@/lib/editorial/queries";
 import { absolute } from "@/lib/seo";
+import { indexableSiteUrls } from "@/lib/sites/queries";
 
 export const dynamic = "force-dynamic";
 
 /**
  * Static pages and everything the newsroom has published. Section indexes join only when they hold
- * something. Unit, hub and owner sitemaps are separate shards written by the indexing job (M2).
+ * something. Site pages join once they meet the content bar; a sample listing never does. Hub and owner
+ * sitemaps, and shards by city, come with the indexing job (M2).
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const fixed = new Date("2026-10-10");
@@ -21,7 +23,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
   ];
-  const [pieces, counts] = await Promise.all([allPieces(), pillarCounts()]);
+  pages.push({
+    url: absolute("/how-results-are-ordered/"),
+    lastModified: fixed,
+    changeFrequency: "yearly",
+    priority: 0.4,
+  });
+  const [pieces, counts, sites] = await Promise.all([
+    allPieces(),
+    pillarCounts(),
+    indexableSiteUrls(),
+  ]);
+  for (const s of sites) {
+    pages.push({
+      url: absolute(s.url),
+      lastModified: new Date(s.updatedAt),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    });
+  }
   if (pieces.length === 0) return pages;
 
   const newest = new Date(pieces[0]?.updatedAt ?? fixed);

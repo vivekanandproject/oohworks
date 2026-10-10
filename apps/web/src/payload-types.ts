@@ -67,6 +67,9 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    sites: Site;
+    owners: Owner;
+    enquiries: Enquiry;
     articles: Article;
     guides: Guide;
     reports: Report;
@@ -79,6 +82,7 @@ export interface Config {
     follows: Follow;
     subscribers: Subscriber;
     corrections: Correction;
+    outbox: Outbox;
     users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -87,6 +91,9 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    sites: SitesSelect<false> | SitesSelect<true>;
+    owners: OwnersSelect<false> | OwnersSelect<true>;
+    enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     guides: GuidesSelect<false> | GuidesSelect<true>;
     reports: ReportsSelect<false> | ReportsSelect<true>;
@@ -99,6 +106,7 @@ export interface Config {
     follows: FollowsSelect<false> | FollowsSelect<true>;
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     corrections: CorrectionsSelect<false> | CorrectionsSelect<true>;
+    outbox: OutboxSelect<false> | OutboxSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -138,6 +146,285 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
+}
+/**
+ * One record per physical face. The id and address never change once published.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sites".
+ */
+export interface Site {
+  id: number;
+  /**
+   * Built from the size, format and road
+   */
+  title?: string | null;
+  slug?: string | null;
+  /**
+   * Assigned once. Never changes.
+   */
+  permanentId?: string | null;
+  /**
+   * Completeness out of 100. Higher ranks better.
+   */
+  qualityScore?: number | null;
+  sample?: boolean | null;
+  removed?: boolean | null;
+  owner: number | Owner;
+  format: 'hoarding' | 'unipole' | 'gantry' | 'bus-shelter' | 'led-screen' | 'transit';
+  environment: 'roadside' | 'transit' | 'retail' | 'indoor';
+  width: number;
+  height: number;
+  sizeUnit: 'ft' | 'm';
+  widthMm?: number | null;
+  heightMm?: number | null;
+  lighting: 'front-lit' | 'back-lit' | 'unlit' | 'digital';
+  /**
+   * e.g. 6 pm to 11 pm
+   */
+  litHours?: string | null;
+  heightAboveRoadM?: number | null;
+  digital?: {
+    /**
+     * e.g. 1920 × 1080
+     */
+    resolution?: string | null;
+    spotSeconds?: number | null;
+    loopSeconds?: number | null;
+    /**
+     * How many advertisers share the loop
+     */
+    advertisers?: number | null;
+    /**
+     * Programmatic exchanges it is available through, if any
+     */
+    exchanges?: string | null;
+  };
+  country: string;
+  city: 'bengaluru' | 'mumbai' | 'delhi-ncr' | 'hyderabad' | 'pune' | 'chennai';
+  locality: string;
+  localitySlug?: string | null;
+  /**
+   * How a buyer would name the road
+   */
+  road: string;
+  /**
+   * e.g. opposite Sony Signal
+   */
+  landmark?: string | null;
+  /**
+   * Five decimals
+   */
+  lat: number;
+  /**
+   * Five decimals
+   */
+  lng: number;
+  /**
+   * Compass bearing the face points to
+   */
+  facingDeg?: number | null;
+  /**
+   * e.g. north-bound
+   */
+  trafficDirection?: string | null;
+  verifiedLocation?: boolean | null;
+  lastVerifiedOn?: string | null;
+  /**
+   * The owner chooses. A private price is never a penalty.
+   */
+  priceDisplay: 'exact' | 'from' | 'on_request';
+  rate?: number | null;
+  /**
+   * e.g. 3 months
+   */
+  minPeriod?: string | null;
+  /**
+   * e.g. ₹ 18,000 once, by the owner
+   */
+  productionCost?: string | null;
+  taxesNote?: string | null;
+  notAccepted?: string | null;
+  /**
+   * Leave empty when the site is free now
+   */
+  bookedUntil?: string | null;
+  /**
+   * The day the owner last confirmed availability
+   */
+  availabilityConfirmedOn?: string | null;
+  /**
+   * e.g. 20 × 10 ft at 30 dpi
+   */
+  artworkSpec?: string | null;
+  /**
+   * e.g. PDF or TIFF, CMYK
+   */
+  fileTypes?: string | null;
+  leadTimeDays?: number | null;
+  /**
+   * A figure is shown only with its source and date. Otherwise leave it empty.
+   */
+  audience?: {
+    figure?: number | null;
+    /**
+     * e.g. weekly impressions, adults 18+
+     */
+    metric?: string | null;
+    source?: string | null;
+    method?: string | null;
+    measuredOn?: string | null;
+  };
+  permit?: {
+    number?: string | null;
+    authority?: string | null;
+    expiresOn?: string | null;
+  };
+  /**
+   * Real photographs of the face in its street. The approach view comes first.
+   */
+  photos?:
+    | {
+        image: number | Media;
+        kind: 'approach' | 'day' | 'night';
+        takenOn: string;
+        gps?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Media owners. The owner is always the seller.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "owners".
+ */
+export interface Owner {
+  id: number;
+  name: string;
+  slug?: string | null;
+  city?: ('bengaluru' | 'mumbai' | 'delhi-ncr' | 'hyderabad' | 'pune' | 'chennai') | null;
+  about?: string | null;
+  /**
+   * Enquiries go here. Never shown on the site.
+   */
+  contactEmail: string;
+  /**
+   * Shown on the site only when a buyer asks to see it
+   */
+  phone?: string | null;
+  verified?: boolean | null;
+  verifiedOn?: string | null;
+  /**
+   * Under 24 earns “Replies in under a day”
+   */
+  medianReplyHours?: number | null;
+  sample?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Real photography with a credit. No stock, no renders presented as photos.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * What the picture shows, for readers who cannot see it
+   */
+  alt: string;
+  /**
+   * Photographer or source, shown with the image
+   */
+  credit: string;
+  licence: 'owned' | 'licensed' | 'cc-by' | 'press';
+  takenAt?: string | null;
+  place?: (number | null) | Tag;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumb?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    hero?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * One taxonomy for articles, listings and profiles.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  name: string;
+  slug?: string | null;
+  kind: 'place' | 'format' | 'company' | 'theme';
+  /**
+   * Opens the topic page. State a dated fact where one exists.
+   */
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries".
+ */
+export interface Enquiry {
+  id: number;
+  reference: string;
+  site: number | Site;
+  owner: number | Owner;
+  email: string;
+  dateFrom: string;
+  dateTo: string;
+  brand: string;
+  budget?: number | null;
+  artwork: 'ready' | 'in_progress' | 'not_started';
+  message?: string | null;
+  status: 'pending' | 'sent' | 'replied' | 'closed';
+  codeHash?: string | null;
+  codeExpiresAt?: string | null;
+  attempts?: number | null;
+  verifiedAt?: string | null;
+  sentAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -228,81 +515,6 @@ export interface Article {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * Real photography with a credit. No stock, no renders presented as photos.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  /**
-   * What the picture shows, for readers who cannot see it
-   */
-  alt: string;
-  /**
-   * Photographer or source, shown with the image
-   */
-  credit: string;
-  licence: 'owned' | 'licensed' | 'cc-by' | 'press';
-  takenAt?: string | null;
-  place?: (number | null) | Tag;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumb?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    hero?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * One taxonomy for articles, listings and profiles.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tags".
- */
-export interface Tag {
-  id: number;
-  name: string;
-  slug?: string | null;
-  kind: 'place' | 'format' | 'company' | 'theme';
-  /**
-   * Opens the topic page. State a dated fact where one exists.
-   */
-  description?: string | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * Authors and verified contributors. Each gets a public page.
@@ -723,6 +935,21 @@ export interface Correction {
   createdAt: string;
 }
 /**
+ * Emails that would have been sent. Filled only when no email service is configured.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "outbox".
+ */
+export interface Outbox {
+  id: number;
+  to: string;
+  subject: string;
+  text: string;
+  kind: 'code' | 'owner_enquiry' | 'buyer_confirmation';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -746,6 +973,18 @@ export interface PayloadKv {
 export interface PayloadLockedDocument {
   id: number;
   document?:
+    | ({
+        relationTo: 'sites';
+        value: number | Site;
+      } | null)
+    | ({
+        relationTo: 'owners';
+        value: number | Owner;
+      } | null)
+    | ({
+        relationTo: 'enquiries';
+        value: number | Enquiry;
+      } | null)
     | ({
         relationTo: 'articles';
         value: number | Article;
@@ -795,6 +1034,10 @@ export interface PayloadLockedDocument {
         value: number | Correction;
       } | null)
     | ({
+        relationTo: 'outbox';
+        value: number | Outbox;
+      } | null)
+    | ({
         relationTo: 'users';
         value: number | User;
       } | null);
@@ -839,6 +1082,131 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sites_select".
+ */
+export interface SitesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  permanentId?: T;
+  qualityScore?: T;
+  sample?: T;
+  removed?: T;
+  owner?: T;
+  format?: T;
+  environment?: T;
+  width?: T;
+  height?: T;
+  sizeUnit?: T;
+  widthMm?: T;
+  heightMm?: T;
+  lighting?: T;
+  litHours?: T;
+  heightAboveRoadM?: T;
+  digital?:
+    | T
+    | {
+        resolution?: T;
+        spotSeconds?: T;
+        loopSeconds?: T;
+        advertisers?: T;
+        exchanges?: T;
+      };
+  country?: T;
+  city?: T;
+  locality?: T;
+  localitySlug?: T;
+  road?: T;
+  landmark?: T;
+  lat?: T;
+  lng?: T;
+  facingDeg?: T;
+  trafficDirection?: T;
+  verifiedLocation?: T;
+  lastVerifiedOn?: T;
+  priceDisplay?: T;
+  rate?: T;
+  minPeriod?: T;
+  productionCost?: T;
+  taxesNote?: T;
+  notAccepted?: T;
+  bookedUntil?: T;
+  availabilityConfirmedOn?: T;
+  artworkSpec?: T;
+  fileTypes?: T;
+  leadTimeDays?: T;
+  audience?:
+    | T
+    | {
+        figure?: T;
+        metric?: T;
+        source?: T;
+        method?: T;
+        measuredOn?: T;
+      };
+  permit?:
+    | T
+    | {
+        number?: T;
+        authority?: T;
+        expiresOn?: T;
+      };
+  photos?:
+    | T
+    | {
+        image?: T;
+        kind?: T;
+        takenOn?: T;
+        gps?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "owners_select".
+ */
+export interface OwnersSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  city?: T;
+  about?: T;
+  contactEmail?: T;
+  phone?: T;
+  verified?: T;
+  verifiedOn?: T;
+  medianReplyHours?: T;
+  sample?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries_select".
+ */
+export interface EnquiriesSelect<T extends boolean = true> {
+  reference?: T;
+  site?: T;
+  owner?: T;
+  email?: T;
+  dateFrom?: T;
+  dateTo?: T;
+  brand?: T;
+  budget?: T;
+  artwork?: T;
+  message?: T;
+  status?: T;
+  codeHash?: T;
+  codeExpiresAt?: T;
+  attempts?: T;
+  verifiedAt?: T;
+  sentAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1165,6 +1533,18 @@ export interface CorrectionsSelect<T extends boolean = true> {
   article?: T;
   note?: T;
   correctedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "outbox_select".
+ */
+export interface OutboxSelect<T extends boolean = true> {
+  to?: T;
+  subject?: T;
+  text?: T;
+  kind?: T;
   updatedAt?: T;
   createdAt?: T;
 }

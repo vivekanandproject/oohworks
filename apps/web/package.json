@@ -17,7 +17,8 @@
     "payload:importmap": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:importmap",
     "seed": "node --env-file=../../.env --import tsx src/payload/seed.ts",
     "verify:cms": "node --env-file=../../.env --import tsx src/payload/verify.ts",
-    "seed:demo": "node --env-file=../../.env --import tsx src/payload/seed-demo.ts"
+    "seed:demo": "node --env-file=../../.env --import tsx src/payload/seed-demo.ts",
+    "seed:sites": "node --env-file=../../.env --import tsx src/payload/seed-sites.ts"
   },
   "dependencies": {
     "@ohworks/core": "workspace:*",
@@ -28,6 +29,7 @@
     "@payloadcms/richtext-lexical": "^3.90.2",
     "@payloadcms/storage-s3": "^3.90.2",
     "graphql": "^17.0.2",
+    "maplibre-gl": "^6.13.0",
     "next": "^15.5.0",
     "payload": "^3.90.2",
     "react": "^19.1.0",

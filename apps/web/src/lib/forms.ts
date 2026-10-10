@@ -31,6 +31,10 @@ export function safePath(value: FormDataEntryValue | string | null, fallback: st
   return v.split("#")[0] ?? fallback;
 }
 
-export function seeOther(req: Request, path: string): Response {
-  return Response.redirect(new URL(path, req.url), 303);
+/**
+ * Sends the browser on after a form post. The address is a path, never a full URL: behind a proxy the
+ * server does not know the public host, and a full URL built from the request would point at itself.
+ */
+export function seeOther(_req: Request, path: string): Response {
+  return new Response(null, { status: 303, headers: { Location: path } });
 }

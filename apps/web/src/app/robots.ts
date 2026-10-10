@@ -4,6 +4,7 @@ import { absolute } from "@/lib/seo";
 export default function robots(): MetadataRoute.Robots {
   const closed = [
     "/search/",
+    "/enquire/",
     "/sign-in/",
     "/newsroom/subscribed/",
     "/api/",

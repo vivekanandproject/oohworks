@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   const form = await req.formData();
   const back = safeReturn(String(form.get("return") ?? ""));
   const redirect = (key: string, val: string) =>
-    Response.redirect(new URL(withParam(back, key, val), req.url), 303);
+    new Response(null, { status: 303, headers: { Location: withParam(back, key, val) } });
 
   if (String(form.get("company") ?? "")) return redirect("followed", "1");
 

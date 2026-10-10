@@ -6,6 +6,14 @@ const PAGES = [
   "/charter/",
   "/for-owners/",
   "/search/",
+  "/search/?city=bengaluru",
+  "/search/?city=bengaluru&map=0",
+  "/search/?city=bengaluru&filters=1",
+  "/search/?city=pune&format=gantry",
+  "/in/bengaluru/koramangala/hoarding-80-feet-road-ows0001/",
+  "/in/bengaluru/indiranagar/led-screen-cmh-road-ows0006/",
+  "/enquire/ows0001/",
+  "/how-results-are-ordered/",
   "/sign-in/",
   "/newsroom/",
   "/newsroom/all/",
@@ -31,6 +39,10 @@ test.describe("responsive: no horizontal overflow at any width", () => {
           for (const el of Array.from(document.querySelectorAll<HTMLElement>("body *"))) {
             const r = el.getBoundingClientRect();
             if (r.width === 0 || r.height === 0) continue;
+            // Shapes inside a drawing are clipped by the drawing itself; only its own box can overflow.
+            if (el instanceof SVGElement && el.ownerSVGElement) continue;
+            // A closed menu is not drawn, though some engines still report a size for what is inside it.
+            if (typeof el.checkVisibility === "function" && !el.checkVisibility()) continue;
             const cs = getComputedStyle(el);
             if (cs.visibility === "hidden" || cs.position === "fixed") continue;
             // Children of an intentional horizontal scroller may extend past the viewport.
@@ -63,6 +75,28 @@ test.describe("responsive: no horizontal overflow at any width", () => {
       }
     });
   }
+
+  test("an open filter menu stays on screen at every width", async ({ page }) => {
+    for (const width of WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto("/search/?city=bengaluru");
+      const menus = page.locator("details.oh-dd");
+      for (let i = 0; i < (await menus.count()); i++) {
+        const menu = menus.nth(i);
+        if (!(await menu.locator("summary").isVisible())) continue;
+        await menu.locator("summary").click();
+        const box = await menu.locator(".oh-pop").boundingBox();
+        const name = await menu.getAttribute("data-filter");
+        expect(box, `${name} menu at ${width}px opens`).not.toBeNull();
+        expect(box!.x, `${name} menu at ${width}px starts on screen`).toBeGreaterThanOrEqual(0);
+        expect(
+          box!.x + box!.width,
+          `${name} menu at ${width}px ends on screen`,
+        ).toBeLessThanOrEqual(width + 1);
+        await menu.locator("summary").click();
+      }
+    }
+  });
 
   test("landscape phone keeps the hero usable", async ({ page }) => {
     await page.setViewportSize({ width: 740, height: 360 });

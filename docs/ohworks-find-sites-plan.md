@@ -1,6 +1,6 @@
 # ohworks Find sites: plan
 
-Date: 10 Oct 2026. Status: decisions taken and wireframes drawn on 10 Oct 2026; awaiting sign-off on the wireframes. Nothing here is built yet. Builds on the strategy report (Product blueprint 2), `ohworks-architecture.md`, the design system's marketplace components and the search page that exists today.
+Date: 10 Oct 2026. Status: step 1 is built (section 14). Steps 2 and 3 are planned and not started. Builds on the strategy report (Product blueprint 2), `ohworks-architecture.md`, the design system's marketplace components and the search page that existed before.
 
 ## 1. What this page must achieve
 
@@ -201,3 +201,86 @@ The founder chose the defaults:
 - Results: list beside a map, list first, all filters, quick view, few or no results.
 - Site page: the full page, and the wording for every state that is not the happy path.
 - Basket: compare, plan, and the enquiry in three screens.
+
+## 14. What step 1 built (10 Oct 2026)
+
+Step 1 of the build order is done: the catalogue, the full site page and the enquiry. The wireframes signed off were `r1` (list beside a map), `s1` and `s2` (site page and its states) and `e1` (enquiry).
+
+### Pages
+
+| Address | What it is |
+| --- | --- |
+| `/search/` | Results: search box, filter bar, all-filters panel, sort, cards, map, pages of twelve |
+| `/in/{city}/{locality}/{format}-{road}-{unit id}/` | The site page. The unit id at the end finds the site; any other address for it redirects to this one |
+| `/enquire/{unit id}/` | The enquiry form |
+| `/enquire/confirm/?ref=` | Enter the emailed code |
+| `/enquire/sent/?ref=` | Confirmation, naming the owner |
+| `/how-results-are-ordered/` | The published ranking, linked beside the results |
+
+### How it answers the ten questions
+
+The card carries what, where, the photo or "No photo yet", price or "Price on request", availability, earned badges and the owner. The site page adds the gallery, key facts, a factual summary built from the listing's own fields, the calendar, the spec sheet in the system's order, location with the facing arrow, audience with its source, what the buyer supplies, the three enquiry steps, the owner card and similar sites nearby. A fact the owner has not given reads "Not provided yet · Ask the owner".
+
+### Filters and addresses
+
+- Place, format, size, price and dates sit in the bar. Static or digital, lighting and the five trust checks sit in "All filters".
+- Every option shows how many sites it would give. An option that would give none is shown but is not a link.
+- Each search has one address, with parameters in a fixed order. A filter form that leaves an empty or out-of-order parameter is redirected to the tidy address.
+- Filters are links and plain forms, so they work without script. The all-filters panel is a page state (`?filters=1`).
+- A price limit only counts sites that show a price. "Booked" sites drop out when the start date falls inside the booking.
+- With three or fewer results the page suggests single changes, each with the number of sites it adds. With none it offers the follow form.
+
+### The map
+
+The page draws a still picture of where the sites sit relative to each other. The live map (MapLibre) loads only when someone asks for it, so it costs the page nothing. Its style comes from `MAP_STYLE_URL`; when that is empty it uses the keyless OpenFreeMap style, which is for local development.
+
+### Data model and admin entry
+
+Four collections under **Marketplace** and **Operations** in `/admin`:
+
+| Collection | Holds |
+| --- | --- |
+| Owners | Name, city, contact email (staff only), phone, verified flag and date, median reply time |
+| Sites | One record per face: format, size, lighting, location, facing, price mode and rate, terms, availability, audience with source, permit, dated photos |
+| Enquiries | Reference, site, owner, buyer email, dates, brand, budget, artwork, message, status |
+| Outbox | Emails that would have been sent, when no email service is configured |
+
+Saving a site derives its title, address, size in millimetres, permanent unit id and completeness score. The save is refused if a rate is missing while the price is set to show, or if an audience figure has no source and date. Sites have drafts: only a published site appears.
+
+### Enquiry
+
+1. The buyer gives dates, brand and category, an optional budget, artwork status, an optional message and a work email.
+2. A six-digit code goes to that email. It works for ten minutes and five tries. Only its hash is stored.
+3. A right code sends the enquiry straight to the owner by email, with the buyer's address as the reply-to, and sends the buyer a copy.
+4. The browser is then remembered for 30 days by a signed cookie, so the next enquiry from the same address needs no code.
+
+Nothing reaches an owner from an unconfirmed address. Form posts from other sites are refused, a hidden trap field catches simple bots, and one address can start five enquiries an hour. Without `RESEND_API_KEY` every email is written to the Outbox instead. On a development server only, the confirm page also shows the code.
+
+### Sample sites
+
+`pnpm --filter @ohworks/web seed:sites` loads 5 sample owners and 37 sample sites across the six launch cities. Each is flagged as a sample: labelled on every card and page, with no photograph, never indexed and never in the sitemap. Roads and places are real; the sites, owners, permits and audience figures are not, and the audience source reads "Sample data". The script updates in place, so addresses stay the same between runs.
+
+### What search engines see
+
+Search, the enquiry pages and every sample are `noindex`; `/enquire/` is closed in robots. A real site page joins the index and the sitemap once it meets the content bar: a verified owner, a dated photo, coordinates and facing, size and lighting, and no unsourced audience figure. It then carries Product structured data with an Offer marked as a lease, and a price only when the page shows one.
+
+### Checks
+
+Unit tests cover the search state and its addresses, filtering, counts, ordering, the wording of each site state, the calendar and the enquiry codes. Browser tests cover the results page, every site-page state and the whole enquiry on desktop Chrome, Android Chrome and iPhone Safari, plus overflow checks from 320 to 1920 px. Lighthouse budgets run on the results page, a site page and the enquiry form.
+
+### Not in step 1
+
+- Shortlist, compare, plan, quick view, the clustered map synced with the list, and "search this area": step 2.
+- One enquiry across several owners, the reply thread, exports, indexable city and locality hubs, Typesense and Claude query parsing: step 3.
+- A taken-down site answers 404 today. The true "gone" (410) answer with similar sites needs a middleware lookup and is deferred.
+- Nearby landmarks with distances, and the street-level check, need a Google Maps key.
+- "Campaigns that ran here" appears once case studies are linked to sites.
+- The phone number is revealed on the page; it is not yet logged per buyer.
+
+### To put real sites on it
+
+1. Sign in at `/admin` as an admin or ops user.
+2. Add the owner under Marketplace, Owners. Tick "Verified owner" only after the documents are checked.
+3. Add each face under Marketplace, Sites, with real dated photographs, and publish it.
+4. Set `RESEND_API_KEY` and `EMAIL_FROM` so enquiries are emailed, and `MAP_STYLE_URL` to a MapTiler style.
+5. Remove the samples before launch: delete the sample sites, then the sample owners, in the admin.

@@ -1,246 +1,356 @@
 import type { Metadata } from "next";
-import { Button, Chip, Container, EmptyState, Icon, SearchField } from "@ohworks/ui";
+import { redirect } from "next/navigation";
+import { Button, Container, EmptyState, SearchField } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { FollowForm } from "@/components/FollowForm";
+import { FilterEnhance } from "@/components/sites/Enhance";
+import { FilterBar, FilterPanel, PhoneBar } from "@/components/sites/Filters";
+import { MapPanel } from "@/components/sites/MapPanel";
+import { SiteCard } from "@/components/sites/SiteCard";
+import { StillMap } from "@/components/sites/StillMap";
+import { formatDate } from "@/lib/editorial/format";
+import { searchSites } from "@/lib/sites/queries";
 import {
-  CITY_OPTIONS,
-  FORMAT_OPTIONS,
-  cityLabel,
-  formatBudget,
-  formatLabel,
-  parseQuery,
-  searchUrl,
-} from "@/lib/search-parse";
+  firstPage,
+  readState,
+  toUrl,
+  toggle,
+  without,
+  type RawParams,
+  type SearchState,
+} from "@/lib/sites/state";
+import { cityDef, formatDef, lightingDef } from "@/lib/sites/taxonomy";
+import { inr } from "@/lib/sites/view";
 
-/** Search results are never indexed; hubs and unit pages are the pages that rank. */
+export const dynamic = "force-dynamic";
+
+/** Search results are never indexed; hubs and site pages are the pages that rank. */
 export const metadata: Metadata = {
   title: "Find sites",
   robots: { index: false, follow: true },
 };
 
-const EXAMPLES = [
-  "Hoardings in Bengaluru",
-  "LED screens in Mumbai under ₹2 lakh",
-  "20 × 10 ft near Silk Board junction",
-  "Bus shelters in Pune",
-  "Unipoles on Outer Ring Road",
-];
+const MAP_STYLE = process.env.MAP_STYLE_URL || "https://tiles.openfreemap.org/styles/positron";
 
-interface Params {
-  q?: string;
-  city?: string;
-  format?: string;
-  followed?: string;
-  follow?: string;
+/** "hoardings in Koramangala, Bengaluru", "LED screens", or plain "sites". One site is named in the singular. */
+function describe(state: SearchState, localityLabel: string | undefined, single = false): string {
+  const format = state.formats.length === 1 ? formatDef(state.formats[0]) : undefined;
+  const plural = format
+    ? format.slug === "led-screen"
+      ? "LED screens"
+      : format.plural.toLowerCase()
+    : "sites";
+  const what = single ? (format ? format.inSentence : "site") : plural;
+  const city = cityDef(state.city)?.label;
+  const where = city ? ` in ${localityLabel ? `${localityLabel}, ` : ""}${city}` : "";
+  return `${what}${where}`;
 }
 
-export default async function SearchPage({ searchParams }: { searchParams: Promise<Params> }) {
-  const p = await searchParams;
-  const q = (p.q ?? "").trim();
-  const parsed = parseQuery(q);
-  const city = p.city || parsed.facets.city;
-  const format = p.format || parsed.facets.format;
-  const here = searchUrl({ q, city: p.city, format: p.format });
+function Pages({ state, pages }: { state: SearchState; pages: number }) {
+  if (pages <= 1) return null;
+  const from = Math.max(1, Math.min(state.page - 2, pages - 4));
+  const numbers = Array.from({ length: Math.min(5, pages) }, (_, i) => from + i).filter(
+    (n) => n <= pages,
+  );
+  return (
+    <nav
+      aria-label="Pages"
+      className="border-hairline mt-8 flex flex-wrap items-center justify-between gap-4 border-t pt-5"
+      data-section="pager"
+    >
+      <span className="t-data text-ink-muted">
+        Page {state.page} of {pages}
+      </span>
+      <div className="flex flex-wrap gap-2">
+        {state.page > 1 ? (
+          <a
+            href={toUrl(state, { page: state.page - 1 })}
+            rel="prev nofollow"
+            className="oh-btn secondary sm"
+          >
+            Previous
+          </a>
+        ) : null}
+        {numbers.map((n) =>
+          n === state.page ? (
+            <span key={n} aria-current="page" className="oh-btn primary sm">
+              {n}
+            </span>
+          ) : (
+            <a
+              key={n}
+              href={toUrl(state, { page: n })}
+              rel="nofollow"
+              className="oh-btn secondary sm"
+            >
+              {n}
+            </a>
+          ),
+        )}
+        {state.page < pages ? (
+          <a
+            href={toUrl(state, { page: state.page + 1 })}
+            rel="next nofollow"
+            className="oh-btn secondary sm"
+          >
+            Next
+          </a>
+        ) : null}
+      </div>
+    </nav>
+  );
+}
 
-  const understood: { key: string; label: string; remove: string }[] = [];
-  if (city)
-    understood.push({
-      key: "city",
-      label: cityLabel(city) ?? city,
-      remove: searchUrl({
-        q: parsed.facets.city === city ? stripFacet(q, city) : q,
-        format: p.format,
-      }),
-    });
-  if (format)
-    understood.push({
-      key: "format",
-      label: formatLabel(format) ?? format,
-      remove: searchUrl({
-        q: parsed.facets.format === format ? stripFacet(q, format) : q,
-        city: p.city,
-      }),
-    });
-  if (parsed.facets.size)
-    understood.push({
-      key: "size",
-      label: `${parsed.facets.size.w} × ${parsed.facets.size.h} ft`,
-      remove: here,
-    });
-  if (parsed.facets.budget)
-    understood.push({
-      key: "budget",
-      label: `Under ${formatBudget(parsed.facets.budget)} a month`,
-      remove: here,
-    });
-  if (parsed.facets.lighting)
-    understood.push({ key: "lighting", label: parsed.facets.lighting, remove: here });
-  if (parsed.facets.area)
-    understood.push({ key: "area", label: `Near ${titleCase(parsed.facets.area)}`, remove: here });
+export default async function SearchPage({ searchParams }: { searchParams: Promise<RawParams> }) {
+  const raw = await searchParams;
+  const { state, typed, understood } = readState(raw);
+  const followed = raw.followed === "1";
+  const followInvalid = raw.follow === "invalid";
 
-  const what = [plainLabel(formatLabel(format)) ?? "sites", city ? `in ${cityLabel(city)}` : ""]
-    .filter(Boolean)
-    .join(" ");
-  const emptyTitle =
-    city || format ? `No ${what} yet` : q ? `No sites match “${q}” yet` : "No sites listed yet";
+  // One address per search. A filter form can leave an empty or out-of-order parameter behind, so the
+  // visitor is sent to the tidy address. A typed query is left alone: it is what the visitor wrote.
+  if (typed === state.q) {
+    const given = new URLSearchParams();
+    for (const [k, v] of Object.entries(raw))
+      for (const x of Array.isArray(v) ? v : [v ?? ""]) given.append(k, x);
+    const asked = `/search/${given.size ? `?${given.toString().replace(/%2C/g, ",")}` : ""}`;
+    const base = toUrl(state);
+    const extra = followed ? "followed=1" : followInvalid ? "follow=invalid" : "";
+    const tidy = extra ? `${base}${base.includes("?") ? "&" : "?"}${extra}` : base;
+    if (asked !== tidy) redirect(tidy);
+  }
+
+  const result = await searchSites(state);
+  if (state.page > result.pages) redirect(toUrl(state, { page: 1 }));
+
+  const now = Date.now();
+  const onlyLocality =
+    state.localities.length === 1
+      ? result.facets.localities.find((l) => l.slug === state.localities[0])?.label
+      : undefined;
+  const what = describe(state, onlyLocality);
+  const here = toUrl(state, { panel: false });
+  const showMap = state.map && result.total > 0;
+
+  const chips: { key: string; label: string; remove: string }[] = [];
+  if (understood) {
+    if (state.city)
+      chips.push({
+        key: "city",
+        label: cityDef(state.city)?.label ?? state.city,
+        remove: toUrl(without(state, "city", "localities"), firstPage),
+      });
+    for (const f of state.formats)
+      chips.push({
+        key: `format-${f}`,
+        label: formatDef(f)?.plural ?? f,
+        remove: toUrl({ ...state, formats: toggle(state.formats, f) }, firstPage),
+      });
+    if (state.size)
+      chips.push({
+        key: "size",
+        label: `${state.size.w} × ${state.size.h} ft`,
+        remove: toUrl(without(state, "size"), firstPage),
+      });
+    if (state.max)
+      chips.push({
+        key: "max",
+        label: `Under ${inr(state.max)} a month`,
+        remove: toUrl(without(state, "max"), firstPage),
+      });
+    for (const l of state.lighting)
+      chips.push({
+        key: `lit-${l}`,
+        label: lightingDef(l)?.label ?? l,
+        remove: toUrl({ ...state, lighting: toggle(state.lighting, l) }, firstPage),
+      });
+    if (state.q)
+      chips.push({
+        key: "q",
+        label: `“${state.q}”`,
+        remove: toUrl({ ...state, q: "" }, firstPage),
+      });
+  }
 
   return (
     <Shell active="find">
-      <Container className="py-10 lg:py-14">
-        <div className="mx-auto max-w-[760px]">
-          <h1 className="t-display-lg">Find sites</h1>
-          <p className="t-body text-ink-muted mt-3">
-            Type a place, a road, a format or a size. ohworks shows what it understood before it
-            searches.
+      <FilterEnhance />
+      <Container className="pt-8 pb-4">
+        <SearchField
+          defaultValue={typed || state.q}
+          size="lg"
+          tone="primary"
+          placeholder="Try: hoardings in Bengaluru, or 20 × 10 ft near Silk Board"
+        />
+        {chips.length ? (
+          <div className="mt-4 flex flex-wrap items-center gap-2" data-section="understood">
+            <span className="t-small text-ink-muted">Understood as</span>
+            {chips.map((c) => (
+              <a
+                key={c.key}
+                href={c.remove}
+                className="oh-chip"
+                aria-current="page"
+                aria-label={`Remove ${c.label}`}
+                rel="nofollow"
+              >
+                {c.label}
+                <span className="x" aria-hidden="true">
+                  ×
+                </span>
+              </a>
+            ))}
+          </div>
+        ) : null}
+      </Container>
+
+      <FilterBar state={state} facets={result.facets} />
+
+      <Container className="pt-5 pb-14">
+        {result.anySample ? (
+          <p
+            className="t-small border-hairline bg-lit-tint text-ink mb-4 rounded-sm border px-3 py-2"
+            data-section="sample-notice"
+          >
+            These are sample listings for development. They are not real sites, and they are never
+            shown to search engines.
           </p>
-          <div className="mt-6">
-            <SearchField
-              defaultValue={q}
-              size="lg"
-              placeholder="Try: hoardings in Bengaluru, or 20 × 10 ft near Silk Board"
-            />
+        ) : null}
+
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pb-4">
+          <div>
+            <h1 className="t-display-md" data-section="heading">
+              {result.total > 0 ? (
+                <>
+                  <span className="font-mono" style={{ fontVariantNumeric: "tabular-nums" }}>
+                    {result.total}
+                  </span>{" "}
+                  {describe(state, onlyLocality, result.total === 1)}
+                </>
+              ) : (
+                "Find sites"
+              )}
+            </h1>
+            {result.median ? (
+              <p className="t-small text-ink-muted mt-1" data-section="median">
+                Median rate {inr(result.median.rate)} a month, from {result.median.n} sites that
+                show a price · ohworks data,{" "}
+                {formatDate(new Date(now).toISOString()).replace(/^\d+ /, "")}
+              </p>
+            ) : null}
           </div>
+          <a href="/how-results-are-ordered/" className="oh-link t-body">
+            How results are ordered
+          </a>
+        </div>
 
-          {understood.length ? (
-            <div className="mt-4 flex flex-wrap items-center gap-2" data-section="understood">
-              <span className="t-small text-ink-muted">Understood as</span>
-              {understood.map((u) => (
-                <Chip key={u.key} href={u.remove} pressed removable ariaLabel={`Remove ${u.label}`}>
-                  {u.label}
-                </Chip>
-              ))}
-            </div>
-          ) : null}
-
-          <div className="mt-6 grid gap-4 sm:grid-cols-[auto_1fr] sm:items-start">
-            <span className="t-label text-ink-muted pt-2">Format</span>
-            <div className="flex flex-wrap gap-2" data-section="formats">
-              {FORMAT_OPTIONS.map((f) => {
-                const on = format === f.slug;
-                return (
-                  <Chip
-                    key={f.slug}
-                    href={searchUrl({ q, city: p.city, format: on ? undefined : f.slug })}
-                    pressed={on}
-                  >
-                    {f.label}
-                  </Chip>
-                );
-              })}
-            </div>
-            <span className="t-label text-ink-muted pt-2">City</span>
-            <div className="flex flex-wrap gap-2" data-section="cities">
-              {CITY_OPTIONS.map((c) => {
-                const on = city === c.slug;
-                return (
-                  <Chip
-                    key={c.slug}
-                    href={searchUrl({ q, format: p.format, city: on ? undefined : c.slug })}
-                    pressed={on}
-                  >
-                    {c.label}
-                  </Chip>
-                );
-              })}
-            </div>
-          </div>
-
-          {p.followed ? (
-            <div className="oh-toast success mt-8" role="status">
-              <span className="dot" />
-              <div>
-                <div className="t">You are on the list.</div>
-                <div className="d">
-                  We will email you when the first {what} are listed. One email, then you choose.
-                </div>
+        {followed ? (
+          <div className="oh-toast success mb-6" role="status">
+            <span className="dot" />
+            <div>
+              <div className="t">You are on the list.</div>
+              <div className="d">
+                We will email you when the first {what} are listed. One email, then you choose.
               </div>
             </div>
-          ) : null}
-          {p.follow === "invalid" ? (
-            <div className="oh-toast error mt-8" role="alert">
-              <span className="dot" />
-              <div>
-                <div className="t">That email did not look right.</div>
-                <div className="d">Check it and try again; nothing was saved.</div>
-              </div>
+          </div>
+        ) : null}
+        {followInvalid ? (
+          <div className="oh-toast error mb-6" role="alert">
+            <span className="dot" />
+            <div>
+              <div className="t">That email did not look right.</div>
+              <div className="d">Check it and try again; nothing was saved.</div>
             </div>
-          ) : null}
+          </div>
+        ) : null}
 
-          <div className="mt-10" data-section="results">
-            <EmptyState icon="pin" title={emptyTitle}>
-              The first verified sites go live city by city with the founding owners. Leave your
-              email and we will tell you the day {what} appear.
+        {result.total > 0 ? (
+          <div
+            className={
+              showMap ? "grid items-start gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]" : ""
+            }
+            data-section="results"
+            data-layout={showMap ? "map" : "list"}
+          >
+            <div className="min-w-0">
+              <div className={`grid gap-5 sm:grid-cols-2 ${showMap ? "" : "lg:grid-cols-3"}`}>
+                {result.cards.map((card) => (
+                  <SiteCard key={card.site.id} card={card} now={now} />
+                ))}
+              </div>
+              <Pages state={state} pages={result.pages} />
+            </div>
+            {showMap ? (
+              <aside
+                id="map"
+                aria-label="Map of results"
+                className="border-hairline bg-paper-sunken order-first h-[200px] scroll-mt-24 overflow-hidden rounded-md border sm:h-[300px] lg:sticky lg:top-[142px] lg:order-none lg:h-[640px]"
+                data-section="map"
+              >
+                <MapPanel points={result.points} styleUrl={MAP_STYLE}>
+                  <StillMap
+                    points={result.points}
+                    label={`Where the ${result.total} matching sites sit relative to each other. Open the live map for streets.`}
+                  />
+                </MapPanel>
+              </aside>
+            ) : null}
+          </div>
+        ) : (
+          <div className="max-w-[760px]" data-section="results" data-layout="empty">
+            <EmptyState
+              icon="pin"
+              title={result.catalogueSize === 0 ? "No sites listed yet" : `No ${what} yet`}
+            >
+              {result.catalogueSize === 0
+                ? "The first verified sites go live city by city with the founding owners. Leave your email and we will tell you when your city opens."
+                : `Nothing matches every filter you chose. Widen the search below, or leave your email and we will tell you the day ${what} appear.`}
             </EmptyState>
-            {!p.followed ? (
-              <FollowForm city={city} format={format} query={q} returnTo={here} what={what} />
+            {!followed ? (
+              <FollowForm
+                city={state.city}
+                format={state.formats[0]}
+                query={typed || state.q}
+                returnTo={here}
+                what={what}
+              />
             ) : null}
             <div className="mt-4 flex flex-wrap gap-2">
               <Button href="/for-owners/" variant="ghost" size="sm">
                 Own sites here? List them free
               </Button>
               <Button href="/guides/" variant="ghost" size="sm">
-                Read the cost guides
+                Read the guides
               </Button>
             </div>
           </div>
+        )}
 
-          <div className="mt-12 grid gap-8 sm:grid-cols-2">
-            <div>
-              <h2 className="t-display-sm">Try a search like</h2>
-              <ul className="mt-3 flex flex-col gap-2">
-                {EXAMPLES.map((e) => (
-                  <li key={e}>
-                    <a href={searchUrl({ q: e })} className="oh-link t-body">
-                      {e}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+        {result.wider.length ? (
+          <section
+            className="border-hairline bg-paper-raised mt-8 max-w-[760px] rounded-md border p-5"
+            data-section="wider"
+          >
+            <h2 className="t-display-sm">Widen your search</h2>
+            <p className="t-body text-ink-muted mt-1">
+              Each change shows how many sites it would add.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {result.wider.map((w) => (
+                <a key={w.label} href={w.url} className="oh-chip" rel="nofollow">
+                  {w.label} <span className="count">+{w.add}</span>
+                </a>
+              ))}
             </div>
-            <div>
-              <h2 className="t-display-sm">What every result shows</h2>
-              <ul className="text-ink-muted t-body mt-3 flex flex-col gap-2">
-                {[
-                  { icon: "pin" as const, t: "The exact spot, with a photo from the road" },
-                  { icon: "hoarding" as const, t: "Format, size, lighting and screen specs" },
-                  { icon: "verified" as const, t: "The verified owner, named on the page" },
-                  {
-                    icon: "enquiry" as const,
-                    t: "A price, or “price on request”, and one-step enquiry",
-                  },
-                ].map((r) => (
-                  <li key={r.t} className="flex items-start gap-2">
-                    <span className="text-ink mt-0.5 shrink-0">
-                      <Icon name={r.icon} size={20} />
-                    </span>
-                    <span>{r.t}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+          </section>
+        ) : null}
       </Container>
+
+      <PhoneBar state={state} />
+      {state.panel ? (
+        <FilterPanel state={state} facets={result.facets} total={result.total} />
+      ) : null}
     </Shell>
   );
-}
-
-/** Lower-cases a format label for use mid-sentence, keeping acronyms such as LED. */
-function plainLabel(label: string | undefined): string | undefined {
-  return label
-    ?.split(" ")
-    .map((w) => (w === w.toUpperCase() && w.length <= 4 ? w : w.toLowerCase()))
-    .join(" ");
-}
-
-function stripFacet(q: string, slug: string): string {
-  const names = [...CITY_OPTIONS, ...FORMAT_OPTIONS].find((o) => o.slug === slug)?.names ?? [slug];
-  let out = q;
-  for (const n of [...names].sort((a, b) => b.length - a.length))
-    out = out.replace(new RegExp(`\\b${n}\\b`, "ig"), " ");
-  return out.replace(/\s+/g, " ").trim();
-}
-
-function titleCase(s: string): string {
-  return s.replace(/\b\w/g, (c) => c.toUpperCase());
 }

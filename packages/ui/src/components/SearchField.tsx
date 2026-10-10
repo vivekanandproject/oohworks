@@ -8,6 +8,8 @@ export interface SearchFieldProps {
   defaultValue?: string;
   /** Large hero variant: 56px tall. */
   size?: "md" | "lg";
+  /** Accent where the search is the one buyer action; primary where enquiring is. */
+  tone?: "accent" | "primary";
 }
 
 /**
@@ -21,6 +23,7 @@ export function SearchField({
   buttonLabel = "Find sites",
   defaultValue,
   size = "lg",
+  tone = "accent",
 }: SearchFieldProps) {
   const lg = size === "lg";
   return (
@@ -48,7 +51,7 @@ export function SearchField({
           enterKeyHint="search"
         />
       </div>
-      <button type="submit" className={`oh-btn accent ${lg ? "lg" : ""}`}>
+      <button type="submit" className={`oh-btn ${tone} ${lg ? "lg" : ""}`}>
         {buttonLabel}
       </button>
     </form>

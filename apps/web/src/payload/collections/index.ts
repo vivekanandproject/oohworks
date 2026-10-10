@@ -11,3 +11,7 @@ export { Issues } from "./Issues";
 export { Corrections } from "./Corrections";
 export { Follows } from "./Follows";
 export { Subscribers } from "./Subscribers";
+export { Owners } from "./Owners";
+export { Sites } from "./Sites";
+export { Enquiries } from "./Enquiries";
+export { Outbox } from "./Outbox";

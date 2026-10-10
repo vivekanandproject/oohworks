@@ -320,7 +320,8 @@ test.describe("sign-up and follow forms", () => {
       browserName !== "chromium" || Boolean(isMobile),
       "one engine is enough for a form post",
     );
-    await page.goto("/search/?q=hoardings+in+Pune");
+    // A search that matches no site, so the follow form is offered.
+    await page.goto("/search/?city=pune&format=gantry");
     await page.locator("[data-section='follow'] input[type='email']").fill("buyer@ohworks.local");
     await page.locator("[data-section='follow'] button").click();
     await expect(page).toHaveURL(/followed=1/);
