@@ -1,8 +1,8 @@
 import type { Block } from "payload";
 
 /**
- * Fact: a number, its unit, a source record and a date. Inline, inside a sentence.
- * It cannot be saved without a source, and an article cannot be published until an editor
+ * Fact: a figure, its source and the date it is true for. Inline, inside a sentence.
+ * It cannot be saved without a source, and a piece cannot be published until an editor
  * has ticked every Fact against its source.
  */
 export const Fact: Block = {
@@ -14,15 +14,30 @@ export const Fact: Block = {
       name: "value",
       type: "text",
       required: true,
-      admin: { description: "The figure as it should read, e.g. 78,000 or 15%" },
+      admin: {
+        description:
+          "The figure exactly as it should read, with its currency or percent sign: $54.2 bn, 15%, ₹ 78,000",
+      },
     },
-    { name: "unit", type: "text", admin: { description: "e.g. ₹ a month, bn, %, sites" } },
+    {
+      name: "unit",
+      type: "text",
+      admin: { description: "What follows it, if anything: a month, sites, of digital spend" },
+    },
     { name: "source", type: "relationship", relationTo: "sources", required: true },
     {
       name: "asOf",
       type: "date",
       required: true,
       admin: { description: "The date the figure is true for" },
+    },
+    {
+      name: "label",
+      type: "text",
+      admin: {
+        description:
+          "Optional. What it measures, in a few words. Facts with a label appear in the Key facts panel beside the piece.",
+      },
     },
     {
       name: "checked",

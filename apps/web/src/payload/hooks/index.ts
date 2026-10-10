@@ -1,4 +1,10 @@
-import { APIError, type CollectionBeforeChangeHook } from "payload";
+import {
+  APIError,
+  type CollectionAfterChangeHook,
+  type CollectionAfterDeleteHook,
+  type CollectionBeforeChangeHook,
+} from "payload";
+import { pieceUrl, pillarOf } from "../../lib/editorial/pillars";
 
 export function slugify(input: string): string {
   return input
@@ -79,4 +85,63 @@ export const editorialBeforeChange: CollectionBeforeChangeHook = async ({
     if (!data.publishedAt && !originalDoc?.publishedAt) data.publishedAt = new Date().toISOString();
   }
   return data;
+};
+
+/** Tells IndexNow engines (Bing, Yandex, Naver, Seznam) about a changed URL. Off unless a key is set and the site is public. */
+async function pingIndexNow(path: string | undefined): Promise<void> {
+  const key = process.env.INDEXNOW_KEY;
+  const site = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
+  if (!key || !path || !site || site.includes("localhost") || site.includes("127.0.0.1")) return;
+  try {
+    await fetch("https://api.indexnow.org/indexnow", {
+      method: "POST",
+      headers: { "content-type": "application/json; charset=utf-8" },
+      body: JSON.stringify({
+        host: new URL(site).host,
+        key,
+        keyLocation: `${site}/indexnow-key.txt`,
+        urlList: [`${site}${path}`],
+      }),
+    });
+  } catch {
+    // A failed ping never blocks publishing.
+  }
+}
+
+/** The home page is cached; drop it when anything public changes. Outside a Next request (seed scripts) there is nothing to drop. */
+async function refreshHome(): Promise<void> {
+  try {
+    const { revalidatePath } = await import("next/cache");
+    revalidatePath("/");
+  } catch {
+    // Not inside a Next request.
+  }
+}
+
+function publicPath(
+  collection: string,
+  doc: { slug?: string | null; pillar?: string | null } | undefined,
+): string | undefined {
+  if (!doc?.slug) return undefined;
+  const pillar = pillarOf(collection, doc);
+  return pillar ? pieceUrl(pillar, doc.slug) : undefined;
+}
+
+export const refreshAfterChange: CollectionAfterChangeHook = async ({
+  doc,
+  previousDoc,
+  collection,
+}) => {
+  const isPublic = doc?._status === "published";
+  const wasPublic = previousDoc?._status === "published";
+  if (isPublic || wasPublic) {
+    await refreshHome();
+    if (isPublic) void pingIndexNow(publicPath(collection.slug, doc));
+  }
+  return doc;
+};
+
+export const refreshAfterDelete: CollectionAfterDeleteHook = async ({ doc }) => {
+  if (doc?._status === "published") await refreshHome();
+  return doc;
 };

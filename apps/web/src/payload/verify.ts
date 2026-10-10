@@ -116,6 +116,7 @@ async function main() {
     overrideAccess: false,
     data: {
       pillar: "news",
+      layout: "standard",
       title: "Verification: global OOH spend 2025",
       standfirst: "A test piece created by the week-one check.",
       body: body(source.id, false),
@@ -201,6 +202,7 @@ async function main() {
     overrideAccess: false,
     data: {
       pillar: "news",
+      layout: "standard",
       title: "Verification: writer draft",
       standfirst: "Writer test.",
       body: body(source.id, true),

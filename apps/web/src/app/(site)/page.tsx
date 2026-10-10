@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import {
-  ArticleCard,
   Button,
   Container,
   Icon,
@@ -9,14 +8,18 @@ import {
   NEUTRALITY_LINE,
   Reveal,
   SearchField,
-  type ArticleCardProps,
   type ListingCardProps,
 } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { SiteSheet } from "@/components/SiteSheet";
 import { ReferenceSites } from "@/components/ReferenceSites";
+import { PieceCard } from "@/components/editorial/PieceBits";
+import { latestForHome } from "@/lib/editorial/queries";
 import { CHARTER } from "@/lib/site";
 import { JsonLd, SITE_NAME, alternates, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
+
+/** Cached, then refreshed every minute and whenever something is published. */
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: {
@@ -30,9 +33,6 @@ const at = (i: number) => ({ "--i": i }) as CSSProperties;
 
 /** Newest indexable faces. Empty until the first owner's site clears the content bar (M2 wires this to Postgres). */
 const NEW_SITES: ListingCardProps[] = [];
-
-/** Latest articles. Empty until the newsroom publishes (M5). */
-const LATEST_ARTICLES: ArticleCardProps[] = [];
 
 const STEPS = [
   {
@@ -75,7 +75,8 @@ const OWNER_FACTS = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const latest = await latestForHome(3);
   return (
     <Shell>
       <JsonLd data={[organizationJsonLd(), webSiteJsonLd()]} />
@@ -297,19 +298,24 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* Newsroom: only when articles exist */}
-      {LATEST_ARTICLES.length > 0 ? (
+      {/* Newsroom: only when pieces exist */}
+      {latest.length > 0 ? (
         <section className="border-hairline border-b" data-section="newsroom">
           <Container className="py-12 lg:py-16">
-            <div className="flex items-end justify-between gap-4">
-              <h2 className="t-display-md">From the newsroom</h2>
-              <a href="/news/" className="oh-link t-body">
-                All news
-              </a>
-            </div>
-            <div className="mt-8 grid gap-6 lg:grid-cols-3">
-              {LATEST_ARTICLES.map((a) => (
-                <ArticleCard key={a.href} {...a} />
+            <Reveal>
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                  <p className="t-label text-ink-muted">From the newsroom</p>
+                  <h2 className="t-display-md mt-3">News, analysis and guides</h2>
+                </div>
+                <a href="/newsroom/" className="oh-link t-body">
+                  Go to the newsroom
+                </a>
+              </div>
+            </Reveal>
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {latest.map((p) => (
+                <PieceCard key={`${p.collection}-${p.id}`} piece={p} />
               ))}
             </div>
           </Container>

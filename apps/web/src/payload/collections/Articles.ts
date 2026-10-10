@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { isAdmin, isWriter, ownDraftOrEditor, publishedOrStaff } from "../access";
-import { editorialBeforeChange } from "../hooks";
+import { editorialBeforeChange, refreshAfterChange, refreshAfterDelete } from "../hooks";
 import {
   createdByField,
   editorialEditor,
@@ -20,7 +20,11 @@ export const Articles: CollectionConfig = {
   },
   versions: { drafts: { autosave: { interval: 1500 } }, maxPerDoc: 50 },
   access: { read: publishedOrStaff, create: isWriter, update: ownDraftOrEditor, delete: isAdmin },
-  hooks: { beforeChange: [editorialBeforeChange] },
+  hooks: {
+    beforeChange: [editorialBeforeChange],
+    afterChange: [refreshAfterChange],
+    afterDelete: [refreshAfterDelete],
+  },
   fields: [
     {
       name: "pillar",
@@ -34,6 +38,27 @@ export const Articles: CollectionConfig = {
         { label: "Showcase", value: "showcase" },
       ],
       admin: { position: "sidebar" },
+    },
+    {
+      name: "lead",
+      type: "checkbox",
+      defaultValue: false,
+      label: "Lead story on the Newsroom front page",
+      admin: {
+        position: "sidebar",
+        description: "The newest piece with this ticked leads the front page.",
+      },
+    },
+    {
+      name: "layout",
+      type: "select",
+      required: true,
+      defaultValue: "standard",
+      options: [
+        { label: "Standard", value: "standard" },
+        { label: "Immersive: full-width photo, for showcase pieces", value: "immersive" },
+      ],
+      admin: { position: "sidebar", description: "Immersive needs a strong, real hero photo." },
     },
     { name: "title", type: "text", required: true, maxLength: 120 },
     slugField,

@@ -42,7 +42,9 @@ export function FollowForm({ city, format, query, returnTo, what }: FollowFormPr
         className="oh-input flex-1"
         autoComplete="email"
       />
-      <Button variant="primary">Tell me when {what} are listed</Button>
+      <Button variant="primary" type="submit">
+        Tell me when {what} are listed
+      </Button>
     </form>
   );
 }

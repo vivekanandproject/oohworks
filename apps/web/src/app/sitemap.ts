@@ -1,17 +1,74 @@
 import type { MetadataRoute } from "next";
+import { PILLARS, PILLAR_KEYS } from "@/lib/editorial/pillars";
+import { allPieces, authorsOf, pillarCounts } from "@/lib/editorial/queries";
 import { absolute } from "@/lib/seo";
 
+export const dynamic = "force-dynamic";
+
 /**
- * Static pages. Unit, hub and owner sitemaps are generated as shards by the indexing job
- * and served from object storage; they join this index in M2.
+ * Static pages and everything the newsroom has published. Section indexes join only when they hold
+ * something. Unit, hub and owner sitemaps are separate shards written by the indexing job (M2).
  */
-export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date("2026-10-09");
-  return [
-    { url: absolute("/"), lastModified, changeFrequency: "daily", priority: 1 },
-    { url: absolute("/charter/"), lastModified, changeFrequency: "yearly", priority: 0.6 },
-    { url: absolute("/for-owners/"), lastModified, changeFrequency: "monthly", priority: 0.8 },
-    { url: absolute("/guides/"), lastModified, changeFrequency: "weekly", priority: 0.7 },
-    { url: absolute("/news/"), lastModified, changeFrequency: "daily", priority: 0.7 },
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const fixed = new Date("2026-10-10");
+  const pages: MetadataRoute.Sitemap = [
+    { url: absolute("/"), lastModified: fixed, changeFrequency: "daily", priority: 1 },
+    { url: absolute("/charter/"), lastModified: fixed, changeFrequency: "yearly", priority: 0.6 },
+    {
+      url: absolute("/for-owners/"),
+      lastModified: fixed,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
   ];
+  const [pieces, counts] = await Promise.all([allPieces(), pillarCounts()]);
+  if (pieces.length === 0) return pages;
+
+  const newest = new Date(pieces[0]?.updatedAt ?? fixed);
+  pages.push({
+    url: absolute("/newsroom/"),
+    lastModified: newest,
+    changeFrequency: "daily",
+    priority: 0.9,
+  });
+  pages.push({
+    url: absolute("/newsroom/all/"),
+    lastModified: newest,
+    changeFrequency: "daily",
+    priority: 0.5,
+  });
+  pages.push({
+    url: absolute("/newsroom/corrections/"),
+    lastModified: fixed,
+    changeFrequency: "monthly",
+    priority: 0.3,
+  });
+  for (const key of PILLAR_KEYS) {
+    if (counts[key] === 0) continue;
+    const latest = pieces.find((p) => p.pillar === key);
+    pages.push({
+      url: absolute(`${PILLARS[key].path}/`),
+      lastModified: new Date(latest?.updatedAt ?? newest),
+      changeFrequency: "daily",
+      priority: 0.7,
+    });
+  }
+  for (const p of pieces) {
+    if (p.noIndex) continue;
+    pages.push({
+      url: absolute(p.url),
+      lastModified: new Date(p.updatedAt),
+      changeFrequency: p.pillar === "news" ? "never" : "monthly",
+      priority: p.pillar === "news" ? 0.6 : 0.8,
+    });
+  }
+  for (const a of authorsOf(pieces)) {
+    pages.push({
+      url: absolute(`/authors/${a.slug}/`),
+      lastModified: newest,
+      changeFrequency: "weekly",
+      priority: 0.4,
+    });
+  }
+  return pages;
 }

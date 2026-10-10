@@ -10,3 +10,4 @@ export { Reports } from "./Reports";
 export { Issues } from "./Issues";
 export { Corrections } from "./Corrections";
 export { Follows } from "./Follows";
+export { Subscribers } from "./Subscribers";

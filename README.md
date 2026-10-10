@@ -35,3 +35,27 @@ Other local UIs: Inngest http://localhost:8288, Mailpit http://localhost:8025, T
 `pnpm dev`, `pnpm build`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm format`, `pnpm db:generate|migrate|seed`.
 
 One Docker image serves both Cloud Run services; `SERVICE_ROLE=jobs` restricts it to the Inngest handler.
+
+## Newsroom
+
+The editorial side runs on the CMS at `/admin` and renders at `/newsroom/`, with one section each for news, analysis, guides, owner academy, data and showcase.
+
+```bash
+pnpm --filter @ohworks/web seed        # users, tags, sources
+pnpm --filter @ohworks/web seed:demo   # nine sample pieces, for development and tests only
+```
+
+- A piece publishes only when an editor has ticked every Fact against its source and marked it fact-checked.
+- Pieces with at least two sections and 300 words get the contents and key-facts rails; shorter ones are a single column. Set Layout to Immersive on a piece with a strong photo for the full-width opening.
+- Feeds: `/feed.xml`, `/feed.json`. Sitemaps: `/sitemap.xml`, `/news-sitemap.xml`.
+- After changing a CMS collection or block, restart the dev server. A server that was running during the change can serve stale routes and a broken editor.
+
+## Verifying without stopping the site
+
+Test builds go to their own folder, so the dev server can stay up:
+
+```bash
+NEXT_DIST_DIR=.next-verify pnpm build
+NEXT_DIST_DIR=.next-verify pnpm test:e2e
+NEXT_DIST_DIR=.next-verify CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" pnpm lighthouse
+```

@@ -7,7 +7,7 @@ export interface NavBarProps {
 
 const LINKS: { key: NonNullable<NavBarProps["active"]>; href: string; label: string }[] = [
   { key: "find", href: "/search/", label: "Find sites" },
-  { key: "news", href: "/news/", label: "News" },
+  { key: "news", href: "/newsroom/", label: "Newsroom" },
   { key: "owners", href: "/for-owners/", label: "For owners" },
 ];
 

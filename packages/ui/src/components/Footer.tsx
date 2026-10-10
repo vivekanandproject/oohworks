@@ -13,8 +13,8 @@ const COLS: Col[] = [
     title: "Product",
     links: [
       { href: "/search/", label: "Find sites" },
+      { href: "/newsroom/", label: "Newsroom" },
       { href: "/guides/", label: "Guides" },
-      { href: "/news/", label: "News" },
       { href: "/charter/", label: "The charter" },
     ],
   },
@@ -31,7 +31,8 @@ const COLS: Col[] = [
     title: "Company",
     links: [
       { href: "/charter/", label: "What we never do" },
-      { href: "/news/", label: "Newsroom" },
+      { href: "/newsroom/corrections/", label: "Corrections" },
+      { href: "/feed.xml", label: "RSS feed" },
       { href: "mailto:hello@ohworks.com", label: "Contact" },
     ],
   },

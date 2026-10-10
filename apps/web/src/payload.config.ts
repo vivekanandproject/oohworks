@@ -15,6 +15,7 @@ import {
   People,
   Reports,
   Sources,
+  Subscribers,
   Tags,
   Users,
 } from "./payload/collections";
@@ -61,6 +62,7 @@ export default buildConfig({
     Media,
     Issues,
     Follows,
+    Subscribers,
     Corrections,
     Users,
   ],

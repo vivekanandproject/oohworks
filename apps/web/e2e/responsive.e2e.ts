@@ -1,7 +1,22 @@
 import { expect, test } from "@playwright/test";
 
 const WIDTHS = [320, 360, 390, 414, 640, 768, 834, 1024, 1280, 1440, 1920];
-const PAGES = ["/", "/charter/", "/for-owners/", "/guides/", "/news/", "/search/", "/sign-in/"];
+const PAGES = [
+  "/",
+  "/charter/",
+  "/for-owners/",
+  "/search/",
+  "/sign-in/",
+  "/newsroom/",
+  "/newsroom/all/",
+  "/news/",
+  "/guides/",
+  "/analysis/most-billboards-cannot-be-found-online/",
+  "/news/global-out-of-home-spend-2025-woo/",
+  "/showcase/how-ohworks-shows-a-campaign/",
+  "/authors/editorial-desk/",
+  "/newsroom/corrections/",
+];
 
 test.describe("responsive: no horizontal overflow at any width", () => {
   for (const path of PAGES) {

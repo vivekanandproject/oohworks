@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { isAdmin, isWriter, ownDraftOrEditor, publishedOrStaff } from "../access";
-import { editorialBeforeChange } from "../hooks";
+import { editorialBeforeChange, refreshAfterChange, refreshAfterDelete } from "../hooks";
 import {
   createdByField,
   editorialEditor,
@@ -21,7 +21,11 @@ export const Guides: CollectionConfig = {
   },
   versions: { drafts: { autosave: { interval: 1500 } }, maxPerDoc: 50 },
   access: { read: publishedOrStaff, create: isWriter, update: ownDraftOrEditor, delete: isAdmin },
-  hooks: { beforeChange: [editorialBeforeChange] },
+  hooks: {
+    beforeChange: [editorialBeforeChange],
+    afterChange: [refreshAfterChange],
+    afterDelete: [refreshAfterDelete],
+  },
   fields: [
     {
       name: "kind",

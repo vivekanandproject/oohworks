@@ -77,6 +77,7 @@ export interface Config {
     media: Media;
     issues: Issue;
     follows: Follow;
+    subscribers: Subscriber;
     corrections: Correction;
     users: User;
     'payload-kv': PayloadKv;
@@ -96,6 +97,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     issues: IssuesSelect<false> | IssuesSelect<true>;
     follows: FollowsSelect<false> | FollowsSelect<true>;
+    subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     corrections: CorrectionsSelect<false> | CorrectionsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -144,6 +146,14 @@ export interface UserAuthOperations {
 export interface Article {
   id: number;
   pillar: 'news' | 'analysis' | 'academy' | 'showcase';
+  /**
+   * The newest piece with this ticked leads the front page.
+   */
+  lead?: boolean | null;
+  /**
+   * Immersive needs a strong, real hero photo.
+   */
+  layout: 'standard' | 'immersive';
   title: string;
   /**
    * Set once from the title. Changing it after publish needs a redirect.
@@ -667,6 +677,23 @@ export interface Follow {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers".
+ */
+export interface Subscriber {
+  id: number;
+  email: string;
+  lists: ('daily' | 'weekly')[];
+  /**
+   * The page they signed up on
+   */
+  source?: string | null;
+  confirmed?: boolean | null;
+  unsubscribedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Public. Shown on the piece and on the corrections page.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -760,6 +787,10 @@ export interface PayloadLockedDocument {
         value: number | Follow;
       } | null)
     | ({
+        relationTo: 'subscribers';
+        value: number | Subscriber;
+      } | null)
+    | ({
         relationTo: 'corrections';
         value: number | Correction;
       } | null)
@@ -815,6 +846,8 @@ export interface PayloadMigration {
  */
 export interface ArticlesSelect<T extends boolean = true> {
   pillar?: T;
+  lead?: T;
+  layout?: T;
   title?: T;
   slug?: T;
   standfirst?: T;
@@ -1113,6 +1146,19 @@ export interface FollowsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers_select".
+ */
+export interface SubscribersSelect<T extends boolean = true> {
+  email?: T;
+  lists?: T;
+  source?: T;
+  confirmed?: T;
+  unsubscribedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "corrections_select".
  */
 export interface CorrectionsSelect<T extends boolean = true> {
@@ -1248,11 +1294,11 @@ export interface CalloutBlock {
  */
 export interface FactBlock {
   /**
-   * The figure as it should read, e.g. 78,000 or 15%
+   * The figure exactly as it should read, with its currency or percent sign: $54.2 bn, 15%, ₹ 78,000
    */
   value: string;
   /**
-   * e.g. ₹ a month, bn, %, sites
+   * What follows it, if anything: a month, sites, of digital spend
    */
   unit?: string | null;
   source: number | Source;
@@ -1260,6 +1306,10 @@ export interface FactBlock {
    * The date the figure is true for
    */
   asOf: string;
+  /**
+   * Optional. What it measures, in a few words. Facts with a label appear in the Key facts panel beside the piece.
+   */
+  label?: string | null;
   checked?: boolean | null;
   id?: string | null;
   blockName?: string | null;

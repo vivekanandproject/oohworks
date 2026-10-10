@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { isAdmin, isEditor, publishedOrStaff } from "../access";
-import { editorialBeforeChange } from "../hooks";
+import { editorialBeforeChange, refreshAfterChange, refreshAfterDelete } from "../hooks";
 import {
   createdByField,
   editorialEditor,
@@ -19,7 +19,11 @@ export const Reports: CollectionConfig = {
   },
   versions: { drafts: true, maxPerDoc: 20 },
   access: { read: publishedOrStaff, create: isEditor, update: isEditor, delete: isAdmin },
-  hooks: { beforeChange: [editorialBeforeChange] },
+  hooks: {
+    beforeChange: [editorialBeforeChange],
+    afterChange: [refreshAfterChange],
+    afterDelete: [refreshAfterDelete],
+  },
   fields: [
     { name: "title", type: "text", required: true },
     slugField,

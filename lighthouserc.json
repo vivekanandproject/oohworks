@@ -3,7 +3,12 @@
     "collect": {
       "startServerCommand": "pnpm --filter @ohworks/web exec next start -p 3200",
       "startServerReadyPattern": "Ready",
-      "url": ["http://127.0.0.1:3200/", "http://127.0.0.1:3200/for-owners/"],
+      "url": [
+        "http://127.0.0.1:3200/",
+        "http://127.0.0.1:3200/for-owners/",
+        "http://127.0.0.1:3200/newsroom/",
+        "http://127.0.0.1:3200/analysis/most-billboards-cannot-be-found-online/"
+      ],
       "numberOfRuns": 1,
       "settings": {
         "preset": "desktop"

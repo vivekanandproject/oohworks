@@ -155,3 +155,17 @@ Marketplace work (M1 data layer onwards) starts in parallel from week 3, so the 
 - Article page: B1 Reading column, B2 Column with rails (recommended), B3 Immersive lead.
 - Recommendation: A1 for the index, and B2 as the one article template, with its rails off for short news (which is B1) and B3's full-width photo as an option for showcase pieces.
 - Open point: the working name of the combined index is "Newsroom".
+
+## 13. Week 2 build notes (10 Oct 2026)
+
+Built from wireframes A1 (front page) and B2 (column with rails), chosen on 10 Oct 2026.
+
+- **Routes.** `/newsroom/` is the front page: an editor-chosen lead, the latest list, analysis and guides. `/newsroom/all/` is every piece in date order. Each pillar has an index (`/news/`, `/analysis/`, `/guides/`, `/academy/`, `/data/`, `/showcase/`) with real pagination at `/news/page/2/`, and pieces at `/news/{slug}/`. Authors are at `/authors/{slug}/`, topics at `/topics/{slug}/`, and the public corrections log at `/newsroom/corrections/`.
+- **One article template, three shapes.** Rails (contents left, key facts right) when a piece has two or more sections and 300 words; a single 680 px column otherwise; a full-width opening when Layout is Immersive and the piece has a hero. Facts with a Label fill the key-facts panel. Every Fact shows a numbered reference into the Sources list.
+- **What stays out of the index.** Empty sections and authors with no pieces are noindex. Topic pages are noindex below five pieces. Search, sign-up confirmation and social-card routes are blocked in robots.
+- **Structured data.** NewsArticle for news, Article elsewhere, Report for data, with real published and modified dates, authors, publisher, citations and breadcrumbs. Person on author pages.
+- **Distribution.** RSS and JSON feeds, a Google News sitemap of the last 48 hours of news, a sitemap of everything published, a generated 1200 by 630 social card per piece, and IndexNow pings on publish when `INDEXNOW_KEY` is set.
+- **Sign-up.** The briefing form posts without JavaScript to `/api/subscribe/` and stores the address in the `subscribers` collection. Double opt-in and sending are week 4.
+- **Rendering.** Editorial pages render per request, so a published piece appears at once. The home page is cached for a minute and refreshed on publish. Tag-based caching for editorial pages comes with the shared Redis cache.
+- **Sample content.** `seed:demo` publishes nine pieces built from the strategy report's sourced figures, each marked as a sample needing a re-check. They exist for development and tests and must not reach production.
+- **Not built yet:** chart blocks for reports, the listing strip (it needs real listings), per-pillar feeds, article search, About and masthead pages, and database migrations for production.
