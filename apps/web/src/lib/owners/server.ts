@@ -18,6 +18,7 @@ import {
 import { sendMail } from "@/lib/sites/mail";
 import { formatDef, type CitySlug } from "@/lib/sites/taxonomy";
 import type { AccessCode, Media, Owner, OwnerFile, Site } from "@/payload-types";
+import { readDetails, type StartDetails } from "./company-input";
 import { metresBetween, sameFace } from "./coords";
 import { freeSlug, stateOf } from "./progress";
 import { toSiteData, type SiteInput } from "./site-input";
@@ -78,8 +79,11 @@ async function mailCode(email: string, code: string): Promise<void> {
   });
 }
 
-/** Emails a six-digit code and returns the token that names this attempt. Only the code's hash is kept. */
-export async function startCode(email: string): Promise<string> {
+/**
+ * Emails a six-digit code and returns the token that names this attempt. Only the code's hash is kept.
+ * A new owner's details ride along and are used once the code is confirmed.
+ */
+export async function startCode(email: string, details?: StartDetails): Promise<string> {
   const token = randomBytes(12).toString("hex");
   const code = newCode();
   await (
@@ -93,6 +97,7 @@ export async function startCode(email: string): Promise<string> {
       codeHash: hashCode(code, token),
       expiresAt: new Date(Date.now() + CODE_MINUTES * 60_000).toISOString(),
       attempts: 0,
+      ...(details ? { details: { ...details } } : {}),
     },
   });
   await mailCode(email, code);
@@ -129,7 +134,8 @@ export async function recentCodes(email: string, now: number): Promise<number> {
 }
 
 export type CodeResult =
-  { ok: true; email: string } | { ok: false; why: "wrong" | "expired" | "locked" | "missing" };
+  | { ok: true; email: string; details: StartDetails | null }
+  | { ok: false; why: "wrong" | "expired" | "locked" | "missing" };
 
 export async function checkCode(token: string, code: string): Promise<CodeResult> {
   const payload = await client();
@@ -152,7 +158,7 @@ export async function checkCode(token: string, code: string): Promise<CodeResult
     overrideAccess: true,
     data: { usedAt: new Date().toISOString() },
   });
-  return { ok: true, email: row.email };
+  return { ok: true, email: row.email, details: readDetails(row.details) };
 }
 
 /** Replaces the code on an attempt with a fresh one. Returns false if one was sent in the last half minute. */

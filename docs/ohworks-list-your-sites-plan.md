@@ -6,12 +6,12 @@ Date: 11 Oct 2026. Status: step 1 is built (section 12), on the defaults in sect
 
 Find sites works, but it runs on samples. Nothing a buyer sees is real, no page can reach a search engine, and no enquiry can reach a real owner, until owners can put their own sites on ohworks. "List your sites" is that door.
 
-| Target (Gate 1 in the strategy) | What List your sites contributes |
-| --- | --- |
-| 300 verified owners | An owner can start alone, in minutes, with only a work email |
-| 5,000 indexable faces | A spreadsheet of sites becomes listings in one upload; each listing is pushed towards the content bar |
-| 500 enquiries a month | Enquiries need real sites to land on, and a real address to reach |
-| Median owner reply under 24 hours | The owner's contact address is confirmed before any site goes live |
+| Target (Gate 1 in the strategy)   | What List your sites contributes                                                                      |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| 300 verified owners               | An owner can start alone, in minutes, with only a work email                                          |
+| 5,000 indexable faces             | A spreadsheet of sites becomes listings in one upload; each listing is pushed towards the content bar |
+| 500 enquiries a month             | Enquiries need real sites to land on, and a real address to reach                                     |
+| Median owner reply under 24 hours | The owner's contact address is confirmed before any site goes live                                    |
 
 **The promise to an owner:** it is free, you set the price and how it shows, every enquiry comes straight to you, and nothing about your site is published until you have seen it and we have checked it.
 
@@ -19,12 +19,12 @@ Find sites works, but it runs on samples. Nothing a buyer sees is real, no page 
 
 ## 2. Who uses it, and what each needs
 
-| Who | Arrives with | Needs |
-| --- | --- | --- |
+| Who                                                       | Arrives with                             | Needs                                                                         |
+| --------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
 | An independent owner with 5 to 50 sites, often on a phone | Photos on the phone, rates in their head | One site at a time, in plain words, with a pin on a map; no account to set up |
-| A larger owner with hundreds of sites | A spreadsheet or an inventory system | A template to fill and upload, with every problem named by row and column |
-| An owner who has only a PDF media kit | The PDF | To hand it over and have ohworks enter it, then approve the result |
-| The ohworks team | A queue of new owners and sites | To see what is waiting, check it, publish it or send it back with a reason |
+| A larger owner with hundreds of sites                     | A spreadsheet or an inventory system     | A template to fill and upload, with every problem named by row and column     |
+| An owner who has only a PDF media kit                     | The PDF                                  | To hand it over and have ohworks enter it, then approve the result            |
+| The ohworks team                                          | A queue of new owners and sites          | To see what is waiting, check it, publish it or send it back with a reason    |
 
 What owners fear, from the strategy: losing clients, rates being undercut, and being listed wrongly. The flow answers each: the owner is always the named seller, the owner chooses whether a price shows at all, and the owner sees every listing before anyone else does.
 
@@ -42,11 +42,11 @@ There is no password and no account to create. The owner's email is the key, pro
 
 ## 4. Three ways to add sites
 
-| Way | For | How it works |
-| --- | --- | --- |
-| **One at a time** | Up to a few dozen sites | A form in five parts: what it is, where it is, price and terms, availability, audience and permit. Then photographs |
-| **A spreadsheet** | Many sites | Download the template, fill one row a site, upload. Rows that are right become draft listings. Rows that are not are listed with the row, the column and what to fix |
-| **Send us your media kit** | Owners with a PDF or their own sheet | Upload the file with a note. The team enters the sites; the owner approves them before they go live |
+| Way                        | For                                  | How it works                                                                                                                                                         |
+| -------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **One at a time**          | Up to a few dozen sites              | A form in five parts: what it is, where it is, price and terms, availability, audience and permit. Then photographs                                                  |
+| **A spreadsheet**          | Many sites                           | Download the template, fill one row a site, upload. Rows that are right become draft listings. Rows that are not are listed with the row, the column and what to fix |
+| **Send us your media kit** | Owners with a PDF or their own sheet | Upload the file with a note. The team enters the sites; the owner approves them before they go live                                                                  |
 
 **Location** is a pin on a map, or coordinates or a Google Maps link pasted in. The site says which way the face points as a compass bearing. A new site within 25 metres of another, facing within 30 degrees of it, is flagged as a possible duplicate, to the owner and to the team.
 
@@ -54,12 +54,12 @@ There is no password and no account to create. The owner's email is the key, pro
 
 ## 5. What is checked, by whom, and when
 
-| State | Meaning | Who moves it on |
-| --- | --- | --- |
-| Draft | The owner is still working on it. Only they can see it | The owner sends it for review |
-| In review | Waiting for the ohworks team | The team publishes it, or returns it |
-| Needs changes | Returned with a written reason | The owner fixes it and sends it again |
-| Live | Published on ohworks | The owner can update price and availability; the team can take it down |
+| State         | Meaning                                                | Who moves it on                                                        |
+| ------------- | ------------------------------------------------------ | ---------------------------------------------------------------------- |
+| Draft         | The owner is still working on it. Only they can see it | The owner sends it for review                                          |
+| In review     | Waiting for the ohworks team                           | The team publishes it, or returns it                                   |
+| Needs changes | Returned with a written reason                         | The owner fixes it and sends it again                                  |
+| Live          | Published on ohworks                                   | The owner can update price and availability; the team can take it down |
 
 Before a site goes live the team checks that the owner is who they say, that the pin is where the site is, and that the photographs are of that site. What was checked becomes the badges a buyer sees: Verified owner, Verified location, Permit on file. A site can go live without every badge; it earns them as each check is done. A site below the content bar is live for buyers but held back from search engines, as the SEO rules say.
 
@@ -89,13 +89,13 @@ These take effect at once. A change to what the site is or where it is goes back
 
 **No new keys are needed for step 1.** What each missing service would add:
 
-| Service | Adds |
-| --- | --- |
-| Email service | Real emails for codes and notices; today they are written to the Outbox |
-| WhatsApp Business | A code by WhatsApp or SMS, which many owners will prefer to email |
-| Google Maps | A street-level picture beside the pin, to check the location |
-| Object storage | Photographs and documents off the local disk |
-| Anthropic | Reading a PDF media kit into draft listings for the team to check |
+| Service           | Adds                                                                    |
+| ----------------- | ----------------------------------------------------------------------- |
+| Email service     | Real emails for codes and notices; today they are written to the Outbox |
+| WhatsApp Business | A code by WhatsApp or SMS, which many owners will prefer to email       |
+| Google Maps       | A street-level picture beside the pin, to check the location            |
+| Object storage    | Photographs and documents off the local disk                            |
+| Anthropic         | Reading a PDF media kit into draft listings for the team to check       |
 
 ## 9. Build order
 
@@ -126,24 +126,38 @@ Step 1 of the build order is done: the door. An owner can now put their own site
 
 ### Pages
 
-| Address | What it is |
-| --- | --- |
-| `/list-your-sites/` | The start: what listing is, and one email field. The "List your sites" button opens it |
-| `/list-your-sites/confirm/` | Enter the emailed code |
-| `/sign-in/` | The way back in for an owner: the same email and code, with no password. It also tells buyers they need no account |
-| `/owner/` | Your sites: every site with its state, how complete it is, and what to do next |
-| `/owner/company/` | The company, where enquiries go, and the GSTIN and document for the Verified owner badge |
-| `/owner/sites/new/` | Add one site, in five parts, with a pin on a map |
-| `/owner/sites/{unit id}/` | One site: its state, photographs, what buyers will see, and quick changes once live |
-| `/owner/sites/{unit id}/edit/` | Change a site that is not yet live |
-| `/owner/import/` | The spreadsheet template, the upload, and the report |
-| `/owner/kit/` | Send a media kit for the team to enter |
+| Address                        | What it is                                                                                                         |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `/list-your-sites/`            | The start: one form for who is listing, beside what happens next. The "List your sites" button opens it            |
+| `/list-your-sites/confirm/`    | Enter the emailed code                                                                                             |
+| `/sign-in/`                    | The way back in for an owner: the same email and code, with no password. It also tells buyers they need no account |
+| `/owner/`                      | Your sites: every site with its state, how complete it is, and what to do next                                     |
+| `/owner/company/`              | The company, where enquiries go, and the GSTIN and document for the Verified owner badge                           |
+| `/owner/sites/new/`            | Add one site, in five parts, with a pin on a map                                                                   |
+| `/owner/sites/{unit id}/`      | One site: its state, photographs, what buyers will see, and quick changes once live                                |
+| `/owner/sites/{unit id}/edit/` | Change a site that is not yet live                                                                                 |
+| `/owner/import/`               | The spreadsheet template, the upload, and the report                                                               |
+| `/owner/kit/`                  | Send a media kit for the team to enter                                                                             |
 
 The start page is offered to search engines, because an owner searching how to list should find it. Everything under `/owner/` is `noindex` and closed in robots.
 
 ### Signing in without an account
 
-An owner gives a work email and is sent a six-digit code, good for ten minutes and five tries. A right code remembers the browser for 30 days. Coming back is the same step. Only the code's hash is stored, one address can ask for five codes an hour, and the owner's note is separate from a buyer's, so one cannot stand in for the other.
+An owner's work email is sent a six-digit code, good for ten minutes and five tries. A right code remembers the browser for 30 days. Coming back is the same step. Only the code's hash is stored, one address can ask for five codes an hour, and the owner's note is separate from a buyer's, so one cannot stand in for the other.
+
+### The start is one form
+
+Changed on 10 Oct 2026 at the founder's direction. The first build asked for an email alone and for everything else after the code, which read as a sign-up box, not as onboarding, and did not match the enquiry page.
+
+- **One form, then the code.** The start page asks for the company name and city, the person's name and phone, and the work email. The GSTIN is the only optional answer. The code step comes second, and the owner then lands on their sites with the company already made.
+- **Nothing is made for an unconfirmed address.** The answers wait beside the code and become an owner only when the code is confirmed. If the address already belongs to an owner, they are signed in and their details are left as they are.
+- **The same layout as the enquiry page.** The form is on the left in three plain sections. On the right, and staying in view on a wide screen, are the steps that follow and what to have ready for each site. On a phone the form comes first.
+- **A strip of four steps** runs across the start and the code page: your details, confirm your email, add your sites, we check then live.
+- **A mistake** returns to the form with everything that was typed, names the problem, and marks the field.
+- **A company outside the six launch cities** chooses "Another city".
+- **Sign in is unchanged.** A returning owner gives the email alone. A new address that comes in through Sign in is asked for the company after the code, as before.
+
+One set of checks, in `src/lib/owners/company-input.ts`, serves the form whichever way it arrives.
 
 ### The ways in, and knowing you are signed in
 
@@ -151,7 +165,7 @@ Added on 10 Oct 2026, after the first build proved hard to find one's way around
 
 - **Sign in is real.** It had been a holding page that said accounts were not open. It is now the owner's way back in. A signed-in owner who opens it goes straight to their sites.
 - **The bar shows where you stand.** Signed out it reads "Sign in" and "List your sites". Signed in it reads "Your sites", on every page, and the footer follows. Both sets of links are in every page, and a small script in the head chooses one before anything is drawn, from a marker cookie (`oh_bar`) set and cleared with the real one. So pages stay the same for everyone and can be cached. The marker proves nothing: the owner's pages still ask for the signed cookie.
-- **"List your sites" answers on its own page.** There it points at the email box, so pressing it puts the cursor in the box and keeps the headline in view. Before, it reloaded the page and looked like nothing had happened.
+- **"List your sites" answers on its own page.** There it points at the form's first box, so pressing it puts the cursor there and keeps the headline in view. Before, it reloaded the page and looked like nothing had happened.
 - **Every "List your sites" leads to the start.** The buttons on the home page and under thin search results went to the page about listing.
 - **A way out before the company exists.** The company step shows the confirmed address with "Not you? Sign out".
 
@@ -195,14 +209,14 @@ Each site has a completeness score out of 100, and a list of what would raise it
 
 ### Emails
 
-| When | To | What |
-| --- | --- | --- |
-| Starting, or coming back | The owner | The code |
-| Sites sent for review | The team | How many, from whom, any flagged as possible duplicates, and a link to the queue |
-| Sites sent for review | The owner | That they are with the team |
-| A media kit arrives | The team | The file and the owner's note |
-| A site is published | The owner | That it is live, with its address |
-| A site is returned | The owner | The reviewer's reason |
+| When                     | To        | What                                                                             |
+| ------------------------ | --------- | -------------------------------------------------------------------------------- |
+| Starting, or coming back | The owner | The code                                                                         |
+| Sites sent for review    | The team  | How many, from whom, any flagged as possible duplicates, and a link to the queue |
+| Sites sent for review    | The owner | That they are with the team                                                      |
+| A media kit arrives      | The team  | The file and the owner's note                                                    |
+| A site is published      | The owner | That it is live, with its address                                                |
+| A site is returned       | The owner | The reviewer's reason                                                            |
 
 Without an email service these are written to the Outbox in the admin. On a development machine the confirm page also shows the code.
 
@@ -234,4 +248,3 @@ To look around without listing anything, start at `/list-your-sites/` with `demo
 - Reading a PDF media kit into drafts automatically: needs an Anthropic key. Today the team enters them.
 - A leads inbox, figures per site, an availability calendar, team seats: step 3.
 - Cities beyond the six launch cities. A site elsewhere is refused with the list of cities that are open.
-

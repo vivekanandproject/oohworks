@@ -1091,6 +1091,15 @@ export interface AccessCode {
   expiresAt: string;
   attempts?: number | null;
   usedAt?: string | null;
+  details?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1773,6 +1782,7 @@ export interface AccessCodesSelect<T extends boolean = true> {
   expiresAt?: T;
   attempts?: T;
   usedAt?: T;
+  details?: T;
   updatedAt?: T;
   createdAt?: T;
 }

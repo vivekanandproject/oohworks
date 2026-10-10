@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
-import { Notice } from "@/components/owners/Bits";
+import { Notice, Steps } from "@/components/owners/Bits";
 import { devOwnerCode, findCode } from "@/lib/owners/server";
 import { MAX_ATTEMPTS, maskEmail } from "@/lib/sites/enquiry";
 
@@ -42,11 +42,10 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
 
   return (
     <Shell active="owners">
-      <Container className="py-10 lg:py-16">
-        <div className="max-w-[560px]">
-          <p className="t-label text-ink-muted">
-            {signIn ? "Sign in" : "List your sites · step 1 of 4"}
-          </p>
+      <Container className="py-8 lg:py-12">
+        {signIn ? null : <Steps at={2} />}
+        <div className={`max-w-[560px] ${signIn ? "" : "mt-6"}`}>
+          <p className="t-label text-ink-muted">{signIn ? "Sign in" : "List your sites"}</p>
           <h1 className="t-display-md mt-2">Confirm it&rsquo;s you</h1>
           <p className="t-body text-ink-muted mt-2" data-section="code-sent-to">
             A code is on its way to{" "}
@@ -118,6 +117,16 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
           </form>
           <p className="t-small text-ink-muted mt-4">
             After this, this browser is remembered for 30 days.
+            {signIn ? null : (
+              <>
+                {" "}
+                Wrong address?{" "}
+                <a href="/list-your-sites/" className="oh-link">
+                  Start again
+                </a>
+                .
+              </>
+            )}
           </p>
         </div>
       </Container>

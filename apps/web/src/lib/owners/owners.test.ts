@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import type { Owner, Site } from "@/payload-types";
 import { readEmail, signEmail } from "@/lib/sites/enquiry";
+import { OTHER_CITY, checkStart, readDetails } from "./company-input";
 import { bearingGap, metresBetween, readCoords, sameFace } from "./coords";
 import { isGstin, tidyGstin } from "./gstin";
 import { freeSlug, improvements, stateOf } from "./progress";
@@ -408,5 +409,63 @@ describe("the owner's remembered browser", () => {
     expect(readEmail("buyer", owner, now)).toBeNull();
     expect(readEmail("owner", signEmail("buyer", "sales@yourcompany.com", now), now)).toBeNull();
     expect(readEmail("owner", owner, now + 31 * 24 * 3600 * 1000)).toBeNull();
+  });
+});
+
+describe("who is listing", () => {
+  const good = {
+    name: "Deccan Signs",
+    city: "hyderabad",
+    contactName: "Asha Rao",
+    phone: "+91 98450 00000",
+    email: " Asha@DeccanSigns.in ",
+    gstin: "29aagcb7383j1z4",
+  };
+
+  it("accepts a full form and tidies what it keeps", () => {
+    const r = checkStart(good);
+    expect(r).toEqual({
+      ok: true,
+      email: "asha@deccansigns.in",
+      details: {
+        name: "Deccan Signs",
+        city: "hyderabad",
+        contactName: "Asha Rao",
+        phone: "+91 98450 00000",
+        gstin: "29AAGCB7383J1Z4",
+      },
+    });
+  });
+
+  it("names the first mistake in the order of the page", () => {
+    const why = (change: Partial<typeof good>) => {
+      const r = checkStart({ ...good, ...change });
+      return r.ok ? "ok" : r.error;
+    };
+    expect(why({ name: "D" })).toBe("name");
+    expect(why({ city: "" })).toBe("city");
+    expect(why({ city: "atlantis" })).toBe("city");
+    expect(why({ contactName: " " })).toBe("contact");
+    expect(why({ phone: "call me" })).toBe("phone");
+    expect(why({ email: "asha@" })).toBe("email");
+    expect(why({ gstin: "29AAGCB7383J1Z5" })).toBe("gstin");
+    expect(why({ name: "", email: "" })).toBe("name");
+    expect(why({ gstin: "" })).toBe("ok");
+  });
+
+  it("lets a company outside the launch cities say so", () => {
+    const r = checkStart({ ...good, city: OTHER_CITY });
+    expect(r.ok && r.details.city).toBeNull();
+  });
+
+  it("reads kept details back, and treats anything else as absent", () => {
+    const r = checkStart(good);
+    if (!r.ok) throw new Error("expected a good form");
+    expect(readDetails(JSON.parse(JSON.stringify(r.details)))).toEqual(r.details);
+    expect(readDetails({ ...r.details, city: null })?.city).toBeNull();
+    expect(readDetails(null)).toBeNull();
+    expect(readDetails("a string")).toBeNull();
+    expect(readDetails({ name: "D" })).toBeNull();
+    expect(readDetails({ ...r.details, phone: 12 })).toBeNull();
   });
 });

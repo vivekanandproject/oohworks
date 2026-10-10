@@ -1,4 +1,5 @@
 import { cleanEmail } from "@/lib/forms";
+import { PHONE } from "@/lib/owners/company-input";
 import { isGstin, tidyGstin } from "@/lib/owners/gstin";
 import { fileOf, go, ownerGate, text } from "@/lib/owners/request";
 import { saveCompany, saveOwnerFile } from "@/lib/owners/server";
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
   };
   if (name.length < 2) return back("name");
   if (contactName.length < 2) return back("contact");
-  if (!/^[+\d][\d\s-]{6,22}$/.test(phone)) return back("phone");
+  if (!PHONE.test(phone)) return back("phone");
   const contactEmail =
     text(form, "contactEmail", 254) === "" ? email : cleanEmail(form.get("contactEmail"));
   if (!contactEmail) return back("email");

@@ -106,6 +106,17 @@ export default async function OwnerHomePage({ searchParams }: { searchParams: Pr
               section="saved-company"
             />
           ) : null}
+          {one(q.saved) === "welcome" ? (
+            <Notice tone="success" title="Your email is confirmed." section="saved-welcome">
+              Now add your sites. Only you can see them until you send them for review.
+            </Notice>
+          ) : null}
+          {one(q.saved) === "known" ? (
+            <Notice tone="success" title="Welcome back." section="saved-known">
+              You were already listed with this email, so your company details were left as they
+              are. Change them under Company details.
+            </Notice>
+          ) : null}
           {sent > 0 ? (
             <Notice
               tone="success"

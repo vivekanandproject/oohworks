@@ -71,7 +71,7 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
         )}
         <div className="mt-6 max-w-[640px]">
           <p className="t-label text-ink-muted">
-            {owner ? "Company details" : "List your sites · step 2 of 4"}
+            {owner ? "Company details" : "List your sites · your details"}
           </p>
           <h1 className="t-display-md mt-2">{owner ? owner.name : "Who is listing"}</h1>
           <p className="t-body text-ink-muted mt-2">

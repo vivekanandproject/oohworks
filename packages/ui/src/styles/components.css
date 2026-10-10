@@ -108,6 +108,10 @@
   .oh-input::placeholder {
     color: var(--color-ink-muted);
   }
+  /* A field the server refused. The page also says why in words beneath it. */
+  .oh-input[aria-invalid="true"] {
+    border-color: var(--color-critical);
+  }
   .oh-input.lg {
     min-height: 56px;
     padding: 14px 16px;

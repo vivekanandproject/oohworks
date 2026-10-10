@@ -93,10 +93,10 @@ type Cells = Record<string, string | number | { $date: string }>;
 
 /** The email step: an address, then the code sent to it. Ends on the company page, or the owner's sites. */
 async function signIn(page: Page, request: APIRequestContext, email: string): Promise<void> {
-  await page.goto("/list-your-sites/");
-  await page.locator("#owner-email").fill(email);
-  await page.locator("[data-action='start']").click();
-  await expect(page).toHaveURL(/\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}$/, {
+  await page.goto("/sign-in/");
+  await page.locator("#signin-email").fill(email);
+  await page.locator("[data-action='signin']").click();
+  await expect(page).toHaveURL(/\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}&via=signin$/, {
     timeout: 15_000,
   });
   const code =
@@ -116,7 +116,7 @@ async function addCompany(page: Page, name: string): Promise<void> {
 }
 
 test.describe("list your sites: the start", () => {
-  test("says what listing is, and asks only for an email", async ({ page, request }) => {
+  test("says what listing is, and asks who is listing in one form", async ({ page, request }) => {
     await page.goto("/");
     await expect(page.getByRole("link", { name: "List your sites" }).first()).toHaveAttribute(
       "href",
@@ -136,8 +136,32 @@ test.describe("list your sites: the start", () => {
       "A spreadsheet",
       "Send us your media kit",
     ]);
-    await expect(page.locator("[data-section='start-form'] input[type='email']")).toHaveCount(1);
+    // One form asks for the company, the person and where enquiries go. Only the GSTIN can wait.
+    const form = page.locator("[data-section='start-form']");
+    for (const id of ["lys-name", "lys-city", "lys-contact", "lys-phone", "owner-email"])
+      await expect(form.locator(`#${id}`), `${id} is asked for`).toHaveAttribute("required", "");
+    await expect(form.locator("#lys-gstin")).not.toHaveAttribute("required", "");
+    await expect(form.locator("label[for='lys-gstin']")).toContainText("optional");
+    await expect(form.locator("#lys-city option")).toContainText(["Another city"]);
+    await expect(form.locator("[data-action='start']")).toHaveText("Save and send my code");
+    await expect(
+      page
+        .locator(
+          "[data-section='steps'] [aria-current='step']:visible, [data-section='steps'] p:visible",
+        )
+        .first(),
+    ).toContainText("Your details");
+    await expect(page.locator("[data-section='next'] li")).toHaveCount(3);
     await expect(page.locator("main")).toContainText("there is no commission");
+    // On a wide screen the form and the explanation sit side by side. On a phone the form comes first.
+    const formBox = (await form.boundingBox())!;
+    const asideBox = (await page.locator("main aside").boundingBox())!;
+    if ((page.viewportSize()?.width ?? 0) >= 1024) {
+      expect(asideBox.x).toBeGreaterThan(formBox.x + formBox.width);
+      expect(Math.abs(asideBox.y - formBox.y)).toBeLessThan(400);
+    } else {
+      expect(asideBox.y).toBeGreaterThan(formBox.y + formBox.height - 1);
+    }
     await page.goto("/for-owners/");
     await expect(
       page.locator("main").getByRole("link", { name: "List your sites" }).first(),
@@ -176,9 +200,10 @@ test.describe("list your sites: the start", () => {
         )
       ).status(),
     ).toBe(403);
-    expect((await post("/api/owner/start/", { email: "not-an-email" })).headers()["location"]).toBe(
-      "/list-your-sites/?error=email",
-    );
+    // An email alone is no longer a start: the form's first missing answer is named.
+    expect(
+      (await post("/api/owner/start/", { email: "not-an-email" })).headers()["location"],
+    ).toMatch(/^\/list-your-sites\/\?error=name&/);
     expect(
       (await post("/api/owner/start/", { email: "bot@example.org", website: "x" })).headers()[
         "location"
@@ -243,20 +268,154 @@ test.describe("list your sites: the start", () => {
   });
 });
 
+test.describe("list your sites: the first form", () => {
+  test.afterAll(async ({ request }) => removeOwners(request, "owner-form-"));
+
+  const fill = async (page: Page, v: { name: string; email: string; gstin?: string }) => {
+    await page.locator("#lys-name").fill(v.name);
+    await page.locator("#lys-city").selectOption("hyderabad");
+    await page.locator("#lys-contact").fill("Asha Rao");
+    await page.locator("#lys-phone").fill("+91 00000 00042");
+    await page.locator("#owner-email").fill(v.email);
+    if (v.gstin) await page.locator("#lys-gstin").fill(v.gstin);
+  };
+  const ownersWith = async (request: APIRequestContext, email: string) =>
+    (
+      (await (
+        await request.get(
+          `/api/owners?where[loginEmail][equals]=${encodeURIComponent(email)}&depth=0`,
+          { headers: await adminHeaders(request) },
+        )
+      ).json()) as { docs: { name: string; gstin?: string | null }[] }
+    ).docs;
+
+  test("one form, one code, and the owner is in with their company made", async ({
+    page,
+    request,
+  }, info) => {
+    const stamp = Date.now();
+    const email = `owner-form-${info.project.name}-${stamp}@example.org`;
+    const company = `E2E Form ${info.project.name} ${stamp}`;
+    await page.goto("/list-your-sites/");
+    await fill(page, { name: company, email, gstin: "29aagcb7383j1z4" });
+    await page.locator("[data-action='start']").click();
+    await expect(page).toHaveURL(/\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}$/);
+    await expect(
+      page
+        .locator(
+          "[data-section='steps'] [aria-current='step']:visible, [data-section='steps'] p:visible",
+        )
+        .first(),
+    ).toContainText("Confirm your email");
+    // Nothing exists for an address nobody has confirmed.
+    expect(await ownersWith(request, email)).toHaveLength(0);
+
+    const code =
+      /\b\d{6}\b/.exec((await mails(request, email, "owner_code"))[0]?.text ?? "")?.[0] ?? "";
+    await page.locator("#owner-code").fill(code);
+    await page.locator("[data-action='confirm']").click();
+    await expect(page).toHaveURL(/\/owner\/\?saved=welcome$/);
+    await expect(page.locator("h1")).toHaveText(company);
+    await expect(page.locator("[data-section='saved-welcome']")).toContainText(
+      "Your email is confirmed.",
+    );
+    const made = await ownersWith(request, email);
+    expect(made).toHaveLength(1);
+    expect(made[0]?.gstin).toBe("29AAGCB7383J1Z4");
+
+    // Everything the form asked is on the company page, and enquiries go to the confirmed address.
+    await page.goto("/owner/company/");
+    await expect(page.locator("#co-name")).toHaveValue(company);
+    await expect(page.locator("#co-city")).toHaveValue("hyderabad");
+    await expect(page.locator("#co-contact")).toHaveValue("Asha Rao");
+    await expect(page.locator("#co-phone")).toHaveValue("+91 00000 00042");
+    await expect(page.locator("#co-email")).toHaveValue(email);
+    await expect(page.locator("#co-gstin")).toHaveValue("29AAGCB7383J1Z4");
+
+    // Someone already listed who fills the form again keeps what they have.
+    await page.locator("form[action='/api/owner/signout/'] button").first().click();
+    await expect(page.locator("[data-section='signed-out']")).toBeVisible();
+    await fill(page, { name: "Another Name Entirely", email });
+    await page.locator("[data-action='start']").click();
+    await expect(page).toHaveURL(/\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}$/);
+    const again =
+      /\b\d{6}\b/.exec((await mails(request, email, "owner_code"))[0]?.text ?? "")?.[0] ?? "";
+    await page.locator("#owner-code").fill(again);
+    await page.locator("[data-action='confirm']").click();
+    await expect(page).toHaveURL(/\/owner\/\?saved=known$/);
+    await expect(page.locator("h1")).toHaveText(company);
+    await expect(page.locator("[data-section='saved-known']")).toContainText("left as they");
+  });
+
+  test("a mistake comes back with what was typed and the field marked", async ({
+    page,
+    request,
+    baseURL,
+  }, info) => {
+    const email = `owner-form-${info.project.name}-bad-${Date.now()}@example.org`;
+    await page.goto("/list-your-sites/");
+    await fill(page, { name: "E2E Form Mistake", email, gstin: "29AAGCB7383J1Z5" });
+    await page.locator("[data-action='start']").click();
+    await expect(page.locator("[data-section='start-error']")).toContainText(
+      "That GSTIN is not right.",
+    );
+    await expect(page.locator("#lys-name")).toHaveValue("E2E Form Mistake");
+    await expect(page.locator("#lys-city")).toHaveValue("hyderabad");
+    await expect(page.locator("#lys-contact")).toHaveValue("Asha Rao");
+    await expect(page.locator("#lys-phone")).toHaveValue("+91 00000 00042");
+    await expect(page.locator("#owner-email")).toHaveValue(email);
+    await expect(page.locator("#lys-gstin")).toHaveAttribute("aria-invalid", "true");
+    // The mistake is named beside the field too, and the notice leads to it.
+    await expect(page.locator("[data-part='badge'] [data-section='field-error']")).toHaveText(
+      "That GSTIN is not right.",
+    );
+    await page.locator("[data-section='start-error'] a").click();
+    await expect(page.locator("#lys-gstin")).toBeFocused();
+    await expect(page.locator("#lys-name")).not.toHaveAttribute("aria-invalid", "true");
+    expect(await ownersWith(request, email)).toHaveLength(0);
+
+    // The browser stops an empty box before it is sent, so the server's own checks are asked directly.
+    const post = async (change: Record<string, string>) =>
+      (
+        await request.post("/api/owner/start/", {
+          form: {
+            name: "E2E Form Mistake",
+            city: "hyderabad",
+            contactName: "Asha Rao",
+            phone: "+91 00000 00042",
+            email,
+            gstin: "",
+            ...change,
+          },
+          headers: { origin: baseURL ?? "", "x-forwarded-for": visitor() },
+          maxRedirects: 0,
+        })
+      ).headers()["location"] ?? "";
+    expect(await post({ name: "X" })).toMatch(/^\/list-your-sites\/\?error=name&/);
+    expect(await post({ city: "" })).toMatch(/^\/list-your-sites\/\?error=city&/);
+    expect(await post({ contactName: "" })).toMatch(/^\/list-your-sites\/\?error=contact&/);
+    expect(await post({ phone: "call me" })).toMatch(/^\/list-your-sites\/\?error=phone&/);
+    expect(await post({ email: "not-an-email" })).toMatch(/^\/list-your-sites\/\?error=email&/);
+    // A company based outside the launch cities can say so and carry on.
+    expect(await post({ city: "other" })).toMatch(/^\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}$/);
+    expect(await ownersWith(request, email)).toHaveLength(0);
+  });
+});
+
 test.describe("list your sites: the ways in", () => {
   test.afterAll(async ({ request }) => removeOwners(request, "owner-bar-"));
 
-  test("on its own page, the bar's List your sites puts the cursor in the email box", async ({
+  test("on its own page, the bar's List your sites puts the cursor in the first box", async ({
     page,
   }) => {
     await page.goto("/list-your-sites/");
     const button = page.locator("header a:visible", { hasText: "List your sites" });
-    await expect(button).toHaveAttribute("href", "#owner-email");
+    await expect(button).toHaveAttribute("href", "#lys-name");
     await button.click();
-    await expect(page.locator("#owner-email")).toBeFocused();
+    await expect(page.locator("#lys-name")).toBeFocused();
     // The page answers without jumping past its own headline.
     await expect(page.locator("h1")).toBeInViewport();
-    await expect(page.locator("#owner-email")).toBeInViewport();
+    await expect(page.locator("#lys-name")).toBeInViewport();
   });
 
   test("Sign in is a real way back in, and the bar then leads to the owner's sites", async ({
