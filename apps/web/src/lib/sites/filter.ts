@@ -39,6 +39,8 @@ export interface Listing {
   quality: number;
   createdAt: number;
   sample: boolean;
+  /** Meets the content bar for a page of its own in search engines. A sample never does. */
+  indexable: boolean;
 }
 
 export type Facet =

@@ -24,6 +24,8 @@ export const Outbox: CollectionConfig = {
         { label: "Verification code", value: "code" },
         { label: "Enquiry to an owner", value: "owner_enquiry" },
         { label: "Confirmation to a buyer", value: "buyer_confirmation" },
+        { label: "An owner's reply, to the buyer", value: "owner_reply" },
+        { label: "A buyer's follow-up, to the owner", value: "buyer_message" },
       ],
     },
   ],

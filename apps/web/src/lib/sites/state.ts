@@ -190,6 +190,20 @@ export function activeCount(s: SearchState): number {
   );
 }
 
+/** A search with nothing chosen: every site, best match first. */
+export const DEFAULT_STATE: SearchState = {
+  q: "",
+  localities: [],
+  formats: [],
+  lighting: [],
+  priced: false,
+  trust: [],
+  sort: "best",
+  page: 1,
+  map: true,
+  panel: false,
+};
+
 /** A change to the filters always returns to the first page. */
 export const firstPage = { page: 1 } as const;
 

@@ -209,6 +209,10 @@ test.describe("compare", () => {
       "/enquire/ows0003/",
     );
 
+    await expect(page.locator("[data-action='enquire-all']")).toHaveAttribute(
+      "href",
+      "/enquire/plan/?sites=ows0001,ows0002,ows0006,ows0003",
+    );
     await page
       .locator("th[data-site='ows0006']")
       .getByRole("link", { name: /Remove/ })

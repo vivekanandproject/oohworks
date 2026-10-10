@@ -23,6 +23,22 @@ export function newReference(): string {
   return out;
 }
 
+/** One reference shared by the requests of a buyer who asked several owners at once. */
+export function newPlanReference(): string {
+  let out = "PLN-";
+  for (let i = 0; i < 8; i += 1) out += ALPHABET[randomInt(ALPHABET.length)];
+  return out;
+}
+
+export function isPlanReference(value: string): boolean {
+  return /^PLN-[0-9A-HJKMNP-TV-Z]{8}$/.test(value);
+}
+
+/** A single enquiry's reference, or a plan's. */
+export function isAnyReference(value: string): boolean {
+  return isReference(value) || isPlanReference(value);
+}
+
 export function isReference(value: string): boolean {
   return /^ENQ-[0-9A-HJKMNP-TV-Z]{8}$/.test(value);
 }
@@ -103,4 +119,46 @@ export function dateRange(from: string, to: string): string {
   if (a[2] !== b[2]) return `${a.join(" ")} to ${b.join(" ")}`;
   if (a[1] !== b[1]) return `${a[0]} ${a[1]} to ${b.join(" ")}`;
   return `${a[0]} to ${b.join(" ")}`;
+}
+
+export type ThreadRole = "owner" | "buyer";
+
+/**
+ * The key in a link emailed to one side of an enquiry. It opens that side's view of the conversation
+ * and nothing else: an owner's key never opens the buyer's view, and no key opens another enquiry.
+ */
+export function threadKey(reference: string, role: ThreadRole): string {
+  return mac(`thread:${role}:${reference}`).slice(0, 32);
+}
+
+export function checkThreadKey(reference: string, role: ThreadRole, key: string): boolean {
+  return /^[0-9a-f]{32}$/.test(key) && sameHash(key, threadKey(reference, role));
+}
+
+export const ANSWERS = {
+  available: "Available for these dates",
+  unavailable: "Not available",
+  other_dates: "Free on other dates",
+} as const;
+export type Answer = keyof typeof ANSWERS;
+
+/** How many answered enquiries an owner needs before their reply time is worked out from them. */
+export const MIN_REPLIES = 5;
+
+/**
+ * The median time an owner takes to give a first reply, in hours. Null until there are enough answered
+ * enquiries to be fair to them: one fast or slow reply should not earn or cost a badge.
+ */
+export function medianReplyHours(pairs: { sentAt: string; repliedAt: string }[]): number | null {
+  const hours = pairs
+    .map((p) => (new Date(p.repliedAt).getTime() - new Date(p.sentAt).getTime()) / 3600_000)
+    .filter((h) => Number.isFinite(h) && h >= 0)
+    .sort((a, b) => a - b);
+  if (hours.length < MIN_REPLIES) return null;
+  const mid = Math.floor(hours.length / 2);
+  const median =
+    hours.length % 2
+      ? (hours[mid] as number)
+      : ((hours[mid - 1] as number) + (hours[mid] as number)) / 2;
+  return Math.round(median * 10) / 10;
 }

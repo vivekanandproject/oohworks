@@ -1163,6 +1163,61 @@
     color: var(--color-ink-muted);
   }
 
+  /* A plain data table: label heads on sunken paper, measured values in mono. */
+  .oh-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--color-paper-raised);
+  }
+  .oh-table th,
+  .oh-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--color-hairline);
+    text-align: left;
+    vertical-align: top;
+    font-size: 15px;
+    line-height: 23px;
+  }
+  .oh-table thead th {
+    background: var(--color-paper-sunken);
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+  .oh-table tbody tr:last-child > * {
+    border-bottom: 0;
+  }
+  .oh-table td.data {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  /* Site sheets: one site to a printed page, without the controls that only make sense on screen. */
+  @media print {
+    .oh-noprint {
+      display: none !important;
+    }
+    .oh-sheet {
+      break-after: page;
+      break-inside: avoid;
+      border: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .oh-sheet:last-child {
+      break-after: auto;
+    }
+  }
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
   /* Below desktop width a menu is placed against its row, not its own button, so it stays on screen. */
   @media (width < 1024px) {
     .oh-dd {

@@ -17,14 +17,16 @@ import { planText, summarise } from "@/lib/sites/plan";
 import { listingsFor, searchSites } from "@/lib/sites/queries";
 import {
   firstPage,
-  readState,
   toUrl,
   toggle,
   without,
   type RawParams,
   type SearchState,
 } from "@/lib/sites/state";
-import { cityDef, formatDef, lightingDef } from "@/lib/sites/taxonomy";
+import { TRUST, cityDef, formatDef, lightingDef } from "@/lib/sites/taxonomy";
+import { dateRange } from "@/lib/sites/enquiry";
+import { readStateSmart } from "@/lib/sites/understand";
+import { indiaDate } from "@/lib/sites/calendar";
 import { inr } from "@/lib/sites/view";
 
 export const dynamic = "force-dynamic";
@@ -112,7 +114,7 @@ function Pages({ state, pages }: { state: SearchState; pages: number }) {
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<RawParams> }) {
   const raw = await searchParams;
-  const { state, typed, understood } = readState(raw);
+  const { state, typed, understood } = await readStateSmart(raw, indiaDate(Date.now()));
   const followed = raw.followed === "1";
   const followInvalid = raw.follow === "invalid";
 
@@ -176,6 +178,30 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         key: `lit-${l}`,
         label: lightingDef(l)?.label ?? l,
         remove: toUrl({ ...state, lighting: toggle(state.lighting, l) }, firstPage),
+      });
+    if (state.type)
+      chips.push({
+        key: "type",
+        label: state.type === "digital" ? "Digital" : "Static",
+        remove: toUrl(without(state, "type"), firstPage),
+      });
+    if (state.min)
+      chips.push({
+        key: "min",
+        label: `From ${inr(state.min)} a month`,
+        remove: toUrl(without(state, "min"), firstPage),
+      });
+    if (state.from)
+      chips.push({
+        key: "dates",
+        label: state.to ? dateRange(state.from, state.to) : `From ${formatDate(state.from)}`,
+        remove: toUrl(without(state, "from", "to"), firstPage),
+      });
+    for (const t of state.trust)
+      chips.push({
+        key: `trust-${t}`,
+        label: TRUST.find((x) => x.key === t)?.label ?? t,
+        remove: toUrl({ ...state, trust: toggle(state.trust, t) }, firstPage),
       });
     if (state.q)
       chips.push({

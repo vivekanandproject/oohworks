@@ -12,7 +12,32 @@ export const Enquiries: CollectionConfig = {
   access: { read: isStaff, create: () => false, update: isStaff, delete: isAdmin },
   fields: [
     { name: "reference", type: "text", required: true, unique: true, index: true },
-    { name: "site", type: "relationship", relationTo: "sites", required: true },
+    {
+      name: "site",
+      type: "relationship",
+      relationTo: "sites",
+      required: true,
+      admin: { description: "The first site asked about" },
+    },
+    {
+      name: "sites",
+      type: "relationship",
+      relationTo: "sites",
+      hasMany: true,
+      admin: { description: "Every site in this request. All belong to the one owner it went to." },
+    },
+    {
+      name: "plan",
+      type: "text",
+      index: true,
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        description:
+          "Set when a buyer asked several owners at once. Each owner sees only their own request.",
+      },
+    },
+    { name: "lead", type: "checkbox", defaultValue: true, admin: { hidden: true } },
     { name: "owner", type: "relationship", relationTo: "owners", required: true },
     { name: "email", type: "email", required: true, index: true },
     { name: "dateFrom", type: "date", required: true },
@@ -49,5 +74,14 @@ export const Enquiries: CollectionConfig = {
     { name: "attempts", type: "number", defaultValue: 0, admin: { hidden: true } },
     { name: "verifiedAt", type: "date", admin: { position: "sidebar", readOnly: true } },
     { name: "sentAt", type: "date", admin: { position: "sidebar", readOnly: true } },
+    {
+      name: "repliedAt",
+      type: "date",
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        description: "The owner's first reply through ohworks",
+      },
+    },
   ],
 };

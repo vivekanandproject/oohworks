@@ -17,6 +17,10 @@ const PAGES = [
   "/shortlist/?sites=ows0001,ows0003,ows0002,ows0017&from=2027-01-01&to=2027-01-31",
   "/compare/?sites=ows0001,ows0002,ows0006,ows0017",
   "/quick/ows0001/",
+  "/in/bengaluru/",
+  "/in/bengaluru/hoardings/",
+  "/enquire/plan/?sites=ows0001,ows0003,ows0017",
+  "/shortlist/sheets/?sites=ows0001,ows0017",
   "/sign-in/",
   "/newsroom/",
   "/newsroom/all/",
@@ -30,6 +34,8 @@ const PAGES = [
 ];
 
 test.describe("responsive: no horizontal overflow at any width", () => {
+  // Each test loads its page at eleven widths, so it is given longer than a single page check.
+  test.describe.configure({ timeout: 90_000 });
   for (const path of PAGES) {
     test(`${path}`, async ({ page }) => {
       for (const width of WIDTHS) {

@@ -288,7 +288,10 @@ test.describe("enquiry", () => {
     expect(toOwner?.text).toContain(`Brand and category: ${brand}`);
     expect(toOwner?.text).toContain("Budget: ₹ 80,000 a month");
     expect(toOwner?.text).toContain("Artwork: Ready");
-    expect(toOwner?.text).toContain(`Reply straight to the buyer: ${email}`);
+    expect(toOwner?.text).toContain(`reply straight to the buyer: ${email}`);
+    expect(toOwner?.text).toMatch(
+      /Answer in one step, with availability and your rate: \S+\/reply\/ENQ-[0-9A-Z]{8}\/\?k=[0-9a-f]{32}/,
+    );
     expect(toOwner?.text).toContain("ohworks never sells media");
     expect(
       (await mails(request, email, "buyer_confirmation")).some((m) =>

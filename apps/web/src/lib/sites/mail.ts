@@ -5,7 +5,7 @@ export interface Mail {
   to: string;
   subject: string;
   text: string;
-  kind: "code" | "owner_enquiry" | "buyer_confirmation";
+  kind: "code" | "owner_enquiry" | "buyer_confirmation" | "owner_reply" | "buyer_message";
   /** Replies go here. An owner answers the buyer, never ohworks. */
   replyTo?: string | undefined;
 }

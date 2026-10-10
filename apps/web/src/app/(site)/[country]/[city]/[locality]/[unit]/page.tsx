@@ -23,7 +23,7 @@ import { picture } from "@/lib/editorial/media";
 import { absolute, alternates, JsonLd } from "@/lib/seo";
 import { monthView } from "@/lib/sites/calendar";
 import { readLists } from "@/lib/sites/lists-server";
-import { getSite, similarSites } from "@/lib/sites/queries";
+import { getSite, hubLinksFor, similarSites } from "@/lib/sites/queries";
 import { cityDef, lightingDef } from "@/lib/sites/taxonomy";
 import {
   availabilityOf,
@@ -105,6 +105,7 @@ export default async function SitePage({
   const price = priceOf(site);
   const similar = await similarSites(site, 3);
   const lists = await readLists();
+  const hubs = await hubLinksFor(site);
   const unitId = site.permanentId ?? "";
   const city = cityDef(site.city)?.label ?? site.city;
   const point = {
@@ -182,16 +183,22 @@ export default async function SitePage({
             </li>
             <li aria-hidden="true">›</li>
             <li>
-              <a href={`/search/?city=${site.city}`} rel="nofollow" className="oh-link">
+              <a
+                href={hubs.city ?? `/search/?city=${site.city}`}
+                {...(hubs.city ? {} : { rel: "nofollow" })}
+                className="oh-link"
+                data-crumb="city"
+              >
                 {city}
               </a>
             </li>
             <li aria-hidden="true">›</li>
             <li>
               <a
-                href={`/search/?city=${site.city}&locality=${site.localitySlug}`}
-                rel="nofollow"
+                href={hubs.locality ?? `/search/?city=${site.city}&locality=${site.localitySlug}`}
+                {...(hubs.locality ? {} : { rel: "nofollow" })}
                 className="oh-link"
+                data-crumb="locality"
               >
                 {site.locality}
               </a>

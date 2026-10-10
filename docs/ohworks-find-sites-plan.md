@@ -1,6 +1,6 @@
 # ohworks Find sites: plan
 
-Date: 10 Oct 2026. Status: steps 1 and 2 are built (sections 14 and 15). Step 3 is planned and not started. Builds on the strategy report (Product blueprint 2), `ohworks-architecture.md`, the design system's marketplace components and the search page that existed before.
+Date: 10 Oct 2026. Status: all three steps are built (sections 14, 15 and 16). What still waits on outside services is listed at the end of section 16. Builds on the strategy report (Product blueprint 2), `ohworks-architecture.md`, the design system's marketplace components and the search page that existed before.
 
 ## 1. What this page must achieve
 
@@ -271,7 +271,7 @@ Unit tests cover the search state and its addresses, filtering, counts, ordering
 ### Not in step 1
 
 - Shortlist, compare, plan, quick view, the clustered map synced with the list, and "search this area": built in step 2, section 15.
-- One enquiry across several owners, the reply thread, exports, indexable city and locality hubs, Typesense and Claude query parsing: step 3.
+- One enquiry across several owners, the reply thread, exports, city and locality hubs and Claude query parsing: built in step 3, section 16. Typesense is not needed yet.
 - A taken-down site answers 404 today. The true "gone" (410) answer with similar sites needs a middleware lookup and is deferred.
 - Nearby landmarks with distances, and the street-level check, need a Google Maps key.
 - "Campaigns that ran here" appears once case studies are linked to sites.
@@ -348,10 +348,93 @@ Unit tests cover the lists, the summary sums, the budget line and map-area searc
 
 ### Not in step 2
 
-- One enquiry for the whole shortlist, split into one request per owner, with a reply thread: step 3.
-- Exports to PDF, Excel and slides: step 3.
+- One enquiry for the whole shortlist, split into one request per owner, with a reply thread: built in step 3, section 16.
+- Exports: Excel, CSV and printable site sheets are built in step 3, section 16. Slides are not.
 - A shortlist that follows a buyer across devices: needs sign-in.
 - Plan names and several plans: not built; there is one shortlist per browser.
 - Sending the saved-search emails: needs the email service and a scheduled job.
 - A static map image with streets before the live map loads: needs a MapTiler key. The still drawing shows positions only.
+
+## 16. What step 3 built (10 Oct 2026)
+
+Step 3 of the build order is done: plans and reach. There were no wireframes for these screens; they follow the design system's templates and the screens already agreed.
+
+### Pages
+
+| Address | What it is |
+| --- | --- |
+| `/enquire/plan/` | One enquiry for a whole shortlist |
+| `/reply/{reference}/?k=…` | The owner's reply page, opened from the link in their email |
+| `/enquiries/{reference}/?k=…` | The buyer's page of replies, opened from the link in their email |
+| `/shortlist/sheets/` | Site sheets laid out to print, one site to a page |
+| `/api/export/shortlist/` | The shortlist as Excel, or CSV with `format=csv` |
+| `/in/{city}/` | A city's hub |
+| `/in/{city}/{area}/` and `/in/{city}/{format}/` | An area's hub, and a format's, such as `/in/bengaluru/hoardings/` |
+
+### One enquiry, split per owner
+
+- The shortlist has one main action: "Send enquiry to N owners". The form lists who gets what, with a tick box beside each site.
+- The buyer fills in dates, brand and category, artwork status, an optional message and their email once. One code confirms the whole enquiry.
+- It becomes one request per owner. **Each owner is told about their own sites only.** They never see the rest of the shortlist, the other owners, or the shared reference.
+- **The buyer's budget is never sent** with a shortlist enquiry. A budget for a whole plan says nothing fair about one owner's sites, and passing it on would share the plan.
+- Several sites belonging to one owner go as a single request to that owner.
+- At most 25 owners can be reached in one go. A longer shortlist is sent in parts.
+
+### The reply thread
+
+- Each owner's email carries a link to a reply page. No account is needed: the link holds a signed key that opens that one request, as that owner, and nothing else.
+- The owner answers each site as available, not available or free on other dates, can quote their own monthly rate, and can add a message.
+- The reply is emailed straight to the buyer and kept on the thread.
+- The buyer's confirmation email carries their own link. It shows every owner asked, who has replied, and a table of answers side by side: site, owner, availability and the rate quoted.
+- The buyer can write back to one owner from that page. It goes to that owner alone.
+- Both sides can still simply reply by email. Every email's reply-to is the other party, never ohworks.
+- A quoted rate is the owner's own quote to that buyer. ohworks does not set it, change it or add to it, and the page says so.
+
+**Keys.** An owner's key never opens the buyer's view and the reverse. A key for one enquiry opens no other. The pages are `noindex`, closed in robots, and send no referrer to other sites, so the address cannot leak through a link.
+
+**Reply time.** An owner's first reply through the page is timed. Once an owner has five answered enquiries, their median reply time is worked out from them and stored, which is what earns "Replies in under a day". Below five the stored value is left alone, so one fast or slow answer neither earns nor costs a badge. Replies sent by plain email are not seen and so are not counted.
+
+### Exports
+
+- **Excel.** One site to a row under 34 fixed columns: identity, size in feet and millimetres, lighting, location with coordinates and facing, price mode and rate, terms, availability, audience with source and date, permit, owner and reply time, and the listing address. With a start date it adds a "Free on" column. A second sheet says what the figures are.
+- **CSV.** The same table, for other tools.
+- **Site sheets.** A page to print, or save as PDF from the browser's print window: one site to an A4 page with the photo area, price and terms, availability, badges, the factual summary and the spec sheet.
+- A price the owner keeps private is a blank cell. A cell that begins like a formula is written as plain text, so an exported file can never run anything.
+- Slides are not built. A PDF made on the server, without the print window, would need a headless browser in the container.
+
+### City, area and format hubs
+
+- A hub opens with a dated fact worked out from the listings: how many sites, from how many owners, the most common format, and the median shown rate when at least five real sites show one.
+- Under it are chips by format and by area, then the same cards, map, shortlist and quick view as the results.
+- Pages are real addresses, `/in/bengaluru/page/2/`, so each can be crawled. Page one has one address.
+- **A hub is published only above its threshold of indexable sites:** 25 for a city or a format, 10 for an area. Below it the address answers "not found", and it is not in the sitemap. Samples are never indexable, so today every hub is below its threshold.
+- A published hub is indexable, sits in the sitemap, and carries breadcrumb and item-list structured data. A site page's breadcrumb links to its hubs when they are open.
+- Links to another hub are followed. Links narrower than a hub go into filtered search and are marked `nofollow`.
+
+**Previews.** `HUB_PREVIEW=1` lets a local or test machine open hubs that are not yet published. A preview says so at the top, is `noindex`, has no structured data and is never in the sitemap. The setting is ignored on any site served over https. It is on in `.env.example` so the hubs can be seen and tested; do not set it in staging or production.
+
+### Typed searches read by Claude
+
+- When `ANTHROPIC_API_KEY` is set, a typed search that the built-in rules could not fully place is also read by Claude (`claude-haiku-5-5`, or `ANTHROPIC_MODEL`).
+- Claude can only fill filters from this site's own lists: city, format, lighting, static or digital, size, price limits, dates and the trust checks. Each value is checked again on the server. A place name is kept only if the buyer typed those words.
+- A filter the buyer set wins, then the built-in rules, then Claude. Whatever was understood is shown back as removable chips.
+- It gives up after 2.5 seconds, remembers answers, and without a key the search works exactly as before.
+- **This has not been run against the real service.** No key is configured here. It is covered by tests that stand in for the service, which check the request sent and the handling of answers, bad answers and failures.
+
+### Checks
+
+Unit tests cover hub thresholds and wording, the conversation keys, the reply-time sum, the form checks, the export table and its formula guard, and the Claude reading. Browser tests on three engines cover a shortlist enquiry to two owners from form to code to owner reply to the buyer's page and a follow-up, what each email does and does not contain, the keys, the exports, the site sheets in print, and the hubs with their "not found" answers.
+
+### What still waits on something outside the code
+
+| Waiting on | What it unlocks |
+| --- | --- |
+| An email service key (`RESEND_API_KEY`) | Real emails for codes, enquiries and replies; today they are written to the Outbox |
+| A scheduled job, and the email service | Sending saved-search and "first sites listed" emails |
+| Real owner inventory with photographs | Indexable site pages, and hubs that pass their thresholds |
+| A MapTiler key | A map style licensed for production, and a street map image before the live map loads |
+| A Google Maps key | Nearby landmarks with distances, and street-level checks |
+| An Anthropic key | The Claude reading of typed searches, and a live check of it |
+| Owner and buyer sign-in | An owner inbox, a shortlist across devices, agency workspaces |
+| More inventory than a few thousand sites | A search index such as Typesense; `searchSites()` is the one place to change |
 

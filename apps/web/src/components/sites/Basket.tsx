@@ -75,6 +75,10 @@ export function BasketEnhance() {
       );
     };
     const onClick = (e: MouseEvent) => {
+      if ((e.target as Element | null)?.closest?.("button[data-print]")) {
+        window.print();
+        return;
+      }
       const button = (e.target as Element | null)?.closest?.<HTMLButtonElement>(
         "button[data-copy]",
       );

@@ -65,6 +65,7 @@ function listing(over: Partial<Listing>): Listing {
     quality: 70,
     createdAt: NOW - 20 * DAY,
     sample: false,
+    indexable: true,
     ...over,
   };
 }

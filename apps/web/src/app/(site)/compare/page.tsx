@@ -125,6 +125,16 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                   View shortlist
                 </a>
               )}
+              {cards.length >= 2 ? (
+                <a
+                  href={`/enquire/plan/?sites=${live.join(",")}`}
+                  rel="nofollow"
+                  className="oh-btn secondary sm"
+                  data-action="enquire-all"
+                >
+                  Send one enquiry for these
+                </a>
+              ) : null}
               <button
                 type="button"
                 className="oh-btn secondary sm"

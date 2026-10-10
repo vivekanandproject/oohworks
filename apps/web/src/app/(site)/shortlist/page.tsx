@@ -406,6 +406,45 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                 Nothing is estimated.
               </p>
 
+              <div className="space-y-3" data-section="plan-actions">
+                <a
+                  href={`/enquire/plan/?sites=${live}${dates.size ? `&${dates.toString()}` : ""}`}
+                  rel="nofollow"
+                  className="oh-btn accent lg w-full"
+                  data-action="enquire-all"
+                >
+                  {cards.length === 1
+                    ? "Send enquiry"
+                    : summary.owners === 1
+                      ? "Send one enquiry for these sites"
+                      : `Send enquiry to ${summary.owners} owners`}
+                </a>
+                <p className="t-small text-ink-muted">
+                  {summary.owners === 1
+                    ? "It goes straight to the owner."
+                    : "One request goes to each owner. Each sees only their own sites, never the rest of your shortlist."}{" "}
+                  Your budget is not sent.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href={`/api/export/shortlist/?sites=${live}${from ? `&from=${from}` : ""}`}
+                    rel="nofollow"
+                    className="oh-btn secondary sm"
+                    data-action="export-excel"
+                  >
+                    Download Excel
+                  </a>
+                  <a
+                    href={`/shortlist/sheets/?sites=${live}${dates.size ? `&${dates.toString()}` : ""}`}
+                    rel="nofollow"
+                    className="oh-btn secondary sm"
+                    data-action="export-sheets"
+                  >
+                    Site sheets to print
+                  </a>
+                </div>
+              </div>
+
               <div data-section="plan-share">
                 <label htmlFor="plan-link" className="oh-label block">
                   Share this shortlist

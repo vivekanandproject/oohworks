@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { PILLARS, PILLAR_KEYS } from "@/lib/editorial/pillars";
 import { allPieces, authorsOf, pillarCounts } from "@/lib/editorial/queries";
 import { absolute } from "@/lib/seo";
-import { indexableSiteUrls } from "@/lib/sites/queries";
+import { indexableSiteUrls, publishedHubs } from "@/lib/sites/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -29,11 +29,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "yearly",
     priority: 0.4,
   });
-  const [pieces, counts, sites] = await Promise.all([
+  const [pieces, counts, sites, hubs] = await Promise.all([
     allPieces(),
     pillarCounts(),
     indexableSiteUrls(),
+    publishedHubs(),
   ]);
+  for (const h of hubs) {
+    pages.push({
+      url: absolute(h.url),
+      lastModified: new Date(h.updatedAt),
+      changeFrequency: "daily",
+      priority: 0.9,
+    });
+  }
   for (const s of sites) {
     pages.push({
       url: absolute(s.url),

@@ -70,6 +70,7 @@ export interface Config {
     sites: Site;
     owners: Owner;
     enquiries: Enquiry;
+    messages: Message;
     articles: Article;
     guides: Guide;
     reports: Report;
@@ -94,6 +95,7 @@ export interface Config {
     sites: SitesSelect<false> | SitesSelect<true>;
     owners: OwnersSelect<false> | OwnersSelect<true>;
     enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
+    messages: MessagesSelect<false> | MessagesSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
     guides: GuidesSelect<false> | GuidesSelect<true>;
     reports: ReportsSelect<false> | ReportsSelect<true>;
@@ -408,7 +410,19 @@ export interface Tag {
 export interface Enquiry {
   id: number;
   reference: string;
+  /**
+   * The first site asked about
+   */
   site: number | Site;
+  /**
+   * Every site in this request. All belong to the one owner it went to.
+   */
+  sites?: (number | Site)[] | null;
+  /**
+   * Set when a buyer asked several owners at once. Each owner sees only their own request.
+   */
+  plan?: string | null;
+  lead?: boolean | null;
   owner: number | Owner;
   email: string;
   dateFrom: string;
@@ -423,6 +437,35 @@ export interface Enquiry {
   attempts?: number | null;
   verifiedAt?: string | null;
   sentAt?: string | null;
+  /**
+   * The owner's first reply through ohworks
+   */
+  repliedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Replies between owners and buyers. Read only: nobody at ohworks writes these.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "messages".
+ */
+export interface Message {
+  id: number;
+  enquiry: number | Enquiry;
+  from: 'owner' | 'buyer';
+  body?: string | null;
+  /**
+   * The owner's answer for each site in the request
+   */
+  answers?:
+    | {
+        site: number | Site;
+        availability?: ('available' | 'unavailable' | 'other_dates') | null;
+        quote?: number | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -949,7 +992,7 @@ export interface Outbox {
   to: string;
   subject: string;
   text: string;
-  kind: 'code' | 'owner_enquiry' | 'buyer_confirmation';
+  kind: 'code' | 'owner_enquiry' | 'buyer_confirmation' | 'owner_reply' | 'buyer_message';
   updatedAt: string;
   createdAt: string;
 }
@@ -988,6 +1031,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'enquiries';
         value: number | Enquiry;
+      } | null)
+    | ({
+        relationTo: 'messages';
+        value: number | Message;
       } | null)
     | ({
         relationTo: 'articles';
@@ -1195,6 +1242,9 @@ export interface OwnersSelect<T extends boolean = true> {
 export interface EnquiriesSelect<T extends boolean = true> {
   reference?: T;
   site?: T;
+  sites?: T;
+  plan?: T;
+  lead?: T;
   owner?: T;
   email?: T;
   dateFrom?: T;
@@ -1209,6 +1259,26 @@ export interface EnquiriesSelect<T extends boolean = true> {
   attempts?: T;
   verifiedAt?: T;
   sentAt?: T;
+  repliedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "messages_select".
+ */
+export interface MessagesSelect<T extends boolean = true> {
+  enquiry?: T;
+  from?: T;
+  body?: T;
+  answers?:
+    | T
+    | {
+        site?: T;
+        availability?: T;
+        quote?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

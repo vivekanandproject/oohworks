@@ -13,8 +13,20 @@ import {
   type Listing,
   type Wider,
 } from "./filter";
-import type { SearchState } from "./state";
-import { freshDays, permitState, siteUrl } from "./view";
+import { formatDate } from "@/lib/editorial/format";
+import {
+  hubFact,
+  hubPath,
+  hubStatus,
+  hubTitle,
+  inHub,
+  readHub,
+  type Hub,
+  type HubStatus,
+} from "./hubs";
+import { DEFAULT_STATE, type SearchState } from "./state";
+import { CITIES, FORMATS } from "./taxonomy";
+import { freshDays, isIndexable, permitState, siteUrl } from "./view";
 
 export const PER_PAGE = 12;
 const DAY = 24 * 3600 * 1000;
@@ -61,6 +73,7 @@ function toListing(site: Site, owner: Owner | undefined, now: number): Listing |
     quality: site.qualityScore ?? 0,
     createdAt: new Date(site.createdAt).getTime(),
     sample: Boolean(site.sample),
+    indexable: isIndexable(site, owner ?? null),
   };
 }
 
@@ -274,6 +287,191 @@ export async function ownerContact(
   } catch {
     return null;
   }
+}
+
+/**
+ * Local and test machines can look at hubs that are not yet published, so the pages can be built and
+ * checked before real inventory exists. Such a page is marked as a preview and is never indexed.
+ * The flag is ignored on any site served over https.
+ */
+export function hubPreview(): boolean {
+  return (
+    process.env.HUB_PREVIEW === "1" &&
+    !(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").startsWith("https://")
+  );
+}
+
+export interface HubLink {
+  label: string;
+  count: number;
+  href: string;
+  /** A link to another hub is followed; a link into filtered search is not. */
+  hub: boolean;
+}
+
+export interface HubResult {
+  hub: Hub;
+  status: HubStatus;
+  /** Shown only because previews are on; the live site answers "not found" here. */
+  preview: boolean;
+  title: string;
+  fact: string;
+  localityLabel: string | undefined;
+  cards: Card[];
+  total: number;
+  pages: number;
+  points: SearchResult["points"];
+  formats: HubLink[];
+  areas: HubLink[];
+  anySample: boolean;
+}
+
+const searchHref = (params: Record<string, string>): string =>
+  `/search/?${new URLSearchParams(params).toString()}`;
+
+/** Everything a hub page shows, or null when the hub does not exist or is not open yet. */
+export async function hubData(hub: Hub, page: number): Promise<HubResult | null> {
+  const cat = await catalogue();
+  const preview = hubPreview();
+  const status = hubStatus(cat.listings, hub);
+  if (!status.published && !preview) return null;
+  // The live page lists real sites only. A preview may also show samples, which are labelled.
+  const pool = cat.listings.filter((l) => (preview || !l.sample) && l.city === hub.city);
+  const now = Date.now();
+  const items = sortListings(
+    pool.filter((l) => inHub(l, hub)),
+    DEFAULT_STATE,
+    now,
+  );
+  if (items.length === 0) return null;
+  const pages = Math.max(1, Math.ceil(items.length / PER_PAGE));
+  if (page > pages) return null;
+  const localityLabel = hub.kind === "locality" ? items[0]?.locality : undefined;
+  const open = (h: Hub): boolean => preview || hubStatus(cat.listings, h).published;
+
+  const formats: HubLink[] = FORMATS.flatMap((f) => {
+    const n = items.filter((l) => l.format === f.slug).length;
+    if (n === 0 || hub.kind === "format") return [];
+    const target: Hub = { kind: "format", city: hub.city, format: f.slug };
+    const asHub = hub.kind === "city" && open(target);
+    return [
+      {
+        label: f.slug === "led-screen" ? "LED screens" : f.plural,
+        count: n,
+        hub: asHub,
+        href: asHub
+          ? hubPath(target)
+          : searchHref({
+              city: hub.city,
+              ...(hub.kind === "locality" ? { locality: hub.locality } : {}),
+              format: f.slug,
+            }),
+      },
+    ];
+  });
+  const byArea = new Map<string, { label: string; count: number }>();
+  for (const l of items)
+    byArea.set(l.localitySlug, {
+      label: l.locality,
+      count: (byArea.get(l.localitySlug)?.count ?? 0) + 1,
+    });
+  const areas: HubLink[] =
+    hub.kind === "locality"
+      ? []
+      : [...byArea.entries()]
+          .sort((a, b) => b[1].count - a[1].count || a[1].label.localeCompare(b[1].label))
+          .map(([slug, v]) => {
+            const target: Hub = { kind: "locality", city: hub.city, locality: slug };
+            const asHub = hub.kind === "city" && open(target);
+            return {
+              label: v.label,
+              count: v.count,
+              hub: asHub,
+              href: asHub
+                ? hubPath(target)
+                : searchHref({
+                    city: hub.city,
+                    locality: slug,
+                    ...(hub.kind === "format" ? { format: hub.format } : {}),
+                  }),
+            };
+          });
+
+  const slice = items.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  return {
+    hub,
+    status,
+    preview: preview && !status.published,
+    title: hubTitle(hub, localityLabel),
+    fact: hubFact(
+      hub,
+      items,
+      medianRate(items),
+      formatDate(new Date(now).toISOString()).replace(/^\d+ /, ""),
+      localityLabel,
+    ),
+    localityLabel,
+    cards: await toCards(slice, cat),
+    total: items.length,
+    pages,
+    points: items.slice(0, 500).map((l) => ({
+      id: l.permanentId,
+      lat: l.lat,
+      lng: l.lng,
+      title: l.title,
+      url: l.url,
+      price: l.rate !== null ? `₹ ${l.rate.toLocaleString("en-IN")}` : null,
+    })),
+    formats,
+    areas,
+    anySample: slice.some((l) => l.sample),
+  };
+}
+
+/** The hubs a site belongs to that a visitor can open, for its breadcrumb. */
+export async function hubLinksFor(
+  site: Pick<Site, "city" | "localitySlug">,
+): Promise<{ city: string | null; locality: string | null }> {
+  const cat = await catalogue();
+  const preview = hubPreview();
+  const city = readHub("in", site.city);
+  const locality = site.localitySlug ? readHub("in", site.city, site.localitySlug) : null;
+  const open = (h: Hub | null): h is Hub =>
+    h !== null && (preview || hubStatus(cat.listings, h).published);
+  return {
+    city: open(city) ? hubPath(city) : null,
+    locality: open(locality) && locality.kind === "locality" ? hubPath(locality) : null,
+  };
+}
+
+/** Every published hub, for the sitemap. A preview is never in it. */
+export async function publishedHubs(): Promise<{ url: string; updatedAt: string }[]> {
+  const cat = await catalogue();
+  const out: { url: string; updatedAt: string }[] = [];
+  for (const c of CITIES) {
+    const inCity = cat.listings.filter((l) => l.city === c.slug && !l.sample);
+    if (inCity.length === 0) continue;
+    const hubs: Hub[] = [
+      { kind: "city", city: c.slug },
+      ...FORMATS.map((f): Hub => ({ kind: "format", city: c.slug, format: f.slug })),
+      ...[...new Set(inCity.map((l) => l.localitySlug))].map((slug): Hub => ({
+        kind: "locality",
+        city: c.slug,
+        locality: slug,
+      })),
+    ];
+    for (const hub of hubs) {
+      if (!hubStatus(cat.listings, hub).published) continue;
+      const newest = inCity
+        .filter((l) => inHub(l, hub))
+        .reduce(
+          (latest, l) => Math.max(latest, new Date(cat.sites.get(l.id)?.updatedAt ?? 0).getTime()),
+          0,
+        );
+      out.push({ url: hubPath(hub), updatedAt: new Date(newest || Date.now()).toISOString() });
+    }
+  }
+  return out;
 }
 
 /** Indexable site pages, for the sitemap. */

@@ -14,4 +14,5 @@ export { Subscribers } from "./Subscribers";
 export { Owners } from "./Owners";
 export { Sites } from "./Sites";
 export { Enquiries } from "./Enquiries";
+export { Messages } from "./Messages";
 export { Outbox } from "./Outbox";

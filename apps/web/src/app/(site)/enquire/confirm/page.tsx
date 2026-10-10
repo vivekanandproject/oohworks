@@ -3,8 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import { Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { EnquirySummary } from "@/components/sites/EnquirySummary";
-import { devCode, findEnquiry } from "@/lib/sites/enquiries";
-import { MAX_ATTEMPTS, isReference, maskEmail } from "@/lib/sites/enquiry";
+import { GroupSummary } from "@/components/sites/Thread";
+import { devCode, findGroup } from "@/lib/sites/enquiries";
+import { MAX_ATTEMPTS, isAnyReference, maskEmail } from "@/lib/sites/enquiry";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -19,13 +20,13 @@ const one = (v: string | string[] | undefined): string =>
 export default async function ConfirmPage({ searchParams }: { searchParams: Promise<Query> }) {
   const q = await searchParams;
   const ref = one(q.ref);
-  if (!isReference(ref)) notFound();
-  const found = await findEnquiry(ref);
-  if (!found) notFound();
-  const { enquiry, site, owner } = found;
-  if (enquiry.status !== "pending") redirect(`/enquire/sent/?ref=${ref}`);
+  if (!isAnyReference(ref)) notFound();
+  const group = await findGroup(ref);
+  if (!group) notFound();
+  if (!group.requests.some((r) => r.enquiry.status === "pending"))
+    redirect(`/enquire/sent/?ref=${ref}`);
 
-  const left = Math.max(0, MAX_ATTEMPTS - (enquiry.attempts ?? 0));
+  const left = Math.max(0, MAX_ATTEMPTS - (group.lead.attempts ?? 0));
   const ERRORS: Record<string, { t: string; d: string }> = {
     wrong: {
       t: "That code did not match.",
@@ -42,7 +43,9 @@ export default async function ConfirmPage({ searchParams }: { searchParams: Prom
   };
   const error = ERRORS[one(q.error)];
   const resent = one(q.resent) === "1";
-  const shown = await devCode(enquiry.email);
+  const shown = await devCode(group.email);
+  const only = group.requests.length === 1 ? group.requests[0] : undefined;
+  const single = only?.sites.length === 1 ? only.sites[0] : undefined;
 
   return (
     <Shell active="find">
@@ -53,8 +56,8 @@ export default async function ConfirmPage({ searchParams }: { searchParams: Prom
             <h1 className="t-display-md mt-2">Confirm it&rsquo;s you</h1>
             <p className="t-body text-ink-muted mt-2" data-section="code-sent-to">
               A code is on its way to{" "}
-              <span className="text-ink font-mono">{maskEmail(enquiry.email)}</span>. It works for
-              ten minutes.
+              <span className="text-ink font-mono">{maskEmail(group.email)}</span>. It works for ten
+              minutes.
             </p>
 
             {error ? (
@@ -138,7 +141,11 @@ export default async function ConfirmPage({ searchParams }: { searchParams: Prom
           </div>
 
           <div className="order-first lg:order-none">
-            <EnquirySummary site={site} owner={owner} now={Date.now()} />
+            {single && only ? (
+              <EnquirySummary site={single} owner={only.owner} now={Date.now()} />
+            ) : (
+              <GroupSummary group={group} />
+            )}
           </div>
         </div>
       </Container>
