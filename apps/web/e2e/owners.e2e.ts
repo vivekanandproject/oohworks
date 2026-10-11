@@ -93,9 +93,9 @@ type Cells = Record<string, string | number | { $date: string }>;
 
 /** The email step: an address, then the code sent to it. Ends on the company page, or the owner's sites. */
 async function signIn(page: Page, request: APIRequestContext, email: string): Promise<void> {
-  await page.goto("/sign-in/");
+  await page.goto("/sign-in/code/");
   await page.locator("#signin-email").fill(email);
-  await page.locator("[data-action='signin']").click();
+  await page.locator("[data-action='signin-code']").click();
   await expect(page).toHaveURL(/\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}&via=signin$/, {
     timeout: 15_000,
   });
@@ -132,6 +132,7 @@ async function typePhone(page: Page, id: string): Promise<void> {
   await page.locator(id).fill(PHONE.typed);
 }
 const HYDERABAD = "Hyderabad, Telangana, India";
+const PASSWORD = "e2e three plain words";
 
 async function addCompany(page: Page, name: string): Promise<void> {
   await page.locator("#co-name").fill(name);
@@ -165,7 +166,14 @@ test.describe("list your sites: the start", () => {
     ]);
     // One form asks for the company, the person and where enquiries go. Only the GSTIN can wait.
     const form = page.locator("[data-section='start-form']");
-    for (const id of ["lys-name", "lys-place", "lys-contact", "lys-phone", "owner-email"])
+    for (const id of [
+      "lys-name",
+      "lys-place",
+      "lys-contact",
+      "lys-phone",
+      "owner-email",
+      "lys-password",
+    ])
       await expect(form.locator(`#${id}`), `${id} is asked for`).toHaveAttribute("required", "");
     await expect(form.locator("#lys-gstin")).not.toHaveAttribute("required", "");
     await expect(form.locator("label[for='lys-gstin']")).toContainText("optional");
@@ -306,6 +314,7 @@ test.describe("list your sites: the first form", () => {
     await choosePlace(page, "#lys-place", "Hyder", HYDERABAD);
     await page.locator("#lys-contact").fill("Asha Rao");
     await typePhone(page, "#lys-phone");
+    await page.locator("#lys-password").fill(PASSWORD);
     await page.locator("#owner-email").fill(v.email);
     if (v.gstin) await page.locator("#lys-gstin").fill(v.gstin);
   };
@@ -376,6 +385,21 @@ test.describe("list your sites: the first form", () => {
     await expect(page.locator("#co-phone")).toHaveValue(PHONE.typed);
     await expect(page.locator("#co-email")).toHaveValue(email);
     await expect(page.locator("#co-gstin")).toHaveValue("29AAGCB7383J1Z4");
+    await expect(page.locator("[data-section='signing-in']")).toContainText(
+      "You sign in with it and your password.",
+    );
+
+    // The password chosen on the form signs them in, with the work email as the user name.
+    await page.locator("form[action='/api/owner/signout/'] button").first().click();
+    await expect(page.locator("[data-section='signed-out']")).toBeVisible();
+    await page.goto("/sign-in/");
+    await page.locator("#signin-user").fill(email);
+    await page.locator("#signin-password").fill(PASSWORD);
+    await page.locator("[data-action='signin']").click();
+    await expect(page).toHaveURL(/\/owner\/$/);
+    await expect(page.locator("h1")).toHaveText(company);
+    await expect(page.locator("[data-section='no-password']")).toHaveCount(0);
+    await page.goto("/owner/company/");
 
     // Someone already listed who fills the form again keeps what they have.
     await page.locator("form[action='/api/owner/signout/'] button").first().click();
@@ -411,6 +435,10 @@ test.describe("list your sites: the first form", () => {
     await expect(page.locator("#lys-phone-country")).toHaveValue(PHONE.country);
     await expect(page.locator("#lys-phone")).toHaveValue(PHONE.typed);
     await expect(page.locator("#owner-email")).toHaveValue(email);
+    // A password is never sent back: not in the box, and not in the address.
+    await expect(page.locator("#lys-password")).toHaveValue("");
+    expect(decodeURIComponent(page.url())).not.toContain(PASSWORD);
+    await expect(page.locator("#lys-password-help")).toContainText("type it again");
     await expect(page.locator("#lys-gstin")).toHaveAttribute("aria-invalid", "true");
     // The mistake is named beside the field too, and the notice leads to it.
     await expect(page.locator("[data-part='badge'] [data-section='field-error']")).toHaveText(
@@ -436,6 +464,7 @@ test.describe("list your sites: the first form", () => {
             phone: PHONE.typed,
             email,
             gstin: "",
+            password: PASSWORD,
             ...change,
           },
           headers: { origin: baseURL ?? "", "x-forwarded-for": visitor() },
@@ -443,6 +472,13 @@ test.describe("list your sites: the first form", () => {
         })
       ).headers()["location"] ?? "";
     expect(await post({ name: "X" })).toMatch(/^\/list-your-sites\/\?error=name&/);
+    expect(decodeURIComponent((await post({ name: "X" })).replace(/\+/g, " "))).not.toContain(
+      PASSWORD,
+    );
+    // A password must be long enough, and may not be the owner's own email.
+    expect(await post({ password: "short" })).toMatch(/^\/list-your-sites\/\?error=password&/);
+    expect(await post({ password: "" })).toMatch(/^\/list-your-sites\/\?error=password&/);
+    expect(await post({ password: email })).toMatch(/^\/list-your-sites\/\?error=passwordsame&/);
     expect(await post({ placeLabel: "" })).toMatch(/^\/list-your-sites\/\?error=place&/);
     expect(await post({ contactName: "" })).toMatch(/^\/list-your-sites\/\?error=contact&/);
     expect(await post({ phone: "call me" })).toMatch(/^\/list-your-sites\/\?error=phone&/);
@@ -544,6 +580,7 @@ test.describe("list your sites: anywhere in the world", () => {
     await page.locator("#lys-contact").fill("Asha Rao");
     await page.locator("#owner-email").fill(email);
     await page.locator("#lys-phone").fill("050 123 4567");
+    await page.locator("#lys-password").fill(PASSWORD);
     await page.locator("#lys-gstin").fill("CN-1234567");
     await page.locator("[data-action='start']").click();
     await expect(page).toHaveURL(/\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}$/);
@@ -680,7 +717,31 @@ test.describe("list your sites: one design", () => {
     };
 
     await check("/list-your-sites/", "form");
-    await check("/sign-in/", "form");
+    // The pages that only ask who you are sit in one column in the middle of the page.
+    for (const path of ["/sign-in/", "/sign-in/code/"]) {
+      await page.goto(path);
+      const got = await frame(page);
+      expect(got.top, `${path}: space above`).toBe(formPage.top);
+      expect(got.title, `${path}: title size`).toBe(formPage.title);
+      expect(got.labelIsLink, `${path}: the label is plain text`).toBe(false);
+      const centred = await page.evaluate(() => {
+        const mid = (el: Element) => {
+          const r = el.getBoundingClientRect();
+          return r.left + r.width / 2;
+        };
+        const box = document.querySelector("main form")!;
+        return {
+          box: Math.round(mid(box) - innerWidth / 2),
+          title: Math.round(mid(document.querySelector("main h1")!) - innerWidth / 2),
+          width: Math.round(box.getBoundingClientRect().width),
+          align: getComputedStyle(document.querySelector("main h1")!).textAlign,
+        };
+      });
+      expect(Math.abs(centred.box), `${path}: the box is in the middle`).toBeLessThanOrEqual(1);
+      expect(Math.abs(centred.title), `${path}: the title is in the middle`).toBeLessThanOrEqual(1);
+      expect(centred.align, `${path}: the title is centred`).toBe("center");
+      expect(centred.width, `${path}: the box's width`).toBe(440);
+    }
     const stamp = Date.now();
     await signIn(page, request, `owner-frame-${info.project.name}-${stamp}@example.org`);
     expect((await frame(page)).form, "the company step, before a company exists").toBe(560);
@@ -709,11 +770,14 @@ test.describe("list your sites: the ways in", () => {
     await expect(page.locator("#lys-name")).toBeInViewport();
   });
 
-  test("Sign in is a real way back in, and the bar then leads to the owner's sites", async ({
+  test("Sign in asks for a user name and password, and the bar then leads to the owner's sites", async ({
     page,
     request,
+    baseURL,
   }, testInfo) => {
-    const email = `owner-bar-${testInfo.project.name}-${Date.now()}@example.org`;
+    test.setTimeout(120_000);
+    const stamp = Date.now();
+    const email = `owner-bar-${testInfo.project.name}-${stamp}@example.org`;
     // By role and exact name: only what is shown counts, and "Your sites" is not "List your sites".
     const bar = page.locator("header");
     const list = bar.getByRole("link", { name: "List your sites", exact: true });
@@ -729,8 +793,42 @@ test.describe("list your sites: the ways in", () => {
       "You need no account",
     );
     expect(await page.locator('meta[name="robots"]').getAttribute("content")).toContain("noindex");
+    // A user name and a password, in a box in the middle of the page.
+    const form = page.locator("[data-section='signin-form']");
+    await expect(form.locator("label[for='signin-user']")).toHaveText("User name");
+    await expect(form.locator("#signin-user")).toHaveAttribute("autocomplete", "username");
+    await expect(form.locator("label[for='signin-password']")).toHaveText("Password");
+    await expect(form.locator("#signin-password")).toHaveAttribute("type", "password");
+    await expect(form.locator("#signin-password")).toHaveAttribute(
+      "autocomplete",
+      "current-password",
+    );
+    const box = (await form.boundingBox())!;
+    const wide = page.viewportSize()!.width;
+    expect(Math.abs(box.x + box.width / 2 - wide / 2)).toBeLessThanOrEqual(1);
+    // The password can be looked at before it is sent.
+    await form.locator("#signin-password").fill("let me see");
+    await form.getByRole("button", { name: "Show password" }).click();
+    await expect(form.locator("#signin-password")).toHaveAttribute("type", "text");
+    await form.getByRole("button", { name: "Hide password" }).click();
+    await expect(form.locator("#signin-password")).toHaveAttribute("type", "password");
+
+    // A pair that is not on file is refused in one sentence, whichever half was wrong.
+    await form.locator("#signin-user").fill(email);
+    await form.locator("#signin-password").fill("not the password");
+    await form.locator("[data-action='signin']").click();
+    await expect(page.locator("[data-section='signin-error']")).toContainText(
+      "That user name and password do not match.",
+    );
+    await expect(page.locator("#signin-user")).toHaveValue(email);
+    await expect(page.locator("#signin-password")).toHaveValue("");
+    expect(decodeURIComponent(page.url())).not.toContain("not the password");
+
+    // Forgotten, or never set: a code by email is the other way in.
+    await page.locator("[data-action='forgot']").click();
+    await expect(page).toHaveURL(/\/sign-in\/code\/$/);
     await page.locator("#signin-email").fill(email);
-    await page.locator("[data-action='signin']").click();
+    await page.locator("[data-action='signin-code']").click();
     await expect(page).toHaveURL(/\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}&via=signin$/);
     await expect(page.locator("main p.t-label").first()).toHaveText("Sign in");
     // A wrong code keeps the visitor on the sign-in wording.
@@ -758,23 +856,65 @@ test.describe("list your sites: the ways in", () => {
     await page.goto("/sign-in/");
     await expect(page).toHaveURL(/\/owner\/company\/$/);
 
+    // Having come in by code they have no password yet, and are asked to make one.
+    await addCompany(page, `E2E Bar ${stamp}`);
+    await expect(page.locator("[data-section='no-password']")).toContainText(
+      "You have no password yet.",
+    );
+    await page.locator("[data-section='no-password'] a").click();
+    await expect(page).toHaveURL(/\/owner\/password\/$/);
+    await expect(page.locator("h1")).toHaveText("Create a password");
+    await page.locator("#new-password").fill(PASSWORD);
+    await page.locator("[data-action='save-password']").click();
+    await expect(page).toHaveURL(/\/owner\/\?saved=password$/);
+    await expect(page.locator("[data-section='saved-password']")).toBeVisible();
+    await expect(page.locator("[data-section='no-password']")).toHaveCount(0);
+    // They are told by email, so a change they did not make would be noticed.
+    await expect
+      .poll(async () => (await mails(request, email, "owner_notice"))[0]?.subject ?? "")
+      .toBe("Your ohworks password is set");
+
     await page.locator("form[action='/api/owner/signout/'] button").first().click();
     await expect(page.locator("[data-section='signed-out']")).toBeVisible();
     await expect(list).toHaveCount(1);
     await page.goto("/");
     await expect(yours).toHaveCount(0);
     await expect(list).toHaveCount(1);
+
+    // And back in with the user name and the new password, sent with the Enter key.
+    await page.goto("/sign-in/");
+    await page.locator("#signin-user").fill(email);
+    await page.locator("#signin-password").fill(PASSWORD);
+    await page.locator("#signin-password").press("Enter");
+    await expect(page).toHaveURL(/\/owner\/$/);
+    await expect(yours).toHaveCount(1);
+
+    // Five wrong passwords in a row close the door for a while, even to the right one. A code
+    // still opens it.
+    const attempt = async (password: string) =>
+      (
+        await request.post("/api/owner/signin/", {
+          form: { email, password },
+          headers: { origin: baseURL ?? "", "x-forwarded-for": visitor() },
+          maxRedirects: 0,
+        })
+      ).headers()["location"] ?? "";
+    for (let i = 0; i < 4; i++) expect(await attempt("wrong again")).toMatch(/error=match/);
+    expect(await attempt("wrong again")).toMatch(/error=locked/);
+    expect(await attempt(PASSWORD)).toMatch(/error=locked/);
+    const shut = await request.get("/sign-in/?error=locked");
+    expect(await shut.text()).toContain("sign in with a code");
   });
 
-  test("a mistake on Sign in comes back to Sign in", async ({ request, baseURL }) => {
+  test("a mistake asking for a code comes back to that page", async ({ request, baseURL }) => {
     const res = await request.post("/api/owner/start/", {
       form: { via: "signin", email: "not-an-email" },
       headers: { origin: baseURL ?? "", "x-forwarded-for": visitor() },
       maxRedirects: 0,
     });
     expect(res.status()).toBe(303);
-    expect(res.headers()["location"]).toBe("/sign-in/?error=email");
-    const page = await request.get("/sign-in/?error=email");
+    expect(res.headers()["location"]).toBe("/sign-in/code/?error=email");
+    const page = await request.get("/sign-in/code/?error=email");
     expect(await page.text()).toContain("That email did not look right.");
   });
 });

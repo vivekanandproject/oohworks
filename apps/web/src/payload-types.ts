@@ -376,6 +376,16 @@ export interface Owner {
    * The address this owner confirms, by code, to manage their own sites
    */
   loginEmail?: string | null;
+  passwordHash?: string | null;
+  /**
+   * When the owner last set a password. Empty means they sign in by emailed code.
+   */
+  passwordSetAt?: string | null;
+  failedSignIns?: number | null;
+  /**
+   * Set for 15 minutes after five wrong passwords in a row
+   */
+  lockedUntil?: string | null;
   source?: ('team' | 'self') | null;
   /**
    * When the owner first sent sites for review
@@ -1384,6 +1394,10 @@ export interface OwnersSelect<T extends boolean = true> {
   contactName?: T;
   gstin?: T;
   loginEmail?: T;
+  passwordHash?: T;
+  passwordSetAt?: T;
+  failedSignIns?: T;
+  lockedUntil?: T;
   source?: T;
   submittedAt?: T;
   verified?: T;

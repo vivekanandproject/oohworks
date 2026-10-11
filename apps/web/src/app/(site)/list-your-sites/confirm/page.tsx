@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { Notice } from "@/components/owners/Bits";
-import { Aside, Card, FORM_GRID, PageHead, StepsCard } from "@/components/owners/Frame";
+import { Aside, CENTER, Card, FORM_GRID, PageHead, StepsCard } from "@/components/owners/Frame";
 import { devOwnerCode, findCode } from "@/lib/owners/server";
 import { MAX_ATTEMPTS, maskEmail } from "@/lib/sites/enquiry";
 
@@ -41,103 +41,147 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
   const shown = await devOwnerCode(row.email);
   const signIn = one(q.via) === "signin";
 
+  const head = (
+    <PageHead
+      center={signIn}
+      eyebrow={signIn ? "Sign in" : "List your sites · step 2 of 4"}
+      title={<>Confirm it&rsquo;s you</>}
+    >
+      <span data-section="code-sent-to">
+        A code is on its way to <span className="text-ink font-mono">{maskEmail(row.email)}</span>.
+        It works for ten minutes.
+      </span>
+    </PageHead>
+  );
+  const notes = (
+    <>
+      {error ? (
+        <div className="mt-5">
+          <Notice tone="error" title={error.t} section="confirm-error">
+            {error.d}
+          </Notice>
+        </div>
+      ) : one(q.resent) === "1" ? (
+        <div className="mt-5">
+          <Notice tone="success" title="A new code is on its way." section="confirm-resent">
+            The earlier one no longer works.
+          </Notice>
+        </div>
+      ) : null}
+      {shown ? (
+        <p
+          className="t-small border-hairline bg-lit-tint text-ink mt-5 rounded-sm border px-3 py-2"
+          data-section="dev-code"
+        >
+          Development only: no email service is set up on this machine, so the code is shown here.
+          It is <span className="font-mono font-medium">{shown}</span>. The email itself is in the
+          admin, under Operations, Outbox.
+        </p>
+      ) : null}
+    </>
+  );
+  // Signing in, the code sits in a box in the middle of the page like the rest of that flow.
+  const fields = (
+    <>
+      <input type="hidden" name="t" value={token} />
+      {signIn ? <input type="hidden" name="via" value="signin" /> : null}
+      <div>
+        <label htmlFor="owner-code" className="oh-label block">
+          Six-digit code
+        </label>
+        <input
+          id="owner-code"
+          name="code"
+          type="text"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          pattern="[0-9 ]{6,7}"
+          maxLength={7}
+          required
+          autoFocus
+          className={`oh-input lg data mt-1 tracking-[0.3em] ${signIn ? "text-center" : "max-w-[220px]"}`}
+        />
+      </div>
+      <div>
+        <button
+          type="submit"
+          className={`oh-btn primary lg w-full ${signIn ? "" : "sm:w-auto"}`}
+          data-action="confirm"
+        >
+          Confirm
+        </button>
+      </div>
+    </>
+  );
+  const again = (
+    <form
+      method="post"
+      action="/api/owner/resend/"
+      className={signIn ? "mt-4 text-center" : "mt-4"}
+    >
+      <input type="hidden" name="t" value={token} />
+      {signIn ? <input type="hidden" name="via" value="signin" /> : null}
+      <button type="submit" className="oh-btn ghost sm">
+        Send the code again
+      </button>
+    </form>
+  );
+
+  if (signIn)
+    return (
+      <Shell active="owners">
+        <Container className="py-8 lg:py-12">
+          <div className={CENTER}>
+            {head}
+            {notes}
+            <form
+              method="post"
+              action="/api/owner/confirm/"
+              className="border-hairline bg-paper-raised mt-6 flex flex-col gap-5 rounded-md border p-5 sm:p-6"
+              data-section="confirm-form"
+            >
+              {fields}
+            </form>
+            {again}
+            <p className="t-small text-ink-muted mt-4 text-center">
+              After this, this browser is remembered for 30 days.{" "}
+              <a href="/sign-in/" className="oh-link">
+                Use your password instead
+              </a>
+              .
+            </p>
+          </div>
+        </Container>
+      </Shell>
+    );
+
   return (
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <div className={FORM_GRID}>
           <div className="min-w-0">
-            <PageHead
-              eyebrow={signIn ? "Sign in" : "List your sites · step 2 of 4"}
-              title={<>Confirm it&rsquo;s you</>}
-            >
-              <span data-section="code-sent-to">
-                A code is on its way to{" "}
-                <span className="text-ink font-mono">{maskEmail(row.email)}</span>. It works for ten
-                minutes.
-              </span>
-            </PageHead>
-            {error ? (
-              <div className="mt-5">
-                <Notice tone="error" title={error.t} section="confirm-error">
-                  {error.d}
-                </Notice>
-              </div>
-            ) : one(q.resent) === "1" ? (
-              <div className="mt-5">
-                <Notice tone="success" title="A new code is on its way." section="confirm-resent">
-                  The earlier one no longer works.
-                </Notice>
-              </div>
-            ) : null}
-            {shown ? (
-              <p
-                className="t-small border-hairline bg-lit-tint text-ink mt-5 rounded-sm border px-3 py-2"
-                data-section="dev-code"
-              >
-                Development only: no email service is set up on this machine, so the code is shown
-                here. It is <span className="font-mono font-medium">{shown}</span>. The email itself
-                is in the admin, under Operations, Outbox.
-              </p>
-            ) : null}
+            {head}
+            {notes}
             <form
               method="post"
               action="/api/owner/confirm/"
               className="mt-6 flex flex-col gap-4"
               data-section="confirm-form"
             >
-              <input type="hidden" name="t" value={token} />
-              {signIn ? <input type="hidden" name="via" value="signin" /> : null}
-              <div>
-                <label htmlFor="owner-code" className="oh-label block">
-                  Six-digit code
-                </label>
-                <input
-                  id="owner-code"
-                  name="code"
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  pattern="[0-9 ]{6,7}"
-                  maxLength={7}
-                  required
-                  autoFocus
-                  className="oh-input lg data mt-1 max-w-[220px] tracking-[0.3em]"
-                />
-              </div>
-              <div>
-                <button
-                  type="submit"
-                  className="oh-btn primary lg w-full sm:w-auto"
-                  data-action="confirm"
-                >
-                  Confirm
-                </button>
-              </div>
+              {fields}
             </form>
-            <form method="post" action="/api/owner/resend/" className="mt-4">
-              <input type="hidden" name="t" value={token} />
-              {signIn ? <input type="hidden" name="via" value="signin" /> : null}
-              <button type="submit" className="oh-btn ghost sm">
-                Send the code again
-              </button>
-            </form>
+            {again}
             <p className="t-small text-ink-muted mt-4">
-              After this, this browser is remembered for 30 days.
-              {signIn ? null : (
-                <>
-                  {" "}
-                  Wrong address?{" "}
-                  <a href="/list-your-sites/" className="oh-link">
-                    Start again
-                  </a>
-                  .
-                </>
-              )}
+              After this, this browser is remembered for 30 days. Wrong address?{" "}
+              <a href="/list-your-sites/" className="oh-link">
+                Start again
+              </a>
+              .
             </p>
           </div>
 
           <Aside label="About the code">
-            {signIn ? null : <StepsCard at={2} />}
+            <StepsCard at={2} />
             <Card title="No code yet?" section="code-help">
               <ul className="t-body text-ink list-disc space-y-1 pl-5">
                 <li>It can take a minute to arrive.</li>

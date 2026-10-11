@@ -3,6 +3,7 @@ import { checkPhone, isPhoneCountry } from "@/lib/phone";
 import { launchCity } from "@/lib/places";
 import { CITIES, type CitySlug } from "@/lib/sites/taxonomy";
 import { isGstin, tidyGstin } from "./gstin";
+import { isPasswordHash } from "./password";
 
 /**
  * What ohworks asks of someone listing: the company buyers will see as the seller, where it is, and
@@ -29,6 +30,8 @@ export interface StartDetails {
   phoneCountry: string;
   /** A GSTIN in India. Elsewhere, the company's registration or trade licence number. */
   gstin: string | null;
+  /** The hash of the password a new owner chose. Never the password. */
+  passwordHash?: string | null;
 }
 
 export interface CompanyRaw {
@@ -154,5 +157,6 @@ export function readDetails(value: unknown): StartDetails | null {
     phone,
     phoneCountry,
     gstin: text(v.gstin, 40),
+    passwordHash: isPasswordHash(v.passwordHash) ? v.passwordHash : null,
   };
 }

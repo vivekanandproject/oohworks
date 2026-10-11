@@ -130,7 +130,9 @@ Step 1 of the build order is done: the door. An owner can now put their own site
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
 | `/list-your-sites/`            | The start: one form for who is listing, beside what happens next. The "List your sites" button opens it            |
 | `/list-your-sites/confirm/`    | Enter the emailed code                                                                                             |
-| `/sign-in/`                    | The way back in for an owner: the same email and code, with no password. It also tells buyers they need no account |
+| `/sign-in/` | The way back in for an owner: user name and password, in a box in the middle of the page. It also tells buyers they need no account |
+| `/sign-in/code/` | For a forgotten password, or an owner who never set one: a code by email |
+| `/owner/password/` | Create or change the password |
 | `/owner/`                      | Your sites: every site with its state, how complete it is, and what to do next                                     |
 | `/owner/company/`              | The company, where enquiries go, and the GSTIN and document for the Verified owner badge                           |
 | `/owner/sites/new/`            | Add one site, in five parts, with a pin on a map                                                                   |
@@ -143,7 +145,7 @@ The start page is offered to search engines, because an owner searching how to l
 
 ### Signing in without an account
 
-An owner's work email is sent a six-digit code, good for ten minutes and five tries. A right code remembers the browser for 30 days. Coming back is the same step. Only the code's hash is stored, one address can ask for five codes an hour, and the owner's note is separate from a buyer's, so one cannot stand in for the other.
+An owner's work email is sent a six-digit code, good for ten minutes and five tries. A right code remembers the browser for 30 days. Since 11 Oct 2026 the code confirms the address once and rescues a forgotten password; coming back is by user name and password, described below. Only the code's hash is stored, one address can ask for five codes an hour, and the owner's note is separate from a buyer's, so one cannot stand in for the other.
 
 ### The start is one form
 
@@ -158,6 +160,22 @@ Changed on 10 Oct 2026 at the founder's direction. The first build asked for an 
 - **Sign in is unchanged.** A returning owner gives the email alone. A new address that comes in through Sign in is asked for the company after the code, as before.
 
 One set of checks, in `src/lib/owners/company-input.ts`, serves the form whichever way it arrives.
+
+### A user name and a password
+
+Changed on 11 Oct 2026 at the founder's direction. The first build had no passwords: an owner came back in with a code by email. Sign in now asks for a user name and a password, centred on the page.
+
+- **The user name is the owner's work email.** There is no second name to remember or to clash.
+- **The password is created on the start form**, with the company's details. A code by email is still sent once, to confirm the address belongs to them.
+- **Only a one-way hash is kept**: scrypt, with a salt of its own for every password. It is hidden from the admin and from every API. A password is never put in an address, and after a mistake on a form the password box comes back empty.
+- **A wrong user name and a wrong password get the same answer**, and take as long to refuse, so the form cannot be used to learn who is listed.
+- **Five wrong passwords in a row** close the door for 15 minutes, even to the right one. A code by email still opens it.
+- **Forgotten it?** "Sign in with a code" emails a six-digit code. Once in, the owner is asked for a new password and can skip that.
+- **An owner with no password**, from before this change or who came in by code, is told so on their sites page until they create one.
+- **A change is told by email**, so one the owner did not make is noticed.
+- **The rule for a password is length**: 8 to 128 characters, and not the owner's own email. No rules about symbols or capitals.
+
+The pages that only ask who you are (sign in, the code after "forgot it", a new password) use a third frame: one 440 px column in the middle of the page, with the fields in a box. The onboarding code page keeps the form frame, beside the four steps.
 
 ### A company anywhere in the world
 

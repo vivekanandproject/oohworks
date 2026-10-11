@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { Button, Container, NEUTRALITY_LINE } from "@ohworks/ui";
+import { PasswordField } from "@/components/PasswordField";
 import { PhoneField } from "@/components/PhoneField";
 import { PlaceField } from "@/components/PlaceField";
 import { Shell } from "@/components/Shell";
@@ -55,6 +56,16 @@ const ERRORS: Record<string, { t: string; d: string; field?: keyof typeof FIELD_
     d: "It has 15 characters and its last one must add up. Check it against your certificate, or leave it empty for now.",
     field: "gstin",
   },
+  password: {
+    t: "Choose a longer password.",
+    d: "Use at least 8 characters.",
+    field: "password",
+  },
+  passwordsame: {
+    t: "Choose a different password.",
+    d: "It cannot be your own email.",
+    field: "password",
+  },
   regno: {
     t: "That registration number did not look right.",
     d: "Use the number on your trade licence or registration, or leave it empty for now.",
@@ -72,6 +83,7 @@ const FIELD_ID = {
   phone: "lys-phone",
   email: "owner-email",
   gstin: "lys-gstin",
+  password: "lys-password",
 } as const;
 
 const WAYS = [
@@ -310,6 +322,24 @@ export default async function ListYourSitesPage({
                   </p>
                 </div>
 
+                <div>
+                  <label htmlFor="lys-password" className="oh-label block">
+                    Create a password
+                  </label>
+                  <PasswordField
+                    id="lys-password"
+                    fresh
+                    required
+                    invalid={wrong("password") ?? false}
+                    describedBy="lys-password-help"
+                  />
+                  {why("password")}
+                  <p id="lys-password-help" className="t-small text-ink-muted mt-1">
+                    At least 8 characters. You sign in with your work email and this password.
+                    {error ? " A password is never kept after a mistake, so type it again." : ""}
+                  </p>
+                </div>
+
                 <FormSection
                   title="For the Verified owner badge"
                   part="badge"
@@ -343,7 +373,7 @@ export default async function ListYourSitesPage({
                     Save and send my code
                   </button>
                   <p className="t-small text-ink-muted mt-3">
-                    No password to remember. Already listed?{" "}
+                    We send a code to confirm your email. Already listed?{" "}
                     <a href="/sign-in/" className="oh-link">
                       Sign in
                     </a>

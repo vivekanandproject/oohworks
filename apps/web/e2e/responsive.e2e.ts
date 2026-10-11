@@ -23,6 +23,7 @@ const PAGES = [
   "/enquire/plan/?sites=ows0001,ows0003,ows0017",
   "/shortlist/sheets/?sites=ows0001,ows0017",
   "/sign-in/",
+  "/sign-in/code/",
   "/newsroom/",
   "/newsroom/all/",
   "/news/",

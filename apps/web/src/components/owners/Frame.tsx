@@ -15,19 +15,36 @@ export const FORM_GRID =
   "grid gap-8 lg:grid-cols-[minmax(0,560px)_minmax(0,380px)] lg:justify-between";
 export const CONTENT_GRID = "grid items-start gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]";
 
+/**
+ * A third frame, for the pages that only ask who you are: signing in, the code, a new password.
+ * One narrow column in the middle of the page, with the fields in a box.
+ */
+export const CENTER = "mx-auto w-full max-w-[440px]";
+
 /** The top of every page here: a small label, the title, and a line or two beneath. */
 export function PageHead({
   eyebrow,
   title,
   children,
   status,
+  center,
 }: {
   eyebrow: ReactNode;
   title: ReactNode;
   children?: ReactNode;
   /** Shown to the right of the title on a wide screen, such as a state or a badge. */
   status?: ReactNode;
+  /** For the centred frame. */
+  center?: boolean;
 }) {
+  if (center)
+    return (
+      <div className="text-center">
+        <p className="t-label text-ink-muted">{eyebrow}</p>
+        <h1 className="t-display-md mt-2">{title}</h1>
+        {children ? <div className="t-body text-ink-muted mt-2">{children}</div> : null}
+      </div>
+    );
   return (
     <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
       <div className="min-w-0">
@@ -101,7 +118,7 @@ export function FormSection({
 
 const STEPS = [
   { t: "Your details", d: "Who is listing, and where enquiries should go." },
-  { t: "Confirm your email", d: "We send a six-digit code to it. There is no password." },
+  { t: "Confirm your email", d: "We send a six-digit code to it, once, to check it is yours." },
   {
     t: "Add your sites",
     d: "One at a time, from our spreadsheet, or send your media kit and we enter them.",

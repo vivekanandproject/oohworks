@@ -1,5 +1,6 @@
 import { cleanEmail, rateLimited, seeOther } from "@/lib/forms";
 import { checkStart, type StartRaw } from "@/lib/owners/company-input";
+import { checkNewPassword, hashPassword } from "@/lib/owners/password";
 import { recentCodes, startCode } from "@/lib/owners/server";
 import { sameOrigin } from "@/lib/sites/enquiry";
 
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
   if (!sameOrigin(req)) return new Response("Forbidden", { status: 403 });
   const form = await req.formData();
   const signIn = form.get("via") === "signin";
-  const page = signIn ? "/sign-in/" : "/list-your-sites/";
+  const page = signIn ? "/sign-in/code/" : "/list-your-sites/";
   if (String(form.get("website") ?? "")) return seeOther(req, page);
 
   if (signIn) {
@@ -54,12 +55,15 @@ export async function POST(req: Request) {
   if (rateLimited(req, "owner-start", 10)) return back("busy");
   const checked = checkStart(raw);
   if (!checked.ok) return back(checked.error);
+  // The password is never put in an address or kept as typed. A mistake elsewhere on the form
+  // sends the owner back without it, and what waits beside the code is its hash.
+  const password = String(form.get("password") ?? "");
+  const weak = checkNewPassword(password, checked.email);
+  if (weak) return back(weak === "same" ? "passwordsame" : "password");
   if ((await recentCodes(checked.email, Date.now())) >= 5) return back("busy");
   try {
-    return seeOther(
-      req,
-      `/list-your-sites/confirm/?t=${await startCode(checked.email, checked.details)}`,
-    );
+    const details = { ...checked.details, passwordHash: await hashPassword(password) };
+    return seeOther(req, `/list-your-sites/confirm/?t=${await startCode(checked.email, details)}`);
   } catch {
     return back("send");
   }

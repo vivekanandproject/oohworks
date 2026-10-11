@@ -99,6 +99,35 @@ export const Owners: CollectionConfig = {
       },
     },
     {
+      // Never a password: its one-way hash. Hidden from every API and from the admin.
+      name: "passwordHash",
+      type: "text",
+      hidden: true,
+      access: { read: () => false, create: () => false, update: () => false },
+    },
+    {
+      name: "passwordSetAt",
+      type: "date",
+      access: { read: staffOnly },
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        description:
+          "When the owner last set a password. Empty means they sign in by emailed code.",
+      },
+    },
+    { name: "failedSignIns", type: "number", defaultValue: 0, admin: { hidden: true } },
+    {
+      name: "lockedUntil",
+      type: "date",
+      access: { read: staffOnly },
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        description: "Set for 15 minutes after five wrong passwords in a row",
+      },
+    },
+    {
       name: "source",
       type: "select",
       defaultValue: "team",

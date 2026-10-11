@@ -290,6 +290,21 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
           </div>
 
           <Aside label="About these details">
+            {owner ? (
+              <Card title="Signing in" section="signing-in">
+                <p className="t-body text-ink-muted">
+                  Your user name is <span className="text-ink font-mono">{maskEmail(email)}</span>.{" "}
+                  {owner.passwordSetAt
+                    ? "You sign in with it and your password."
+                    : "You have no password yet, so you sign in with a code sent to it."}
+                </p>
+                <p className="mt-3">
+                  <a href="/owner/password/" className="oh-btn secondary" data-action="password">
+                    {owner.passwordSetAt ? "Change your password" : "Create a password"}
+                  </a>
+                </p>
+              </Card>
+            ) : null}
             <Card title="Who sees what" section="who-sees">
               <dl className="t-body flex flex-col gap-3">
                 <div>

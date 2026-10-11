@@ -19,6 +19,7 @@ import { sendMail } from "@/lib/sites/mail";
 import { formatDef } from "@/lib/sites/taxonomy";
 import type { AccessCode, Media, Owner, OwnerFile, Site } from "@/payload-types";
 import { readDetails, type StartDetails } from "./company-input";
+import { hashPassword, verifyPassword } from "./password";
 import { metresBetween, sameFace } from "./coords";
 import { freeSlug, stateOf } from "./progress";
 import { toSiteData, type SiteInput } from "./site-input";
@@ -236,8 +237,107 @@ export async function saveCompany(email: string, input: CompanyInput): Promise<O
       source: "self",
       verified: false,
       sample: false,
+      // A new owner chose a password on the start form. Only its hash arrives here.
+      ...(input.passwordHash
+        ? { passwordHash: input.passwordHash, passwordSetAt: new Date().toISOString() }
+        : {}),
     },
   });
+}
+
+/* Passwords -------------------------------------------------------------------------------------- */
+
+const WRONG_TRIES = 5;
+const LOCK_MINUTES = 15;
+
+export type SignInResult = { ok: true; email: string } | { ok: false; why: "match" | "locked" };
+
+/**
+ * Checks a user name and password. The user name is the owner's work email. A wrong user name and a
+ * wrong password are answered alike, and take as long, so the form cannot be used to learn who is
+ * listed. Five wrong passwords in a row close the door for fifteen minutes; a code by email still
+ * opens it.
+ */
+export async function checkSignIn(email: string, password: string): Promise<SignInResult> {
+  const payload = await client();
+  const found = await payload.find({
+    collection: "owners",
+    where: { loginEmail: { equals: email } },
+    limit: 1,
+    depth: 0,
+    overrideAccess: true,
+    showHiddenFields: true,
+  });
+  const owner = found.docs[0] ?? null;
+  const locked = Boolean(owner?.lockedUntil && new Date(owner.lockedUntil).getTime() > Date.now());
+  // The password is checked even when the answer is already no, so a locked or unknown account
+  // cannot be told from a wrong password by how quickly it is refused.
+  const right = await verifyPassword(password, owner?.passwordHash);
+  if (!owner) return { ok: false, why: "match" };
+  if (locked) return { ok: false, why: "locked" };
+  if (!right) {
+    const tries = (owner.failedSignIns ?? 0) + 1;
+    const lock = tries >= WRONG_TRIES;
+    await payload.update({
+      collection: "owners",
+      id: owner.id,
+      overrideAccess: true,
+      data: {
+        failedSignIns: lock ? 0 : tries,
+        ...(lock
+          ? { lockedUntil: new Date(Date.now() + LOCK_MINUTES * 60_000).toISOString() }
+          : {}),
+      },
+    });
+    return { ok: false, why: lock ? "locked" : "match" };
+  }
+  if (owner.failedSignIns || owner.lockedUntil)
+    await payload.update({
+      collection: "owners",
+      id: owner.id,
+      overrideAccess: true,
+      data: { failedSignIns: 0, lockedUntil: null },
+    });
+  return { ok: true, email };
+}
+
+/** Sets an owner's password and tells them by email, so a change they did not make is noticed. */
+export async function setPassword(owner: Owner, password: string): Promise<void> {
+  const first = !owner.passwordSetAt;
+  await (
+    await client()
+  ).update({
+    collection: "owners",
+    id: owner.id,
+    overrideAccess: true,
+    data: {
+      passwordHash: await hashPassword(password),
+      passwordSetAt: new Date().toISOString(),
+      failedSignIns: 0,
+      lockedUntil: null,
+    },
+  });
+  if (!owner.loginEmail) return;
+  try {
+    await sendMail({
+      kind: "owner_notice",
+      to: owner.loginEmail,
+      subject: first ? "Your ohworks password is set" : "Your ohworks password was changed",
+      text: [
+        first
+          ? "You can now sign in to ohworks with your work email and your password."
+          : "The password you sign in to ohworks with was changed just now.",
+        "",
+        `Sign in: ${absolute("/sign-in/")}`,
+        "",
+        "If this was not you, sign in with a code sent to this address and set a new password at once.",
+        "",
+        NEUTRAL,
+      ].join("\n"),
+    });
+  } catch {
+    // The password is set. A notice that could not be sent must not undo it.
+  }
 }
 
 /** A private file from an owner: a document, a spreadsheet or a media kit. Only staff can open it. */

@@ -30,7 +30,8 @@ export async function POST(req: Request) {
       ? seeOther(req, "/list-your-sites/?error=again")
       : back(result.why);
   const known = await ownerByEmail(result.email);
-  let next = known ? "/owner/" : "/owner/company/";
+  // An owner who came in by code, with no password or a forgotten one, is offered a new one first.
+  let next = known ? "/owner/password/?after=code" : "/owner/company/";
   if (result.details) {
     if (known) {
       // Someone already listed filled the start form again. What they have is left as it is.

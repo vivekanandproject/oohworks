@@ -6,6 +6,7 @@ import { launchCity, placeDetail, provider, searchPlaces } from "@/lib/places";
 import { checkStart, readDetails } from "./company-input";
 import { bearingGap, metresBetween, readCoords, sameFace } from "./coords";
 import { isGstin, tidyGstin } from "./gstin";
+import { checkNewPassword, hashPassword, isPasswordHash, verifyPassword } from "./password";
 import { freeSlug, improvements, stateOf } from "./progress";
 import { EXAMPLE_REF, SHEET_COLUMNS, cellText, readSheet } from "./sheet";
 import { checkSite, readDate, toSiteData, type Raw } from "./site-input";
@@ -524,7 +525,11 @@ describe("who is listing", () => {
   it("reads kept details back, and treats anything else as absent", () => {
     const r = checkStart(good);
     if (!r.ok) throw new Error("expected a good form");
-    expect(readDetails(JSON.parse(JSON.stringify(r.details)))).toEqual(r.details);
+    // No password came with these details, and that is said, not left out.
+    expect(readDetails(JSON.parse(JSON.stringify(r.details)))).toEqual({
+      ...r.details,
+      passwordHash: null,
+    });
     expect(readDetails({ ...r.details, city: "atlantis" })?.city).toBeNull();
     expect(readDetails(null)).toBeNull();
     expect(readDetails("a string")).toBeNull();
@@ -626,5 +631,64 @@ describe("phone numbers from anywhere", () => {
     });
     expect(splitPhone("", "GB")).toEqual({ country: "GB", national: "" });
     expect(splitPhone(null, null)).toEqual({ country: "IN", national: "" });
+  });
+});
+
+describe("passwords", () => {
+  it("keeps a hash that only the same password opens, and never the password", async () => {
+    const hash = await hashPassword("three plain words");
+    expect(hash).toMatch(/^scrypt\$16384\$8\$1\$/);
+    expect(hash).not.toContain("three plain words");
+    expect(isPasswordHash(hash)).toBe(true);
+    expect(await verifyPassword("three plain words", hash)).toBe(true);
+    expect(await verifyPassword("three plain word", hash)).toBe(false);
+    expect(await verifyPassword("Three plain words", hash)).toBe(false);
+  });
+
+  it("gives two owners with one password two different hashes", async () => {
+    const a = await hashPassword("the same password");
+    const b = await hashPassword("the same password");
+    expect(a).not.toBe(b);
+    expect(await verifyPassword("the same password", a)).toBe(true);
+    expect(await verifyPassword("the same password", b)).toBe(true);
+  });
+
+  it("refuses when there is no hash, or something that is not one", async () => {
+    expect(await verifyPassword("anything", null)).toBe(false);
+    expect(await verifyPassword("anything", undefined)).toBe(false);
+    expect(await verifyPassword("anything", "plain text")).toBe(false);
+    expect(await verifyPassword("anything", "scrypt$1$1$1$short$short")).toBe(false);
+    expect(isPasswordHash("anything")).toBe(false);
+  });
+
+  it("asks for length, and not the owner's own email", () => {
+    expect(checkNewPassword("seven77", "asha@deccansigns.in")).toBe("short");
+    expect(checkNewPassword("eight888", "asha@deccansigns.in")).toBeNull();
+    expect(checkNewPassword("x".repeat(129), "asha@deccansigns.in")).toBe("long");
+    expect(checkNewPassword("Asha@DeccanSigns.in", "asha@deccansigns.in")).toBe("same");
+    expect(checkNewPassword("a few plain words", "asha@deccansigns.in")).toBeNull();
+  });
+
+  it("a new owner's details carry the hash only when it is one", async () => {
+    const good = checkStart({
+      name: "Deccan Signs",
+      placeLabel: "Hyderabad, Telangana, India",
+      placeId: "",
+      placeLat: "",
+      placeLng: "",
+      placeCountry: "IN",
+      contactName: "Asha Rao",
+      phoneCountry: "IN",
+      phone: "98450 00000",
+      email: "asha@deccansigns.in",
+      gstin: "",
+    });
+    if (!good.ok) throw new Error("expected a good form");
+    const hash = await hashPassword("three plain words");
+    expect(readDetails({ ...good.details, passwordHash: hash })?.passwordHash).toBe(hash);
+    expect(
+      readDetails({ ...good.details, passwordHash: "three plain words" })?.passwordHash,
+    ).toBeNull();
+    expect(readDetails({ ...good.details })?.passwordHash).toBeNull();
   });
 });

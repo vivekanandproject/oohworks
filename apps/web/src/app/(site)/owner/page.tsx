@@ -113,6 +113,20 @@ export default async function OwnerHomePage({ searchParams }: { searchParams: Pr
                   section="saved-company"
                 />
               ) : null}
+              {one(q.saved) === "password" ? (
+                <Notice tone="success" title="Your password is saved." section="saved-password">
+                  Next time, sign in with your work email and this password.
+                </Notice>
+              ) : null}
+              {!owner.passwordSetAt && one(q.saved) !== "password" ? (
+                <Notice tone="warning" title="You have no password yet." section="no-password">
+                  You signed in with a code.{" "}
+                  <a href="/owner/password/" className="oh-link">
+                    Create a password
+                  </a>{" "}
+                  to sign in with your work email next time.
+                </Notice>
+              ) : null}
               {one(q.saved) === "welcome" ? (
                 <Notice tone="success" title="Your email is confirmed." section="saved-welcome">
                   Now add your sites. Only you can see them until you send them for review.
