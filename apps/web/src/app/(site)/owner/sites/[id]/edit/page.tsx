@@ -4,6 +4,7 @@ import { isPermanentId } from "@ohworks/core";
 import { Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { Notice, OwnerBar } from "@/components/owners/Bits";
+import { Aside, BetterPlace, FORM_GRID, PageHead } from "@/components/owners/Frame";
 import { SiteForm } from "@/components/owners/SiteForm";
 import { stateOf } from "@/lib/owners/progress";
 import { ownerSite, requireOwner } from "@/lib/owners/server";
@@ -59,29 +60,33 @@ export default async function EditSitePage({
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="site" />
-        <div className="mt-6 max-w-[820px]">
-          <p className="t-label text-ink-muted">
-            <a href={`/owner/sites/${id}/`} className="oh-link">
-              {site.title}
-            </a>
-          </p>
-          <h1 className="t-display-md mt-2">Edit this site</h1>
-          {stateOf(site) === "changes" && site.reviewNote ? (
-            <div className="mt-5">
-              <Notice tone="warning" title="What our reviewer asked for" section="review-note">
-                &ldquo;{site.reviewNote}&rdquo;
-              </Notice>
+        <div className={`mt-6 ${FORM_GRID}`}>
+          <div className="min-w-0">
+            <PageHead eyebrow="Your sites" title="Edit this site">
+              <a href={`/owner/sites/${id}/`} className="oh-link">
+                {site.title}
+              </a>
+            </PageHead>
+            {stateOf(site) === "changes" && site.reviewNote ? (
+              <div className="mt-5">
+                <Notice tone="warning" title="What our reviewer asked for" section="review-note">
+                  &ldquo;{site.reviewNote}&rdquo;
+                </Notice>
+              </div>
+            ) : null}
+            <div className="mt-6">
+              <SiteForm
+                raw={raw}
+                errors={errors}
+                id={id}
+                availability={booked ? "booked" : "free"}
+                styleUrl={MAP_STYLE}
+              />
             </div>
-          ) : null}
-          <div className="mt-6">
-            <SiteForm
-              raw={raw}
-              errors={errors}
-              id={id}
-              availability={booked ? "booked" : "free"}
-              styleUrl={MAP_STYLE}
-            />
           </div>
+          <Aside label="About this site">
+            <BetterPlace />
+          </Aside>
         </div>
       </Container>
     </Shell>

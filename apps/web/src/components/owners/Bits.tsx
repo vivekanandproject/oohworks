@@ -43,46 +43,6 @@ export function Notice({
   );
 }
 
-const STEPS = ["Your details", "Confirm your email", "Add your sites", "We check, then live"];
-
-/** Where someone is on the way to their first live site. The number and the words carry it, not the colour. */
-export function Steps({ at }: { at: 1 | 2 | 3 | 4 }) {
-  return (
-    <div data-section="steps">
-      <p className="t-label text-ink-muted sm:hidden">
-        Step {at} of {STEPS.length} · {STEPS[at - 1]}
-      </p>
-      <ol
-        className="t-small hidden flex-wrap items-center gap-x-6 gap-y-2 sm:flex"
-        aria-label="Steps to list your sites"
-      >
-        {STEPS.map((label, i) => {
-          const n = i + 1;
-          const now = n === at;
-          const done = n < at;
-          return (
-            <li
-              key={label}
-              aria-current={now ? "step" : undefined}
-              className={`flex items-center gap-2 ${now || done ? "text-ink" : "text-ink-muted"}`}
-            >
-              <span
-                className={`grid h-6 w-6 shrink-0 place-items-center rounded-full font-mono text-[12px] leading-none ${now ? "bg-navy text-on-navy" : done ? "bg-navy-200 text-ink" : "border-hairline-strong border"}`}
-              >
-                {n}
-              </span>
-              <span className={now ? "font-semibold" : ""}>
-                {label}
-                {done ? <span className="sr-only">, done</span> : null}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
-    </div>
-  );
-}
-
 /** A completeness score out of 100, as a bar and a number. */
 export function Score({ value }: { value: number }) {
   return (

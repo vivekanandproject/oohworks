@@ -5,6 +5,7 @@ import { Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { NativeSelect } from "@/components/NativeSelect";
 import { Notice, OwnerBar, Score, StateTag } from "@/components/owners/Bits";
+import { CONTENT_GRID, PageHead } from "@/components/owners/Frame";
 import { formatDate } from "@/lib/editorial/format";
 import { picture } from "@/lib/editorial/media";
 import { improvements, stateOf } from "@/lib/owners/progress";
@@ -83,84 +84,84 @@ export default async function OwnerSitePage({
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="site" />
-        <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
-          <div className="min-w-0">
-            <p className="t-label text-ink-muted">
-              <a href="/owner/" className="oh-link">
-                Your sites
-              </a>{" "}
-              · <span className="font-mono">{site.permanentId}</span>
-            </p>
-            <h1 className="t-display-md mt-2">{site.title}</h1>
-            <p className="t-body text-ink-muted mt-1">{placeLine(site)}</p>
-          </div>
-          <StateTag state={state} />
+        <div className="mt-6">
+          <PageHead
+            eyebrow={
+              <>
+                Your sites · <span className="font-mono">{site.permanentId}</span>
+              </>
+            }
+            title={site.title}
+            status={<StateTag state={state} />}
+          >
+            {placeLine(site)}
+          </PageHead>
         </div>
 
-        <div className="mt-5 max-w-[760px] space-y-3">
-          {one(q.saved) === "1" ? (
-            <Notice tone="success" title="Saved as a draft." section="saved">
-              Only you can see it. Add photographs below, then send it for review from your sites.
-            </Notice>
-          ) : null}
-          {one(q.withdrawn) === "1" ? (
-            <Notice tone="success" title="This site is off ohworks." section="withdrawn">
-              It is a draft again. Send it for review when you want it back.
-            </Notice>
-          ) : null}
-          {state === "draft" ? (
-            <p className="t-body text-ink" data-section="state-note">
-              Only you can see this. When it is ready,{" "}
-              <a href="/owner/" className="oh-link">
-                send it for review from your sites
-              </a>
-              .
-            </p>
-          ) : null}
-          {state === "review" ? (
-            <p className="t-body text-ink" data-section="state-note">
-              With the ohworks team since {formatDate(site.submittedAt)}. We check the owner, the
-              location and the photographs, usually within a working day.
-            </p>
-          ) : null}
-          {state === "changes" ? (
-            <Notice
-              tone="warning"
-              title="It needs a change before it can go live."
-              section="review-note"
-            >
-              Our reviewer wrote: &ldquo;{site.reviewNote}&rdquo;{" "}
-              <a href={`/owner/sites/${id}/edit/`} className="oh-link">
-                Fix it
-              </a>
-              , then send it again from your sites.
-            </Notice>
-          ) : null}
-          {state === "live" ? (
-            <p className="t-body text-ink" data-section="state-note">
-              Buyers can find it.{" "}
-              <a href={siteUrl(site)} className="oh-link">
-                View it as a buyer does
-              </a>
-              . Enquiries come to <span className="font-mono">{maskEmail(owner.contactEmail)}</span>
-              .
-            </p>
-          ) : null}
-          {site.duplicateNote ? (
-            <Notice
-              tone="warning"
-              title="Is this the same face as one already listed?"
-              section="duplicate"
-            >
-              {site.duplicateNote.replace(/, listed by .*$/, "")}, facing the same way. If it is the
-              same face, do not list it twice. If it is a different face, carry on: our team will
-              check.
-            </Notice>
-          ) : null}
-        </div>
-
-        <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <div className={`mt-6 ${CONTENT_GRID}`}>
           <div className="min-w-0 space-y-10">
+            <div className="space-y-3 empty:hidden" data-section="site-notes">
+              {one(q.saved) === "1" ? (
+                <Notice tone="success" title="Saved as a draft." section="saved">
+                  Only you can see it. Add photographs below, then send it for review from your
+                  sites.
+                </Notice>
+              ) : null}
+              {one(q.withdrawn) === "1" ? (
+                <Notice tone="success" title="This site is off ohworks." section="withdrawn">
+                  It is a draft again. Send it for review when you want it back.
+                </Notice>
+              ) : null}
+              {state === "draft" ? (
+                <p className="t-body text-ink" data-section="state-note">
+                  Only you can see this. When it is ready,{" "}
+                  <a href="/owner/" className="oh-link">
+                    send it for review from your sites
+                  </a>
+                  .
+                </p>
+              ) : null}
+              {state === "review" ? (
+                <p className="t-body text-ink" data-section="state-note">
+                  With the ohworks team since {formatDate(site.submittedAt)}. We check the owner,
+                  the location and the photographs, usually within a working day.
+                </p>
+              ) : null}
+              {state === "changes" ? (
+                <Notice
+                  tone="warning"
+                  title="It needs a change before it can go live."
+                  section="review-note"
+                >
+                  Our reviewer wrote: &ldquo;{site.reviewNote}&rdquo;{" "}
+                  <a href={`/owner/sites/${id}/edit/`} className="oh-link">
+                    Fix it
+                  </a>
+                  , then send it again from your sites.
+                </Notice>
+              ) : null}
+              {state === "live" ? (
+                <p className="t-body text-ink" data-section="state-note">
+                  Buyers can find it.{" "}
+                  <a href={siteUrl(site)} className="oh-link">
+                    View it as a buyer does
+                  </a>
+                  . Enquiries come to{" "}
+                  <span className="font-mono">{maskEmail(owner.contactEmail)}</span>.
+                </p>
+              ) : null}
+              {site.duplicateNote ? (
+                <Notice
+                  tone="warning"
+                  title="Is this the same face as one already listed?"
+                  section="duplicate"
+                >
+                  {site.duplicateNote.replace(/, listed by .*$/, "")}, facing the same way. If it is
+                  the same face, do not list it twice. If it is a different face, carry on: our team
+                  will check.
+                </Notice>
+              ) : null}
+            </div>
             {state === "live" ? (
               <section id="update" className="scroll-mt-28" data-section="quick">
                 <h2 className="t-display-sm">Update the price or availability</h2>
@@ -451,7 +452,11 @@ export default async function OwnerSitePage({
             </section>
           </div>
 
-          <aside className="space-y-5 lg:sticky lg:top-24" data-section="site-aside">
+          <aside
+            className="flex flex-col gap-5 self-start lg:sticky lg:top-24"
+            aria-label="About this listing"
+            data-section="site-aside"
+          >
             <section
               className="border-hairline bg-paper-raised rounded-md border p-5"
               data-section="score"
@@ -482,16 +487,16 @@ export default async function OwnerSitePage({
               <form
                 method="post"
                 action="/api/owner/site/withdraw/"
-                className="border-hairline rounded-md border p-5"
+                className="border-hairline bg-paper-raised rounded-md border p-5"
                 data-section="withdraw"
               >
                 <input type="hidden" name="id" value={id} />
-                <h2 className="text-[16px] leading-[22px] font-semibold">Withdraw this site</h2>
-                <p className="t-small text-ink-muted mt-1">
+                <h2 className="t-display-sm">Withdraw this site</h2>
+                <p className="t-body text-ink-muted mt-3">
                   It comes off ohworks at once and becomes a draft. You can send it for review again
                   later.
                 </p>
-                <button type="submit" className="oh-btn danger sm mt-3" data-action="withdraw">
+                <button type="submit" className="oh-btn danger mt-4" data-action="withdraw">
                   Withdraw from ohworks
                 </button>
               </form>
@@ -499,15 +504,15 @@ export default async function OwnerSitePage({
               <form
                 method="post"
                 action="/api/owner/site/remove/"
-                className="border-hairline rounded-md border p-5"
+                className="border-hairline bg-paper-raised rounded-md border p-5"
                 data-section="remove"
               >
                 <input type="hidden" name="id" value={id} />
-                <h2 className="text-[16px] leading-[22px] font-semibold">Remove this site</h2>
-                <p className="t-small text-ink-muted mt-1">
+                <h2 className="t-display-sm">Remove this site</h2>
+                <p className="t-body text-ink-muted mt-3">
                   It has never been live, so it is removed for good.
                 </p>
-                <button type="submit" className="oh-btn danger sm mt-3" data-action="remove">
+                <button type="submit" className="oh-btn danger mt-4" data-action="remove">
                   Remove this draft
                 </button>
               </form>

@@ -3,6 +3,7 @@ import { Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { NativeSelect } from "@/components/NativeSelect";
 import { Notice, OwnerBar } from "@/components/owners/Bits";
+import { Aside, Card, FORM_GRID, FormSection, PageHead } from "@/components/owners/Frame";
 import { ownerFiles, requireEmail } from "@/lib/owners/server";
 import { maskEmail } from "@/lib/sites/enquiry";
 import { CITIES } from "@/lib/sites/taxonomy";
@@ -69,196 +70,224 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
             </button>
           </form>
         )}
-        <div className="mt-6 max-w-[640px]">
-          <p className="t-label text-ink-muted">
-            {owner ? "Company details" : "List your sites · your details"}
-          </p>
-          <h1 className="t-display-md mt-2">{owner ? owner.name : "Who is listing"}</h1>
-          <p className="t-body text-ink-muted mt-2">
-            Buyers see the company as the owner and seller of every site. Nothing else here is shown
-            without your say.
-          </p>
-          {error ? (
-            <div className="mt-5">
-              <Notice tone="error" title={error.t} section="company-error">
-                {error.d}
-              </Notice>
-            </div>
-          ) : null}
-
-          <form
-            method="post"
-            action="/api/owner/company/"
-            encType="multipart/form-data"
-            className="mt-6 flex flex-col gap-5"
-            data-section="company-form"
-          >
-            <div>
-              <label htmlFor="co-name" className="oh-label block">
-                Company name
-              </label>
-              <input
-                id="co-name"
-                name="name"
-                type="text"
-                required
-                minLength={2}
-                maxLength={80}
-                defaultValue={v("name", owner?.name)}
-                autoComplete="organization"
-                aria-describedby="co-name-help"
-                className="oh-input mt-1"
-              />
-              <p id="co-name-help" className="t-small text-ink-muted mt-1">
-                Shown to buyers as the owner and seller.
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="co-city" className="oh-label block">
-                  City
-                </label>
-                <NativeSelect
-                  id="co-city"
-                  name="city"
-                  value={v("city", owner?.city)}
-                  placeholder="Choose…"
-                  options={CITIES.map((c) => ({ value: c.slug, label: c.label }))}
-                  className="oh-input mt-1"
-                />
+        <div className={`mt-6 ${FORM_GRID}`}>
+          <div className="min-w-0">
+            <PageHead
+              eyebrow={owner ? "Company details" : "List your sites · your details"}
+              title={owner ? owner.name : "Who is listing"}
+            >
+              Buyers see the company as the owner and seller of every site. Nothing else here is
+              shown without your say.
+            </PageHead>
+            {error ? (
+              <div className="mt-5">
+                <Notice tone="error" title={error.t} section="company-error">
+                  {error.d}
+                </Notice>
               </div>
+            ) : null}
+
+            <form
+              method="post"
+              action="/api/owner/company/"
+              encType="multipart/form-data"
+              className="mt-6 flex flex-col gap-5"
+              data-section="company-form"
+            >
               <div>
-                <label htmlFor="co-contact" className="oh-label block">
-                  Your name
+                <label htmlFor="co-name" className="oh-label block">
+                  Company name
                 </label>
                 <input
-                  id="co-contact"
-                  name="contactName"
+                  id="co-name"
+                  name="name"
                   type="text"
                   required
                   minLength={2}
                   maxLength={80}
-                  defaultValue={v("contactName", owner?.contactName)}
-                  autoComplete="name"
+                  defaultValue={v("name", owner?.name)}
+                  autoComplete="organization"
+                  aria-describedby="co-name-help"
                   className="oh-input mt-1"
                 />
-              </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="co-phone" className="oh-label block">
-                  Phone
-                </label>
-                <input
-                  id="co-phone"
-                  name="phone"
-                  type="tel"
-                  required
-                  maxLength={24}
-                  defaultValue={v("phone", owner?.phone)}
-                  autoComplete="tel"
-                  placeholder="+91"
-                  aria-describedby="co-phone-help"
-                  className="oh-input data mt-1"
-                />
-                <p id="co-phone-help" className="t-small text-ink-muted mt-1">
-                  Shown to a buyer only when they ask to see it.
+                <p id="co-name-help" className="t-small text-ink-muted mt-1">
+                  Shown to buyers as the owner and seller.
                 </p>
               </div>
-              <div>
-                <label htmlFor="co-email" className="oh-label block">
-                  Enquiries go to
-                </label>
-                <input
-                  id="co-email"
-                  name="contactEmail"
-                  type="email"
-                  maxLength={254}
-                  defaultValue={owner?.contactEmail ?? email}
-                  autoComplete="email"
-                  aria-describedby="co-email-help"
-                  className="oh-input mt-1"
-                />
-                <p id="co-email-help" className="t-small text-ink-muted mt-1">
-                  Never shown on the site. Change it to a sales address if you like.
-                </p>
-              </div>
-            </div>
-            <div>
-              <label htmlFor="co-about" className="oh-label block">
-                About the company, optional
-              </label>
-              <textarea
-                id="co-about"
-                name="about"
-                rows={3}
-                maxLength={600}
-                defaultValue={owner?.about ?? ""}
-                className="oh-input mt-1 block"
-              />
-            </div>
-
-            <fieldset className="border-hairline bg-paper-raised rounded-md border p-5">
-              <legend className="px-1 text-[16px] leading-[22px] font-semibold">
-                For the Verified owner badge
-              </legend>
-              <p className="t-small text-ink-muted">
-                Optional now. Our team checks the number against the document. Neither is ever
-                shown, and only our team can open the file.
-              </p>
-              {owner?.verified ? <p className="oh-badge verified mt-3">Verified owner</p> : null}
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="co-gstin" className="oh-label block">
-                    GSTIN
+                  <label htmlFor="co-city" className="oh-label block">
+                    City
                   </label>
-                  <input
-                    id="co-gstin"
-                    name="gstin"
-                    type="text"
-                    maxLength={24}
-                    defaultValue={v("gstin", owner?.gstin)}
-                    placeholder="29ABCDE1234F1Z5"
-                    autoCapitalize="characters"
-                    className="oh-input data mt-1"
+                  <NativeSelect
+                    id="co-city"
+                    name="city"
+                    value={v("city", owner?.city)}
+                    placeholder="Choose…"
+                    options={CITIES.map((c) => ({ value: c.slug, label: c.label }))}
+                    className="oh-input mt-1"
                   />
                 </div>
                 <div>
-                  <label htmlFor="co-doc" className="oh-label block">
-                    GST certificate or trade licence
+                  <label htmlFor="co-contact" className="oh-label block">
+                    Your name
                   </label>
                   <input
-                    id="co-doc"
-                    name="document"
-                    type="file"
-                    accept="application/pdf,image/jpeg,image/png,image/webp"
-                    aria-describedby="co-doc-help"
+                    id="co-contact"
+                    name="contactName"
+                    type="text"
+                    required
+                    minLength={2}
+                    maxLength={80}
+                    defaultValue={v("contactName", owner?.contactName)}
+                    autoComplete="name"
                     className="oh-input mt-1"
                   />
-                  <p
-                    id="co-doc-help"
-                    className="t-small text-ink-muted mt-1"
-                    data-section="documents-held"
-                  >
-                    PDF or image, up to 10 MB.
-                    {documents.length
-                      ? ` ${documents.length === 1 ? "One document is" : `${documents.length} documents are`} already with our team.`
-                      : ""}
+                </div>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="co-phone" className="oh-label block">
+                    Phone
+                  </label>
+                  <input
+                    id="co-phone"
+                    name="phone"
+                    type="tel"
+                    required
+                    maxLength={24}
+                    defaultValue={v("phone", owner?.phone)}
+                    autoComplete="tel"
+                    placeholder="+91"
+                    aria-describedby="co-phone-help"
+                    className="oh-input data mt-1"
+                  />
+                  <p id="co-phone-help" className="t-small text-ink-muted mt-1">
+                    Shown to a buyer only when they ask to see it.
+                  </p>
+                </div>
+                <div>
+                  <label htmlFor="co-email" className="oh-label block">
+                    Enquiries go to
+                  </label>
+                  <input
+                    id="co-email"
+                    name="contactEmail"
+                    type="email"
+                    maxLength={254}
+                    defaultValue={owner?.contactEmail ?? email}
+                    autoComplete="email"
+                    aria-describedby="co-email-help"
+                    className="oh-input mt-1"
+                  />
+                  <p id="co-email-help" className="t-small text-ink-muted mt-1">
+                    Never shown on the site. Change it to a sales address if you like.
                   </p>
                 </div>
               </div>
-            </fieldset>
+              <div>
+                <label htmlFor="co-about" className="oh-label block">
+                  About the company, optional
+                </label>
+                <textarea
+                  id="co-about"
+                  name="about"
+                  rows={3}
+                  maxLength={600}
+                  defaultValue={owner?.about ?? ""}
+                  className="oh-input mt-1 block"
+                />
+              </div>
 
-            <div>
-              <button
-                type="submit"
-                className="oh-btn primary lg w-full sm:w-auto"
-                data-action="save-company"
+              <FormSection
+                title="For the Verified owner badge"
+                part="badge"
+                note="Optional now. Our team checks the number against the document. Neither is ever shown, and only our team can open the file."
               >
-                {owner ? "Save the details" : "Save and add sites"}
-              </button>
-            </div>
-          </form>
+                {owner?.verified ? (
+                  <p>
+                    <span className="oh-badge verified">Verified owner</span>
+                  </p>
+                ) : null}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="co-gstin" className="oh-label block">
+                      GSTIN
+                    </label>
+                    <input
+                      id="co-gstin"
+                      name="gstin"
+                      type="text"
+                      maxLength={24}
+                      defaultValue={v("gstin", owner?.gstin)}
+                      placeholder="29ABCDE1234F1Z5"
+                      autoCapitalize="characters"
+                      className="oh-input data mt-1"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="co-doc" className="oh-label block">
+                      GST certificate or trade licence
+                    </label>
+                    <input
+                      id="co-doc"
+                      name="document"
+                      type="file"
+                      accept="application/pdf,image/jpeg,image/png,image/webp"
+                      aria-describedby="co-doc-help"
+                      className="oh-input mt-1"
+                    />
+                    <p
+                      id="co-doc-help"
+                      className="t-small text-ink-muted mt-1"
+                      data-section="documents-held"
+                    >
+                      PDF or image, up to 10 MB.
+                      {documents.length
+                        ? ` ${documents.length === 1 ? "One document is" : `${documents.length} documents are`} already with our team.`
+                        : ""}
+                    </p>
+                  </div>
+                </div>
+              </FormSection>
+
+              <div>
+                <button
+                  type="submit"
+                  className="oh-btn primary lg w-full sm:w-auto"
+                  data-action="save-company"
+                >
+                  {owner ? "Save the details" : "Save and add sites"}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <Aside label="About these details">
+            <Card title="Who sees what" section="who-sees">
+              <dl className="t-body flex flex-col gap-3">
+                <div>
+                  <dt className="font-semibold">Company name</dt>
+                  <dd className="text-ink-muted">Shown on every site you list.</dd>
+                </div>
+                <div>
+                  <dt className="font-semibold">Phone</dt>
+                  <dd className="text-ink-muted">Shown to a buyer only when they ask to see it.</dd>
+                </div>
+                <div>
+                  <dt className="font-semibold">Email, your name, GSTIN and document</dt>
+                  <dd className="text-ink-muted">Never shown. They are for our team.</dd>
+                </div>
+              </dl>
+            </Card>
+            <Card title="The Verified owner badge" section="badge-help">
+              <p className="t-body text-ink-muted">
+                Buyers trust a site more when its owner is checked. Add your GSTIN and its
+                certificate, or a trade licence, and our team compares them, usually within a
+                working day.
+              </p>
+            </Card>
+          </Aside>
         </div>
       </Container>
     </Shell>

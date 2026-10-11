@@ -2,7 +2,15 @@ import type { Metadata } from "next";
 import { Button, Container, NEUTRALITY_LINE } from "@ohworks/ui";
 import { NativeSelect } from "@/components/NativeSelect";
 import { Shell } from "@/components/Shell";
-import { Notice, Steps } from "@/components/owners/Bits";
+import { Notice } from "@/components/owners/Bits";
+import {
+  Aside,
+  Card,
+  FORM_GRID,
+  FormSection,
+  PageHead,
+  StepsCard,
+} from "@/components/owners/Frame";
 import { OTHER_CITY } from "@/lib/owners/company-input";
 import { ownerByEmail, ownerEmail } from "@/lib/owners/server";
 import { alternates } from "@/lib/seo";
@@ -51,7 +59,6 @@ const ERRORS: Record<string, { t: string; d: string; field?: keyof typeof FIELD_
   again: { t: "That code can no longer be used.", d: "Send the form again for a new one." },
 };
 
-/** The steps after this form, numbered as they are in the strip at the top of the page. */
 const FIELD_ID = {
   name: "lys-name",
   city: "lys-city",
@@ -60,20 +67,6 @@ const FIELD_ID = {
   email: "owner-email",
   gstin: "lys-gstin",
 } as const;
-
-const NEXT = [
-  { n: 2, t: "Confirm your email", d: "We send a six-digit code to it. There is no password." },
-  {
-    n: 3,
-    t: "Add your sites",
-    d: "One at a time, from our spreadsheet, or send your media kit and we enter them. Only you can see them.",
-  },
-  {
-    n: 4,
-    t: "We check, then live",
-    d: "You send them for review. We check the owner, the location and the photographs. Each site goes live, or comes back with the reason.",
-  },
-];
 
 const WAYS = [
   {
@@ -120,18 +113,15 @@ export default async function ListYourSitesPage({
   return (
     <Shell active="owners" listHref={email ? undefined : "#lys-name"}>
       <Container className="py-8 lg:py-12">
-        <Steps at={1} />
-        <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,620px)_minmax(0,400px)] lg:justify-between">
+        <div className={FORM_GRID}>
           <div className="min-w-0">
-            <p className="t-label text-ink-muted">For media owners</p>
-            <h1 className="t-display-lg mt-2">List your sites. It is free.</h1>
-            <p className="t-body-lg text-ink-muted mt-4">
+            <PageHead eyebrow="List your sites · step 1 of 4" title="List your sites. It is free.">
               Tell us who is listing. Every enquiry then comes straight to you, at the price you
               set. ohworks never sells media or takes a margin.
-            </p>
+            </PageHead>
 
-            <div className="mt-6 space-y-3 [&_.oh-toast]:max-w-none">
-              {one(q.out) === "1" ? (
+            {one(q.out) === "1" ? (
+              <div className="mt-5">
                 <Notice tone="success" title="You are signed out." section="signed-out">
                   Your sites are untouched.{" "}
                   <a href="/sign-in/" className="oh-link">
@@ -139,8 +129,10 @@ export default async function ListYourSitesPage({
                   </a>{" "}
                   to come back to them.
                 </Notice>
-              ) : null}
-              {error ? (
+              </div>
+            ) : null}
+            {error ? (
+              <div className="mt-5">
                 <Notice tone="error" title={error.t} section="start-error">
                   {error.d}
                   {error.field ? (
@@ -153,32 +145,32 @@ export default async function ListYourSitesPage({
                     </>
                   ) : null}
                 </Notice>
-              ) : null}
-            </div>
+              </div>
+            ) : null}
 
             {email ? (
-              <section
-                className="border-hairline bg-paper-raised mt-6 rounded-md border p-5 sm:p-6"
-                data-section="start-known"
-              >
-                <h2 className="t-display-sm">
-                  {owner ? `Welcome back, ${owner.name}` : "Carry on where you left off"}
-                </h2>
-                <p className="t-body text-ink-muted mt-2">
-                  This browser has confirmed{" "}
-                  <span className="text-ink font-mono">{maskEmail(email)}</span>.
-                </p>
-                <div className="mt-4">
-                  <Button href={owner ? "/owner/" : "/owner/company/"} variant="primary" size="lg">
-                    {owner ? "Go to your sites" : "Add your company"}
-                  </Button>
-                </div>
-              </section>
+              <div className="mt-6" data-section="start-known">
+                <Card title={owner ? `Welcome back, ${owner.name}` : "Carry on where you left off"}>
+                  <p className="t-body text-ink-muted">
+                    This browser has confirmed{" "}
+                    <span className="text-ink font-mono">{maskEmail(email)}</span>.
+                  </p>
+                  <div className="mt-4">
+                    <Button
+                      href={owner ? "/owner/" : "/owner/company/"}
+                      variant="primary"
+                      size="lg"
+                    >
+                      {owner ? "Go to your sites" : "Add your company"}
+                    </Button>
+                  </div>
+                </Card>
+              </div>
             ) : (
               <form
                 method="post"
                 action="/api/owner/start/"
-                className="mt-6 flex flex-col gap-6"
+                className="mt-6 flex flex-col gap-5"
                 data-section="start-form"
               >
                 <input
@@ -190,142 +182,124 @@ export default async function ListYourSitesPage({
                   className="sr-only"
                 />
 
-                <fieldset
-                  className="border-hairline bg-paper-raised rounded-md border p-5"
-                  data-part="company"
-                >
-                  <legend className="t-display-sm px-1">Your company</legend>
-                  <div className="flex flex-col gap-4">
-                    <div>
-                      <label htmlFor="lys-name" className="oh-label block">
-                        Company name
-                      </label>
-                      <input
-                        id="lys-name"
-                        name="name"
-                        type="text"
-                        required
-                        minLength={2}
-                        maxLength={80}
-                        defaultValue={typed("name", 80)}
-                        autoComplete="organization"
-                        aria-describedby="lys-name-help"
-                        aria-invalid={wrong("name")}
-                        // The bar's "List your sites" points here. The margin keeps the headline in
-                        // view when it does, so the page answers by focusing the box.
-                        className="oh-input mt-1 scroll-mt-[60vh]"
-                      />
-                      {why("name")}
-                      <p id="lys-name-help" className="t-small text-ink-muted mt-1">
-                        Shown to buyers as the owner and seller of every site you list.
-                      </p>
-                    </div>
-                    <div className="sm:max-w-[50%] sm:pr-2">
-                      <label htmlFor="lys-city" className="oh-label block">
-                        City
-                      </label>
-                      <NativeSelect
-                        id="lys-city"
-                        name="city"
-                        required
-                        value={typed("city", 20)}
-                        placeholder="Choose…"
-                        options={[
-                          ...CITIES.map((c) => ({ value: c.slug, label: c.label })),
-                          { value: OTHER_CITY, label: "Another city" },
-                        ]}
-                        aria-describedby="lys-city-help"
-                        aria-invalid={wrong("city")}
-                        className="oh-input mt-1 scroll-mt-10"
-                      />
-                      {why("city")}
-                      <p id="lys-city-help" className="t-small text-ink-muted mt-1">
-                        Where your company is based.
-                      </p>
-                    </div>
-                  </div>
-                </fieldset>
+                <div>
+                  <label htmlFor="lys-name" className="oh-label block">
+                    Company name
+                  </label>
+                  <input
+                    id="lys-name"
+                    name="name"
+                    type="text"
+                    required
+                    minLength={2}
+                    maxLength={80}
+                    defaultValue={typed("name", 80)}
+                    autoComplete="organization"
+                    aria-describedby="lys-name-help"
+                    aria-invalid={wrong("name")}
+                    // The bar's "List your sites" points here. The margin keeps the headline in
+                    // view when it does, so the page answers by focusing the box.
+                    className="oh-input mt-1 scroll-mt-[60vh]"
+                  />
+                  {why("name")}
+                  <p id="lys-name-help" className="t-small text-ink-muted mt-1">
+                    Shown to buyers as the owner and seller.
+                  </p>
+                </div>
 
-                <fieldset
-                  className="border-hairline bg-paper-raised rounded-md border p-5"
-                  data-part="person"
-                >
-                  <legend className="t-display-sm px-1">You</legend>
-                  <div className="flex flex-col gap-4">
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div>
-                        <label htmlFor="lys-contact" className="oh-label block">
-                          Your name
-                        </label>
-                        <input
-                          id="lys-contact"
-                          name="contactName"
-                          type="text"
-                          required
-                          minLength={2}
-                          maxLength={80}
-                          defaultValue={typed("contactName", 80)}
-                          autoComplete="name"
-                          aria-invalid={wrong("contactName")}
-                          className="oh-input mt-1 scroll-mt-10"
-                        />
-                        {why("contactName")}
-                      </div>
-                      <div>
-                        <label htmlFor="lys-phone" className="oh-label block">
-                          Phone
-                        </label>
-                        <input
-                          id="lys-phone"
-                          name="phone"
-                          type="tel"
-                          required
-                          maxLength={24}
-                          defaultValue={typed("phone", 24)}
-                          autoComplete="tel"
-                          placeholder="+91"
-                          aria-describedby="lys-phone-help"
-                          aria-invalid={wrong("phone")}
-                          className="oh-input data mt-1 scroll-mt-10"
-                        />
-                        {why("phone")}
-                      </div>
-                    </div>
-                    <p id="lys-phone-help" className="t-small text-ink-muted -mt-2">
-                      Your phone is shown to a buyer only when they ask to see it.
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="lys-city" className="oh-label block">
+                      City
+                    </label>
+                    <NativeSelect
+                      id="lys-city"
+                      name="city"
+                      required
+                      value={typed("city", 20)}
+                      placeholder="Choose…"
+                      options={[
+                        ...CITIES.map((c) => ({ value: c.slug, label: c.label })),
+                        { value: OTHER_CITY, label: "Another city" },
+                      ]}
+                      aria-invalid={wrong("city")}
+                      className="oh-input mt-1 scroll-mt-10"
+                    />
+                    {why("city")}
+                  </div>
+                  <div>
+                    <label htmlFor="lys-contact" className="oh-label block">
+                      Your name
+                    </label>
+                    <input
+                      id="lys-contact"
+                      name="contactName"
+                      type="text"
+                      required
+                      minLength={2}
+                      maxLength={80}
+                      defaultValue={typed("contactName", 80)}
+                      autoComplete="name"
+                      aria-invalid={wrong("contactName")}
+                      className="oh-input mt-1 scroll-mt-10"
+                    />
+                    {why("contactName")}
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="lys-phone" className="oh-label block">
+                      Phone
+                    </label>
+                    <input
+                      id="lys-phone"
+                      name="phone"
+                      type="tel"
+                      required
+                      maxLength={24}
+                      defaultValue={typed("phone", 24)}
+                      autoComplete="tel"
+                      placeholder="+91"
+                      aria-describedby="lys-phone-help"
+                      aria-invalid={wrong("phone")}
+                      className="oh-input data mt-1 scroll-mt-10"
+                    />
+                    {why("phone")}
+                    <p id="lys-phone-help" className="t-small text-ink-muted mt-1">
+                      Shown to a buyer only when they ask to see it.
                     </p>
-                    <div>
-                      <label htmlFor="owner-email" className="oh-label block">
-                        Work email
-                      </label>
-                      <input
-                        id="owner-email"
-                        name="email"
-                        type="email"
-                        required
-                        maxLength={254}
-                        defaultValue={typed("email", 254)}
-                        autoComplete="email"
-                        placeholder="you@yourcompany.com"
-                        aria-describedby="owner-email-help"
-                        aria-invalid={wrong("email")}
-                        className="oh-input mt-1 scroll-mt-10"
-                      />
-                      {why("email")}
-                      <p id="owner-email-help" className="t-small text-ink-muted mt-1">
-                        Enquiries are sent here, so we confirm it with a six-digit code. It is never
-                        shown on the site.
-                      </p>
-                    </div>
                   </div>
-                </fieldset>
+                  <div>
+                    <label htmlFor="owner-email" className="oh-label block">
+                      Work email
+                    </label>
+                    <input
+                      id="owner-email"
+                      name="email"
+                      type="email"
+                      required
+                      maxLength={254}
+                      defaultValue={typed("email", 254)}
+                      autoComplete="email"
+                      placeholder="you@yourcompany.com"
+                      aria-describedby="owner-email-help"
+                      aria-invalid={wrong("email")}
+                      className="oh-input mt-1 scroll-mt-10"
+                    />
+                    {why("email")}
+                    <p id="owner-email-help" className="t-small text-ink-muted mt-1">
+                      Enquiries are sent here. We confirm it with a code. Never shown on the site.
+                    </p>
+                  </div>
+                </div>
 
-                <fieldset
-                  className="border-hairline bg-paper-raised rounded-md border p-5"
-                  data-part="badge"
+                <FormSection
+                  title="For the Verified owner badge"
+                  part="badge"
+                  note="Optional now. Our team checks the number against your GST certificate, which you add after this step. Neither is ever shown."
                 >
-                  <legend className="t-display-sm px-1">For the Verified owner badge</legend>
-                  <div className="sm:max-w-[50%] sm:pr-2">
+                  <div className="sm:max-w-[calc(50%-8px)]">
                     <label htmlFor="lys-gstin" className="oh-label block">
                       GSTIN, optional
                     </label>
@@ -337,17 +311,12 @@ export default async function ListYourSitesPage({
                       defaultValue={typed("gstin", 24)}
                       placeholder="29ABCDE1234F1Z5"
                       autoCapitalize="characters"
-                      aria-describedby="lys-gstin-help"
                       aria-invalid={wrong("gstin")}
                       className="oh-input data mt-1 scroll-mt-10"
                     />
                     {why("gstin")}
                   </div>
-                  <p id="lys-gstin-help" className="t-small text-ink-muted mt-2">
-                    Our team checks it against your GST certificate, which you add after this step.
-                    Neither is ever shown. You can leave this for later.
-                  </p>
-                </fieldset>
+                </FormSection>
 
                 <div>
                   <button
@@ -369,44 +338,16 @@ export default async function ListYourSitesPage({
             )}
           </div>
 
-          <aside
-            className="flex flex-col gap-5 self-start lg:sticky lg:top-24"
-            aria-label="How listing works"
-          >
-            <section
-              className="border-hairline bg-paper-raised rounded-md border p-5"
-              data-section="next"
-            >
-              <h2 className="t-display-sm">What happens next</h2>
-              <ol className="mt-4 flex flex-col gap-4" start={2}>
-                {NEXT.map((step) => (
-                  <li key={step.t} className="flex gap-3">
-                    <span
-                      className="border-hairline-strong text-ink-muted grid h-6 w-6 shrink-0 place-items-center rounded-full border font-mono text-[12px] leading-none"
-                      aria-hidden="true"
-                    >
-                      {step.n}
-                    </span>
-                    <div>
-                      <p className="text-[15px] leading-[22px] font-semibold">{step.t}</p>
-                      <p className="t-small text-ink-muted mt-0.5">{step.d}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </section>
-            <section
-              className="border-hairline bg-paper-raised rounded-md border p-5"
-              data-section="needs"
-            >
-              <h2 className="t-display-sm">For each site, have ready</h2>
-              <ul className="t-body text-ink mt-3 list-disc space-y-1 pl-5">
+          <Aside label="How listing works">
+            <StepsCard at={1} />
+            <Card title="For each site, have ready" section="needs">
+              <ul className="t-body text-ink list-disc space-y-1 pl-5">
                 <li>Where it is, and which way it faces</li>
                 <li>Its size and how it is lit</li>
                 <li>Your rate, or a choice to show &ldquo;price on request&rdquo;</li>
                 <li>Real photographs, if you have them</li>
               </ul>
-            </section>
+            </Card>
             <p className="t-small text-ink-muted">
               Listing costs nothing and there is no commission. {NEUTRALITY_LINE}{" "}
               <a href="/charter/" className="oh-link">
@@ -414,19 +355,19 @@ export default async function ListYourSitesPage({
               </a>
               .
             </p>
-          </aside>
+          </Aside>
         </div>
 
-        <section className="border-hairline mt-12 border-t pt-10 lg:mt-16">
-          <h2 className="t-display-md">Three ways to add your sites</h2>
-          <p className="t-body text-ink-muted mt-2 max-w-[60ch]">
+        <section className="border-hairline mt-12 border-t pt-8">
+          <h2 className="t-display-sm">Three ways to add your sites</h2>
+          <p className="t-body text-ink-muted mt-1">
             You choose after this step, and you can mix them.
           </p>
-          <div className="mt-6 grid gap-5 sm:grid-cols-3" data-section="ways">
+          <div className="mt-5 grid gap-5 sm:grid-cols-3" data-section="ways">
             {WAYS.map((w) => (
               <div key={w.title} className="border-hairline bg-paper-raised rounded-md border p-5">
                 <span className="oh-badge neutral">{w.tag}</span>
-                <h3 className="mt-3 text-[18px] leading-6 font-semibold">{w.title}</h3>
+                <h3 className="mt-3 text-[16px] leading-[22px] font-semibold">{w.title}</h3>
                 <p className="t-body text-ink-muted mt-2">{w.text}</p>
               </div>
             ))}

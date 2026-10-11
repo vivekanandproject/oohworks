@@ -144,14 +144,14 @@ test.describe("list your sites: the start", () => {
     await expect(form.locator("label[for='lys-gstin']")).toContainText("optional");
     await expect(form.locator("#lys-city option")).toContainText(["Another city"]);
     await expect(form.locator("[data-action='start']")).toHaveText("Save and send my code");
-    await expect(
-      page
-        .locator(
-          "[data-section='steps'] [aria-current='step']:visible, [data-section='steps'] p:visible",
-        )
-        .first(),
-    ).toContainText("Your details");
-    await expect(page.locator("[data-section='next'] li")).toHaveCount(3);
+    // The four steps are beside the form, with this one marked in words.
+    await expect(page.locator("[data-section='steps'] li")).toHaveCount(4);
+    await expect(page.locator("[data-section='steps'] [aria-current='step']")).toContainText(
+      /Your details\s*You are here/,
+    );
+    await expect(page.locator("main p.t-label").first()).toHaveText(
+      "List your sites · step 1 of 4",
+    );
     await expect(page.locator("main")).toContainText("there is no commission");
     // On a wide screen the form and the explanation sit side by side. On a phone the form comes first.
     const formBox = (await form.boundingBox())!;
@@ -300,13 +300,12 @@ test.describe("list your sites: the first form", () => {
     await fill(page, { name: company, email, gstin: "29aagcb7383j1z4" });
     await page.locator("[data-action='start']").click();
     await expect(page).toHaveURL(/\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}$/);
-    await expect(
-      page
-        .locator(
-          "[data-section='steps'] [aria-current='step']:visible, [data-section='steps'] p:visible",
-        )
-        .first(),
-    ).toContainText("Confirm your email");
+    await expect(page.locator("[data-section='steps'] [aria-current='step']")).toContainText(
+      /Confirm your email\s*You are here/,
+    );
+    await expect(page.locator("main p.t-label").first()).toHaveText(
+      "List your sites · step 2 of 4",
+    );
     // Nothing exists for an address nobody has confirmed.
     expect(await ownersWith(request, email)).toHaveLength(0);
 
@@ -399,6 +398,88 @@ test.describe("list your sites: the first form", () => {
     // A company based outside the launch cities can say so and carry on.
     expect(await post({ city: "other" })).toMatch(/^\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}$/);
     expect(await ownersWith(request, email)).toHaveLength(0);
+  });
+});
+
+test.describe("list your sites: one design", () => {
+  test.afterAll(async ({ request }) => removeOwners(request, "owner-frame-"));
+
+  /** What a page's frame measures: its title, its top space, its form and its side panel. */
+  const frame = (page: Page) =>
+    page.evaluate(() => {
+      const main = document.querySelector("main")!;
+      const px = (v: string) => Math.round(parseFloat(v));
+      const box = (el: Element) => el.getBoundingClientRect();
+      const h1 = main.querySelector("h1")!;
+      const aside = main.querySelector("aside");
+      const label = [...main.querySelectorAll(".t-label")].find((e) => box(e).top < box(h1).top);
+      // The page's own form: not the sign-out in the owner's bar, and not a tool inside a panel.
+      const form = [...main.querySelectorAll("form")].find(
+        (f) => box(f).width >= 500 && !f.closest("aside") && f.querySelector(".oh-input"),
+      );
+      return {
+        top: px(getComputedStyle(main.firstElementChild!).paddingTop),
+        title: px(getComputedStyle(h1).fontSize),
+        labelIsLink: Boolean(label?.querySelector("a")),
+        hasLabel: Boolean(label),
+        form: form ? Math.round(box(form).width) : null,
+        asideLeft: aside ? Math.round(box(aside).left) : null,
+        asideWidth: aside ? Math.round(box(aside).width) : null,
+        boxedFieldsets: [...main.querySelectorAll("fieldset")].filter(
+          (f) => getComputedStyle(f).borderTopWidth !== "0px",
+        ).length,
+        headings: [
+          ...new Set(
+            [...main.querySelectorAll("section > h2, aside h2")]
+              .filter((h) => box(h).height > 0)
+              .map((h) => px(getComputedStyle(h).fontSize)),
+          ),
+        ],
+      };
+    });
+
+  test("every owner page shares the frame of the enquiry page or the shortlist", async ({
+    page,
+    request,
+    isMobile,
+  }, info) => {
+    test.skip(Boolean(isMobile), "the two columns are a wide-screen layout");
+    test.setTimeout(90_000);
+    // The two pages the rest of the site already had: a form page and a page of content.
+    await page.goto("/enquire/ows0001/");
+    const formPage = await frame(page);
+    await page.goto("/shortlist/?sites=ows0001,ows0003");
+    const contentPage = await frame(page);
+    expect(formPage.form, "the enquiry form").toBe(560);
+
+    const check = async (path: string, kind: "form" | "content") => {
+      await page.goto(path);
+      const got = await frame(page);
+      const want = kind === "form" ? formPage : contentPage;
+      expect(got.top, `${path}: space above`).toBe(want.top);
+      expect(got.title, `${path}: title size`).toBe(want.title);
+      expect(got.hasLabel, `${path}: a label above the title`).toBe(true);
+      expect(got.labelIsLink, `${path}: the label is plain text`).toBe(false);
+      expect(got.asideLeft, `${path}: where the side panel starts`).toBe(want.asideLeft);
+      expect(got.asideWidth, `${path}: how wide the side panel is`).toBe(want.asideWidth);
+      if (kind === "form") expect(got.form, `${path}: form width`).toBe(formPage.form);
+      // Fields sit on the page. A long form is split by a rule and a heading, never by boxes.
+      expect(got.boxedFieldsets, `${path}: boxes around fields`).toBe(0);
+      // Every panel and section title is one size.
+      expect(got.headings, `${path}: heading sizes`).toEqual(got.headings.length ? [23] : []);
+    };
+
+    await check("/list-your-sites/", "form");
+    await check("/sign-in/", "form");
+    const stamp = Date.now();
+    await signIn(page, request, `owner-frame-${info.project.name}-${stamp}@example.org`);
+    expect((await frame(page)).form, "the company step, before a company exists").toBe(560);
+    await addCompany(page, `E2E Frame ${stamp}`);
+    await check("/owner/", "content");
+    await check("/owner/company/", "form");
+    await check("/owner/sites/new/", "form");
+    await check("/owner/import/", "form");
+    await check("/owner/kit/", "form");
   });
 });
 

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
-import { Notice, Steps } from "@/components/owners/Bits";
+import { Notice } from "@/components/owners/Bits";
+import { Aside, Card, FORM_GRID, PageHead, StepsCard } from "@/components/owners/Frame";
 import { devOwnerCode, findCode } from "@/lib/owners/server";
 import { MAX_ATTEMPTS, maskEmail } from "@/lib/sites/enquiry";
 
@@ -43,28 +44,34 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
   return (
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
-        {signIn ? null : <Steps at={2} />}
-        <div className={`max-w-[560px] ${signIn ? "" : "mt-6"}`}>
-          <p className="t-label text-ink-muted">{signIn ? "Sign in" : "List your sites"}</p>
-          <h1 className="t-display-md mt-2">Confirm it&rsquo;s you</h1>
-          <p className="t-body text-ink-muted mt-2" data-section="code-sent-to">
-            A code is on its way to{" "}
-            <span className="text-ink font-mono">{maskEmail(row.email)}</span>. It works for ten
-            minutes.
-          </p>
-          <div className="mt-5 space-y-3">
+        <div className={FORM_GRID}>
+          <div className="min-w-0">
+            <PageHead
+              eyebrow={signIn ? "Sign in" : "List your sites · step 2 of 4"}
+              title={<>Confirm it&rsquo;s you</>}
+            >
+              <span data-section="code-sent-to">
+                A code is on its way to{" "}
+                <span className="text-ink font-mono">{maskEmail(row.email)}</span>. It works for ten
+                minutes.
+              </span>
+            </PageHead>
             {error ? (
-              <Notice tone="error" title={error.t} section="confirm-error">
-                {error.d}
-              </Notice>
+              <div className="mt-5">
+                <Notice tone="error" title={error.t} section="confirm-error">
+                  {error.d}
+                </Notice>
+              </div>
             ) : one(q.resent) === "1" ? (
-              <Notice tone="success" title="A new code is on its way." section="confirm-resent">
-                The earlier one no longer works.
-              </Notice>
+              <div className="mt-5">
+                <Notice tone="success" title="A new code is on its way." section="confirm-resent">
+                  The earlier one no longer works.
+                </Notice>
+              </div>
             ) : null}
             {shown ? (
               <p
-                className="t-small border-hairline bg-lit-tint text-ink rounded-sm border px-3 py-2"
+                className="t-small border-hairline bg-lit-tint text-ink mt-5 rounded-sm border px-3 py-2"
                 data-section="dev-code"
               >
                 Development only: no email service is set up on this machine, so the code is shown
@@ -72,62 +79,73 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
                 is in the admin, under Operations, Outbox.
               </p>
             ) : null}
-          </div>
-          <form
-            method="post"
-            action="/api/owner/confirm/"
-            className="mt-6 flex flex-col gap-4"
-            data-section="confirm-form"
-          >
-            <input type="hidden" name="t" value={token} />
-            {signIn ? <input type="hidden" name="via" value="signin" /> : null}
-            <div>
-              <label htmlFor="owner-code" className="oh-label block">
-                Six-digit code
-              </label>
-              <input
-                id="owner-code"
-                name="code"
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                pattern="[0-9 ]{6,7}"
-                maxLength={7}
-                required
-                autoFocus
-                className="oh-input lg data mt-1 max-w-[220px] tracking-[0.3em]"
-              />
-            </div>
-            <div>
-              <button
-                type="submit"
-                className="oh-btn primary lg w-full sm:w-auto"
-                data-action="confirm"
-              >
-                Confirm
+            <form
+              method="post"
+              action="/api/owner/confirm/"
+              className="mt-6 flex flex-col gap-4"
+              data-section="confirm-form"
+            >
+              <input type="hidden" name="t" value={token} />
+              {signIn ? <input type="hidden" name="via" value="signin" /> : null}
+              <div>
+                <label htmlFor="owner-code" className="oh-label block">
+                  Six-digit code
+                </label>
+                <input
+                  id="owner-code"
+                  name="code"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  pattern="[0-9 ]{6,7}"
+                  maxLength={7}
+                  required
+                  autoFocus
+                  className="oh-input lg data mt-1 max-w-[220px] tracking-[0.3em]"
+                />
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  className="oh-btn primary lg w-full sm:w-auto"
+                  data-action="confirm"
+                >
+                  Confirm
+                </button>
+              </div>
+            </form>
+            <form method="post" action="/api/owner/resend/" className="mt-4">
+              <input type="hidden" name="t" value={token} />
+              {signIn ? <input type="hidden" name="via" value="signin" /> : null}
+              <button type="submit" className="oh-btn ghost sm">
+                Send the code again
               </button>
-            </div>
-          </form>
-          <form method="post" action="/api/owner/resend/" className="mt-4">
-            <input type="hidden" name="t" value={token} />
-            {signIn ? <input type="hidden" name="via" value="signin" /> : null}
-            <button type="submit" className="oh-btn ghost sm">
-              Send the code again
-            </button>
-          </form>
-          <p className="t-small text-ink-muted mt-4">
-            After this, this browser is remembered for 30 days.
-            {signIn ? null : (
-              <>
-                {" "}
-                Wrong address?{" "}
-                <a href="/list-your-sites/" className="oh-link">
-                  Start again
-                </a>
-                .
-              </>
-            )}
-          </p>
+            </form>
+            <p className="t-small text-ink-muted mt-4">
+              After this, this browser is remembered for 30 days.
+              {signIn ? null : (
+                <>
+                  {" "}
+                  Wrong address?{" "}
+                  <a href="/list-your-sites/" className="oh-link">
+                    Start again
+                  </a>
+                  .
+                </>
+              )}
+            </p>
+          </div>
+
+          <Aside label="About the code">
+            {signIn ? null : <StepsCard at={2} />}
+            <Card title="No code yet?" section="code-help">
+              <ul className="t-body text-ink list-disc space-y-1 pl-5">
+                <li>It can take a minute to arrive.</li>
+                <li>Look in your spam or promotions folder.</li>
+                <li>You can send it again, once every half minute.</li>
+              </ul>
+            </Card>
+          </Aside>
         </div>
       </Container>
     </Shell>

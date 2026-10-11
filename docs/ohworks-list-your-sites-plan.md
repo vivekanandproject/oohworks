@@ -151,13 +151,35 @@ Changed on 10 Oct 2026 at the founder's direction. The first build asked for an 
 
 - **One form, then the code.** The start page asks for the company name and city, the person's name and phone, and the work email. The GSTIN is the only optional answer. The code step comes second, and the owner then lands on their sites with the company already made.
 - **Nothing is made for an unconfirmed address.** The answers wait beside the code and become an owner only when the code is confirmed. If the address already belongs to an owner, they are signed in and their details are left as they are.
-- **The same layout as the enquiry page.** The form is on the left in three plain sections. On the right, and staying in view on a wide screen, are the steps that follow and what to have ready for each site. On a phone the form comes first.
-- **A strip of four steps** runs across the start and the code page: your details, confirm your email, add your sites, we check then live.
+- **The same layout as the enquiry page.** The form is on the left. On the right, and staying in view on a wide screen, are the four steps and what to have ready for each site. On a phone the form comes first.
+- **The four steps** are a panel beside the form on the start, the code page and the first site, with the current one marked "You are here". The label above each title says the step in words, as the enquiry pages do.
 - **A mistake** returns to the form with everything that was typed, names the problem, and marks the field.
 - **A company outside the six launch cities** chooses "Another city".
 - **Sign in is unchanged.** A returning owner gives the email alone. A new address that comes in through Sign in is asked for the company after the code, as before.
 
 One set of checks, in `src/lib/owners/company-input.ts`, serves the form whichever way it arrives.
+
+### One design for every owner page
+
+Done on 11 Oct 2026, after the pages were found to disagree with each other and with the rest of the site. Measured side by side they had six column widths, three title sizes, form sections boxed on some pages and plain on others, and box titles on the border in some places and inside in others.
+
+The owner's area now uses the two frames the site already had, and nothing else. They live in `src/components/owners/Frame.tsx`.
+
+| Frame | Columns | Used by | Same as |
+| --- | --- | --- | --- |
+| Form | 560 for the form, 380 for help | Start, code, Sign in, company, add a site, edit a site, spreadsheet, media kit | The enquiry page |
+| Content | Seven parts for content, four for a panel | The owner's sites, one site | The shortlist and the public site page |
+
+The rules inside them:
+
+- **The top of a page** is a small plain label, a title at 34 px, and a line or two at 15 px. The label is never a link.
+- **Fields sit on the page**, as on the enquiry form. A long form is split by a rule and a heading, never by boxes.
+- **Boxes** are for the panels beside a form and for a tool that sits among other content. A box's title is inside it, at 23 px.
+- **The same fields look the same.** The start page and the company page ask for the company in one arrangement.
+- **The main action of a page** is the large navy button. Actions inside a box are the standard size.
+- **Rows of fields** share one 16 px gap.
+
+A browser test measures the enquiry page and the shortlist, then holds seven owner pages to the same top space, title size, form width and panel position, and fails if a boxed field group or an odd heading size returns.
 
 ### The ways in, and knowing you are signed in
 

@@ -65,7 +65,7 @@ export function PinPicker({
   };
 
   return (
-    <div className="flex flex-col gap-3" data-section="pin-picker">
+    <div className="flex flex-col gap-4" data-section="pin-picker">
       {open ? (
         <>
           <div className="border-hairline bg-paper-sunken h-[280px] overflow-hidden rounded-md border">
@@ -94,7 +94,7 @@ export function PinPicker({
           Place the pin on a map
         </button>
       )}
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="site-lat" className="oh-label block">
             Latitude

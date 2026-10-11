@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { Notice, OwnerBar } from "@/components/owners/Bits";
+import { Aside, Card, FORM_GRID, FormSection, PageHead } from "@/components/owners/Frame";
 import type { ImportReport } from "@/app/api/owner/import/route";
 import { ownerFile, requireOwner } from "@/lib/owners/server";
 import { MAX_ROWS } from "@/lib/owners/sheet";
@@ -36,161 +37,183 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="import" />
-        <div className="mt-6">
-          <p className="t-label text-ink-muted">
-            <a href="/owner/" className="oh-link">
-              Your sites
-            </a>
-          </p>
-          <h1 className="t-display-md mt-2">Upload a spreadsheet</h1>
-          <p className="t-body text-ink-muted mt-2 max-w-[68ch]">
-            For many sites at once. Each row that is right becomes a draft that only you can see.
-            Each row that is not is listed with what to fix, and creates nothing.
-          </p>
-        </div>
+        <div className={`mt-6 ${FORM_GRID}`}>
+          <div className="min-w-0">
+            <PageHead eyebrow="Your sites" title="Upload a spreadsheet">
+              For many sites at once. Each row that is right becomes a draft that only you can see.
+              Each row that is not is listed with what to fix, and creates nothing.
+            </PageHead>
 
-        {ERRORS[one(q.error)] ? (
-          <div className="mt-5">
-            <Notice tone="error" title={ERRORS[one(q.error)] ?? ""} section="import-error" />
-          </div>
-        ) : null}
+            {ERRORS[one(q.error)] ? (
+              <div className="mt-5">
+                <Notice tone="error" title={ERRORS[one(q.error)] ?? ""} section="import-error" />
+              </div>
+            ) : null}
 
-        {report ? (
-          <section className="mt-6 space-y-3" data-section="import-report">
-            <h2 className="t-display-sm">
-              What we found in <span className="font-mono text-[18px]">{report.name}</span>
-            </h2>
-            {report.refused ? (
-              <Notice tone="error" title="Nothing was added." section="import-refused">
-                {report.refused}
-              </Notice>
+            {report ? (
+              <section className="mt-6 space-y-3" data-section="import-report">
+                <h2 className="t-display-sm">
+                  What we found in <span className="font-mono text-[18px]">{report.name}</span>
+                </h2>
+                {report.refused ? (
+                  <Notice tone="error" title="Nothing was added." section="import-refused">
+                    {report.refused}
+                  </Notice>
+                ) : null}
+                {added ? (
+                  <Notice
+                    tone="success"
+                    title={
+                      [
+                        report.created.length
+                          ? `${report.created.length === 1 ? "1 site" : `${report.created.length} sites`} added as ${report.created.length === 1 ? "a draft" : "drafts"}`
+                          : null,
+                        report.updated.length
+                          ? `${report.updated.length === 1 ? "1 site" : `${report.updated.length} sites`} updated`
+                          : null,
+                      ]
+                        .filter(Boolean)
+                        .join(", ") + "."
+                    }
+                    section="import-added"
+                  >
+                    Add photographs to them, then{" "}
+                    <a href="/owner/" className="oh-link">
+                      send them for review from your sites
+                    </a>
+                    .
+                  </Notice>
+                ) : null}
+                {report.problems.length ? (
+                  <>
+                    <Notice
+                      tone="warning"
+                      title={
+                        report.problems.length === 1
+                          ? "1 thing needs fixing."
+                          : `${report.problems.length} things need fixing.`
+                      }
+                      section="import-problems-note"
+                    >
+                      Nothing was created for those rows. Correct them in your file and upload it
+                      again. Give each site &ldquo;Your reference&rdquo; and uploading again will
+                      update it, not double it.
+                    </Notice>
+                    <div
+                      className="border-hairline relative overflow-x-auto rounded-md border"
+                      tabIndex={0}
+                      role="region"
+                      aria-label="Rows that need fixing"
+                    >
+                      <table
+                        className="oh-table w-full min-w-[560px]"
+                        data-section="import-problems"
+                      >
+                        <thead>
+                          <tr>
+                            <th scope="col">Row</th>
+                            <th scope="col">Column</th>
+                            <th scope="col">What to fix</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {report.problems.map((p, i) => (
+                            <tr key={`${p.row}-${p.column}-${i}`}>
+                              <td className="data">{p.row}</td>
+                              <td>{p.column}</td>
+                              <td>{p.problem}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                ) : null}
+                {report.unknown.length ? (
+                  <p className="t-small text-ink-muted" data-section="import-unknown">
+                    {report.unknown.length === 1
+                      ? "One column was"
+                      : `${report.unknown.length} columns were`}{" "}
+                    not read, because the template has no such heading:{" "}
+                    {report.unknown.map((u) => `“${u}”`).join(", ")}.
+                  </p>
+                ) : null}
+              </section>
             ) : null}
-            {added ? (
-              <Notice
-                tone="success"
-                title={
-                  [
-                    report.created.length
-                      ? `${report.created.length === 1 ? "1 site" : `${report.created.length} sites`} added as ${report.created.length === 1 ? "a draft" : "drafts"}`
-                      : null,
-                    report.updated.length
-                      ? `${report.updated.length === 1 ? "1 site" : `${report.updated.length} sites`} updated`
-                      : null,
-                  ]
-                    .filter(Boolean)
-                    .join(", ") + "."
-                }
-                section="import-added"
-              >
-                Add photographs to them, then{" "}
-                <a href="/owner/" className="oh-link">
-                  send them for review from your sites
-                </a>
-                .
-              </Notice>
-            ) : null}
-            {report.problems.length ? (
-              <>
-                <Notice
-                  tone="warning"
-                  title={
-                    report.problems.length === 1
-                      ? "1 thing needs fixing."
-                      : `${report.problems.length} things need fixing.`
-                  }
-                  section="import-problems-note"
-                >
-                  Nothing was created for those rows. Correct them in your file and upload it again.
-                  Give each site &ldquo;Your reference&rdquo; and uploading again will update it,
-                  not double it.
-                </Notice>
-                <div
-                  className="border-hairline relative overflow-x-auto rounded-md border"
-                  tabIndex={0}
-                  role="region"
-                  aria-label="Rows that need fixing"
-                >
-                  <table className="oh-table w-full min-w-[560px]" data-section="import-problems">
-                    <thead>
-                      <tr>
-                        <th scope="col">Row</th>
-                        <th scope="col">Column</th>
-                        <th scope="col">What to fix</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {report.problems.map((p, i) => (
-                        <tr key={`${p.row}-${p.column}-${i}`}>
-                          <td className="data">{p.row}</td>
-                          <td>{p.column}</td>
-                          <td>{p.problem}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+
+            <div className="mt-6 flex flex-col gap-6">
+              <FormSection title="Get the template" n={1} part="template">
+                <p className="t-body text-ink-muted" data-section="template">
+                  An Excel file with a heading for each fact, drop-downs where there is a fixed
+                  choice, an example row, and a second sheet that explains every column. The ten
+                  navy headings are needed; the rest are optional.
+                </p>
+                <div>
+                  <a
+                    href="/api/owner/template/"
+                    className="oh-btn secondary"
+                    data-action="template"
+                  >
+                    Download the template
+                  </a>
                 </div>
-              </>
-            ) : null}
-            {report.unknown.length ? (
-              <p className="t-small text-ink-muted" data-section="import-unknown">
-                {report.unknown.length === 1
-                  ? "One column was"
-                  : `${report.unknown.length} columns were`}{" "}
-                not read, because the template has no such heading:{" "}
-                {report.unknown.map((u) => `“${u}”`).join(", ")}.
-              </p>
-            ) : null}
-          </section>
-        ) : null}
+              </FormSection>
+              <FormSection title="Upload it" n={2} part="upload">
+                <form
+                  method="post"
+                  action="/api/owner/import/"
+                  encType="multipart/form-data"
+                  className="flex flex-col gap-5"
+                  data-section="import-form"
+                >
+                  <div>
+                    <label htmlFor="sheet-file" className="oh-label block">
+                      Your filled-in template
+                    </label>
+                    <input
+                      id="sheet-file"
+                      name="sheet"
+                      type="file"
+                      required
+                      accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      aria-describedby="sheet-file-help"
+                      className="oh-input mt-1"
+                    />
+                    <p id="sheet-file-help" className="t-small text-ink-muted mt-1">
+                      An Excel workbook, up to {MAX_ROWS} sites at a time.
+                    </p>
+                  </div>
+                  <div>
+                    <button
+                      type="submit"
+                      className="oh-btn primary lg w-full sm:w-auto"
+                      data-action="import"
+                    >
+                      Upload and check
+                    </button>
+                  </div>
+                </form>
+              </FormSection>
+            </div>
+          </div>
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-2">
-          <section
-            className="border-hairline bg-paper-raised rounded-md border p-5"
-            data-section="template"
-          >
-            <span className="oh-badge neutral">1 · Get the template</span>
-            <h2 className="mt-3 text-[18px] leading-6 font-semibold">One row a site</h2>
-            <p className="t-body text-ink-muted mt-2">
-              An Excel file with a heading for each fact, drop-downs where there is a fixed choice,
-              an example row, and a second sheet that explains every column. The ten navy headings
-              are needed; the rest are optional.
-            </p>
-            <a href="/api/owner/template/" className="oh-btn secondary mt-4" data-action="template">
-              Download the template
-            </a>
-          </section>
-          <section className="border-hairline bg-paper-raised rounded-md border p-5">
-            <span className="oh-badge neutral">2 · Upload it</span>
-            <h2 className="mt-3 text-[18px] leading-6 font-semibold">
-              Up to {MAX_ROWS} sites at a time
-            </h2>
-            <form
-              method="post"
-              action="/api/owner/import/"
-              encType="multipart/form-data"
-              className="mt-3 flex flex-col gap-3"
-              data-section="import-form"
-            >
-              <div>
-                <label htmlFor="sheet-file" className="oh-label block">
-                  Your filled-in template
-                </label>
-                <input
-                  id="sheet-file"
-                  name="sheet"
-                  type="file"
-                  required
-                  accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                  className="oh-input mt-1"
-                />
-              </div>
-              <div>
-                <button type="submit" className="oh-btn primary" data-action="import">
-                  Upload and check
-                </button>
-              </div>
-            </form>
-          </section>
+          <Aside label="How the spreadsheet works">
+            <Card title="How it works">
+              <ul className="t-body text-ink list-disc space-y-1 pl-5">
+                <li>One row is one site.</li>
+                <li>A right row becomes a draft that only you can see.</li>
+                <li>A wrong row is named by its row and column, and creates nothing.</li>
+                <li>
+                  Give each site &ldquo;Your reference&rdquo; and uploading again updates it, not
+                  doubles it.
+                </li>
+              </ul>
+              <p className="t-small bg-lit-tint text-ink mt-4 rounded-sm px-3 py-2">
+                Nothing is published from a spreadsheet. You add photographs and send each site for
+                review yourself.
+              </p>
+            </Card>
+          </Aside>
         </div>
       </Container>
     </Shell>

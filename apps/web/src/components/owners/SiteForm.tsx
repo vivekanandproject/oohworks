@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type { FieldErrors, FieldKey, Raw } from "@/lib/owners/site-input";
 import { CITIES, FORMATS, LIGHTING } from "@/lib/sites/taxonomy";
 import { NativeSelect } from "@/components/NativeSelect";
+import { FormSection } from "./Frame";
 import { PinPicker } from "./PinPicker";
 
 function Field({
@@ -119,13 +120,9 @@ function Part({
   note?: string;
 }) {
   return (
-    <fieldset className="border-hairline bg-paper-raised rounded-md border p-5" data-part={n}>
-      <legend className="t-display-sm px-1">
-        <span className="text-ink-muted font-mono text-[15px]">{n}</span> {title}
-      </legend>
-      {note ? <p className="t-small text-ink-muted mb-3">{note}</p> : null}
-      <div className="flex flex-col gap-4">{children}</div>
-    </fieldset>
+    <FormSection n={n} title={title} note={note}>
+      {children}
+    </FormSection>
   );
 }
 
@@ -461,7 +458,7 @@ export function SiteForm({
           <summary className="oh-link t-body cursor-pointer">
             For a screen: resolution, spot and loop
           </summary>
-          <div className="mt-3 grid gap-4 sm:grid-cols-4">
+          <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
             <Field
               name="resolution"
               label="Resolution"
