@@ -1,9 +1,7 @@
 import { cleanEmail } from "@/lib/forms";
-import { PHONE } from "@/lib/owners/company-input";
-import { isGstin, tidyGstin } from "@/lib/owners/gstin";
+import { checkCompany, type CompanyRaw } from "@/lib/owners/company-input";
 import { fileOf, go, ownerGate, text } from "@/lib/owners/request";
 import { saveCompany, saveOwnerFile } from "@/lib/owners/server";
-import { CITIES, type CitySlug } from "@/lib/sites/taxonomy";
 
 export const dynamic = "force-dynamic";
 
@@ -12,44 +10,34 @@ export async function POST(req: Request) {
   const gate = await ownerGate(req, "company");
   if (!gate.ok) return gate.response;
   const { form, email } = gate;
-  const name = text(form, "name", 80);
-  const contactName = text(form, "contactName", 80);
-  const phone = text(form, "phone", 24);
-  const cityRaw = text(form, "city", 20);
-  const city = (CITIES.find((c) => c.slug === cityRaw)?.slug ?? null) as CitySlug | null;
-  const gstinRaw = text(form, "gstin", 24);
-  const about = text(form, "about", 600) || null;
-  const back = (error: string) => {
-    const q = new URLSearchParams({
-      error,
-      name,
-      contactName,
-      phone,
-      city: cityRaw,
-      gstin: gstinRaw,
-    });
-    return go(`/owner/company/?${q.toString()}`);
+  const raw: CompanyRaw = {
+    name: text(form, "name", 80),
+    placeLabel: text(form, "placeLabel", 160),
+    placeId: text(form, "placeId", 300),
+    placeLat: text(form, "placeLat", 24),
+    placeLng: text(form, "placeLng", 24),
+    placeCountry: text(form, "placeCountry", 2),
+    contactName: text(form, "contactName", 80),
+    phoneCountry: text(form, "phoneCountry", 2),
+    phone: text(form, "phone", 32),
+    gstin: text(form, "gstin", 40),
   };
-  if (name.length < 2) return back("name");
-  if (contactName.length < 2) return back("contact");
-  if (!PHONE.test(phone)) return back("phone");
+  const about = text(form, "about", 600) || null;
+  // A mistake returns to the form with everything that was typed.
+  const back = (error: string) =>
+    go(`/owner/company/?${new URLSearchParams({ error, ...raw }).toString()}`);
+  const checked = checkCompany(raw);
+  if (!checked.ok && checked.error !== "gstin" && checked.error !== "regno")
+    return back(checked.error);
   const contactEmail =
     text(form, "contactEmail", 254) === "" ? email : cleanEmail(form.get("contactEmail"));
   if (!contactEmail) return back("email");
-  if (gstinRaw && !isGstin(gstinRaw)) return back("gstin");
+  if (!checked.ok) return back(checked.error);
   const doc = fileOf(form, "document", "document");
   if ("problem" in doc && doc.problem !== "missing")
     return back(doc.problem === "big" ? "filebig" : "filetype");
 
-  const owner = await saveCompany(email, {
-    name,
-    city,
-    contactName,
-    phone,
-    contactEmail,
-    about,
-    gstin: gstinRaw ? tidyGstin(gstinRaw) : null,
-  });
+  const owner = await saveCompany(email, { ...checked.details, contactEmail, about });
   if ("file" in doc) {
     try {
       await saveOwnerFile(owner, doc.file, "document", "For verification");

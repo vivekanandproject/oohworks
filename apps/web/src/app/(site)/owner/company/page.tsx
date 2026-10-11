@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
-import { NativeSelect } from "@/components/NativeSelect";
+import { PhoneField } from "@/components/PhoneField";
+import { PlaceField } from "@/components/PlaceField";
 import { Notice, OwnerBar } from "@/components/owners/Bits";
 import { Aside, Card, FORM_GRID, FormSection, PageHead } from "@/components/owners/Frame";
 import { ownerFiles, requireEmail } from "@/lib/owners/server";
 import { maskEmail } from "@/lib/sites/enquiry";
-import { CITIES } from "@/lib/sites/taxonomy";
+import { countryOf, splitPhone } from "@/lib/phone";
+import { cityDef } from "@/lib/sites/taxonomy";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -17,9 +20,17 @@ export const metadata: Metadata = {
 const ERRORS: Record<string, { t: string; d: string }> = {
   name: { t: "Add your company name.", d: "It is shown to buyers as the owner and seller." },
   contact: { t: "Add your own name.", d: "It is for our team only." },
+  place: {
+    t: "Say where your company is based.",
+    d: "Start typing your city and choose it from the list, or type it in full.",
+  },
   phone: {
     t: "Check the phone number.",
-    d: "Use digits, with the country code if you like, such as +91 98450 00000.",
+    d: "Choose the country, then type the number as you write it there.",
+  },
+  regno: {
+    t: "That registration number did not look right.",
+    d: "Use the number on your trade licence or registration, or leave it empty for now.",
   },
   email: { t: "That email did not look right.", d: "It is where enquiries will be sent." },
   gstin: {
@@ -48,6 +59,13 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
   const documents = owner ? await ownerFiles(owner.id, "document") : [];
   const v = (key: string, saved: string | null | undefined): string =>
     one(q.error) ? one(q[key]) : (saved ?? "");
+  // A saved number is shown as its country and the part written after it.
+  const savedPhone = splitPhone(owner?.phone, owner?.phoneCountry);
+  const phoneCountry = one(q.error)
+    ? one(q.phoneCountry)
+    : owner?.phone
+      ? savedPhone.country
+      : countryOf(await headers());
 
   return (
     <Shell active="owners">
@@ -114,20 +132,34 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
                   Shown to buyers as the owner and seller.
                 </p>
               </div>
+              <div>
+                <label htmlFor="co-place" className="oh-label block">
+                  Where the company is based
+                </label>
+                <PlaceField
+                  id="co-place"
+                  name="place"
+                  scope="city"
+                  required
+                  defaultLabel={v(
+                    "placeLabel",
+                    owner?.location?.label ?? cityDef(owner?.city)?.label,
+                  )}
+                  defaults={{
+                    id: v("placeId", owner?.location?.placeId),
+                    lat: v("placeLat", ""),
+                    lng: v("placeLng", ""),
+                    country: v("placeCountry", owner?.location?.country),
+                  }}
+                  placeholder="Start typing your city"
+                  describedBy="co-place-help"
+                  phone={{ countryId: "co-phone-country", numberId: "co-phone" }}
+                />
+                <p id="co-place-help" className="t-small text-ink-muted mt-1">
+                  Any city in the world. Choose it from the list as you type.
+                </p>
+              </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="co-city" className="oh-label block">
-                    City
-                  </label>
-                  <NativeSelect
-                    id="co-city"
-                    name="city"
-                    value={v("city", owner?.city)}
-                    placeholder="Choose…"
-                    options={CITIES.map((c) => ({ value: c.slug, label: c.label }))}
-                    className="oh-input mt-1"
-                  />
-                </div>
                 <div>
                   <label htmlFor="co-contact" className="oh-label block">
                     Your name
@@ -143,28 +175,6 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
                     autoComplete="name"
                     className="oh-input mt-1"
                   />
-                </div>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="co-phone" className="oh-label block">
-                    Phone
-                  </label>
-                  <input
-                    id="co-phone"
-                    name="phone"
-                    type="tel"
-                    required
-                    maxLength={24}
-                    defaultValue={v("phone", owner?.phone)}
-                    autoComplete="tel"
-                    placeholder="+91"
-                    aria-describedby="co-phone-help"
-                    className="oh-input data mt-1"
-                  />
-                  <p id="co-phone-help" className="t-small text-ink-muted mt-1">
-                    Shown to a buyer only when they ask to see it.
-                  </p>
                 </div>
                 <div>
                   <label htmlFor="co-email" className="oh-label block">
@@ -184,6 +194,22 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
                     Never shown on the site. Change it to a sales address if you like.
                   </p>
                 </div>
+              </div>
+              <div>
+                <label htmlFor="co-phone" className="oh-label block">
+                  Phone
+                </label>
+                <PhoneField
+                  id="co-phone"
+                  country={phoneCountry}
+                  number={v("phone", savedPhone.national)}
+                  required
+                  describedBy="co-phone-help"
+                />
+                <p id="co-phone-help" className="t-small text-ink-muted mt-1">
+                  Choose the country, then the number as you write it there. Shown to a buyer only
+                  when they ask to see it.
+                </p>
               </div>
               <div>
                 <label htmlFor="co-about" className="oh-label block">
@@ -212,13 +238,13 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="co-gstin" className="oh-label block">
-                      GSTIN
+                      GSTIN or licence number
                     </label>
                     <input
                       id="co-gstin"
                       name="gstin"
                       type="text"
-                      maxLength={24}
+                      maxLength={40}
                       defaultValue={v("gstin", owner?.gstin)}
                       placeholder="29ABCDE1234F1Z5"
                       autoCapitalize="characters"

@@ -2,8 +2,9 @@
 
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
+import { PlaceField, type PickedPlace } from "@/components/PlaceField";
 import { readCoords } from "@/lib/owners/coords";
-import { CITY_CENTRE, type CitySlug } from "@/lib/sites/taxonomy";
+import { CITIES, CITY_CENTRE, type CitySlug } from "@/lib/sites/taxonomy";
 
 const PinMap = dynamic(() => import("./PinMap"), {
   ssr: false,
@@ -13,9 +14,9 @@ const PinMap = dynamic(() => import("./PinMap"), {
 });
 
 /**
- * Where a site is. Three ways to say it, all filling the same two numbers: press on a map, paste
- * coordinates or a Google Maps link, or type them. The fields are ordinary inputs, so they work
- * without script and keep whatever was typed before the page finished loading.
+ * Where a site is. Four ways to say it, all filling the same two numbers: search for the place,
+ * press on a map, paste coordinates or a Google Maps link, or type them. The fields are ordinary
+ * inputs, so they work without script and keep whatever was typed before the page finished loading.
  */
 export function PinPicker({
   lat,
@@ -38,6 +39,8 @@ export function PinPicker({
     pin: [number, number] | null;
   } | null>(null);
   const [missed, setMissed] = useState(false);
+  // What the search found: the pin is put there, and the map opens on it for the owner to adjust.
+  const [found, setFound] = useState<{ label: string; outside: boolean } | null>(null);
 
   const set = (la: number, lo: number) => {
     if (latRef.current) latRef.current.value = la.toFixed(5);
@@ -58,6 +61,17 @@ export function PinPicker({
       pin: has ? [lo, la] : null,
     });
   };
+  const onFound = (p: PickedPlace) => {
+    if (p.lat === null || p.lng === null) return;
+    set(p.lat, p.lng);
+    if (placeRef.current) placeRef.current.value = "";
+    setMissed(false);
+    setOpen({ start: [p.lng, p.lat], pin: [p.lng, p.lat] });
+    // The site's city follows the place, when the place is in a city ohworks has pages for.
+    const city = document.querySelector<HTMLSelectElement>("select[name='city']");
+    if (city && p.city && [...city.options].some((o) => o.value === p.city)) city.value = p.city;
+    setFound({ label: p.label, outside: !p.city });
+  };
   const onPaste = (value: string) => {
     const found = readCoords(value);
     setMissed(value.trim() !== "" && !found);
@@ -66,10 +80,36 @@ export function PinPicker({
 
   return (
     <div className="flex flex-col gap-4" data-section="pin-picker">
+      <div>
+        <label htmlFor="site-find" className="oh-label block">
+          Find the place
+        </label>
+        <PlaceField
+          id="site-find"
+          scope="any"
+          placeholder="A road, a landmark or an address"
+          describedBy="site-find-help"
+          onPick={onFound}
+        />
+        <p
+          id="site-find-help"
+          className="t-small text-ink-muted mt-1"
+          role={found ? "status" : undefined}
+          data-section="site-found"
+        >
+          {found
+            ? found.outside
+              ? `The pin is at ${found.label}. That is outside ${CITIES.map((c) => c.label).join(", ")}, the cities ohworks has pages for today.`
+              : `The pin is at ${found.label}. Drag it to the exact spot the site stands on.`
+            : "Search anywhere in the world. The pin goes there, and you can then drag it to the exact spot."}
+        </p>
+      </div>
       {open ? (
         <>
           <div className="border-hairline bg-paper-sunken h-[280px] overflow-hidden rounded-md border">
             <PinMap
+              // A new search opens the map afresh on the place found.
+              key={`${open.start[0]},${open.start[1]}`}
               styleUrl={styleUrl}
               start={open.start}
               pin={open.pin}

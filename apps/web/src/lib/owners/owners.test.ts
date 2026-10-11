@@ -1,7 +1,9 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import type { Owner, Site } from "@/payload-types";
 import { readEmail, signEmail } from "@/lib/sites/enquiry";
-import { OTHER_CITY, checkStart, readDetails } from "./company-input";
+import { PHONE_COUNTRIES, checkPhone, splitPhone } from "@/lib/phone";
+import { launchCity, placeDetail, provider, searchPlaces } from "@/lib/places";
+import { checkStart, readDetails } from "./company-input";
 import { bearingGap, metresBetween, readCoords, sameFace } from "./coords";
 import { isGstin, tidyGstin } from "./gstin";
 import { freeSlug, improvements, stateOf } from "./progress";
@@ -415,23 +417,29 @@ describe("the owner's remembered browser", () => {
 describe("who is listing", () => {
   const good = {
     name: "Deccan Signs",
-    city: "hyderabad",
+    placeLabel: "Hyderabad, Telangana, India",
+    placeId: "",
+    placeLat: "17.385",
+    placeLng: "78.4867",
+    placeCountry: "IN",
     contactName: "Asha Rao",
-    phone: "+91 98450 00000",
+    phoneCountry: "IN",
+    phone: "98450 00000",
     email: " Asha@DeccanSigns.in ",
     gstin: "29aagcb7383j1z4",
   };
 
   it("accepts a full form and tidies what it keeps", () => {
-    const r = checkStart(good);
-    expect(r).toEqual({
+    expect(checkStart(good)).toEqual({
       ok: true,
       email: "asha@deccansigns.in",
       details: {
         name: "Deccan Signs",
+        place: { label: "Hyderabad, Telangana, India", id: null, country: "IN" },
         city: "hyderabad",
         contactName: "Asha Rao",
         phone: "+91 98450 00000",
+        phoneCountry: "IN",
         gstin: "29AAGCB7383J1Z4",
       },
     });
@@ -443,29 +451,180 @@ describe("who is listing", () => {
       return r.ok ? "ok" : r.error;
     };
     expect(why({ name: "D" })).toBe("name");
-    expect(why({ city: "" })).toBe("city");
-    expect(why({ city: "atlantis" })).toBe("city");
+    expect(why({ placeLabel: "" })).toBe("place");
     expect(why({ contactName: " " })).toBe("contact");
     expect(why({ phone: "call me" })).toBe("phone");
+    expect(why({ phone: "12345" })).toBe("phone");
     expect(why({ email: "asha@" })).toBe("email");
     expect(why({ gstin: "29AAGCB7383J1Z5" })).toBe("gstin");
+    // The email stands above the registration number, so it is named first.
+    expect(why({ email: "asha@", gstin: "29AAGCB7383J1Z5" })).toBe("email");
     expect(why({ name: "", email: "" })).toBe("name");
     expect(why({ gstin: "" })).toBe("ok");
   });
 
-  it("lets a company outside the launch cities say so", () => {
-    const r = checkStart({ ...good, city: OTHER_CITY });
-    expect(r.ok && r.details.city).toBeNull();
+  it("takes a company anywhere in the world, with its own phone and registration number", () => {
+    const r = checkStart({
+      ...good,
+      placeLabel: "Dubai, United Arab Emirates",
+      placeId: "ChIJRcbZaklDXz4RYlEphFBu5r0",
+      placeLat: "25.2048",
+      placeLng: "55.2708",
+      placeCountry: "ae",
+      phoneCountry: "AE",
+      phone: "050 123 4567",
+      gstin: "CN-1234567",
+    });
+    if (!r.ok) throw new Error(`expected a good form, got ${r.error}`);
+    expect(r.details.place).toEqual({
+      label: "Dubai, United Arab Emirates",
+      id: "ChIJRcbZaklDXz4RYlEphFBu5r0",
+      country: "AE",
+    });
+    expect(r.details.city).toBeNull();
+    expect(r.details.phone).toBe("+971 50 123 4567");
+    expect(r.details.phoneCountry).toBe("AE");
+    // Outside India the number is not a GSTIN, so it is kept as written and read by the team.
+    expect(r.details.gstin).toBe("CN-1234567");
+    const bad = checkStart({
+      ...good,
+      placeCountry: "AE",
+      placeLat: "25.2",
+      placeLng: "55.27",
+      gstin: "!!",
+    });
+    expect(bad.ok ? "ok" : bad.error).toBe("regno");
+  });
+
+  it("finds the ohworks city from where the place is, or from its name", () => {
+    const city = (change: Partial<typeof good>) => {
+      const r = checkStart({ ...good, ...change });
+      return r.ok ? r.details.city : "refused";
+    };
+    // Gurugram is within reach of Delhi NCR by position.
+    expect(
+      city({ placeLabel: "Gurugram, Haryana, India", placeLat: "28.4595", placeLng: "77.0266" }),
+    ).toBe("delhi-ncr");
+    // Typed with no pick, the name alone is tried.
+    expect(city({ placeLabel: "Bangalore", placeLat: "", placeLng: "", placeCountry: "" })).toBe(
+      "bengaluru",
+    );
+    expect(
+      city({ placeLabel: "Kochi, Kerala, India", placeLat: "9.9312", placeLng: "76.2673" }),
+    ).toBeNull();
+  });
+
+  it("a number that carries its own country code wins over the list", () => {
+    const r = checkStart({ ...good, phoneCountry: "IN", phone: "+44 7700 900123" });
+    if (!r.ok) throw new Error("expected a good form");
+    expect(r.details.phone).toBe("+44 7700 900123");
+    expect(r.details.phoneCountry).toBe("GB");
   });
 
   it("reads kept details back, and treats anything else as absent", () => {
     const r = checkStart(good);
     if (!r.ok) throw new Error("expected a good form");
     expect(readDetails(JSON.parse(JSON.stringify(r.details)))).toEqual(r.details);
-    expect(readDetails({ ...r.details, city: null })?.city).toBeNull();
+    expect(readDetails({ ...r.details, city: "atlantis" })?.city).toBeNull();
     expect(readDetails(null)).toBeNull();
     expect(readDetails("a string")).toBeNull();
     expect(readDetails({ name: "D" })).toBeNull();
     expect(readDetails({ ...r.details, phone: 12 })).toBeNull();
+    expect(readDetails({ ...r.details, place: { label: "" } })).toBeNull();
+  });
+});
+
+describe("places", () => {
+  it("the list in the code finds cities by how they start, whatever the accents", async () => {
+    process.env.PLACES_PROVIDER = "local";
+    const found = await searchPlaces("hyd", "city", "");
+    expect(found.provider).toBe("local");
+    expect(found.suggestions[0]).toMatchObject({ label: "Hyderabad", detail: "Telangana, India" });
+    expect((await searchPlaces("sao p", "city", "")).suggestions[0]?.label).toBe("São Paulo");
+    expect((await searchPlaces("h", "city", "")).suggestions).toEqual([]);
+    const dubai = (await searchPlaces("Dubai", "city", "")).suggestions[0];
+    expect(await placeDetail(dubai?.id ?? "", "")).toMatchObject({
+      label: "Dubai, United Arab Emirates",
+      countryCode: "AE",
+      lat: 25.2048,
+      lng: 55.2708,
+    });
+    expect(await placeDetail("l:99999", "")).toBeNull();
+    expect(await placeDetail("nonsense", "")).toBeNull();
+    delete process.env.PLACES_PROVIDER;
+  });
+
+  it("chooses Google when a key is set, and never the open service in production", () => {
+    const keep = { ...process.env };
+    delete process.env.PLACES_PROVIDER;
+    process.env.GOOGLE_MAPS_API_KEY = "a-key";
+    expect(provider()).toBe("google");
+    process.env.GOOGLE_MAPS_API_KEY = "";
+    Object.assign(process.env, { NODE_ENV: "production" });
+    expect(provider()).toBe("local");
+    Object.assign(process.env, { NODE_ENV: "development" });
+    expect(provider()).toBe("photon");
+    process.env = keep;
+  });
+
+  it("matches a place to an ohworks city only when it is in one", () => {
+    expect(launchCity({ label: "Noida", lat: 28.5355, lng: 77.391 })).toBe("delhi-ncr");
+    expect(launchCity({ label: "Mysuru", lat: 12.2958, lng: 76.6394 })).toBeNull();
+    expect(launchCity({ label: "Bombay" })).toBe("mumbai");
+    expect(launchCity({ label: "Dubai, United Arab Emirates" })).toBeNull();
+  });
+});
+
+describe("phone numbers from anywhere", () => {
+  it("reads a number the way it is written in its own country", () => {
+    expect(checkPhone("IN", "98450 00000")).toMatchObject({
+      ok: true,
+      display: "+91 98450 00000",
+      e164: "+919845000000",
+    });
+    expect(checkPhone("US", "(415) 555-0132")).toMatchObject({
+      ok: true,
+      display: "+1 415 555 0132",
+      country: "US",
+    });
+    expect(checkPhone("GB", "07700 900123")).toMatchObject({
+      ok: true,
+      display: "+44 7700 900123",
+    });
+    expect(checkPhone("AE", "050 123 4567")).toMatchObject({
+      ok: true,
+      display: "+971 50 123 4567",
+    });
+  });
+
+  it("refuses what could not be a number there", () => {
+    expect(checkPhone("IN", "12345").ok).toBe(false);
+    expect(checkPhone("IN", "call me").ok).toBe(false);
+    expect(checkPhone("IN", "").ok).toBe(false);
+    expect(checkPhone("GB", "9".repeat(40)).ok).toBe(false);
+  });
+
+  it("offers every country once, by name, with its calling code", () => {
+    expect(PHONE_COUNTRIES.length).toBeGreaterThan(200);
+    expect(new Set(PHONE_COUNTRIES.map((c) => c.code)).size).toBe(PHONE_COUNTRIES.length);
+    expect(PHONE_COUNTRIES.find((c) => c.code === "IN")).toEqual({
+      code: "IN",
+      name: "India",
+      dial: "+91",
+    });
+    expect(PHONE_COUNTRIES.find((c) => c.code === "AE")?.dial).toBe("+971");
+  });
+
+  it("splits a saved number back into its country and the part written after it", () => {
+    expect(splitPhone("+971 50 123 4567", "AE")).toEqual({
+      country: "AE",
+      national: "050 123 4567",
+    });
+    expect(splitPhone("+91 98450 00000", null)).toEqual({
+      country: "IN",
+      national: "098450 00000",
+    });
+    expect(splitPhone("", "GB")).toEqual({ country: "GB", national: "" });
+    expect(splitPhone(null, null)).toEqual({ country: "IN", national: "" });
   });
 });

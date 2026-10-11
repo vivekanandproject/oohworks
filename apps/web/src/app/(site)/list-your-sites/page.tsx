@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Button, Container, NEUTRALITY_LINE } from "@ohworks/ui";
-import { NativeSelect } from "@/components/NativeSelect";
+import { PhoneField } from "@/components/PhoneField";
+import { PlaceField } from "@/components/PlaceField";
 import { Shell } from "@/components/Shell";
 import { Notice } from "@/components/owners/Bits";
 import {
@@ -11,11 +13,10 @@ import {
   PageHead,
   StepsCard,
 } from "@/components/owners/Frame";
-import { OTHER_CITY } from "@/lib/owners/company-input";
 import { ownerByEmail, ownerEmail } from "@/lib/owners/server";
+import { countryOf, isPhoneCountry } from "@/lib/phone";
 import { alternates } from "@/lib/seo";
 import { maskEmail } from "@/lib/sites/enquiry";
-import { CITIES } from "@/lib/sites/taxonomy";
 
 export const dynamic = "force-dynamic";
 
@@ -33,15 +34,15 @@ const ERRORS: Record<string, { t: string; d: string; field?: keyof typeof FIELD_
     d: "It is shown to buyers as the owner and seller.",
     field: "name",
   },
-  city: {
-    t: "Choose your city.",
-    d: "Pick “Another city” if yours is not in the list.",
-    field: "city",
+  place: {
+    t: "Say where your company is based.",
+    d: "Start typing your city and choose it from the list, or type it in full.",
+    field: "place",
   },
   contact: { t: "Add your own name.", d: "It is for our team only.", field: "contactName" },
   phone: {
     t: "Check the phone number.",
-    d: "Use digits, with the country code if you like, such as +91 98450 00000.",
+    d: "Choose the country, then type the number as you write it there.",
     field: "phone",
   },
   email: {
@@ -54,6 +55,11 @@ const ERRORS: Record<string, { t: string; d: string; field?: keyof typeof FIELD_
     d: "It has 15 characters and its last one must add up. Check it against your certificate, or leave it empty for now.",
     field: "gstin",
   },
+  regno: {
+    t: "That registration number did not look right.",
+    d: "Use the number on your trade licence or registration, or leave it empty for now.",
+    field: "gstin",
+  },
   busy: { t: "Too many tries in a short time.", d: "Wait a minute, then try again." },
   send: { t: "We could not send the code just now.", d: "Try again in a minute." },
   again: { t: "That code can no longer be used.", d: "Send the form again for a new one." },
@@ -61,7 +67,7 @@ const ERRORS: Record<string, { t: string; d: string; field?: keyof typeof FIELD_
 
 const FIELD_ID = {
   name: "lys-name",
-  city: "lys-city",
+  place: "lys-place",
   contactName: "lys-contact",
   phone: "lys-phone",
   email: "owner-email",
@@ -102,6 +108,10 @@ export default async function ListYourSitesPage({
   // After a mistake the form comes back holding what was typed.
   const typed = (key: string, max: number): string => one(q[key]).slice(0, max);
   const wrong = (field: string) => (error?.field === field ? true : undefined);
+  // The country list opens on the visitor's own country when the network says which it is.
+  const phoneCountry = isPhoneCountry(typed("phoneCountry", 2))
+    ? typed("phoneCountry", 2)
+    : countryOf(await headers());
   // The same words sit under the field itself, so the mistake is named where it is.
   const why = (field: string) =>
     error?.field === field ? (
@@ -207,108 +217,114 @@ export default async function ListYourSitesPage({
                   </p>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label htmlFor="lys-city" className="oh-label block">
-                      City
-                    </label>
-                    <NativeSelect
-                      id="lys-city"
-                      name="city"
-                      required
-                      value={typed("city", 20)}
-                      placeholder="Choose…"
-                      options={[
-                        ...CITIES.map((c) => ({ value: c.slug, label: c.label })),
-                        { value: OTHER_CITY, label: "Another city" },
-                      ]}
-                      aria-invalid={wrong("city")}
-                      className="oh-input mt-1 scroll-mt-10"
-                    />
-                    {why("city")}
-                  </div>
-                  <div>
-                    <label htmlFor="lys-contact" className="oh-label block">
-                      Your name
-                    </label>
-                    <input
-                      id="lys-contact"
-                      name="contactName"
-                      type="text"
-                      required
-                      minLength={2}
-                      maxLength={80}
-                      defaultValue={typed("contactName", 80)}
-                      autoComplete="name"
-                      aria-invalid={wrong("contactName")}
-                      className="oh-input mt-1 scroll-mt-10"
-                    />
-                    {why("contactName")}
-                  </div>
+                <div>
+                  <label htmlFor="lys-place" className="oh-label block">
+                    Where the company is based
+                  </label>
+                  <PlaceField
+                    id="lys-place"
+                    name="place"
+                    scope="city"
+                    required
+                    defaultLabel={typed("placeLabel", 160)}
+                    defaults={{
+                      id: typed("placeId", 300),
+                      lat: typed("placeLat", 24),
+                      lng: typed("placeLng", 24),
+                      country: typed("placeCountry", 2),
+                    }}
+                    placeholder="Start typing your city"
+                    describedBy="lys-place-help"
+                    invalid={wrong("place") ?? false}
+                    className="oh-input mt-1 scroll-mt-10"
+                    phone={{ countryId: "lys-phone-country", numberId: "lys-phone" }}
+                  />
+                  {why("place")}
+                  <p id="lys-place-help" className="t-small text-ink-muted mt-1">
+                    Any city in the world. Choose it from the list as you type.
+                  </p>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div>
-                    <label htmlFor="lys-phone" className="oh-label block">
-                      Phone
-                    </label>
-                    <input
-                      id="lys-phone"
-                      name="phone"
-                      type="tel"
-                      required
-                      maxLength={24}
-                      defaultValue={typed("phone", 24)}
-                      autoComplete="tel"
-                      placeholder="+91"
-                      aria-describedby="lys-phone-help"
-                      aria-invalid={wrong("phone")}
-                      className="oh-input data mt-1 scroll-mt-10"
-                    />
-                    {why("phone")}
-                    <p id="lys-phone-help" className="t-small text-ink-muted mt-1">
-                      Shown to a buyer only when they ask to see it.
-                    </p>
+                <div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="lys-contact" className="oh-label block">
+                        Your name
+                      </label>
+                      <input
+                        id="lys-contact"
+                        name="contactName"
+                        type="text"
+                        required
+                        minLength={2}
+                        maxLength={80}
+                        defaultValue={typed("contactName", 80)}
+                        autoComplete="name"
+                        aria-invalid={wrong("contactName")}
+                        className="oh-input mt-1 scroll-mt-10"
+                      />
+                      {why("contactName")}
+                    </div>
+                    <div>
+                      <label htmlFor="owner-email" className="oh-label block">
+                        Work email
+                      </label>
+                      <input
+                        id="owner-email"
+                        name="email"
+                        type="email"
+                        required
+                        maxLength={254}
+                        defaultValue={typed("email", 254)}
+                        autoComplete="email"
+                        placeholder="you@yourcompany.com"
+                        aria-describedby="owner-email-help"
+                        aria-invalid={wrong("email")}
+                        className="oh-input mt-1 scroll-mt-10"
+                      />
+                      {why("email")}
+                    </div>
                   </div>
-                  <div>
-                    <label htmlFor="owner-email" className="oh-label block">
-                      Work email
-                    </label>
-                    <input
-                      id="owner-email"
-                      name="email"
-                      type="email"
-                      required
-                      maxLength={254}
-                      defaultValue={typed("email", 254)}
-                      autoComplete="email"
-                      placeholder="you@yourcompany.com"
-                      aria-describedby="owner-email-help"
-                      aria-invalid={wrong("email")}
-                      className="oh-input mt-1 scroll-mt-10"
-                    />
-                    {why("email")}
-                    <p id="owner-email-help" className="t-small text-ink-muted mt-1">
-                      Enquiries are sent here. We confirm it with a code. Never shown on the site.
-                    </p>
-                  </div>
+                  <p id="owner-email-help" className="t-small text-ink-muted mt-1">
+                    Enquiries are sent to your work email. We confirm it with a code. It is never
+                    shown on the site.
+                  </p>
+                </div>
+
+                <div>
+                  <label htmlFor="lys-phone" className="oh-label block">
+                    Phone
+                  </label>
+                  <PhoneField
+                    id="lys-phone"
+                    country={phoneCountry}
+                    number={typed("phone", 32)}
+                    required
+                    invalid={wrong("phone") ?? false}
+                    describedBy="lys-phone-help"
+                  />
+                  {why("phone")}
+                  <p id="lys-phone-help" className="t-small text-ink-muted mt-1">
+                    Choose the country, then the number as you write it there. Shown to a buyer only
+                    when they ask to see it.
+                  </p>
                 </div>
 
                 <FormSection
                   title="For the Verified owner badge"
                   part="badge"
-                  note="Optional now. Our team checks the number against your GST certificate, which you add after this step. Neither is ever shown."
+                  note="Optional now. Our team checks the number against your GST certificate or trade licence, which you add after this step. Neither is ever shown."
                 >
                   <div className="sm:max-w-[calc(50%-8px)]">
                     <label htmlFor="lys-gstin" className="oh-label block">
-                      GSTIN, optional
+                      GSTIN or licence number, optional
                     </label>
                     <input
                       id="lys-gstin"
                       name="gstin"
                       type="text"
-                      maxLength={24}
-                      defaultValue={typed("gstin", 24)}
+                      maxLength={40}
+                      defaultValue={typed("gstin", 40)}
                       placeholder="29ABCDE1234F1Z5"
                       autoCapitalize="characters"
                       aria-invalid={wrong("gstin")}

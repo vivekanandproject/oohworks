@@ -16,7 +16,7 @@ import {
   sameHash,
 } from "@/lib/sites/enquiry";
 import { sendMail } from "@/lib/sites/mail";
-import { formatDef, type CitySlug } from "@/lib/sites/taxonomy";
+import { formatDef } from "@/lib/sites/taxonomy";
 import type { AccessCode, Media, Owner, OwnerFile, Site } from "@/payload-types";
 import { readDetails, type StartDetails } from "./company-input";
 import { metresBetween, sameFace } from "./coords";
@@ -183,14 +183,9 @@ export async function resendCode(row: AccessCode): Promise<boolean> {
 
 /* Company ---------------------------------------------------------------------------------------- */
 
-export interface CompanyInput {
-  name: string;
-  city: CitySlug | null;
-  contactName: string;
-  phone: string;
+export interface CompanyInput extends StartDetails {
   contactEmail: string;
   about: string | null;
-  gstin: string | null;
 }
 
 const slugOf = (name: string): string =>
@@ -203,11 +198,20 @@ const slugOf = (name: string): string =>
 export async function saveCompany(email: string, input: CompanyInput): Promise<Owner> {
   const payload = await client();
   const existing = await ownerByEmail(email);
+  // A place picked from the search is matched to a city by where it is. Saved again unchanged, it
+  // arrives as words alone, so the city found the first time is kept.
+  const unchanged = existing?.location?.label === input.place.label;
   const data = {
     name: input.name,
-    city: input.city,
+    city: input.city ?? (unchanged ? (existing?.city ?? null) : null),
+    location: {
+      label: input.place.label,
+      placeId: input.place.id,
+      country: input.place.country,
+    },
     contactName: input.contactName,
     phone: input.phone,
+    phoneCountry: input.phoneCountry,
     contactEmail: input.contactEmail,
     about: input.about,
     gstin: input.gstin,

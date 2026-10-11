@@ -330,16 +330,40 @@ export interface Owner {
   id: number;
   name: string;
   slug?: string | null;
+  /**
+   * The ohworks city the company is in, when it is in one. Set from the place below.
+   */
   city?: ('bengaluru' | 'mumbai' | 'delhi-ncr' | 'hyderabad' | 'pune' | 'chennai') | null;
+  /**
+   * Where the company says it is based. It can be anywhere in the world.
+   */
+  location?: {
+    /**
+     * As the owner chose or typed it
+     */
+    label?: string | null;
+    /**
+     * The Google place, when it was picked from the search
+     */
+    placeId?: string | null;
+    /**
+     * ISO country code
+     */
+    country?: string | null;
+  };
   about?: string | null;
   /**
    * Enquiries go here. Never shown on the site.
    */
   contactEmail: string;
   /**
-   * Shown on the site only when a buyer asks to see it
+   * In the international form, such as +91 98450 00000. Shown on the site only when a buyer asks to see it
    */
   phone?: string | null;
+  /**
+   * ISO country code of the number
+   */
+  phoneCountry?: string | null;
   /**
    * The person who listed. Never shown on the site.
    */
@@ -1346,9 +1370,17 @@ export interface OwnersSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   city?: T;
+  location?:
+    | T
+    | {
+        label?: T;
+        placeId?: T;
+        country?: T;
+      };
   about?: T;
   contactEmail?: T;
   phone?: T;
+  phoneCountry?: T;
   contactName?: T;
   gstin?: T;
   loginEmail?: T;

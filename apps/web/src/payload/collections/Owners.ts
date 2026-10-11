@@ -25,7 +25,31 @@ export const Owners: CollectionConfig = {
   fields: [
     { name: "name", type: "text", required: true },
     { name: "slug", type: "text", unique: true, index: true, admin: { position: "sidebar" } },
-    { name: "city", type: "select", options: CITY_SELECT },
+    {
+      name: "city",
+      type: "select",
+      options: CITY_SELECT,
+      admin: {
+        description:
+          "The ohworks city the company is in, when it is in one. Set from the place below.",
+      },
+    },
+    {
+      name: "location",
+      type: "group",
+      admin: {
+        description: "Where the company says it is based. It can be anywhere in the world.",
+      },
+      fields: [
+        { name: "label", type: "text", admin: { description: "As the owner chose or typed it" } },
+        {
+          name: "placeId",
+          type: "text",
+          admin: { description: "The Google place, when it was picked from the search" },
+        },
+        { name: "country", type: "text", admin: { description: "ISO country code" } },
+      ],
+    },
     { name: "about", type: "textarea" },
     {
       name: "contactEmail",
@@ -37,7 +61,15 @@ export const Owners: CollectionConfig = {
     {
       name: "phone",
       type: "text",
-      admin: { description: "Shown on the site only when a buyer asks to see it" },
+      admin: {
+        description:
+          "In the international form, such as +91 98450 00000. Shown on the site only when a buyer asks to see it",
+      },
+    },
+    {
+      name: "phoneCountry",
+      type: "text",
+      admin: { description: "ISO country code of the number" },
     },
     {
       name: "contactName",

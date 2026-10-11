@@ -159,6 +159,21 @@ Changed on 10 Oct 2026 at the founder's direction. The first build asked for an 
 
 One set of checks, in `src/lib/owners/company-input.ts`, serves the form whichever way it arrives.
 
+### A company anywhere in the world
+
+Added on 11 Oct 2026 at the founder's direction: the place is found with a worldwide search, and the phone can be from any country.
+
+- **Where the company is based** is a search box, on the start page and the company page. As the owner types, places are offered. Choosing one records the place, its country, and the ohworks city it is in, if it is in one. The six-city list is gone from these forms.
+- **Three services can answer the search**, and the page never knows which did. With `GOOGLE_MAPS_API_KEY` set it is Google Places, which is the one meant for real use. Without a key, a development machine uses Photon, the open search built on OpenStreetMap, and a production build uses a list of about 130 cities held in the code. If the chosen service fails, the list answers. The key never leaves the server: the page asks `/api/places/`, which only this site's own pages may call.
+- **Nobody is turned away for where they are.** The box is an ordinary text box first. With no script, or with a place the search does not know, what was typed is what is kept.
+- **The phone** is a country list and a number typed the way it is written in that country. It is checked against that country's own rules with `libphonenumber-js` and kept in the international form, such as `+971 50 123 4567`. A number typed with its own plus carries its country, whatever the list says. The list opens on the visitor's country when the edge network says which it is, and follows the chosen place while the number is still empty.
+- **The registration number** is a GSTIN in India, checked by its last character. Elsewhere it is a trade licence or registration number, kept as written for the team to read against the document.
+- **On the site form**, "Find the place" uses the same search for any road, landmark or address. It puts the pin there, opens the map on it, and moves the site's city to match.
+
+Not changed: a site itself must still be in one of the six cities, because the city pages, the search filters and the addresses are built on that list. A place found outside them is said to be so. Opening sites to every country is its own piece of work.
+
+Google's terms let a place id be kept but not the rest of what the search returns, so for a company only the id, the country and the words the owner chose are stored. A site's position is the owner's own pin, not the search's answer.
+
 ### One design for every owner page
 
 Done on 11 Oct 2026, after the pages were found to disagree with each other and with the rest of the site. Measured side by side they had six column widths, three title sizes, form sections boxed on some pages and plain on others, and box titles on the border in some places and inside in others.

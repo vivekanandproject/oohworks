@@ -37,11 +37,16 @@ export async function POST(req: Request) {
 
   const raw: StartRaw = {
     name: field(form, "name", 80),
-    city: field(form, "city", 20),
+    placeLabel: field(form, "placeLabel", 160),
+    placeId: field(form, "placeId", 300),
+    placeLat: field(form, "placeLat", 24),
+    placeLng: field(form, "placeLng", 24),
+    placeCountry: field(form, "placeCountry", 2),
     contactName: field(form, "contactName", 80),
-    phone: field(form, "phone", 24),
+    phoneCountry: field(form, "phoneCountry", 2),
+    phone: field(form, "phone", 32),
     email: field(form, "email", 254),
-    gstin: field(form, "gstin", 24),
+    gstin: field(form, "gstin", 40),
   };
   // A mistake returns to the form with everything that was typed.
   const back = (error: string) =>

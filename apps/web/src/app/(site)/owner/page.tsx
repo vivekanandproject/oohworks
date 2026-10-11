@@ -91,7 +91,8 @@ export default async function OwnerHomePage({ searchParams }: { searchParams: Pr
           >
             <span data-section="owner-counts">
               {[
-                cityDef(owner.city)?.label,
+                owner.location?.label?.split(",").slice(0, 2).join(",") ??
+                  cityDef(owner.city)?.label,
                 sites.length === 1 ? "1 site" : `${sites.length} sites`,
                 counts.live ? `${counts.live} live` : null,
                 counts.review ? `${counts.review} in review` : null,

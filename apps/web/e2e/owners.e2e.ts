@@ -106,11 +106,38 @@ async function signIn(page: Page, request: APIRequestContext, email: string): Pr
   await expect(page).toHaveURL(/\/owner\//, { timeout: 30_000 });
 }
 
+/**
+ * Types into a place box and picks the first place offered. The box is an ordinary text box until
+ * its script wakes, so the typing is tried again if nothing is offered.
+ */
+async function choosePlace(page: Page, box: string, typed: string, full: string): Promise<void> {
+  const input = page.locator(box);
+  const field = input.locator("xpath=..");
+  const first = field.locator("[role='option']").first();
+  await baseExpect(async () => {
+    await input.fill("");
+    await input.pressSequentially(typed, { delay: 20 });
+    await baseExpect(first).toBeVisible({ timeout: 4000 });
+  }).toPass({ timeout: 40_000 });
+  await first.click();
+  await expect(input).toHaveValue(full);
+  // The pick is recorded once the place's details have come back.
+  await expect(field.locator("input[name='placeCountry']")).not.toHaveValue("");
+}
+
+/** A number from the range British television is given for drama, so it is nobody's. */
+const PHONE = { country: "GB", typed: "07700 900123", kept: "+44 7700 900123" };
+async function typePhone(page: Page, id: string): Promise<void> {
+  await page.locator(`${id}-country`).selectOption(PHONE.country);
+  await page.locator(id).fill(PHONE.typed);
+}
+const HYDERABAD = "Hyderabad, Telangana, India";
+
 async function addCompany(page: Page, name: string): Promise<void> {
   await page.locator("#co-name").fill(name);
-  await page.locator("#co-city").selectOption("hyderabad");
+  await choosePlace(page, "#co-place", "Hyder", HYDERABAD);
   await page.locator("#co-contact").fill("Asha Rao");
-  await page.locator("#co-phone").fill("+91 00000 00042");
+  await typePhone(page, "#co-phone");
   await page.locator("[data-action='save-company']").click();
   await expect(page).toHaveURL(/\/owner\/\?saved=company$/, { timeout: 30_000 });
 }
@@ -138,11 +165,14 @@ test.describe("list your sites: the start", () => {
     ]);
     // One form asks for the company, the person and where enquiries go. Only the GSTIN can wait.
     const form = page.locator("[data-section='start-form']");
-    for (const id of ["lys-name", "lys-city", "lys-contact", "lys-phone", "owner-email"])
+    for (const id of ["lys-name", "lys-place", "lys-contact", "lys-phone", "owner-email"])
       await expect(form.locator(`#${id}`), `${id} is asked for`).toHaveAttribute("required", "");
     await expect(form.locator("#lys-gstin")).not.toHaveAttribute("required", "");
     await expect(form.locator("label[for='lys-gstin']")).toContainText("optional");
-    await expect(form.locator("#lys-city option")).toContainText(["Another city"]);
+    // The company can be anywhere: its place is searched, and its phone can be from any country.
+    await expect(form.locator("#lys-place")).toHaveAttribute("role", "combobox");
+    expect(await form.locator("#lys-phone-country option").count()).toBeGreaterThan(200);
+    await expect(form.locator("#lys-phone-country")).toHaveValue("IN");
     await expect(form.locator("[data-action='start']")).toHaveText("Save and send my code");
     // The four steps are beside the form, with this one marked in words.
     await expect(page.locator("[data-section='steps'] li")).toHaveCount(4);
@@ -273,9 +303,9 @@ test.describe("list your sites: the first form", () => {
 
   const fill = async (page: Page, v: { name: string; email: string; gstin?: string }) => {
     await page.locator("#lys-name").fill(v.name);
-    await page.locator("#lys-city").selectOption("hyderabad");
+    await choosePlace(page, "#lys-place", "Hyder", HYDERABAD);
     await page.locator("#lys-contact").fill("Asha Rao");
-    await page.locator("#lys-phone").fill("+91 00000 00042");
+    await typePhone(page, "#lys-phone");
     await page.locator("#owner-email").fill(v.email);
     if (v.gstin) await page.locator("#lys-gstin").fill(v.gstin);
   };
@@ -286,7 +316,16 @@ test.describe("list your sites: the first form", () => {
           `/api/owners?where[loginEmail][equals]=${encodeURIComponent(email)}&depth=0`,
           { headers: await adminHeaders(request) },
         )
-      ).json()) as { docs: { name: string; gstin?: string | null }[] }
+      ).json()) as {
+        docs: {
+          name: string;
+          gstin?: string | null;
+          city?: string | null;
+          phone?: string | null;
+          phoneCountry?: string | null;
+          location?: { label?: string | null; country?: string | null } | null;
+        }[];
+      }
     ).docs;
 
   test("one form, one code, and the owner is in with their company made", async ({
@@ -321,13 +360,20 @@ test.describe("list your sites: the first form", () => {
     const made = await ownersWith(request, email);
     expect(made).toHaveLength(1);
     expect(made[0]?.gstin).toBe("29AAGCB7383J1Z4");
+    // The place is kept as chosen and matched to the ohworks city it is in. The phone is kept in
+    // the form that can be dialled from anywhere.
+    expect(made[0]?.location).toMatchObject({ label: HYDERABAD, country: "IN" });
+    expect(made[0]?.city).toBe("hyderabad");
+    expect(made[0]?.phone).toBe(PHONE.kept);
+    expect(made[0]?.phoneCountry).toBe(PHONE.country);
 
     // Everything the form asked is on the company page, and enquiries go to the confirmed address.
     await page.goto("/owner/company/");
     await expect(page.locator("#co-name")).toHaveValue(company);
-    await expect(page.locator("#co-city")).toHaveValue("hyderabad");
+    await expect(page.locator("#co-place")).toHaveValue(HYDERABAD);
     await expect(page.locator("#co-contact")).toHaveValue("Asha Rao");
-    await expect(page.locator("#co-phone")).toHaveValue("+91 00000 00042");
+    await expect(page.locator("#co-phone-country")).toHaveValue(PHONE.country);
+    await expect(page.locator("#co-phone")).toHaveValue(PHONE.typed);
     await expect(page.locator("#co-email")).toHaveValue(email);
     await expect(page.locator("#co-gstin")).toHaveValue("29AAGCB7383J1Z4");
 
@@ -359,9 +405,11 @@ test.describe("list your sites: the first form", () => {
       "That GSTIN is not right.",
     );
     await expect(page.locator("#lys-name")).toHaveValue("E2E Form Mistake");
-    await expect(page.locator("#lys-city")).toHaveValue("hyderabad");
+    await expect(page.locator("#lys-place")).toHaveValue(HYDERABAD);
+    await expect(page.locator("input[name='placeCountry']")).toHaveValue("IN");
     await expect(page.locator("#lys-contact")).toHaveValue("Asha Rao");
-    await expect(page.locator("#lys-phone")).toHaveValue("+91 00000 00042");
+    await expect(page.locator("#lys-phone-country")).toHaveValue(PHONE.country);
+    await expect(page.locator("#lys-phone")).toHaveValue(PHONE.typed);
     await expect(page.locator("#owner-email")).toHaveValue(email);
     await expect(page.locator("#lys-gstin")).toHaveAttribute("aria-invalid", "true");
     // The mistake is named beside the field too, and the notice leads to it.
@@ -379,9 +427,13 @@ test.describe("list your sites: the first form", () => {
         await request.post("/api/owner/start/", {
           form: {
             name: "E2E Form Mistake",
-            city: "hyderabad",
+            placeLabel: HYDERABAD,
+            placeLat: "17.385",
+            placeLng: "78.4867",
+            placeCountry: "IN",
             contactName: "Asha Rao",
-            phone: "+91 00000 00042",
+            phoneCountry: PHONE.country,
+            phone: PHONE.typed,
             email,
             gstin: "",
             ...change,
@@ -391,13 +443,171 @@ test.describe("list your sites: the first form", () => {
         })
       ).headers()["location"] ?? "";
     expect(await post({ name: "X" })).toMatch(/^\/list-your-sites\/\?error=name&/);
-    expect(await post({ city: "" })).toMatch(/^\/list-your-sites\/\?error=city&/);
+    expect(await post({ placeLabel: "" })).toMatch(/^\/list-your-sites\/\?error=place&/);
     expect(await post({ contactName: "" })).toMatch(/^\/list-your-sites\/\?error=contact&/);
     expect(await post({ phone: "call me" })).toMatch(/^\/list-your-sites\/\?error=phone&/);
+    // Too short to be a number in the country chosen.
+    expect(await post({ phoneCountry: "IN", phone: "12345" })).toMatch(
+      /^\/list-your-sites\/\?error=phone&/,
+    );
     expect(await post({ email: "not-an-email" })).toMatch(/^\/list-your-sites\/\?error=email&/);
-    // A company based outside the launch cities can say so and carry on.
-    expect(await post({ city: "other" })).toMatch(/^\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}$/);
+    // A company anywhere in the world carries on, with its own phone and registration number.
+    expect(
+      await post({
+        placeLabel: "Dubai, United Arab Emirates",
+        placeLat: "25.2048",
+        placeLng: "55.2708",
+        placeCountry: "AE",
+        phoneCountry: "AE",
+        phone: "050 123 4567",
+        gstin: "CN-1234567",
+      }),
+    ).toMatch(/^\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}$/);
     expect(await ownersWith(request, email)).toHaveLength(0);
+  });
+});
+
+test.describe("list your sites: anywhere in the world", () => {
+  test.afterAll(async ({ request }) => removeOwners(request, "owner-world-"));
+
+  test("the place search answers this site's own pages, and nobody else's", async ({
+    request,
+    browserName,
+    isMobile,
+  }) => {
+    test.skip(
+      browserName !== "chromium" || Boolean(isMobile),
+      "one engine is enough for an API check",
+    );
+    const found = (await (await request.get("/api/places/?q=hyd&scope=city")).json()) as {
+      provider: string;
+      suggestions: { id: string; label: string; detail: string }[];
+    };
+    // No key is set where the tests run, so the list held in the code answers.
+    expect(found.provider).toBe("local");
+    expect(found.suggestions[0]).toMatchObject({ label: "Hyderabad", detail: "Telangana, India" });
+    const detail = (await (
+      await request.get(`/api/places/detail/?id=${encodeURIComponent(found.suggestions[0]!.id)}`)
+    ).json()) as { place: { countryCode: string; lat: number }; city: string };
+    expect(detail.place).toMatchObject({ countryCode: "IN", lat: 17.385 });
+    expect(detail.city).toBe("hyderabad");
+    expect((await (await request.get("/api/places/?q=h")).json()).suggestions).toEqual([]);
+    const stranger = await request.get("/api/places/?q=hyd", {
+      headers: { "sec-fetch-site": "cross-site" },
+    });
+    expect(stranger.status()).toBe(403);
+  });
+
+  test("a company in another country is found by search, with a phone from that country", async ({
+    page,
+    request,
+  }, info) => {
+    test.setTimeout(120_000);
+    const stamp = Date.now();
+    const email = `owner-world-${info.project.name}-${stamp}@example.org`;
+    const company = `E2E Gulf ${info.project.name} ${stamp}`;
+    const ownerOf = async () =>
+      (
+        (await (
+          await request.get(
+            `/api/owners?where[loginEmail][equals]=${encodeURIComponent(email)}&depth=0`,
+            { headers: await adminHeaders(request) },
+          )
+        ).json()) as {
+          docs: {
+            city?: string | null;
+            phone?: string | null;
+            phoneCountry?: string | null;
+            location?: { label?: string | null; country?: string | null } | null;
+          }[];
+        }
+      ).docs[0];
+
+    await page.goto("/list-your-sites/");
+    await page.locator("#lys-name").fill(company);
+    // Typed, offered, and chosen with the keyboard alone.
+    const place = page.locator("#lys-place");
+    const options = page.locator("[data-section='start-form'] [role='option']");
+    await baseExpect(async () => {
+      await place.fill("");
+      await place.pressSequentially("Dub", { delay: 20 });
+      await baseExpect(options.first()).toBeVisible({ timeout: 4000 });
+    }).toPass({ timeout: 40_000 });
+    await expect(options.first()).toContainText("Dubai");
+    await expect(place).toHaveAttribute("aria-expanded", "true");
+    await place.press("ArrowDown");
+    await place.press("Enter");
+    await expect(place).toHaveValue("Dubai, United Arab Emirates");
+    await expect(page).toHaveURL(/\/list-your-sites\/$/);
+    // The phone's country follows the place while the number is still empty.
+    await expect(page.locator("#lys-phone-country")).toHaveValue("AE");
+    await page.locator("#lys-contact").fill("Asha Rao");
+    await page.locator("#owner-email").fill(email);
+    await page.locator("#lys-phone").fill("050 123 4567");
+    await page.locator("#lys-gstin").fill("CN-1234567");
+    await page.locator("[data-action='start']").click();
+    await expect(page).toHaveURL(/\/list-your-sites\/confirm\/\?t=[0-9a-f]{24}$/);
+    const code =
+      /\b\d{6}\b/.exec((await mails(request, email, "owner_code"))[0]?.text ?? "")?.[0] ?? "";
+    await page.locator("#owner-code").fill(code);
+    await page.locator("[data-action='confirm']").click();
+    await expect(page).toHaveURL(/\/owner\/\?saved=welcome$/);
+    await expect(page.locator("[data-section='owner-counts']")).toContainText(
+      "Dubai, United Arab Emirates",
+    );
+    expect(await ownerOf()).toMatchObject({
+      location: { label: "Dubai, United Arab Emirates", country: "AE" },
+      city: null,
+      phone: "+971 50 123 4567",
+      phoneCountry: "AE",
+    });
+
+    // The company page shows it back the way it was given.
+    await page.goto("/owner/company/");
+    await expect(page.locator("#co-place")).toHaveValue("Dubai, United Arab Emirates");
+    await expect(page.locator("#co-phone-country")).toHaveValue("AE");
+    await expect(page.locator("#co-phone")).toHaveValue("050 123 4567");
+    await expect(page.locator("#co-gstin")).toHaveValue("CN-1234567");
+
+    // A place the search does not know is kept as typed. Nobody is turned away for where they are.
+    const mine = page.locator("#co-place");
+    await baseExpect(async () => {
+      await mine.fill("");
+      await mine.pressSequentially("Timbuktu, Mali", { delay: 20 });
+      await baseExpect(
+        page.locator("[data-section='company-form'] [data-section='place-options']"),
+      ).toContainText("You can keep what you typed", { timeout: 4000 });
+    }).toPass({ timeout: 40_000 });
+    await page.locator("[data-action='save-company']").click();
+    await expect(page).toHaveURL(/\/owner\/\?saved=company$/);
+    await expect(page.locator("[data-section='owner-counts']")).toContainText("Timbuktu, Mali");
+    expect((await ownerOf())?.location).toMatchObject({ label: "Timbuktu, Mali", country: null });
+
+    // On the site form the same search puts the pin on the place and moves the city to match.
+    await page.goto("/owner/sites/new/");
+    const find = page.locator("#site-find");
+    const found = page.locator("[data-section='site-found']");
+    await baseExpect(async () => {
+      await find.fill("");
+      await find.pressSequentially("Pune", { delay: 20 });
+      await baseExpect(
+        page.locator("[data-section='pin-picker'] [role='option']").first(),
+      ).toBeVisible({ timeout: 4000 });
+    }).toPass({ timeout: 40_000 });
+    // Enter chooses the first place. It does not send the form the search sits in.
+    await find.press("Enter");
+    await expect(found).toContainText("The pin is at Pune, Maharashtra, India");
+    await expect(page).toHaveURL(/\/owner\/sites\/new\/$/);
+    await expect(page.locator("#site-lat")).toHaveValue("18.52040");
+    await expect(page.locator("#site-lng")).toHaveValue("73.85670");
+    await expect(page.locator("select[name='city']")).toHaveValue("pune");
+    // A place outside the cities ohworks has pages for is said to be so.
+    await find.fill("");
+    await find.pressSequentially("Singap", { delay: 20 });
+    await expect(page.locator("[data-section='pin-picker'] [role='option']").first()).toBeVisible();
+    await find.press("Enter");
+    await expect(found).toContainText("That is outside");
+    await expect(page.locator("#site-lat")).toHaveValue("1.35210");
   });
 });
 
@@ -596,9 +806,9 @@ test.describe("list your sites: the journey", () => {
 
       // The company. A mistyped GSTIN is caught, and what was typed is kept.
       await page.locator("#co-name").fill(company);
-      await page.locator("#co-city").selectOption("hyderabad");
+      await choosePlace(page, "#co-place", "Hyder", HYDERABAD);
       await page.locator("#co-contact").fill("Asha Rao");
-      await page.locator("#co-phone").fill("+91 00000 00042");
+      await typePhone(page, "#co-phone");
       await page.locator("#co-gstin").fill("29AAGCB7383J1Z5");
       await page.locator("[data-action='save-company']").click();
       await expect(page.locator("[data-section='company-error']")).toContainText(
