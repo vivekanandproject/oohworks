@@ -291,7 +291,7 @@ The owner tests now fail on any script error on a page, and a test reads the raw
 
 ### A demonstration owner on this machine
 
-To look around without listing anything, start at `/list-your-sites/` with `demo-owner@example.com`. The code is shown on the confirm page. It has one live site, one returned with a reason, and a media kit. It is labelled as a sample and is not part of the seeds.
+To look around without listing anything, go to `/sign-in/`, choose "Forgot it?" and ask for a code as `demo-owner@example.com`. The code is shown on the next page, because a development machine has no email service. It has one live site, one returned with a reason, and a media kit. It is labelled as a sample and is not part of the seeds.
 
 ### Not in step 1
 
