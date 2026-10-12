@@ -1,0 +1,84 @@
+# The GitHub Actions workflow for this project: lint, type check, unit tests, the CMS checks, the
+# build, the browser tests on three engines, and the Lighthouse budgets.
+#
+# It is parked here, where GitHub does not run it. A token may only push a file under
+# .github/workflows/ when it has the workflow permission, and the token this was first pushed with
+# did not. To switch the tests on: move this file to .github/workflows/ci.yml and push with a token
+# that has it (classic: the workflow scope; fine-grained: Workflows, read and write).
+
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ohworks
+          POSTGRES_PASSWORD: ohworks
+          POSTGRES_DB: ohworks
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ohworks -d ohworks"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://ohworks:ohworks@localhost:5432/ohworks
+      PAYLOAD_SECRET: ci-only-secret
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3100
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - name: Create the CMS schema and load users, sources, sample pieces and sample sites
+        run: |
+          cp .env.example .env
+          pnpm --filter @ohworks/web seed
+          pnpm --filter @ohworks/web seed:demo
+          pnpm --filter @ohworks/web seed:sites
+      - name: Editorial workflow checks (fact-check gate, roles, versions)
+        run: pnpm --filter @ohworks/web verify:cms
+      - run: pnpm build
+      - name: Install browsers (Chromium, WebKit, Firefox)
+        run: pnpm --filter @ohworks/web exec playwright install --with-deps chromium webkit firefox
+      - name: End-to-end, responsive and cross-browser checks
+        run: pnpm test:e2e
+      - name: Lighthouse budgets
+        run: pnpm lighthouse
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: apps/web/test-results
+
+  image:
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build container image (no push until Artifact Registry exists)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: ohworks/web:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
