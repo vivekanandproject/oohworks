@@ -931,8 +931,9 @@ const ROWS: Row[] = [
 ];
 
 async function main() {
-  if (process.env.NODE_ENV === "production")
-    throw new Error("Sample sites are for development only.");
+  // Sample sites never go to a real site. A preview host says so itself with SAMPLE_DATA=allow.
+  if (process.env.NODE_ENV === "production" && process.env.SAMPLE_DATA !== "allow")
+    throw new Error("Sample sites are for development and previews only.");
   const payload = await getPayload({ config });
 
   const ownerIds = new Map<OwnerKey, number>();

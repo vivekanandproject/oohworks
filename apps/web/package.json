@@ -18,9 +18,11 @@
     "seed": "node --env-file=../../.env --import tsx src/payload/seed.ts",
     "verify:cms": "node --env-file=../../.env --import tsx src/payload/verify.ts",
     "seed:demo": "node --env-file=../../.env --import tsx src/payload/seed-demo.ts",
-    "seed:sites": "node --env-file=../../.env --import tsx src/payload/seed-sites.ts"
+    "seed:sites": "node --env-file=../../.env --import tsx src/payload/seed-sites.ts",
+    "build:hosted": "node scripts/hosted-build.mjs"
   },
   "dependencies": {
+    "@netlify/neon": "^0.1.2",
     "@ohworks/core": "workspace:*",
     "@ohworks/db": "workspace:*",
     "@ohworks/ui": "workspace:*",

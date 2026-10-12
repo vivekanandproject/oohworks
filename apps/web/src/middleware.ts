@@ -22,7 +22,11 @@ export function middleware(req: NextRequest) {
       return new NextResponse("Forbidden", { status: 403 });
     }
   }
-  return NextResponse.next();
+  const res = NextResponse.next();
+  // A preview on a host's own address is never for search engines, whatever a page says of itself.
+  if ((req.headers.get("host") ?? "").endsWith(".netlify.app"))
+    res.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return res;
 }
 
 export const config = {

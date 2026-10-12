@@ -27,6 +27,7 @@ import {
   Users,
 } from "./payload/collections";
 import { editorialEditor } from "./payload/collections/shared";
+import { databaseUrl, payloadSecret } from "./lib/hosting";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -81,15 +82,18 @@ export default buildConfig({
     Users,
   ],
   editor: editorialEditor,
-  secret: process.env.PAYLOAD_SECRET ?? "",
+  secret: payloadSecret(),
   serverURL: siteUrl,
   cors: [siteUrl],
   csrf: [siteUrl],
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
   // Payload keeps its tables in their own schema so the marketplace schema in packages/db stays separate.
+  // On a development machine the tables follow the code as it changes. A hosted build creates them
+  // from the files in `migrations`, which is the only way a production database is ever changed.
   db: postgresAdapter({
-    pool: { connectionString: process.env.DATABASE_URL ?? "" },
+    pool: { connectionString: databaseUrl() },
     schemaName: "payload",
+    migrationDir: path.resolve(dirname, "migrations"),
   }),
   sharp,
   plugins: r2 ? [r2] : [],

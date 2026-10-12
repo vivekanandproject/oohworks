@@ -66,7 +66,25 @@ async function ensure(
     overrideAccess: true,
     depth: 0,
   });
-  if (found.docs[0]) return found.docs[0] as { id: number };
+  const existing = found.docs[0] as { id: number } | undefined;
+  if (existing) {
+    // The sample pieces are dated a few hours back from when the seed runs. Running it again moves
+    // the dates forward, so a sample newsroom never looks a week old and its news sitemap, which
+    // holds only the last two days, is never empty.
+    const dates = Object.fromEntries(
+      (["publishedAt", "lastRefreshedAt"] as const)
+        .filter((key) => typeof data[key] === "string")
+        .map((key) => [key, data[key]]),
+    );
+    if (Object.keys(dates).length)
+      await payload.update({
+        collection: collection as never,
+        id: existing.id,
+        data: dates as never,
+        overrideAccess: true,
+      });
+    return existing;
+  }
   return (await payload.create({
     collection: collection as never,
     data: data as never,
@@ -75,8 +93,9 @@ async function ensure(
 }
 
 async function main() {
-  if (process.env.NODE_ENV === "production")
-    throw new Error("seed-demo is for development and tests only");
+  // Sample pieces never go to a real site. A preview host says so itself with SAMPLE_DATA=allow.
+  if (process.env.NODE_ENV === "production" && process.env.SAMPLE_DATA !== "allow")
+    throw new Error("seed-demo is for development, tests and previews only");
   const payload = await getPayload({ config });
   const hoursAgo = (h: number) => new Date(Date.now() - h * 3600_000).toISOString();
 

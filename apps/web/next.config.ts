@@ -10,6 +10,24 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@ohworks/core", "@ohworks/db", "@ohworks/ui"],
   trailingSlash: true,
   poweredByHeader: false,
+  // Read when the site is built and carried into the server, for hosts whose settings file is not
+  // seen by the running app. Neither is a secret.
+  env: {
+    HUB_PREVIEW: process.env.HUB_PREVIEW ?? "",
+    HOSTED_MEDIA: process.env.HOSTED_MEDIA ?? "",
+  },
+  // A host with no disk to keep files on serves the pictures made at build time as plain files.
+  async rewrites() {
+    if (process.env.HOSTED_MEDIA !== "static") return [];
+    return {
+      beforeFiles: [
+        { source: "/api/media/file/:file", destination: "/_media/:file" },
+        { source: "/api/media/file/:file/", destination: "/_media/:file" },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   // The title, description, canonical link and robots tag are always sent in the head. Left alone,
   // Next.js sends them later, inside the body, to any visitor it does not list as a simple crawler,
   // and that includes Googlebot. A canonical link or a noindex in the body can be ignored.

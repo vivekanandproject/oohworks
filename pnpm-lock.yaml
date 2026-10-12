@@ -52,6 +52,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@netlify/neon':
+        specifier: ^0.1.2
+        version: 0.1.2
       '@ohworks/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -63,7 +66,7 @@ importers:
         version: link:../../packages/ui
       '@payloadcms/db-postgres':
         specifier: ^3.90.2
-        version: 3.90.2(payload@3.90.2(graphql@17.0.2)(typescript@5.9.3))(postgres@3.4.9)
+        version: 3.90.2(@neondatabase/serverless@1.2.0)(payload@3.90.2(graphql@17.0.2)(typescript@5.9.3))(postgres@3.4.9)
       '@payloadcms/next':
         specifier: ^3.90.2
         version: 3.90.2(@types/react@19.3.0)(graphql@17.0.2)(monaco-editor@0.57.0)(next@15.5.27(patch_hash=76310d3e1f39ac2923d37120fe9a00a936f808efe635f217279df86a3b79f7f2)(@playwright/test@1.64.0)(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(sass@1.77.4))(payload@3.90.2(graphql@17.0.2)(typescript@5.9.3))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@5.9.3)
@@ -156,7 +159,7 @@ importers:
     dependencies:
       drizzle-orm:
         specifier: ^0.44.0
-        version: 0.44.7(@types/pg@8.20.0)(pg@8.20.0)(postgres@3.4.9)
+        version: 0.44.7(@neondatabase/serverless@1.2.0)(@types/pg@8.20.0)(pg@8.20.0)(postgres@3.4.9)
       postgres:
         specifier: ^3.4.0
         version: 3.4.9
@@ -1442,6 +1445,13 @@ packages:
     peerDependencies:
       '@emnapi/core': ^1.7.1 || ^2.0.0-alpha.4
       '@emnapi/runtime': ^1.7.1 || ^2.0.0-alpha.4
+
+  '@neondatabase/serverless@1.2.0':
+    resolution: {integrity: sha512-tnaqgixUengZQNd9ZrS3ytQfamJzLKY8QxgqWQTNHHtB+KrFQWk77JTbbpg4RD+J3qE4eO2lVytvGDX5Kj6FdQ==}
+    engines: {node: '>=19.0.0'}
+
+  '@netlify/neon@0.1.2':
+    resolution: {integrity: sha512-F8+Dnu+nvGZruskblFwTopv/CUbHi2VOP4bJpDhRo85UFawZ/wMPmxnWQ0CLYwdAERU1OYoQyXOQM19HxAHjQQ==}
 
   '@next/env@15.5.27':
     resolution: {integrity: sha512-WC5hvVqiuFOcRyz6gKPeJkiVvSMf3scNeAV49CdWtVqxmUlzh8UKR6YHt9yiNkh8LngtzqSlVz07/Ma3ZAzchA==}
@@ -7046,6 +7056,12 @@ snapshots:
       '@tybys/wasm-util': 0.10.4
     optional: true
 
+  '@neondatabase/serverless@1.2.0': {}
+
+  '@netlify/neon@0.1.2':
+    dependencies:
+      '@neondatabase/serverless': 1.2.0
+
   '@next/env@15.5.27': {}
 
   '@next/eslint-plugin-next@15.5.27':
@@ -7097,13 +7113,13 @@ snapshots:
       legacy-javascript: 0.0.3
       third-party-web: 0.30.0
 
-  '@payloadcms/db-postgres@3.90.2(payload@3.90.2(graphql@17.0.2)(typescript@5.9.3))(postgres@3.4.9)':
+  '@payloadcms/db-postgres@3.90.2(@neondatabase/serverless@1.2.0)(payload@3.90.2(graphql@17.0.2)(typescript@5.9.3))(postgres@3.4.9)':
     dependencies:
-      '@payloadcms/drizzle': 3.90.2(@types/pg@8.20.0)(payload@3.90.2(graphql@17.0.2)(typescript@5.9.3))(pg@8.20.0)(postgres@3.4.9)
+      '@payloadcms/drizzle': 3.90.2(@neondatabase/serverless@1.2.0)(@types/pg@8.20.0)(payload@3.90.2(graphql@17.0.2)(typescript@5.9.3))(pg@8.20.0)(postgres@3.4.9)
       '@types/pg': 8.20.0
       console-table-printer: 2.12.1
       drizzle-kit: 0.31.7
-      drizzle-orm: 0.45.2(@types/pg@8.20.0)(pg@8.20.0)(postgres@3.4.9)
+      drizzle-orm: 0.45.2(@neondatabase/serverless@1.2.0)(@types/pg@8.20.0)(pg@8.20.0)(postgres@3.4.9)
       payload: 3.90.2(graphql@17.0.2)(typescript@5.9.3)
       pg: 8.20.0
       prompts: 2.4.2
@@ -7140,11 +7156,11 @@ snapshots:
       - sqlite3
       - supports-color
 
-  '@payloadcms/drizzle@3.90.2(@types/pg@8.20.0)(payload@3.90.2(graphql@17.0.2)(typescript@5.9.3))(pg@8.20.0)(postgres@3.4.9)':
+  '@payloadcms/drizzle@3.90.2(@neondatabase/serverless@1.2.0)(@types/pg@8.20.0)(payload@3.90.2(graphql@17.0.2)(typescript@5.9.3))(pg@8.20.0)(postgres@3.4.9)':
     dependencies:
       console-table-printer: 2.12.1
       dequal: 2.0.3
-      drizzle-orm: 0.45.2(@types/pg@8.20.0)(pg@8.20.0)(postgres@3.4.9)
+      drizzle-orm: 0.45.2(@neondatabase/serverless@1.2.0)(@types/pg@8.20.0)(pg@8.20.0)(postgres@3.4.9)
       payload: 3.90.2(graphql@17.0.2)(typescript@5.9.3)
       prompts: 2.4.2
       to-snake-case: 1.0.0
@@ -8516,14 +8532,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.7(@types/pg@8.20.0)(pg@8.20.0)(postgres@3.4.9):
+  drizzle-orm@0.44.7(@neondatabase/serverless@1.2.0)(@types/pg@8.20.0)(pg@8.20.0)(postgres@3.4.9):
     optionalDependencies:
+      '@neondatabase/serverless': 1.2.0
       '@types/pg': 8.20.0
       pg: 8.20.0
       postgres: 3.4.9
 
-  drizzle-orm@0.45.2(@types/pg@8.20.0)(pg@8.20.0)(postgres@3.4.9):
+  drizzle-orm@0.45.2(@neondatabase/serverless@1.2.0)(@types/pg@8.20.0)(pg@8.20.0)(postgres@3.4.9):
     optionalDependencies:
+      '@neondatabase/serverless': 1.2.0
       '@types/pg': 8.20.0
       pg: 8.20.0
       postgres: 3.4.9

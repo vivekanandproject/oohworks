@@ -292,13 +292,13 @@ export async function ownerContact(
 /**
  * Local and test machines can look at hubs that are not yet published, so the pages can be built and
  * checked before real inventory exists. Such a page is marked as a preview and is never indexed.
- * The flag is ignored on any site served over https.
+ * The flag is ignored on any site served over https, except a preview on a host's own address,
+ * which the middleware keeps out of search engines whatever a page says of itself.
  */
 export function hubPreview(): boolean {
-  return (
-    process.env.HUB_PREVIEW === "1" &&
-    !(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").startsWith("https://")
-  );
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const preview = /^https:\/\/[a-z0-9-]+\.netlify\.app\/?$/.test(site);
+  return process.env.HUB_PREVIEW === "1" && (!site.startsWith("https://") || preview);
 }
 
 export interface HubLink {

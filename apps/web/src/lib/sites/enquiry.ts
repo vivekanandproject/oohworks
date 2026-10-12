@@ -1,5 +1,6 @@
 import { createHmac, randomInt, timingSafeEqual } from "node:crypto";
 import { formatDate } from "@/lib/editorial/format";
+import { payloadSecret } from "@/lib/hosting";
 
 const ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 const THIRTY_DAYS = 30 * 24 * 3600 * 1000;
@@ -8,7 +9,7 @@ export const MAX_ATTEMPTS = 5;
 export const BUYER_COOKIE = "oh_buyer";
 
 function secret(): string {
-  const s = process.env.PAYLOAD_SECRET;
+  const s = payloadSecret();
   if (!s) throw new Error("PAYLOAD_SECRET is not set");
   return s;
 }
