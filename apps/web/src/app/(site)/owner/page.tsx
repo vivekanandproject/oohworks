@@ -74,20 +74,11 @@ export default async function OwnerHomePage({ searchParams }: { searchParams: Pr
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="sites" />
-        <div className="mt-6">
+        <div className="mt-4">
           <PageHead
             eyebrow="Your sites"
             title={owner.name}
-            status={
-              owner.verified ? (
-                <Badge kind="verified">Verified owner</Badge>
-              ) : (
-                <a href="/owner/company/" className="oh-badge neutral" data-section="not-verified">
-                  Not yet a verified owner ·{" "}
-                  {owner.gstin ? "we are checking your details" : "add your GSTIN"}
-                </a>
-              )
-            }
+            status={owner.verified ? <Badge kind="verified">Verified owner</Badge> : null}
           >
             <span data-section="owner-counts">
               {[
@@ -100,12 +91,27 @@ export default async function OwnerHomePage({ searchParams }: { searchParams: Pr
                 .filter(Boolean)
                 .join(" · ")}
             </span>
+            {owner.verified ? null : (
+              <span className="block" data-section="not-verified">
+                {owner.gstin ? (
+                  "Not verified yet: we are checking your GSTIN and document."
+                ) : (
+                  <>
+                    Not verified yet.{" "}
+                    <a href="/owner/company/" className="oh-link">
+                      Add your GSTIN
+                    </a>{" "}
+                    to earn the Verified owner badge.
+                  </>
+                )}
+              </span>
+            )}
           </PageHead>
         </div>
 
         <div className={`mt-6 ${CONTENT_GRID}`}>
           <div className="flex min-w-0 flex-col gap-6">
-            <div className="space-y-3 empty:hidden">
+            <div className="flex flex-col gap-3 empty:hidden">
               {one(q.saved) === "company" ? (
                 <Notice
                   tone="success"

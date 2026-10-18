@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container } from "@ohworks/ui";
+import { Container, Note } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { Notice, OwnerBar } from "@/components/owners/Bits";
 import { Aside, Card, FORM_GRID, FormSection, PageHead } from "@/components/owners/Frame";
@@ -37,7 +37,7 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="import" />
-        <div className={`mt-6 ${FORM_GRID}`}>
+        <div className={`mt-4 ${FORM_GRID}`}>
           <div className="min-w-0">
             <PageHead eyebrow="Your sites" title="Upload a spreadsheet">
               For many sites at once. Each row that is right becomes a draft that only you can see.
@@ -208,10 +208,10 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
                   doubles it.
                 </li>
               </ul>
-              <p className="t-small bg-lit-tint text-ink mt-4 rounded-sm px-3 py-2">
+              <Note className="mt-4">
                 Nothing is published from a spreadsheet. You add photographs and send each site for
                 review yourself.
-              </p>
+              </Note>
             </Card>
           </Aside>
         </div>

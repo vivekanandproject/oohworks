@@ -102,7 +102,7 @@ export default async function OwnerSitePage({
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="site" />
-        <div className="mt-6">
+        <div className="mt-4">
           <PageHead
             eyebrow={
               <>
@@ -411,7 +411,7 @@ export default async function OwnerSitePage({
                 </ul>
               ) : (
                 <p
-                  className="border-hairline bg-paper-sunken text-ink-muted t-body mt-4 rounded-md border px-4 py-6 text-center"
+                  className="border-hairline bg-paper-sunken text-ink-muted t-body mt-4 rounded-md border p-5 text-center"
                   data-section="no-photos"
                 >
                   No photo yet. A site with a real photograph ranks higher and is checked faster.

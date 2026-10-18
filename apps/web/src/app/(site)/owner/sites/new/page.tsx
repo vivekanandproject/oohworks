@@ -42,7 +42,7 @@ export default async function NewSitePage({ searchParams }: { searchParams: Prom
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="site" />
-        <div className={`mt-6 ${FORM_GRID}`}>
+        <div className={`mt-4 ${FORM_GRID}`}>
           <div className="min-w-0">
             <PageHead
               eyebrow={first ? "List your sites · step 3 of 4" : "Your sites"}

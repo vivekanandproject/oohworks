@@ -974,7 +974,7 @@ test.describe("list your sites: the journey", () => {
       await expect(page).toHaveURL(/\/owner\/\?saved=company$/, { timeout: 30_000 });
       await expect(page.locator("h1")).toHaveText(company);
       await expect(page.locator("[data-section='not-verified']")).toContainText(
-        "we are checking your details",
+        "we are checking your GSTIN and document",
       );
       await expect(page.locator("[data-section='no-sites']")).toContainText("No sites yet");
 

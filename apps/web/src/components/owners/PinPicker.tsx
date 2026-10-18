@@ -106,7 +106,7 @@ export function PinPicker({
       </div>
       {open ? (
         <>
-          <div className="border-hairline bg-paper-sunken h-[280px] overflow-hidden rounded-md border">
+          <div className="border-hairline bg-paper-sunken h-[280px] overflow-hidden rounded-md border sm:h-[320px]">
             <PinMap
               // A new search opens the map afresh on the place found.
               key={`${open.start[0]},${open.start[1]}`}

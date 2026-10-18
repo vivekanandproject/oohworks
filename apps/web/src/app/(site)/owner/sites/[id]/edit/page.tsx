@@ -63,7 +63,7 @@ export default async function EditSitePage({
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="site" />
-        <div className={`mt-6 ${FORM_GRID}`}>
+        <div className={`mt-4 ${FORM_GRID}`}>
           <div className="min-w-0">
             <PageHead eyebrow="Your sites" title="Edit this site">
               <a href={`/owner/sites/${id}/`} className="oh-link">

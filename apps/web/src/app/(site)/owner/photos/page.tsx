@@ -39,7 +39,7 @@ export default async function PhotosPage({ searchParams }: { searchParams: Promi
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="import" />
-        <div className={`mt-6 ${FORM_GRID}`}>
+        <div className={`mt-4 ${FORM_GRID}`}>
           <div className="min-w-0">
             <PageHead eyebrow="Your sites" title="Add photographs">
               Photographs of many sites at once. Each one taken at a site, with your phone&rsquo;s

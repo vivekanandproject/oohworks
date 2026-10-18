@@ -35,7 +35,7 @@ export default async function PasswordPage({ searchParams }: { searchParams: Pro
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="company" />
-        <div className={`mt-8 ${CENTER}`}>
+        <div className={`mt-6 ${CENTER}`}>
           <PageHead
             center
             eyebrow="Signing in"

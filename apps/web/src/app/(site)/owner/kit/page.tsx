@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Button, Container } from "@ohworks/ui";
+import { Button, Container, Note } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { Notice, OwnerBar } from "@/components/owners/Bits";
 import { Aside, Card, FORM_GRID, FormSection, PageHead } from "@/components/owners/Frame";
@@ -55,7 +55,7 @@ export default async function KitPage({ searchParams }: { searchParams: Promise<
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="kit" />
-        <div className={`mt-6 ${FORM_GRID}`}>
+        <div className={`mt-4 ${FORM_GRID}`}>
           <div className="min-w-0">
             <PageHead eyebrow="Your sites" title="Send us your media kit">
               A PDF, a presentation or your own spreadsheet. Our team enters the sites for you, at
@@ -173,10 +173,10 @@ export default async function KitPage({ searchParams }: { searchParams: Promise<
                 <li>You get an email when they are ready.</li>
                 <li>You check each one, correct anything, and send them for review.</li>
               </ol>
-              <p className="t-small bg-lit-tint text-ink mt-4 rounded-sm px-3 py-2">
+              <Note className="mt-4">
                 Nothing from your file is published until you have seen it. Only our team can open
                 the file.
-              </p>
+              </Note>
             </Card>
           </Aside>
         </div>
