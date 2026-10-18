@@ -46,6 +46,8 @@ jobs:
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
+      - name: The API descriptions are valid OpenAPI
+        run: pnpm --filter @ohworks/web openapi:lint
       - run: pnpm test
       - name: Make the test database with its sample owners, sites and pieces
         run: |
@@ -55,12 +57,12 @@ jobs:
         run: pnpm --filter @ohworks/web verify:cms
       - name: Migrations build the same tables from nothing
         run: pnpm --filter @ohworks/web release
-      - run: pnpm build
-      - run: pnpm --filter @ohworks/web build:test
         env:
           # A release refuses to finish without a super admin. These exist only in this throwaway database.
           SUPER_ADMIN_EMAILS: ci@ohworks.invalid
           SUPER_ADMIN_PASSWORD: ci-only-first-password
+      - run: pnpm build
+      - run: pnpm --filter @ohworks/web build:test
       - name: Install browsers (Chromium, WebKit, Firefox)
         run: pnpm --filter @ohworks/web exec playwright install --with-deps chromium webkit firefox
       - name: End-to-end, responsive and cross-browser checks

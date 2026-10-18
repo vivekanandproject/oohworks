@@ -43,6 +43,8 @@ export function testEnv(env = process.env) {
     NEXT_DIST_DIR: ".next-verify",
     NEXT_PUBLIC_SITE_URL: `http://127.0.0.1:${TEST_PORT}`,
     NEXT_TELEMETRY_DISABLED: "1",
+    // A test run, so the internal API reference is served and can be checked (src/lib/api/env.ts).
+    SITE_ENV: "test",
     // Hubs open below their threshold, marked as previews, so their pages can be tested on samples.
     HUB_PREVIEW: "1",
     // Tests read every email from the Outbox and never call an outside service, whatever .env holds.

@@ -1,10 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { hiddenFromSearch } from "@/lib/api/env";
 
 /**
  * 1. Origin check: in staging and prod Cloudflare injects X-Origin-Secret via a Transform
  *    Rule; a request that reaches Cloud Run without it is not from Cloudflare and gets 403.
  *    When ORIGIN_SECRET is unset (local dev) the check is off.
  * 2. Service role: the "jobs" service serves only the Inngest handler and health.
+ * 3. Previews and staging (SITE_ENV) carry noindex on every answer, whatever a page says itself.
  */
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -22,7 +24,9 @@ export function middleware(req: NextRequest) {
       return new NextResponse("Forbidden", { status: 403 });
     }
   }
-  return NextResponse.next();
+  const res = NextResponse.next();
+  if (hiddenFromSearch()) res.headers.set("X-Robots-Tag", "noindex, nofollow");
+  return res;
 }
 
 export const config = {

@@ -1,0 +1,7 @@
+# Copy to terraform.tfvars (ignored by git) and fill in.
+registry_project = "ohworks-shared"
+project_id      = "ohworks-staging"
+staff           = ["user:you@example.com"]
+billing_account = "000000-000000-000000"
+# Add each name only after `gcloud secrets versions add NAME` has given it a value.
+optional_secrets = ["RESEND_API_KEY", "EMAIL_FROM"]

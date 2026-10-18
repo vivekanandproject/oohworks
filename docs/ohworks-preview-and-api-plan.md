@@ -1,6 +1,6 @@
 # ohworks previews, services and API docs: plan
 
-Date: 18 Oct 2026. Status: plan, awaiting go. Builds on `ohworks-build-plan.md` (Google Cloud, `asia-south1`, three projects), ADR 0001 (Cloud Run), and the clean-up of 18 Oct 2026, which left sample data only in the test database and removed Netlify. Staff accounts for these environments come from `ohworks-super-admin-plan.md`.
+Date: 18 Oct 2026. Status: step 4 (Swagger and the public API) is built, see section 7; the other steps are planned. Builds on `ohworks-build-plan.md` (Google Cloud, `asia-south1`, three projects), ADR 0001 (Cloud Run), and the clean-up of 18 Oct 2026, which left sample data only in the test database and removed Netlify. Staff accounts for these environments come from `ohworks-super-admin-plan.md`.
 
 ## 1. What this must achieve
 
@@ -115,6 +115,22 @@ Read-only, no key at first. Cloudflare rate-limits it per address (for example 6
 ### The CMS API in Swagger
 
 The CMS does not describe its own REST API as OpenAPI. A one-day spike tries the community plugin `payload-oapi` against this version of the CMS. If it does not fit, the internal reference describes the collections staff actually use by hand, and links to the GraphQL playground on staging.
+
+### What step 4 built (18 Oct 2026)
+
+Swagger is hosted by the app at `/api/docs/` and runs wherever the app runs; on this Mac today, on Cloud Run when step 2 lands.
+
+- **Public API v1**: `GET /api/v1/sites/` (every filter of the search page, plus `per_page` up to 50), `GET /api/v1/sites/{unitId}/`, `GET /api/v1/cities/`, `GET /api/v1/formats/`, and the existing `/api/health/`. Open to any site's scripts (`Access-Control-Allow-Origin: *`), never indexed, errors as RFC 9457 problem documents.
+- **The descriptions are code**, not YAML: `src/lib/api/openapi/public-v1.ts` takes its lists of cities, formats, lighting, checks and orders from the site's taxonomy, so the documentation cannot name a value the API refuses. `scripts/openapi-export.ts` writes them as JSON files.
+- **Internal reference**: all 37 routes under `src/app/api` from `src/lib/api/openapi/internal-endpoints.ts`, each with its fields, checks in order and every answer, plus the CMS API (sign in, list, get, create, change, delete, GraphQL), with the Origin check and the origin-secret guard explained once at the top. Shown unless `SITE_ENV` is `production`; a production build without `SITE_ENV` counts as production.
+- **Checks**: `pnpm --filter @ohworks/web openapi:lint` (Redocly, `redocly.yaml`, in the CI workflow); `e2e/api.e2e.ts` validates every public answer against its schema with ajv, drives Try it out in Swagger UI, checks nothing loads from another site, and fails when a route folder has no entry in the internal reference.
+
+Changed from the plan above:
+
+- Samples are included, marked `"sample": true`, because they now exist only in test and preview databases. Production has none.
+- `GET /api/v1/owners/{slug}` waits for the public owner page (List your sites step 2).
+- The CMS API is described by hand; the community plugin was not tried.
+- Rate limits and API keys wait for Cloudflare (step 2) and the Owner Network tier.
 
 ## 8. Build order
 

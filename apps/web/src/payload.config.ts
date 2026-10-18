@@ -62,6 +62,9 @@ export default buildConfig({
     // ohworks has one theme, Day (docs/ohworks-design-system.md). Without this the admin follows the
     // computer's dark mode, and the brand colours in custom.css are made for paper, not for dark.
     theme: "light",
+    // Browser extensions (Scribe, password managers) add attributes to <html> before the page starts,
+    // which React reports as a mismatch. The site's own layout ignores them the same way.
+    suppressHydrationWarning: true,
   },
   collections: [
     Sites,

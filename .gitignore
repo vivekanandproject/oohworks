@@ -29,3 +29,7 @@ apps/web/owner-files/
 
 # The test run's uploads (see apps/web/scripts/test-env.mjs)
 apps/web/test-data/
+
+# Filled-in Terraform settings: project ids, staff emails, the billing account
+*.tfvars
+!*.tfvars.example

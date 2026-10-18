@@ -180,7 +180,10 @@ export interface SearchResult {
   catalogueSize: number;
 }
 
-export async function searchSites(state: SearchState): Promise<SearchResult> {
+export async function searchSites(
+  state: SearchState,
+  perPage: number = PER_PAGE,
+): Promise<SearchResult> {
   const cat = await catalogue();
   const now = Date.now();
   const matched = sortListings(
@@ -188,8 +191,8 @@ export async function searchSites(state: SearchState): Promise<SearchResult> {
     state,
     now,
   );
-  const pages = Math.max(1, Math.ceil(matched.length / PER_PAGE));
-  const slice = matched.slice((state.page - 1) * PER_PAGE, state.page * PER_PAGE);
+  const pages = Math.max(1, Math.ceil(matched.length / perPage));
+  const slice = matched.slice((state.page - 1) * perPage, state.page * perPage);
   return {
     cards: await toCards(slice, cat),
     total: matched.length,
@@ -208,6 +211,21 @@ export async function searchSites(state: SearchState): Promise<SearchResult> {
     anySample: slice.some((l) => l.sample),
     catalogueSize: cat.listings.length,
   };
+}
+
+/** How many published sites each city and each format has. */
+export async function catalogueCounts(): Promise<{
+  cities: Map<string, number>;
+  formats: Map<string, number>;
+}> {
+  const cat = await catalogue();
+  const cities = new Map<string, number>();
+  const formats = new Map<string, number>();
+  for (const l of cat.listings) {
+    cities.set(l.city, (cities.get(l.city) ?? 0) + 1);
+    formats.set(l.format, (formats.get(l.format) ?? 0) + 1);
+  }
+  return { cities, formats };
 }
 
 /** Sites by unit id, in the order asked for. Ids that match nothing, or a site taken down, are left out. */

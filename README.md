@@ -64,6 +64,20 @@ pnpm test:e2e
 CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" pnpm lighthouse
 ```
 
+## API and its documentation
+
+Swagger UI at `/api/docs/` (served from the site's own copy of `swagger-ui-dist`) shows two descriptions:
+
+- **Public API v1**, read-only JSON: `/api/v1/sites/` (the search page's filters), `/api/v1/sites/{unitId}/`,
+  `/api/v1/cities/`, `/api/v1/formats/`. Described in `apps/web/src/lib/api/openapi/public-v1.ts`, served at
+  `/api/v1/openapi.json`.
+- **Internal reference**: every endpoint under `apps/web/src/app/api` and the CMS API, from
+  `apps/web/src/lib/api/openapi/internal-endpoints.ts`. Shown everywhere except production (`SITE_ENV`).
+
+Add an entry to `internal-endpoints.ts` with every new route; the browser tests fail while a route has none,
+and check every public answer against its schema. `pnpm --filter @ohworks/web openapi:lint` checks both
+descriptions with Redocly.
+
 ## Releasing
 
 `pnpm --filter @ohworks/web release` prepares a database for a new version: it runs the migrations in

@@ -1,0 +1,8 @@
+# How `pnpm openapi:lint` checks the API descriptions in src/lib/api/openapi.
+extends:
+  - recommended
+rules:
+  # Every address on this site ends in a slash (trailingSlash in next.config.ts), so the paths must too.
+  no-path-trailing-slash: off
+  # The code is not published under a licence.
+  info-license: off
