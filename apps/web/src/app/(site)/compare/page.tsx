@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Button, Container, EmptyState } from "@ohworks/ui";
+import { Button, Container, EmptyState, Notice } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance } from "@/components/sites/Basket";
 import { AvailabilityChip } from "@/components/sites/SiteCard";
@@ -81,26 +81,30 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
         </h1>
 
         {one(q.full) === "1" ? (
-          <div className="oh-toast warning mt-5" role="status" data-section="compare-full">
-            <span className="dot" />
-            <div>
-              <div className="t">You can compare four sites at a time.</div>
-              <div className="d">Remove one below to add another.</div>
-            </div>
-          </div>
+          <Notice
+            tone="warning"
+            title="You can compare four sites at a time."
+            section="compare-full"
+            className="mt-5"
+          >
+            Remove one below to add another.
+          </Notice>
         ) : null}
 
         {cards.length === 0 ? (
           <div className="mx-auto mt-6 w-full max-w-[760px]" data-section="compare-empty">
-            <EmptyState icon="pin" title="Nothing to compare yet">
+            <EmptyState
+              icon="pin"
+              title="Nothing to compare yet"
+              actions={
+                <Button href="/search/" variant="primary" size="sm">
+                  Find sites
+                </Button>
+              }
+            >
               Press Compare on two to four sites in the results. They appear here side by side, fact
               by fact.
             </EmptyState>
-            <div className="mt-4">
-              <Button href="/search/" variant="primary">
-                Find sites
-              </Button>
-            </div>
           </div>
         ) : (
           <>

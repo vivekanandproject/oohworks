@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Container, EmptyState } from "@ohworks/ui";
+import { Button, Container, EmptyState } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { PieceRow } from "@/components/editorial/PieceBits";
 import { breadcrumbJsonLd } from "@/lib/editorial/jsonld";
@@ -63,7 +63,15 @@ export default async function TopicPage({ params }: Params) {
             {pieces.length ? (
               pieces.map((p) => <PieceRow key={`${p.collection}-${p.id}`} piece={p} level={2} />)
             ) : (
-              <EmptyState icon="enquiry" title={`Nothing about ${tag.name} yet`}>
+              <EmptyState
+                icon="enquiry"
+                title={`Nothing about ${tag.name} yet`}
+                actions={
+                  <Button href="/newsroom/" variant="primary" size="sm">
+                    Back to the newsroom
+                  </Button>
+                }
+              >
                 Pieces appear here as they are published.
               </EmptyState>
             )}

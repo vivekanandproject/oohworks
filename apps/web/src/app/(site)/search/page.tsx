@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Button, Container, EmptyState, SearchField } from "@ohworks/ui";
+import { Button, Container, EmptyState, Note, Notice, SearchField } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { FollowForm } from "@/components/FollowForm";
 import { BasketEnhance, ListSync } from "@/components/sites/Basket";
@@ -250,13 +250,10 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
       <Container className="pt-5 pb-14">
         {result.anySample ? (
-          <p
-            className="t-small border-hairline bg-lit-tint text-ink mb-4 rounded-sm border px-3 py-2"
-            data-section="sample-notice"
-          >
+          <Note section="sample-notice" className="mb-4">
             These are sample listings for development. They are not real sites, and they are never
             shown to search engines.
-          </p>
+          </Note>
         ) : null}
 
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pb-4">
@@ -287,26 +284,16 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         </div>
 
         {followed ? (
-          <div className="oh-toast success mb-6" role="status">
-            <span className="dot" />
-            <div>
-              <div className="t">Check your email.</div>
-              <div className="d">
-                {result.total > 0
-                  ? `We sent a link to confirm. After that, we will email you when new ${what} are listed, with a way to stop in every email.`
-                  : `We sent a link to confirm. After that, we will email you when the first ${what} are listed, with a way to stop in every email.`}
-              </div>
-            </div>
-          </div>
+          <Notice tone="success" title="Check your email." className="mb-6">
+            {result.total > 0
+              ? `We sent a link to confirm. After that, we will email you when new ${what} are listed, with a way to stop in every email.`
+              : `We sent a link to confirm. After that, we will email you when the first ${what} are listed, with a way to stop in every email.`}
+          </Notice>
         ) : null}
         {followInvalid ? (
-          <div className="oh-toast error mb-6" role="alert">
-            <span className="dot" />
-            <div>
-              <div className="t">That email did not look right.</div>
-              <div className="d">Check it and try again; nothing was saved.</div>
-            </div>
-          </div>
+          <Notice tone="error" title="That email did not look right." className="mb-6">
+            Check it and try again; nothing was saved.
+          </Notice>
         ) : null}
 
         {result.total > 0 ? (
@@ -352,6 +339,16 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <EmptyState
               icon="pin"
               title={result.catalogueSize === 0 ? "No sites listed yet" : `No ${what} yet`}
+              actions={
+                <>
+                  <Button href="/list-your-sites/" variant="ghost" size="sm">
+                    Own sites here? List them free
+                  </Button>
+                  <Button href="/guides/" variant="ghost" size="sm">
+                    Read the guides
+                  </Button>
+                </>
+              }
             >
               {result.catalogueSize === 0
                 ? "The first verified sites go live city by city with the founding owners. Leave your email and we will tell you when your city opens."
@@ -366,14 +363,6 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                 what={what}
               />
             ) : null}
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button href="/list-your-sites/" variant="ghost" size="sm">
-                Own sites here? List them free
-              </Button>
-              <Button href="/guides/" variant="ghost" size="sm">
-                Read the guides
-              </Button>
-            </div>
           </div>
         )}
 

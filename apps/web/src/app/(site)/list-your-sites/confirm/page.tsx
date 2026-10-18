@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Container } from "@ohworks/ui";
+import { Container, Note } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { Notice } from "@/components/owners/Bits";
 import { Aside, CENTER, Card, FORM_GRID, PageHead, StepsCard } from "@/components/owners/Frame";
@@ -69,14 +69,11 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
         </div>
       ) : null}
       {shown ? (
-        <p
-          className="t-small border-hairline bg-lit-tint text-ink mt-5 rounded-sm border px-3 py-2"
-          data-section="dev-code"
-        >
+        <Note section="dev-code" className="mt-5">
           Development only: no email service is set up on this machine, so the code is shown here.
           It is <span className="font-mono font-medium">{shown}</span>. The email itself is in the
           admin, under Operations, Outbox.
-        </p>
+        </Note>
       ) : null}
     </>
   );

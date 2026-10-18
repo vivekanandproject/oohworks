@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Button, Container } from "@ohworks/ui";
+import { Button, Container, Notice } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { BriefingBand } from "@/components/editorial/PieceBits";
 import { PageHead } from "@/components/owners/Frame";
@@ -22,13 +22,9 @@ export default async function SubscribedPage({
         <div className="mx-auto max-w-[620px]">
           {error ? (
             <>
-              <div className="oh-toast error" role="alert">
-                <span className="dot" />
-                <div>
-                  <div className="t">That email did not look right.</div>
-                  <div className="d">Check it and try again; nothing was saved.</div>
-                </div>
-              </div>
+              <Notice tone="error" title="That email did not look right.">
+                Check it and try again; nothing was saved.
+              </Notice>
               <div className="mt-6">
                 <BriefingBand from="/newsroom/" id="brief-retry" />
               </div>

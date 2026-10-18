@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Badge, Icon, NEUTRALITY_LINE, Wordmark, type IconName } from "@ohworks/ui";
+import { Badge, Icon, type IconName, NEUTRALITY_LINE, Note, Wordmark } from "@ohworks/ui";
 import { BasketEnhance } from "@/components/sites/Basket";
 import { SpecSheet } from "@/components/sites/SiteParts";
 import { formatDate } from "@/lib/editorial/format";
@@ -89,9 +89,9 @@ export default async function SheetsPage({ searchParams }: { searchParams: Promi
               </header>
 
               {site.sample ? (
-                <p className="t-small bg-lit-tint text-ink mt-4 rounded-sm px-3 py-2">
+                <Note className="mt-4">
                   A sample listing for development. It is not a real site.
-                </p>
+                </Note>
               ) : null}
 
               <div className="mt-4 grid gap-5 sm:grid-cols-[minmax(0,5fr)_minmax(0,4fr)]">

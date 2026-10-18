@@ -110,4 +110,9 @@ A second, page-by-page audit of the owner area, status pages and flows (by the o
 | Owner bar | One row of controls and one muted "name · email" line; it was three rows (113px) on a phone |
 | Phase A regression | On a phone the search page's strip lost "Compare N" and the list-full message when the saved-sites bar moved off phones. The strip now carries Filters, Map, Compare N and Shortlist N, and the message; sorting moved into the filters drawer on phones |
 
-Still in Phase B: empty states (item 5), notices (item 9) and PageHead for every page (item 6).
+| 5. Empty states | Every empty state carries its next step inside the box (search, shortlist, compare; and authors, topics and corrections, which had none); the title is t-display-sm; .oh-empty centres itself |
+| 9. Notices | Notice and Note in @ohworks/ui replace 13 hand-built toasts and 10 amber notes (sample, preview and development notes now look one way, with a hairline); the owner area's Notice is the shared one |
+
+The other session, from its audit: one spacing rhythm on the owner pages (24px between sections, 48 between import steps, mt-4 under the owner bar), the "No photo yet" box at p-5, the pin map at 280/320, and the verified state as a sentence and a link instead of a grey chip (4d9e9e2).
+
+Still in Phase B: PageHead for every page (item 6). Then Phase C (one component per pattern) and Phase D; the typeface waits on the founder.

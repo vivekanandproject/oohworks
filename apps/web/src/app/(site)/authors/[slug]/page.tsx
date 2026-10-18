@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Badge, Container, EmptyState } from "@ohworks/ui";
+import { Badge, Button, Container, EmptyState } from "@ohworks/ui";
 import type { Media } from "@/payload-types";
 import { Shell } from "@/components/Shell";
 import { PieceRow } from "@/components/editorial/PieceBits";
@@ -105,7 +105,15 @@ export default async function AuthorPage({ params }: Params) {
             {pieces.length ? (
               pieces.map((p) => <PieceRow key={`${p.collection}-${p.id}`} piece={p} />)
             ) : (
-              <EmptyState icon="enquiry" title="Nothing published yet">
+              <EmptyState
+                icon="enquiry"
+                title="Nothing published yet"
+                actions={
+                  <Button href="/newsroom/" variant="primary" size="sm">
+                    Back to the newsroom
+                  </Button>
+                }
+              >
                 Their first piece appears here the day it is published.
               </EmptyState>
             )}

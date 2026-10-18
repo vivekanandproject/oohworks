@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Badge, Container, NEUTRALITY_LINE } from "@ohworks/ui";
+import { Badge, Container, NEUTRALITY_LINE, Notice } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { AskedFacts, SiteList, Thread } from "@/components/sites/Thread";
 import { timeAgo } from "@/lib/editorial/format";
@@ -96,22 +96,19 @@ export default async function EnquiryThreadPage({
           </p>
 
           {sent && !error ? (
-            <div className="oh-toast success mt-5" role="status" data-section="thread-sent">
-              <span className="dot" />
-              <div>
-                <div className="t">Your message was sent.</div>
-                <div className="d">It went straight to that owner, and to nobody else.</div>
-              </div>
-            </div>
+            <Notice
+              tone="success"
+              title="Your message was sent."
+              section="thread-sent"
+              className="mt-5"
+            >
+              It went straight to that owner, and to nobody else.
+            </Notice>
           ) : null}
           {error ? (
-            <div className="oh-toast error mt-5" role="alert" data-section="thread-error">
-              <span className="dot" />
-              <div>
-                <div className="t">{error.t}</div>
-                <div className="d">{error.d}</div>
-              </div>
-            </div>
+            <Notice tone="error" title={error.t} section="thread-error" className="mt-5">
+              {error.d}
+            </Notice>
           ) : null}
 
           <div className="mt-6 max-w-[760px]">

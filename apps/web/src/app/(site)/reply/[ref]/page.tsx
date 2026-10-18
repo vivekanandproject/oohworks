@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Container } from "@ohworks/ui";
+import { Container, Notice } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { AskedFacts, SiteList, Thread } from "@/components/sites/Thread";
 import { findGroup, messagesOf } from "@/lib/sites/enquiries";
@@ -67,22 +67,19 @@ export default async function ReplyPage({
           </p>
 
           {sent && !error ? (
-            <div className="oh-toast success mt-5" role="status" data-section="reply-sent">
-              <span className="dot" />
-              <div>
-                <div className="t">Your reply was sent to the buyer.</div>
-                <div className="d">They can answer here or by email. You can add to it below.</div>
-              </div>
-            </div>
+            <Notice
+              tone="success"
+              title="Your reply was sent to the buyer."
+              section="reply-sent"
+              className="mt-5"
+            >
+              They can answer here or by email. You can add to it below.
+            </Notice>
           ) : null}
           {error ? (
-            <div className="oh-toast error mt-5" role="alert" data-section="reply-error">
-              <span className="dot" />
-              <div>
-                <div className="t">{error.t}</div>
-                <div className="d">{error.d}</div>
-              </div>
-            </div>
+            <Notice tone="error" title={error.t} section="reply-error" className="mt-5">
+              {error.d}
+            </Notice>
           ) : null}
 
           <section className="mt-8" data-section="asked">

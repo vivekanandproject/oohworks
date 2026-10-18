@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Badge, Button, Container, EmptyState, NEUTRALITY_LINE } from "@ohworks/ui";
+import { Badge, Button, Container, EmptyState, NEUTRALITY_LINE, Note } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance } from "@/components/sites/Basket";
 import { ListToggle } from "@/components/sites/ListToggle";
@@ -188,27 +188,27 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
         </p>
 
         {gone > 0 ? (
-          <p
-            className="t-small border-hairline bg-lit-tint text-ink mt-5 max-w-[68ch] rounded-sm border px-3 py-2"
-            data-section="gone"
-          >
+          <Note section="gone" className="mt-5 max-w-[68ch]">
             {gone === 1
               ? "One site here is no longer listed, so it is not shown."
               : `${gone} sites here are no longer listed, so they are not shown.`}
-          </p>
+          </Note>
         ) : null}
 
         {cards.length === 0 ? (
           <div className="mx-auto mt-6 w-full max-w-[760px]" data-section="shortlist-empty">
-            <EmptyState icon="pin" title="No sites saved yet">
+            <EmptyState
+              icon="pin"
+              title="No sites saved yet"
+              actions={
+                <Button href="/search/" variant="primary" size="sm">
+                  Find sites
+                </Button>
+              }
+            >
               Press Save on any site in the results, or on its page, and it appears here with the
               others from the same owner.
             </EmptyState>
-            <div className="mt-4">
-              <Button href="/search/" variant="primary">
-                Find sites
-              </Button>
-            </div>
           </div>
         ) : (
           <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">

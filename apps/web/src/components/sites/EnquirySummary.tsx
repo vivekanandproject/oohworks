@@ -1,4 +1,4 @@
-import { NEUTRALITY_LINE } from "@ohworks/ui";
+import { NEUTRALITY_LINE, Note } from "@ohworks/ui";
 import type { Owner, Site } from "@/payload-types";
 import { availabilityOf, metaLine, priceOf, siteUrl } from "@/lib/sites/view";
 import { AvailabilityChip } from "./SiteCard";
@@ -42,9 +42,9 @@ export function EnquirySummary({
         <AvailabilityChip availability={availabilityOf(site, now)} />
       </div>
       {site.sample ? (
-        <p className="t-small bg-lit-tint text-ink mt-3 rounded-sm px-3 py-2">
+        <Note className="mt-3">
           A sample listing. Its owner is not real, so nothing leaves this machine.
-        </p>
+        </Note>
       ) : null}
       <p className="t-small border-hairline text-ink-muted mt-4 border-t pt-4">
         {owner ? `Goes straight to ${owner.name}. ` : ""}

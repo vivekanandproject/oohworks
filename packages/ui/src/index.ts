@@ -9,6 +9,7 @@ export { SearchField } from "./components/SearchField";
 export { NavBar } from "./components/NavBar";
 export { EditionStrip, type Edition } from "./components/EditionStrip";
 export { Footer, NEUTRALITY_LINE, NEUTRALITY_LINE_OWNER } from "./components/Footer";
+export { Note, Notice } from "./components/Notice";
 export { ListingCard, type ListingCardProps } from "./components/ListingCard";
 export { ArticleCard, type ArticleCardProps } from "./components/ArticleCard";
 export { EmptyState } from "./components/EmptyState";

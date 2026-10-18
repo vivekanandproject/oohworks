@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, EmptyState } from "@ohworks/ui";
+import { Button, Container, EmptyState } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { formatDate } from "@/lib/editorial/format";
 import { allCorrections } from "@/lib/editorial/queries";
@@ -50,7 +50,15 @@ export default async function CorrectionsPage() {
             </ol>
           ) : (
             <div className="mt-8">
-              <EmptyState icon="verified" title="No corrections so far">
+              <EmptyState
+                icon="verified"
+                title="No corrections so far"
+                actions={
+                  <Button href="/newsroom/" variant="primary" size="sm">
+                    Back to the newsroom
+                  </Button>
+                }
+              >
                 None has been needed yet. When one is, it appears here the same day.
               </EmptyState>
             </div>

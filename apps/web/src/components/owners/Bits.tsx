@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { STATE_LABEL, type SiteState } from "@/lib/owners/progress";
 
 /** Each state in the badge kind that means it: waiting is pending, held back is critical, live is verified. */
@@ -18,31 +17,8 @@ export function StateTag({ state }: { state: SiteState }) {
   );
 }
 
-export function Notice({
-  tone,
-  title,
-  children,
-  section,
-}: {
-  tone: "success" | "error" | "warning";
-  title: string;
-  children?: ReactNode;
-  section?: string;
-}) {
-  return (
-    <div
-      className={`oh-toast ${tone}`}
-      role={tone === "error" ? "alert" : "status"}
-      data-section={section}
-    >
-      <span className="dot" />
-      <div>
-        <div className="t">{title}</div>
-        {children ? <div className="d">{children}</div> : null}
-      </div>
-    </div>
-  );
-}
+// The owner pages import Notice from here; it is the shared one, so every notice looks the same.
+export { Notice } from "@ohworks/ui";
 
 /** A completeness score out of 100, as a bar and a number. */
 export function Score({ value }: { value: number }) {

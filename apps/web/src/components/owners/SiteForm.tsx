@@ -1,3 +1,4 @@
+import { Note, Notice } from "@ohworks/ui";
 import type { ReactNode } from "react";
 import type { FieldErrors, FieldKey, Raw } from "@/lib/owners/site-input";
 import { CITIES, FORMATS, LIGHTING } from "@/lib/sites/taxonomy";
@@ -179,17 +180,17 @@ export function SiteForm({
     >
       {id ? <input type="hidden" name="id" value={id} /> : null}
       {count ? (
-        <div className="oh-toast error" role="alert" data-section="site-errors">
-          <span className="dot" />
-          <div>
-            <div className="t">
-              {count === 1
-                ? "One thing to fix before this can be saved."
-                : `${count} things to fix before this can be saved.`}
-            </div>
-            <div className="d">Each is marked beside its field. Nothing you typed was lost.</div>
-          </div>
-        </div>
+        <Notice
+          tone="error"
+          title={
+            count === 1
+              ? "One thing to fix before this can be saved."
+              : `${count} things to fix before this can be saved.`
+          }
+          section="site-errors"
+        >
+          Each is marked beside its field. Nothing you typed was lost.
+        </Notice>
       ) : null}
 
       <Part n={1} title="What it is">
@@ -414,10 +415,10 @@ export function SiteForm({
             placeholder="weekly impressions, adults 18+"
           />
         </div>
-        <p className="t-small bg-lit-tint text-ink rounded-sm px-3 py-2">
+        <Note>
           A figure is shown only with its source and the date it was measured. Without them, leave
           it empty.
-        </p>
+        </Note>
         <div className="grid gap-4 sm:grid-cols-3">
           <Field name="permitNumber" label="Permit number" raw={raw} errors={errors} mono />
           <Field

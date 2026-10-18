@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import { Container } from "@ohworks/ui";
+import { Container, Note } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance, ListSync } from "@/components/sites/Basket";
 import { MapPanel } from "@/components/sites/MapPanel";
@@ -163,15 +163,12 @@ export async function HubPage({ hub, page }: { hub: Hub | null; page: number }) 
         </nav>
 
         {data.preview ? (
-          <p
-            className="t-small border-hairline bg-lit-tint text-ink mt-4 rounded-sm border px-3 py-2"
-            data-section="hub-preview"
-          >
+          <Note section="hub-preview" className="mt-4">
             Preview, for this machine only. This page needs {data.status.needed} indexable sites to
             be published and has {data.status.indexable}, so on the live site this address answers
             &ldquo;not found&rdquo;.
             {data.anySample ? " The listings below are samples, not real sites." : ""}
-          </p>
+          </Note>
         ) : null}
 
         <h1 className="t-display-lg mt-4" data-section="hub-title">

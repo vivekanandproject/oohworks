@@ -1,7 +1,7 @@
 import { FORM_GRID } from "@/components/owners/Frame";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { Container } from "@ohworks/ui";
+import { Container, Note, Notice } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { EnquirySummary } from "@/components/sites/EnquirySummary";
 import { GroupSummary } from "@/components/sites/Thread";
@@ -62,32 +62,26 @@ export default async function ConfirmPage({ searchParams }: { searchParams: Prom
             </p>
 
             {error ? (
-              <div className="oh-toast error mt-5" role="alert" data-section="confirm-error">
-                <span className="dot" />
-                <div>
-                  <div className="t">{error.t}</div>
-                  <div className="d">{error.d}</div>
-                </div>
-              </div>
+              <Notice tone="error" title={error.t} section="confirm-error" className="mt-5">
+                {error.d}
+              </Notice>
             ) : null}
             {resent && !error ? (
-              <div className="oh-toast success mt-5" role="status" data-section="confirm-resent">
-                <span className="dot" />
-                <div>
-                  <div className="t">A new code is on its way.</div>
-                  <div className="d">The earlier one no longer works.</div>
-                </div>
-              </div>
+              <Notice
+                tone="success"
+                title="A new code is on its way."
+                section="confirm-resent"
+                className="mt-5"
+              >
+                The earlier one no longer works.
+              </Notice>
             ) : null}
             {shown ? (
-              <p
-                className="t-small border-hairline bg-lit-tint text-ink mt-5 rounded-sm border px-3 py-2"
-                data-section="dev-code"
-              >
+              <Note section="dev-code" className="mt-5">
                 Development only: no email service is set up on this machine, so the code is shown
                 here. It is <span className="font-mono font-medium">{shown}</span>. The email itself
                 is in the admin, under Operations, Outbox.
-              </p>
+              </Note>
             ) : null}
 
             <form

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-import { Button, Container, NEUTRALITY_LINE } from "@ohworks/ui";
+import { Button, Container, NEUTRALITY_LINE, Note } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { aboutText, dateRange, findGroup, threadPath } from "@/lib/sites/enquiries";
 import { BUYER_COOKIE, isAnyReference, maskEmail, readBuyer } from "@/lib/sites/enquiry";
@@ -98,14 +98,11 @@ export default async function SentPage({
           )}
 
           {local ? (
-            <p
-              className="t-small border-hairline bg-lit-tint text-ink mt-5 rounded-sm border px-3 py-2"
-              data-section="dev-outbox"
-            >
+            <Note section="dev-outbox" className="mt-5">
               Development only: no email service is set up on this machine, so the{" "}
               {many ? "emails to the owners" : "email to the owner"} and your copy are in the admin,
               under Operations, Outbox.
-            </p>
+            </Note>
           ) : null}
 
           <p className="t-body text-ink mt-6">

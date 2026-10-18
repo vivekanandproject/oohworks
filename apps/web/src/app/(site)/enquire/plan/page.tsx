@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Badge, Container, NEUTRALITY_LINE } from "@ohworks/ui";
+import { Badge, Container, NEUTRALITY_LINE, Notice } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { DateOrder } from "@/components/sites/Enhance";
 import { indiaDate } from "@/lib/sites/calendar";
@@ -77,13 +77,9 @@ export default async function PlanEnquiryPage({ searchParams }: { searchParams: 
         </p>
 
         {error ? (
-          <div className="oh-toast error mt-5" role="alert" data-section="enquiry-error">
-            <span className="dot" />
-            <div>
-              <div className="t">{error.t}</div>
-              <div className="d">{error.d}</div>
-            </div>
-          </div>
+          <Notice tone="error" title={error.t} section="enquiry-error" className="mt-5">
+            {error.d}
+          </Notice>
         ) : null}
 
         <form

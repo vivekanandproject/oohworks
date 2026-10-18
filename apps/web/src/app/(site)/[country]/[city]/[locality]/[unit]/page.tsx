@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { permanentIdFromSlug } from "@ohworks/core";
-import { Badge, Button, Container } from "@ohworks/ui";
+import { Badge, Button, Container, Note } from "@ohworks/ui";
 import { PageHead } from "@/components/owners/Frame";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance } from "@/components/sites/Basket";
@@ -218,13 +218,10 @@ export default async function SitePage({
         </nav>
 
         {site.sample ? (
-          <p
-            className="t-small border-hairline bg-lit-tint text-ink mt-4 rounded-sm border px-3 py-2"
-            data-section="sample-notice"
-          >
+          <Note section="sample-notice" className="mt-4">
             This is a sample listing for development. It is not a real site, and it is never shown
             to search engines.
-          </p>
+          </Note>
         ) : null}
 
         <h1 className="t-display-md mt-4" data-section="title">

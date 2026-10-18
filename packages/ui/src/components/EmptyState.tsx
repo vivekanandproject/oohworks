@@ -17,7 +17,7 @@ export function EmptyState({
       <span className="text-ink-muted">
         <Icon name={icon} size={32} />
       </span>
-      <div className="t">{title}</div>
+      <div className="t t-display-sm">{title}</div>
       <p>{children}</p>
       {actions ? <div className="mt-2 flex flex-wrap justify-center gap-2">{actions}</div> : null}
     </div>

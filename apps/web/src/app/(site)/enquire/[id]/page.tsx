@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { isPermanentId } from "@ohworks/core";
-import { Container } from "@ohworks/ui";
+import { Container, Notice } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { EnquirySummary } from "@/components/sites/EnquirySummary";
 import { DateOrder } from "@/components/sites/Enhance";
@@ -82,13 +82,9 @@ export default async function EnquirePage({
             </p>
 
             {error ? (
-              <div className="oh-toast error mt-5" role="alert" data-section="enquiry-error">
-                <span className="dot" />
-                <div>
-                  <div className="t">{error.t}</div>
-                  <div className="d">{error.d}</div>
-                </div>
-              </div>
+              <Notice tone="error" title={error.t} section="enquiry-error" className="mt-5">
+                {error.d}
+              </Notice>
             ) : null}
             {availability.state === "booked" ? (
               <p
