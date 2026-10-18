@@ -2,6 +2,7 @@ import { isPermanentId } from "@ohworks/core";
 import { readCoords } from "@/lib/owners/coords";
 import { go, ownerGate, text } from "@/lib/owners/request";
 import { ownerSite, saveSite } from "@/lib/owners/server";
+import { proposeChange } from "@/lib/owners/site-changes";
 import { stateOf } from "@/lib/owners/progress";
 import { FIELD_KEYS, checkSite, type Raw } from "@/lib/owners/site-input";
 import { indiaDate } from "@/lib/sites/calendar";
@@ -9,7 +10,8 @@ import { indiaDate } from "@/lib/sites/calendar";
 export const dynamic = "force-dynamic";
 
 /**
- * Saves one site from the owner's form, as a draft only they can see. Mistakes go back to the form
+ * Saves one site from the owner's form, as a draft only they can see. Changes to a live site go to the
+ * team instead, and buyers see the live version until they are approved. Mistakes go back to the form
  * with what was typed and each problem named, so nothing has to be entered twice.
  */
 export async function POST(req: Request) {
@@ -20,7 +22,6 @@ export async function POST(req: Request) {
   const id = text(form, "id", 12);
   const existing = id ? (isPermanentId(id) ? await ownerSite(owner.id, id) : null) : null;
   if (id && !existing) return go("/owner/");
-  if (existing && stateOf(existing) === "live") return go(`/owner/sites/${id}/`);
 
   const raw: Raw = {};
   for (const key of FIELD_KEYS) raw[key] = text(form, key, 300);
@@ -43,6 +44,10 @@ export async function POST(req: Request) {
     q.set("availability", text(form, "availability", 10) === "booked" ? "booked" : "free");
     q.set("e", Object.keys(checked.errors).join(","));
     return go(`${existing ? `/owner/sites/${id}/edit/` : "/owner/sites/new/"}?${q.toString()}`);
+  }
+  if (existing && stateOf(existing) === "live") {
+    const sent = await proposeChange(owner, existing, checked.site);
+    return go(`/owner/sites/${id}/?changes=${sent ? "sent" : "none"}#changes`);
   }
   const site = await saveSite(owner, checked.site, "form", existing);
   return go(`/owner/sites/${site.permanentId}/?saved=1`);

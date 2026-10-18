@@ -21,6 +21,7 @@ import {
   Owners,
   People,
   Reports,
+  SiteChanges,
   Sites,
   Sources,
   Subscribers,
@@ -85,6 +86,7 @@ export default buildConfig({
   },
   collections: [
     Sites,
+    SiteChanges,
     Owners,
     Enquiries,
     Messages,

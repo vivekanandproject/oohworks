@@ -1122,10 +1122,13 @@ test.describe("list your sites: the journey", () => {
       await page.goto(`/search/?owner=${slug}`);
       await expect(page.locator("[data-section='results'] [data-site]")).toHaveCount(1);
 
-      // What a live site is cannot be edited; its price and availability change at once.
+      // What a live site is can be changed, but the changes go to the team first (followed through
+      // in e2e/live-changes.e2e.ts); its price and availability change at once.
       await page.goto(`/owner/sites/${id}/edit/`);
-      await expect(page).toHaveURL(new RegExp(`/owner/sites/${id}/$`));
-      await expect(page.locator("[data-action='edit']")).toHaveCount(0);
+      await expect(page.locator("[data-section='live-edit']")).toContainText(
+        "go to the team first",
+      );
+      await page.goto(`/owner/sites/${id}/`);
       await page
         .locator("[data-section='quick-form'] input[name='priceDisplay'][value='on_request']")
         .check();

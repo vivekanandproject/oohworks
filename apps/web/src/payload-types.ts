@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     sites: Site;
+    'site-changes': SiteChange;
     owners: Owner;
     enquiries: Enquiry;
     messages: Message;
@@ -96,6 +97,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     sites: SitesSelect<false> | SitesSelect<true>;
+    'site-changes': SiteChangesSelect<false> | SiteChangesSelect<true>;
     owners: OwnersSelect<false> | OwnersSelect<true>;
     enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
     messages: MessagesSelect<false> | MessagesSelect<true>;
@@ -479,6 +481,87 @@ export interface Tag {
   createdAt: string;
 }
 /**
+ * Owners' changes to live sites. Buyers see the live version until you approve. Read the summary, check the pin if the location moved, then set Approved, or Returned with a note.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-changes".
+ */
+export interface SiteChange {
+  id: number;
+  site: number | Site;
+  owner?: (number | null) | Owner;
+  unitId: string;
+  status: 'submitted' | 'changes' | 'approved' | 'withdrawn';
+  /**
+   * What the owner changed, from what to what
+   */
+  summary?: string | null;
+  /**
+   * Needed to return the changes. The owner reads these words.
+   */
+  reviewNote?: string | null;
+  /**
+   * The pin moved more than 25 m. Approving clears Verified location until you check it again.
+   */
+  moved?: boolean | null;
+  /**
+   * The owner's form as sent
+   */
+  proposed?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  submittedAt?: string | null;
+  decidedBy?: (number | null) | User;
+  decidedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * The team. Only a super admin can add people, change roles, suspend or delete. Suspend instead of deleting, so the record of who did what stays.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name: string;
+  role: 'superadmin' | 'admin' | 'editor' | 'writer' | 'contributor' | 'ops';
+  /**
+   * Untick to suspend: they are signed out at once and cannot sign in again.
+   */
+  active?: boolean | null;
+  /**
+   * On until they replace the password they were given. Until then the admin shows them only their account page.
+   */
+  mustChangePassword?: boolean | null;
+  lastSignInAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "enquiries".
  */
@@ -678,45 +761,6 @@ export interface Person {
   user?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * The team. Only a super admin can add people, change roles, suspend or delete. Suspend instead of deleting, so the record of who did what stays.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  name: string;
-  role: 'superadmin' | 'admin' | 'editor' | 'writer' | 'contributor' | 'ops';
-  /**
-   * Untick to suspend: they are signed out at once and cannot sign in again.
-   */
-  active?: boolean | null;
-  /**
-   * On until they replace the password they were given. Until then the admin shows them only their account page.
-   */
-  mustChangePassword?: boolean | null;
-  lastSignInAt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  resetPasswordRequestedAt?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
 }
 /**
  * The citation registry. Every Fact points at one of these.
@@ -1014,9 +1058,22 @@ export interface Follow {
   search?: string | null;
   source: 'search' | 'saved_search' | 'hub' | 'guide';
   /**
-   * Double opt-in lands with the newsletter build
+   * They opened the link we emailed. Only confirmed follows get alerts.
    */
   confirmed?: boolean | null;
+  /**
+   * The sites already sent to them (unit ids), so no site is sent twice
+   */
+  seen?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  notifiedAt?: string | null;
   unsubscribedAt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1068,7 +1125,7 @@ export interface Correction {
   createdAt: string;
 }
 /**
- * Emails that would have been sent. Filled only when no email service is configured.
+ * Emails that were not sent: no email service is configured, or, outside production, the address is not on the allowlist.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "outbox".
@@ -1086,7 +1143,9 @@ export interface Outbox {
     | 'buyer_message'
     | 'owner_code'
     | 'owner_notice'
-    | 'team_notice';
+    | 'team_notice'
+    | 'alert'
+    | 'confirm_email';
   updatedAt: string;
   createdAt: string;
 }
@@ -1213,6 +1272,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'sites';
         value: number | Site;
+      } | null)
+    | ({
+        relationTo: 'site-changes';
+        value: number | SiteChange;
       } | null)
     | ({
         relationTo: 'owners';
@@ -1424,6 +1487,25 @@ export interface SitesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-changes_select".
+ */
+export interface SiteChangesSelect<T extends boolean = true> {
+  site?: T;
+  owner?: T;
+  unitId?: T;
+  status?: T;
+  summary?: T;
+  reviewNote?: T;
+  moved?: T;
+  proposed?: T;
+  submittedAt?: T;
+  decidedBy?: T;
+  decidedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1808,6 +1890,8 @@ export interface FollowsSelect<T extends boolean = true> {
   search?: T;
   source?: T;
   confirmed?: T;
+  seen?: T;
+  notifiedAt?: T;
   unsubscribedAt?: T;
   updatedAt?: T;
   createdAt?: T;

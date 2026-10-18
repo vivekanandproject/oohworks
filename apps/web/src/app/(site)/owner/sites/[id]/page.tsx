@@ -10,6 +10,7 @@ import { formatDate } from "@/lib/editorial/format";
 import { picture } from "@/lib/editorial/media";
 import { improvements, stateOf } from "@/lib/owners/progress";
 import { MAX_PHOTOS, ownerSite, photoOf, requireOwner } from "@/lib/owners/server";
+import { openChange } from "@/lib/owners/site-changes";
 import { indiaDate } from "@/lib/sites/calendar";
 import { maskEmail } from "@/lib/sites/enquiry";
 import { lightingDef } from "@/lib/sites/taxonomy";
@@ -74,6 +75,8 @@ export default async function OwnerSitePage({
   const site = isPermanentId(id) ? await ownerSite(owner.id, id) : null;
   if (!site) notFound();
   const state = stateOf(site);
+  // Changes to a live site waiting for the team, or returned by it.
+  const pending = state === "live" ? await openChange(site.id) : null;
   const now = Date.now();
   const today = indiaDate(now);
   const price = priceOf(site);
@@ -118,6 +121,32 @@ export default async function OwnerSitePage({
                 <Notice tone="success" title="Saved as a draft." section="saved">
                   Only you can see it. Add photographs below, then send it for review from your
                   sites.
+                </Notice>
+              ) : null}
+              {one(q.changes) === "sent" ? (
+                <Notice
+                  tone="success"
+                  title="Your changes are with the team."
+                  section="changes-sent"
+                >
+                  Buyers see the live version until they are approved, usually within a day.
+                  We&rsquo;ll email you either way.
+                </Notice>
+              ) : null}
+              {one(q.changes) === "none" ? (
+                <Notice
+                  tone="success"
+                  title="Nothing had changed, so nothing was sent."
+                  section="changes-none"
+                />
+              ) : null}
+              {one(q.changes) === "withdrawn" ? (
+                <Notice
+                  tone="success"
+                  title="Your changes are withdrawn."
+                  section="changes-withdrawn"
+                >
+                  The live version stays as it is.
                 </Notice>
               ) : null}
               {one(q.withdrawn) === "1" ? (
@@ -431,15 +460,9 @@ export default async function OwnerSitePage({
             <section data-section="facts">
               <div className="flex flex-wrap items-baseline justify-between gap-3">
                 <h2 className="t-display-sm">What buyers will see</h2>
-                {state === "live" ? null : (
-                  <a
-                    href={`/owner/sites/${id}/edit/`}
-                    className="oh-link t-body"
-                    data-action="edit"
-                  >
-                    Edit the details
-                  </a>
-                )}
+                <a href={`/owner/sites/${id}/edit/`} className="oh-link t-body" data-action="edit">
+                  Edit the details
+                </a>
               </div>
               <dl className="oh-spec mt-4">
                 {facts.map(([label, value]) => (
@@ -450,16 +473,54 @@ export default async function OwnerSitePage({
                 ))}
               </dl>
               {state === "live" ? (
-                <p className="t-small text-ink-muted mt-3">
-                  To change what the site is or where it is,{" "}
-                  <a
-                    href={`mailto:owners@ohworks.com?subject=${encodeURIComponent(`Change to ${site.permanentId}`)}`}
-                    className="oh-link"
-                  >
-                    write to us
-                  </a>
-                  . That is what the badges vouch for, so it is checked again.
-                </p>
+                <div id="changes" className="mt-3 scroll-mt-28" data-section="changes">
+                  {pending ? (
+                    <Notice
+                      tone={pending.status === "changes" ? "warning" : "success"}
+                      title={
+                        pending.status === "changes"
+                          ? "The team returned your changes."
+                          : "Your changes are with the team."
+                      }
+                      section="pending-change"
+                    >
+                      {pending.status === "changes" && pending.reviewNote ? (
+                        <>What the reviewer wrote: &ldquo;{pending.reviewNote}&rdquo;</>
+                      ) : (
+                        "Buyers see the live version until they are approved."
+                      )}
+                      <span className="mt-2 block font-mono text-[13px] whitespace-pre-line">
+                        {pending.summary}
+                      </span>
+                      <span className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                        <a
+                          href={`/owner/sites/${id}/edit/`}
+                          className="oh-link inline-flex min-h-11 items-center"
+                        >
+                          {pending.status === "changes" ? "Fix them" : "Change them"}
+                        </a>
+                        <form method="post" action="/api/owner/change/withdraw/">
+                          <input type="hidden" name="id" value={id} />
+                          <button
+                            type="submit"
+                            className="oh-link inline-flex min-h-11 cursor-pointer items-center"
+                          >
+                            Withdraw them
+                          </button>
+                        </form>
+                      </span>
+                    </Notice>
+                  ) : (
+                    <p className="t-small text-ink-muted">
+                      To change what the site is or where it is,{" "}
+                      <a href={`/owner/sites/${id}/edit/`} className="oh-link">
+                        edit the details
+                      </a>
+                      . The team checks changes before buyers see them, because that is what the
+                      badges vouch for.
+                    </p>
+                  )}
+                </div>
               ) : null}
             </section>
           </div>

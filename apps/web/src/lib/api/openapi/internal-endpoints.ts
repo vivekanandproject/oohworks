@@ -229,6 +229,31 @@ export const ENDPOINTS: Endpoint[] = [
       { status: 403, when: "Posted from another site." },
     ],
   },
+  {
+    path: "/api/owner/change/withdraw/",
+    method: "post",
+    tag: "Owners: company and sites",
+    summary: "Withdraw changes to a live site",
+    description:
+      "The owner takes back changes to a live site that the team has not yet approved. The live version stays as it is.",
+    body: "form",
+    fields: [{ name: "id", type: "string", required: true, description: "The site's unit ID." }],
+    cookies: [{ name: "oh_owner", required: true, description: "The signed-in owner." }],
+    checks: [
+      "Origin must be this site: see **The Origin check** at the top.",
+      "Forty posts a minute from one address.",
+      "The site must belong to the signed-in owner.",
+    ],
+    answers: [
+      {
+        status: 303,
+        when: "Withdrawn, or nothing was waiting.",
+        location: "/owner/sites/{id}/?changes=withdrawn#changes",
+      },
+      { status: 303, when: "Not signed in, or not their site.", location: "/owner/" },
+      { status: 403, when: "Posted from another site." },
+    ],
+  },
   // The site's own endpoints, catalogued from each route handler on 18 Oct 2026.
   {
     path: "/api/enquire/",
@@ -1662,7 +1687,7 @@ export const ENDPOINTS: Endpoint[] = [
     tag: "Owners: company and sites",
     summary: "Add or change a site",
     description:
-      "Saves one site from the owner's form as a draft only they can see (new, or an edit of an existing non-live site); mistakes go back to the form with what was typed and each problem named.\n\n- Works without JavaScript: a plain HTML form post answered with a 303 whose Location is a site-relative path (never a full URL).\n- Error messages are not in the address: e names the fields, and the form page words them. The same rules apply to spreadsheet rows (/api/owner/import/).\n- Field names are FIELD_KEYS in src/lib/owners/site-input.ts.\n- Saving can throw if the site became live in between; that surfaces as a 500.",
+      "Saves one site from the owner's form as a draft only they can see (new, or an edit of a site not yet live). For a live site the changes go to the team as a change to a live site (collection site-changes), and buyers see the live version until they are approved; the answer is a 303 to /owner/sites/{id}/?changes=sent (or none, when nothing changed). Mistakes go back to the form with what was typed and each problem named.\n\n- Works without JavaScript: a plain HTML form post answered with a 303 whose Location is a site-relative path (never a full URL).\n- Error messages are not in the address: e names the fields, and the form page words them. The same rules apply to spreadsheet rows (/api/owner/import/).\n- Field names are FIELD_KEYS in src/lib/owners/site-input.ts.\n- Saving can throw if the site became live in between; that surfaces as a 500.",
     body: "form",
     fields: [
       {

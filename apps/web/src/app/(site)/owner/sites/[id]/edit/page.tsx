@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { isPermanentId } from "@ohworks/core";
 import { Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
@@ -8,6 +8,7 @@ import { Aside, BetterPlace, FORM_GRID, PageHead } from "@/components/owners/Fra
 import { SiteForm } from "@/components/owners/SiteForm";
 import { stateOf } from "@/lib/owners/progress";
 import { ownerSite, requireOwner } from "@/lib/owners/server";
+import { openChange } from "@/lib/owners/site-changes";
 import {
   FIELD_KEYS,
   checkSite,
@@ -39,12 +40,14 @@ export default async function EditSitePage({
   const { email, owner } = await requireOwner();
   const site = isPermanentId(id) ? await ownerSite(owner.id, id) : null;
   if (!site) notFound();
-  // What a live site is and where it is are what the badges vouch for, so they are not edited here.
-  if (stateOf(site) === "live") redirect(`/owner/sites/${id}/`);
+  // A live site's changes go to the team first: what it is and where it is are what the badges vouch for.
+  const live = stateOf(site) === "live";
+  const pending = live ? await openChange(site.id) : null;
 
   const today = indiaDate(Date.now());
   const back = Boolean(one(q.e));
-  let raw: Raw = rawFromSite(site);
+  // Changes already with the team, or returned, are the starting point, so they can be adjusted.
+  let raw: Raw = pending?.proposed ? (pending.proposed as Raw) : rawFromSite(site);
   let errors: FieldErrors = {};
   if (back) {
     raw = {};
@@ -67,6 +70,21 @@ export default async function EditSitePage({
                 {site.title}
               </a>
             </PageHead>
+            {live ? (
+              <p className="t-body text-ink mt-5 max-w-[60ch]" data-section="live-edit">
+                <strong>This site is live, so your changes go to the team first.</strong> Buyers
+                keep seeing the live version until they are approved, usually within a day. Price
+                and availability are not changed here: change them on the site&rsquo;s page, where
+                they take effect at once.
+              </p>
+            ) : null}
+            {pending?.status === "changes" && pending.reviewNote ? (
+              <div className="mt-5">
+                <Notice tone="warning" title="What our reviewer asked for" section="review-note">
+                  &ldquo;{pending.reviewNote}&rdquo;
+                </Notice>
+              </div>
+            ) : null}
             {stateOf(site) === "changes" && site.reviewNote ? (
               <div className="mt-5">
                 <Notice tone="warning" title="What our reviewer asked for" section="review-note">

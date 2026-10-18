@@ -42,7 +42,7 @@ export function ReportListing({
       data-section="report"
       {...(error ? { open: true } : {})}
     >
-      <summary className="t-small text-ink-muted cursor-pointer">
+      <summary className="t-small text-ink-muted flex min-h-11 cursor-pointer items-center">
         Something wrong with this listing? <span className="oh-link">Report it</span>
       </summary>
       <form method="post" action="/api/report/" className="mt-4 flex flex-col gap-4">
