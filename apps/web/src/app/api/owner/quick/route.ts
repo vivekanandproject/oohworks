@@ -29,10 +29,15 @@ export async function POST(req: Request) {
   if (rate !== null && (Number.isNaN(rate) || rate <= 0 || rate > 1e9)) return back("qerror=rate");
   if (priceDisplay !== "on_request" && rate === null) return back("qerror=norate");
   let bookedUntil: string | null = null;
-  if (text(form, "availability", 10) === "booked") {
-    const date = readDate(text(form, "bookedUntil", 20));
-    if (date === null || date === "bad" || date < indiaDate(Date.now())) return back("qerror=date");
-    bookedUntil = date;
+  const typed = readDate(text(form, "bookedUntil", 20));
+  // A date the owner typed that is not the one on file means booked, even with "free" still chosen;
+  // the date already on file, left in the box after choosing "free", does not.
+  const onFile = site.bookedUntil ? site.bookedUntil.slice(0, 10) : null;
+  const newDate = typed !== null && typed !== "bad" && typed !== onFile;
+  if (text(form, "availability", 10) === "booked" || newDate) {
+    if (typed === null || typed === "bad" || typed < indiaDate(Date.now()))
+      return back("qerror=date");
+    bookedUntil = typed;
   }
   await quickUpdate(site, {
     priceDisplay,

@@ -11,6 +11,11 @@ export default defineConfig({
   testMatch: "**/*.workflow.ts",
   fullyParallel: false,
   workers: 1,
-  reporter: [["list"], ["html", { outputFolder: "playwright-report/workflow", open: "never" }]],
+  reporter: [
+    ["list"],
+    ["html", { outputFolder: "playwright-report/workflow", open: "never" }],
+    // A plain summary for people, beside it: playwright-report/workflow/summary.html.
+    ["./e2e/workflow-reporter.ts"],
+  ],
   projects: [{ name: "desktop", use: { ...devices["Desktop Chrome"] } }],
 });

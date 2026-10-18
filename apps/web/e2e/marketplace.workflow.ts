@@ -147,6 +147,12 @@ test.describe("the marketplace loop", () => {
         body: JSON.stringify(data, null, 2),
         contentType: "application/json",
       });
+    /** What a stage checks, for the summary page (e2e/workflow-reporter.ts). */
+    const covers = (stage: number, ...layers: string[]) =>
+      test.info().attach(`${stage} · checks`, {
+        body: JSON.stringify(layers),
+        contentType: "application/json",
+      });
 
     await cleanUp(request);
     let unit = "";
@@ -158,6 +164,7 @@ test.describe("the marketplace loop", () => {
 
     try {
       await test.step("0. The platform answers: health, API contract, docs, services and the database", async () => {
+        await covers(0, "API", "Database");
         expect((await request.get("/api/health/")).ok()).toBe(true);
         const spec = (await (await request.get("/api/v1/openapi.json")).json()) as {
           openapi: string;
@@ -174,10 +181,11 @@ test.describe("the marketplace loop", () => {
           "select count(*)::int as n from payload.sites where _status = 'published' and coalesce(removed, false) = false",
         );
         expect(live?.n).toBeGreaterThan(0);
-        await snapshot("services", { services: state, liveSitesBefore: live?.n });
+        await snapshot("0 · services", { services: state, liveSitesBefore: live?.n });
       });
 
       await test.step("1. An owner starts: one form, then the code sent to their email", async () => {
+        await covers(1, "Screen", "Email", "Database");
         await page.goto("/list-your-sites/");
         await page.locator("#lys-name").fill(COMPANY);
         await choosePlace(page, "#lys-place", "Hyder");
@@ -211,10 +219,11 @@ test.describe("the marketplace loop", () => {
         expect(owner?.password_hash).toBeTruthy();
         ownerId = owner!.id;
         ownerSlug = owner!.slug;
-        await snapshot("owner row", { ...owner, password_hash: "(set)" });
+        await snapshot("1 · owner row", { ...owner, password_hash: "(set)" });
       });
 
       await test.step("2. The owner adds a site with the form, then a photograph taken at it", async () => {
+        await covers(2, "Screen", "Database");
         await page
           .locator("[data-section='add']")
           .getByRole("link", { name: "Add a site" })
@@ -256,10 +265,11 @@ test.describe("the marketplace loop", () => {
           [site!.version_id],
         );
         expect(photos).toEqual([{ kind: "approach", gps: true }]);
-        await snapshot("site row (draft)", { unit, ...site, photos });
+        await snapshot("2 · site, draft", { unit, ...site, photos });
       });
 
       await test.step("3. The owner sends it for review; the team is told", async () => {
+        await covers(3, "Screen", "Email", "Database");
         await page.goto("/owner/");
         await page.locator("[data-action='submit']").click();
         await expect(page.locator("[data-section='sent']")).toContainText(
@@ -277,6 +287,7 @@ test.describe("the marketplace loop", () => {
       });
 
       await test.step("4. The team returns it with a reason, the owner sends it again, and the team publishes it", async () => {
+        await covers(4, "Screen", "Email", "API", "Database");
         const refused = await request.patch(`/api/sites/${siteId}?draft=true`, {
           headers,
           data: { review: "changes" },
@@ -346,10 +357,11 @@ test.describe("the marketplace loop", () => {
           )
         ).json()) as { sites: { unitId: string }[] };
         expect(theirs.sites.map((s) => s.unitId)).toEqual([unit]);
-        await snapshot("site row (published)", { ...site, publicPath });
+        await snapshot("4 · site, published", { ...site, publicPath });
       });
 
       await test.step("5. A buyer finds it in search, opens it, saves it and exports the shortlist", async () => {
+        await covers(5, "Screen", "API");
         const buyer = await browser.newContext({
           extraHTTPHeaders: { "x-forwarded-for": visitor() },
         });
@@ -376,6 +388,7 @@ test.describe("the marketplace loop", () => {
       });
 
       await test.step("6. The buyer enquires, confirms their email with a code, and the owner gets it", async () => {
+        await covers(6, "Screen", "Email", "Database");
         const buyer = await browser.newContext({
           extraHTTPHeaders: { "x-forwarded-for": visitor() },
         });
@@ -423,11 +436,12 @@ test.describe("the marketplace loop", () => {
         expect(toOwner?.subject).toContain(`New enquiry: 30 × 15 ft hoarding, ${ROAD}`);
         expect(toOwner?.text).toContain("Brand and category: Workflow Coffee");
         expect(toOwner?.text).toContain(`reply straight to the buyer: ${BUYER}`);
-        await snapshot("enquiry row", { reference, ...enquiry });
+        await snapshot("6 · enquiry", { reference, ...enquiry });
         await buyer.close();
       });
 
       await test.step("7. The owner answers from the email link, and the buyer reads it on their thread", async () => {
+        await covers(7, "Screen", "Email", "Database");
         const contact = await row<{ contact_email: string }>(
           "select contact_email from payload.owners where id = $1",
           [ownerId],
@@ -469,13 +483,14 @@ test.describe("the marketplace loop", () => {
         );
         await expect(b.locator("[data-section='thread']")).toContainText("Printing is extra.");
         await buyer.close();
-        await snapshot("enquiry after the reply", replied);
+        await snapshot("7 · enquiry after the reply", replied);
       });
 
       await test.step("8. The owner keeps it fresh: a new price and a booking at once; a new road through the team", async () => {
+        await covers(8, "Screen", "Email", "API", "Database");
         await page.goto(`/owner/sites/${unit}/`);
         await page.locator("#quick-rate").fill("70000");
-        await page.getByLabel("It is booked until").check();
+        // A date typed without choosing "booked" still books it: the owner said when.
         await page.locator("#quick-booked").fill(day(10));
         await page.locator("[data-action='quick-save']").click();
         await expect(page).toHaveURL(/updated=1/);
@@ -514,10 +529,11 @@ test.describe("the marketplace loop", () => {
         expect(api.location.road).toBe(NEW_ROAD);
         expect(api.availability.bookedUntil).toBe(day(10));
         publicPath = new URL(api.url).pathname;
-        await snapshot("site after the owner's changes", { ...after, change });
+        await snapshot("8 · site after the owner's changes", { ...after, change });
       });
 
       await test.step("9. The jobs on a timer run with the secret, and refuse without it", async () => {
+        await covers(9, "Jobs");
         expect((await request.post("/api/jobs/alerts/")).status()).toBe(401);
         for (const name of ["alerts", "availability", "reply-times", "media-kits"]) {
           const res = await job(request, name);
@@ -529,6 +545,7 @@ test.describe("the marketplace loop", () => {
       });
 
       await test.step("10. The buyer follows Hyderabad, confirms by email, and is not told about what they have seen", async () => {
+        await covers(10, "Email", "Jobs", "Database");
         const followed = await request.post("/api/follow/", {
           form: { email: BUYER, city: "hyderabad", return: "/search/?city=hyderabad" },
           maxRedirects: 0,
@@ -550,6 +567,7 @@ test.describe("the marketplace loop", () => {
       });
 
       await test.step("11. A buyer reports it; the team takes it down: 410 on the page and the API", async () => {
+        await covers(11, "Screen", "Email", "API", "Database");
         await page.goto(publicPath);
         await page.locator("#report summary").click();
         await page.getByLabel("What is wrong?").selectOption("gone");
@@ -589,7 +607,7 @@ test.describe("the marketplace loop", () => {
           await request.get("/api/v1/sites/?city=hyderabad&per_page=50")
         ).json()) as { sites: { unitId: string }[] };
         expect(list.sites.map((s) => s.unitId)).not.toContain(unit);
-        await snapshot("report and takedown", { report, removed: true });
+        await snapshot("11 · report and takedown", { report, removed: true });
       });
 
       expect(errors, "no script errors on any page").toEqual([]);
