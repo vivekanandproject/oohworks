@@ -52,7 +52,7 @@ export default async function ReplyPage({
   return (
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
-        <div className="max-w-[760px]">
+        <div className="mx-auto max-w-[760px]">
           <p className="t-label text-ink-muted">
             Enquiry <span className="font-mono">{request.enquiry.reference}</span>
           </p>

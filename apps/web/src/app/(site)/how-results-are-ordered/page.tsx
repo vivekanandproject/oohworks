@@ -38,7 +38,7 @@ export default function OrderPage() {
   return (
     <Shell active="find">
       <Container className="py-12 lg:py-16">
-        <div className="max-w-[680px]">
+        <div className="mx-auto max-w-[680px]">
           <p className="t-label text-ink-muted">Find sites</p>
           <h1 className="t-display-lg mt-3">How results are ordered</h1>
           <p className="t-body-lg text-ink-muted mt-5">

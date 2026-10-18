@@ -18,7 +18,7 @@ export default async function SubscribedPage({
   return (
     <Shell active="news">
       <Container className="py-12 lg:py-16">
-        <div className="max-w-[620px]">
+        <div className="mx-auto max-w-[620px]">
           {error ? (
             <>
               <div className="oh-toast error" role="alert">
@@ -33,19 +33,19 @@ export default async function SubscribedPage({
               </div>
             </>
           ) : (
-            <>
+            <div className="text-center">
               <h1 className="t-display-lg">Check your email</h1>
               <p className="t-body-lg text-ink-muted mt-4" role="status">
                 We sent a link to confirm your address. Once you open it, the first issue of the
                 daily briefing reaches you when it starts, and every issue carries a one-click way
                 out.
               </p>
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <Button href="/newsroom/" variant="primary">
                   Back to the newsroom
                 </Button>
               </div>
-            </>
+            </div>
           )}
         </div>
       </Container>

@@ -15,7 +15,7 @@ export default function CharterPage() {
   return (
     <Shell>
       <Container className="py-12 lg:py-16">
-        <div className="max-w-[680px]">
+        <div className="mx-auto max-w-[680px]">
           <p className="t-label text-survey-text">The charter</p>
           <h1 className="t-display-lg mt-3">Five things we will never do</h1>
           <p className="text-ink-muted t-body-lg mt-5">

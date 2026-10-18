@@ -253,7 +253,11 @@
     color: var(--color-ink-muted);
   }
 
+  /* An empty state centres itself in whatever holds it, at most a reading width across. */
   .oh-empty {
+    width: 100%;
+    max-width: 760px;
+    margin-inline: auto;
     text-align: center;
     padding: 32px 20px;
     border: 1px dashed var(--color-hairline-strong);

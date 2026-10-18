@@ -82,3 +82,15 @@ Phase A is pure rule enforcement and starts at once. Phases B to D change files 
 **Guard.** `apps/web/e2e/design-rules.e2e.ts` checks twelve pages for: at most one accent; every control 44px tall on the phone project (menus opened first; bot-trap fields and the skip link excepted); fixed and sticky bars at or under 25% of a 360×640 and a 740×360 screen; no label wider than its button, chip or badge. `search.e2e.ts` now expects no accent on results.
 
 **Checked:** design-rules, responsive, search, sites, home and owners on desktop and phone against a freshly built test database: 190 passed, 14 skipped by design (tests for one device only), none failed.
+
+## 8. Where content sits on the page (18 Oct 2026)
+
+The founder found the newsroom's empty state pinned to the left with the right of the page empty, and asked for content to sit in the centre across the site. The rule, now applied everywhere:
+
+| Kind of page | Where its content sits | Pages |
+| --- | --- | --- |
+| Full width (two or more columns) | The header spans the content area; anything narrower inside it is centred | Home, search, hubs, site page, newsroom front, shortlist, compare, enquiry form and plan, owner area, list your sites |
+| Single column (reading or a list) | The whole column is centred, heading included, as articles already were | Charter, how results are ordered, corrections, authors, topics, section indexes, enquiry threads, owner reply, enquiry sent |
+| Status page | A centred column with centred text and buttons, like the email-result page | 404, newsroom sign-up confirmation, email results |
+
+`.oh-empty` now centres itself at most 760px wide, so a new empty state is right without help. The search page's "Email me new sites" and "Widen your search" panels follow the same rule. Checked by measuring every page at 1440px for a box or column narrower than the page that hugs its left edge: none left, data-free pages on the development server and populated pages on the sample database. design-rules, responsive, newsroom and home passed on desktop and phone (161 passed).

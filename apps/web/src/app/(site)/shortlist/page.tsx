@@ -202,7 +202,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
         ) : null}
 
         {cards.length === 0 ? (
-          <div className="mt-6 max-w-[760px]" data-section="shortlist-empty">
+          <div className="mx-auto mt-6 w-full max-w-[760px]" data-section="shortlist-empty">
             <EmptyState icon="pin" title="No sites saved yet">
               Press Save on any site in the results, or on its page, and it appears here with the
               others from the same owner.

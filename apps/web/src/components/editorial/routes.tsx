@@ -40,49 +40,51 @@ function IndexView({ title, blurb, base, current, list, page, counts }: IndexPro
   return (
     <Shell active="news">
       <Container className="py-10 lg:py-14">
-        <header className="flex flex-col gap-4">
-          <nav aria-label="Breadcrumb" className="t-small text-ink-muted">
-            <a className="oh-link" href="/newsroom/">
-              Newsroom
-            </a>
-          </nav>
-          <div>
-            <h1 className="t-display-lg">{title}</h1>
-            <p className="t-body text-ink-muted mt-3 max-w-[62ch]">{blurb}</p>
-          </div>
-          <PillarChips current={current} counts={counts} />
-        </header>
-
-        {items.length === 0 ? (
-          <div className="mt-10 max-w-[760px]">
-            <EmptyState
-              icon="enquiry"
-              title={`Nothing in ${title.toLowerCase()} yet`}
-              actions={
-                <Button href="/newsroom/" variant="primary" size="sm">
-                  Back to the newsroom
-                </Button>
-              }
-            >
-              The first pieces are on their way. Every one carries its sources and its dates.
-            </EmptyState>
-          </div>
-        ) : (
-          <div className="mt-8 max-w-[760px]" data-section="stream">
-            {items.slice(0, 3).map((p) => (
-              <PieceRow key={`${p.collection}-${p.id}`} piece={p} level={2} />
-            ))}
-            <div className="my-6">
-              <BriefingBand from={path} id="brief-index" />
+        <div className="mx-auto max-w-[760px]">
+          <header className="flex flex-col gap-4">
+            <nav aria-label="Breadcrumb" className="t-small text-ink-muted">
+              <a className="oh-link" href="/newsroom/">
+                Newsroom
+              </a>
+            </nav>
+            <div>
+              <h1 className="t-display-lg">{title}</h1>
+              <p className="t-body text-ink-muted mt-3 max-w-[62ch]">{blurb}</p>
             </div>
-            {items.slice(3).map((p) => (
-              <PieceRow key={`${p.collection}-${p.id}`} piece={p} level={2} />
-            ))}
-          </div>
-        )}
+            <PillarChips current={current} counts={counts} />
+          </header>
 
-        <div className="mt-8 max-w-[760px]">
-          <Pager base={base} page={page} pages={list.pages} />
+          {items.length === 0 ? (
+            <div className="mx-auto mt-10 w-full max-w-[760px]">
+              <EmptyState
+                icon="enquiry"
+                title={`Nothing in ${title.toLowerCase()} yet`}
+                actions={
+                  <Button href="/newsroom/" variant="primary" size="sm">
+                    Back to the newsroom
+                  </Button>
+                }
+              >
+                The first pieces are on their way. Every one carries its sources and its dates.
+              </EmptyState>
+            </div>
+          ) : (
+            <div className="mt-8 max-w-[760px]" data-section="stream">
+              {items.slice(0, 3).map((p) => (
+                <PieceRow key={`${p.collection}-${p.id}`} piece={p} level={2} />
+              ))}
+              <div className="my-6">
+                <BriefingBand from={path} id="brief-index" />
+              </div>
+              {items.slice(3).map((p) => (
+                <PieceRow key={`${p.collection}-${p.id}`} piece={p} level={2} />
+              ))}
+            </div>
+          )}
+
+          <div className="mt-8">
+            <Pager base={base} page={page} pages={list.pages} />
+          </div>
         </div>
       </Container>
     </Shell>

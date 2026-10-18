@@ -348,7 +348,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             ) : null}
           </div>
         ) : (
-          <div className="max-w-[760px]" data-section="results" data-layout="empty">
+          <div className="mx-auto w-full max-w-[760px]" data-section="results" data-layout="empty">
             <EmptyState
               icon="pin"
               title={result.catalogueSize === 0 ? "No sites listed yet" : `No ${what} yet`}
@@ -379,7 +379,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
         {result.total > 0 && !followed ? (
           <details
-            className="border-hairline bg-paper-raised mt-8 max-w-[760px] rounded-md border p-5"
+            className="border-hairline bg-paper-raised mx-auto mt-8 max-w-[760px] rounded-md border p-5"
             data-section="save-search"
             open={followInvalid}
           >
@@ -404,7 +404,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
         {result.wider.length ? (
           <section
-            className="border-hairline bg-paper-raised mt-8 max-w-[760px] rounded-md border p-5"
+            className="border-hairline bg-paper-raised mx-auto mt-8 max-w-[760px] rounded-md border p-5"
             data-section="wider"
           >
             <h2 className="t-display-sm">Widen your search</h2>

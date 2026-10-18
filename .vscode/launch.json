@@ -1,0 +1,32 @@
+{
+  // Run and Debug (F5). "Run the site" starts the dev server on http://localhost:3000 and opens it
+  // when it is ready; breakpoints in server code (pages, API routes, Payload hooks) stop in VS Code.
+  // Postgres must be running (it is on this Mac as a native service on port 5432).
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ohworks: run the site",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm --filter @ohworks/web dev",
+      "cwd": "${workspaceFolder}",
+      "serverReadyAction": {
+        "pattern": "- Local:\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "openExternally"
+      }
+    },
+    {
+      "name": "ohworks: run the site and debug the browser too",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm --filter @ohworks/web dev",
+      "cwd": "${workspaceFolder}",
+      "serverReadyAction": {
+        "pattern": "- Local:\\s+(https?://\\S+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    }
+  ]
+}

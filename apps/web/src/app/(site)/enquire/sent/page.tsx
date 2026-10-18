@@ -40,7 +40,7 @@ export default async function SentPage({
   return (
     <Shell active="find">
       <Container className="py-10 lg:py-16">
-        <div className="max-w-[680px]" data-section="enquiry-sent">
+        <div className="mx-auto max-w-[680px]" data-section="enquiry-sent">
           <p className="t-label text-verified">Enquiry sent</p>
           <h1 className="t-display-lg mt-2">
             Sent to {only ? only.owner.name : `${group.requests.length} owners`}.

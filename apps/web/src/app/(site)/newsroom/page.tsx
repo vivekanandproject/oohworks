@@ -164,7 +164,7 @@ export default async function NewsroomPage() {
               ) : null}
             </div>
           ) : (
-            <div className="max-w-[760px]">
+            <div className="mx-auto w-full max-w-[760px]">
               <EmptyState
                 icon="enquiry"
                 title="The newsroom opens with the India launch"

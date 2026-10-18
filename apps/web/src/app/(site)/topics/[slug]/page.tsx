@@ -48,7 +48,7 @@ export default async function TopicPage({ params }: Params) {
         ])}
       />
       <Container className="py-10 lg:py-14">
-        <div className="max-w-[760px]">
+        <div className="mx-auto max-w-[760px]">
           <nav aria-label="Breadcrumb" className="t-small text-ink-muted">
             <a className="oh-link" href="/newsroom/">
               Newsroom

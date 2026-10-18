@@ -89,7 +89,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
         ) : null}
 
         {cards.length === 0 ? (
-          <div className="mt-6 max-w-[760px]" data-section="compare-empty">
+          <div className="mx-auto mt-6 w-full max-w-[760px]" data-section="compare-empty">
             <EmptyState icon="pin" title="Nothing to compare yet">
               Press Compare on two to four sites in the results. They appear here side by side, fact
               by fact.
