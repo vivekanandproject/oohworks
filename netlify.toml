@@ -19,6 +19,8 @@
   HUB_PREVIEW = "1"
   # Netlify keeps no files between requests, so pictures made at build time are served as plain files.
   HOSTED_MEDIA = "static"
+  # Netlify's functions run on 64-bit Intel Linux. Naming it keeps the server under their size limit.
+  FUNCTION_PLATFORM = "linux-x64"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
