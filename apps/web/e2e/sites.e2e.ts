@@ -76,7 +76,12 @@ test.describe("site page", () => {
     await expect(page.locator("[data-section='similar'] [data-site]").first()).toContainText(
       "m away",
     );
-    await expect(page.locator("[data-section='report'] a")).toHaveAttribute("href", /^mailto:/);
+    // Anyone can report the listing to the team's queue (e2e/report.e2e.ts follows it through).
+    await expect(page.locator("[data-section='report'] summary")).toContainText("Report it");
+    await expect(page.locator("[data-section='report'] form")).toHaveAttribute(
+      "action",
+      "/api/report/",
+    );
   });
 
   test("one h1 and no skipped heading levels", async ({ page }) => {

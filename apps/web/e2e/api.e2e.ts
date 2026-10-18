@@ -157,7 +157,7 @@ test.describe("API documentation", () => {
     expect(res?.headers()["x-robots-tag"]).toBe("noindex");
     await expect(page.locator(".swagger-ui .info .title")).toContainText("ohworks public API");
     await expect(page.locator(".opblock-summary-path").first()).toBeVisible();
-    expect(await page.locator(".opblock-summary-path").count()).toBe(5);
+    expect(await page.locator(".opblock-summary-path").count()).toBe(6);
 
     // The page opens every operation ready to try (tryItOutEnabled), so there is no button to press.
     await page.locator("#operations-Sites-getSite").click();

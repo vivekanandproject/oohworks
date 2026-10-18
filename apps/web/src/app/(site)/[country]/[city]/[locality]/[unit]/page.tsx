@@ -24,6 +24,7 @@ import { absolute, alternates, JsonLd } from "@/lib/seo";
 import { monthView } from "@/lib/sites/calendar";
 import { readLists } from "@/lib/sites/lists-server";
 import { getSite, hubLinksFor, similarSites } from "@/lib/sites/queries";
+import { ReportListing } from "@/components/sites/ReportListing";
 import { cityDef, lightingDef } from "@/lib/sites/taxonomy";
 import {
   availabilityOf,
@@ -85,7 +86,7 @@ export default async function SitePage({
   searchParams,
 }: {
   params: Promise<Params>;
-  searchParams: Promise<{ m?: string | string[] }>;
+  searchParams: Promise<{ m?: string | string[]; reported?: string; report?: string }>;
 }) {
   const p = await params;
   const found = await load(p);
@@ -98,7 +99,8 @@ export default async function SitePage({
     permanentRedirect(canonical);
 
   const now = Date.now();
-  const m = (await searchParams).m;
+  const asked = await searchParams;
+  const m = asked.m;
   const month = monthView(Array.isArray(m) ? m[0] : m, site.bookedUntil, now);
   const availability = availabilityOf(site, now);
   const badges = badgesOf(site, owner, now);
@@ -395,16 +397,12 @@ export default async function SitePage({
           </section>
         ) : null}
 
-        <p className="t-small text-ink-muted mt-10" data-section="report">
-          Something wrong with this listing?{" "}
-          <a
-            href={`mailto:hello@ohworks.com?subject=${encodeURIComponent(`Listing ${site.permanentId}`)}`}
-            className="oh-link"
-          >
-            Tell us what you saw
-          </a>
-          .
-        </p>
+        <ReportListing
+          unitId={unitId}
+          path={canonical}
+          sent={asked.reported === "1"}
+          problem={typeof asked.report === "string" ? asked.report : null}
+        />
       </Container>
 
       <div

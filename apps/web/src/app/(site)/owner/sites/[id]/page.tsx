@@ -33,9 +33,22 @@ const PHOTO_ERRORS: Record<string, string> = {
   big: "That photograph is over 10 MB. Use a smaller one.",
   type: "Use a JPEG, PNG or WebP photograph.",
   many: `A site holds up to ${MAX_PHOTOS} photographs. Remove one to add another.`,
-  date: "Give the date the photograph was taken. It cannot be in the future.",
+  date: "This photograph does not record when it was taken. Give the date; it cannot be in the future.",
   read: "We could not read that file as a photograph. Try another.",
 };
+/** What happened to an added photograph: where its date came from, and whether it matched the pin. */
+function photoAdded(q: Record<string, string | string[] | undefined>): string {
+  const said = ["Photograph added."];
+  if (one(q.from) === "file") said.push("Its date was read from the photograph.");
+  if (one(q.gps) === "1") said.push("It was taken at the pin, so buyers see it as GPS-stamped.");
+  const away = Number(one(q.away));
+  if (Number.isFinite(away) && away > 0)
+    said.push(
+      `It was taken about ${away >= 1000 ? `${(away / 1000).toFixed(1)} km` : `${away} m`} from the pin. Check that the pin is right and that this is the right site.`,
+    );
+  return said.join(" ");
+}
+
 const QUICK_ERRORS: Record<string, string> = {
   rate: "Give the monthly rate as a number of rupees, such as 85000.",
   norate:
@@ -288,7 +301,7 @@ export default async function OwnerSitePage({
               </p>
               <div className="mt-3 space-y-3">
                 {one(q.photo) === "added" ? (
-                  <Notice tone="success" title="Photograph added." section="photo-added" />
+                  <Notice tone="success" title={photoAdded(q)} section="photo-added" />
                 ) : null}
                 {one(q.photo) === "removed" ? (
                   <Notice tone="success" title="Photograph removed." section="photo-removed" />
@@ -395,13 +408,12 @@ export default async function OwnerSitePage({
                   </div>
                   <div>
                     <label htmlFor="photo-date" className="oh-label block">
-                      Date it was taken
+                      Date it was taken, if the photograph does not record it
                     </label>
                     <input
                       id="photo-date"
                       name="takenOn"
                       type="date"
-                      required
                       max={today}
                       defaultValue={today}
                       className="oh-input data mt-1"

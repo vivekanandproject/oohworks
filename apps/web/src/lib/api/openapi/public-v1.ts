@@ -419,6 +419,30 @@ export const publicSpec = {
         },
       },
     },
+    "/api/v1/owners/{slug}/": {
+      get: {
+        tags: ["Sites"],
+        operationId: "getOwner",
+        summary: "Get an owner",
+        description:
+          "An owner with at least one published site: who they are and where they sell. Contact details are never included; buyers ask about a site from its `enquireUrl`.",
+        parameters: [
+          {
+            name: "slug",
+            in: "path",
+            required: true,
+            schema: { type: "string", pattern: "^[a-z0-9-]{1,80}$", examples: ["sample-kaveri"] },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "The owner.",
+            content: { "application/json": { schema: { $ref: "#/components/schemas/Owner" } } },
+          },
+          "404": problemResponse("No owner with published sites has this slug."),
+        },
+      },
+    },
     "/api/v1/cities/": {
       get: {
         tags: ["Reference"],
@@ -499,6 +523,59 @@ export const publicSpec = {
         },
       },
       Filters,
+      Owner: {
+        type: "object",
+        required: [
+          "slug",
+          "name",
+          "verified",
+          "sites",
+          "cities",
+          "formats",
+          "sample",
+          "url",
+          "sitesUrl",
+        ],
+        properties: {
+          slug: { type: "string" },
+          name: { type: "string" },
+          verified: {
+            type: "boolean",
+            description: "Company documents and contact details checked.",
+          },
+          verifiedOn: nullable(date),
+          about: nullable({ type: "string" }),
+          medianReplyHours: nullable({ type: "number" }),
+          sites: { type: "integer", description: "Published sites." },
+          cities: {
+            type: "array",
+            items: {
+              type: "object",
+              required: ["slug", "label", "count"],
+              properties: {
+                slug: { type: "string", enum: slugs(CITIES) },
+                label: { type: "string" },
+                count: { type: "integer" },
+              },
+            },
+          },
+          formats: {
+            type: "array",
+            items: {
+              type: "object",
+              required: ["slug", "label", "count"],
+              properties: {
+                slug: { type: "string", enum: slugs(FORMATS) },
+                label: { type: "string" },
+                count: { type: "integer" },
+              },
+            },
+          },
+          sample: { type: "boolean" },
+          url: { type: "string", format: "uri", description: "The owner's page on ohworks." },
+          sitesUrl: { type: "string", format: "uri", description: "Their sites, in this API." },
+        },
+      },
       City: {
         type: "object",
         required: ["slug", "label", "sites", "searchUrl"],

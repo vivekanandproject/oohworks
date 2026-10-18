@@ -520,6 +520,8 @@ export async function addPhoto(
   file: File,
   kind: keyof typeof KIND_WORD,
   takenOn: string,
+  /** Taken within reach of the site's pin, by the position in the file (src/lib/owners/photo-facts.ts). */
+  gps = false,
 ): Promise<void> {
   const payload = await client();
   const data = Buffer.from(await file.arrayBuffer());
@@ -546,7 +548,7 @@ export async function addPhoto(
       takenOn: p.takenOn,
       gps: Boolean(p.gps),
     })),
-    { image: media.id, kind, takenOn, gps: false },
+    { image: media.id, kind, takenOn, gps },
   ];
   // The approach view leads, as it does on every card.
   photos.sort((a, b) => Number(b.kind === "approach") - Number(a.kind === "approach"));

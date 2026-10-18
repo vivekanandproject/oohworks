@@ -333,6 +333,7 @@ const TAG_TEXT: Record<string, string> = {
   "Owners: company and sites":
     "What a signed-in owner changes: the company, sites, photographs, files and reviews.",
   Places: "The place search on the owners' forms.",
+  Reports: "Reports about a listing, from the form on each site page.",
   "Newsletter and follows": "Newsletter sign-ups and follows of a search.",
   CMS: "The CMS's own REST and GraphQL API, used by /admin.",
 };

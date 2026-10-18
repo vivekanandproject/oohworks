@@ -2,14 +2,14 @@ import type { MetadataRoute } from "next";
 import { PILLARS, PILLAR_KEYS } from "@/lib/editorial/pillars";
 import { allPieces, authorsOf, pillarCounts } from "@/lib/editorial/queries";
 import { absolute } from "@/lib/seo";
-import { indexableSiteUrls, publishedHubs } from "@/lib/sites/queries";
+import { indexableOwnerUrls, indexableSiteUrls, publishedHubs } from "@/lib/sites/queries";
 
 export const dynamic = "force-dynamic";
 
 /**
  * Static pages and everything the newsroom has published. Section indexes join only when they hold
- * something. Site pages join once they meet the content bar; a sample listing never does. Hub and owner
- * sitemaps, and shards by city, come with the indexing job (M2).
+ * something. Site pages join once they meet the content bar; a sample listing never does. An owner's page
+ * joins once they are verified and have such a site. Shards by city come with the indexing job (M2).
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const fixed = new Date("2026-10-10");
@@ -35,12 +35,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "yearly",
     priority: 0.4,
   });
-  const [pieces, counts, sites, hubs] = await Promise.all([
+  const [pieces, counts, sites, hubs, owners] = await Promise.all([
     allPieces(),
     pillarCounts(),
     indexableSiteUrls(),
     publishedHubs(),
+    indexableOwnerUrls(),
   ]);
+  for (const o of owners) {
+    pages.push({
+      url: absolute(o.url),
+      lastModified: new Date(o.updatedAt),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    });
+  }
   for (const h of hubs) {
     pages.push({
       url: absolute(h.url),

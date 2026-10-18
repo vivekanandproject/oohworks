@@ -214,6 +214,63 @@ export async function searchSites(
   };
 }
 
+export interface OwnerPage {
+  owner: Owner;
+  cards: Card[];
+  total: number;
+  pages: number;
+  cities: { slug: string; label: string; count: number }[];
+  formats: { slug: string; label: string; count: number }[];
+  /** Search engines see it only for a verified, real owner with at least one site above the content bar. */
+  indexable: boolean;
+}
+
+/** An owner's public page: who they are and their published sites, best first, twelve a page. */
+export async function ownerPage(slug: string, page: number): Promise<OwnerPage | null> {
+  const cat = await catalogue();
+  const owner = [...cat.owners.values()].find((o) => o.slug === slug);
+  if (!owner) return null;
+  const now = Date.now();
+  const theirs = sortListings(
+    cat.listings.filter((l) => l.ownerId === owner.id),
+    DEFAULT_STATE,
+    now,
+  );
+  if (theirs.length === 0) return null;
+  const pages = Math.max(1, Math.ceil(theirs.length / PER_PAGE));
+  const count = (key: "city" | "format", list: readonly { slug: string; label: string }[]) =>
+    list
+      .map((d) => ({ ...d, count: theirs.filter((l) => l[key] === d.slug).length }))
+      .filter((d) => d.count > 0)
+      .map(({ slug, label, count }) => ({ slug, label, count }));
+  return {
+    owner,
+    cards: await toCards(theirs.slice((page - 1) * PER_PAGE, page * PER_PAGE), cat),
+    total: theirs.length,
+    pages,
+    cities: count("city", CITIES),
+    formats: count(
+      "format",
+      FORMATS.map((f) => ({ slug: f.slug, label: f.plural })),
+    ),
+    indexable: Boolean(owner.verified) && !owner.sample && theirs.some((l) => l.indexable),
+  };
+}
+
+/** Owners whose public page search engines may see, for the sitemap. */
+export async function indexableOwnerUrls(): Promise<{ url: string; updatedAt: string }[]> {
+  const cat = await catalogue();
+  return [...cat.owners.values()]
+    .filter(
+      (o) =>
+        o.slug &&
+        o.verified &&
+        !o.sample &&
+        cat.listings.some((l) => l.ownerId === o.id && l.indexable),
+    )
+    .map((o) => ({ url: `/owners/${o.slug}/`, updatedAt: o.updatedAt }));
+}
+
 /** How many published sites each city and each format has. */
 export async function catalogueCounts(): Promise<{
   cities: Map<string, number>;

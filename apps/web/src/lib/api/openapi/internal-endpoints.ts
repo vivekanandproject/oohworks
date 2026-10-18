@@ -153,6 +153,18 @@ export const ENDPOINTS: Endpoint[] = [
     ],
   },
   {
+    path: "/api/v1/owners/{slug}/",
+    method: "get",
+    tag: PUBLIC,
+    summary: "Get an owner",
+    description: seePublic,
+    pathParams: [{ name: "slug", description: "The owner's slug." }],
+    answers: [
+      { status: 200, when: "The owner." },
+      { status: 404, when: "No owner with published sites has this slug." },
+    ],
+  },
+  {
     path: "/api/v1/cities/",
     method: "get",
     tag: PUBLIC,
@@ -167,6 +179,55 @@ export const ENDPOINTS: Endpoint[] = [
     summary: "List formats",
     description: seePublic,
     answers: [{ status: 200, when: "Every format." }],
+  },
+  {
+    path: "/api/report/",
+    method: "post",
+    tag: "Reports",
+    summary: "Report a listing",
+    description:
+      "The form at the foot of every site page. Stores a listing report for the team, who are emailed and answer within two days, and sends the visitor back to the site page. Works without JavaScript.",
+    body: "form",
+    fields: [
+      { name: "id", type: "string", required: true, description: "The site's unit ID." },
+      {
+        name: "reason",
+        type: "string",
+        required: true,
+        description: "What is wrong.",
+        enum: ["details", "location", "photos", "gone", "permit", "seller", "other"],
+      },
+      { name: "message", type: "string", description: "What they saw. Cut to 2,000 characters." },
+      {
+        name: "email",
+        type: "string",
+        description: "Only to hear back. Never shown on the site.",
+      },
+      {
+        name: "return",
+        type: "string",
+        description: "The site page to come back to: a path on this site.",
+      },
+      { name: "website", type: "string", description: "A trap for bots: must be empty." },
+    ],
+    checks: [
+      "Origin must be this site: see **The Origin check** at the top.",
+      "A filled trap field, or more than ten reports a minute from one address: thanked, nothing stored.",
+      "The reason must be one of the list; an email, if given, must look right; the unit ID must be a published site.",
+    ],
+    answers: [
+      {
+        status: 303,
+        when: "Stored, and the team emailed.",
+        location: "{return}?reported=1#report",
+      },
+      {
+        status: 303,
+        when: "A mistake: the form opens again with a message.",
+        location: "{return}?report=reason|email|site#report",
+      },
+      { status: 403, when: "Posted from another site." },
+    ],
   },
   // The site's own endpoints, catalogued from each route handler on 18 Oct 2026.
   {

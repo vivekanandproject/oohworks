@@ -85,6 +85,7 @@ export interface Config {
     corrections: Correction;
     outbox: Outbox;
     'owner-files': OwnerFile;
+    'listing-reports': ListingReport;
     'access-codes': AccessCode;
     users: User;
     'payload-kv': PayloadKv;
@@ -112,6 +113,7 @@ export interface Config {
     corrections: CorrectionsSelect<false> | CorrectionsSelect<true>;
     outbox: OutboxSelect<false> | OutboxSelect<true>;
     'owner-files': OwnerFilesSelect<false> | OwnerFilesSelect<true>;
+    'listing-reports': ListingReportsSelect<false> | ListingReportsSelect<true>;
     'access-codes': AccessCodesSelect<false> | AccessCodesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -1125,6 +1127,42 @@ export interface OwnerFile {
   focalY?: number | null;
 }
 /**
+ * Reports about listings from the site. Answer each within two days. When one is right, correct the site or take it down in Sites, then mark the report resolved with what was done.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "listing-reports".
+ */
+export interface ListingReport {
+  id: number;
+  site?: (number | null) | Site;
+  /**
+   * The site's unit ID, kept even if the site is later deleted
+   */
+  unitId: string;
+  reason: 'details' | 'location' | 'photos' | 'gone' | 'permit' | 'seller' | 'other';
+  /**
+   * What they saw, in their words
+   */
+  message?: string | null;
+  /**
+   * Only if they asked to hear back. Never shown on the site.
+   */
+  email?: string | null;
+  status: 'new' | 'reviewing' | 'resolved' | 'dismissed';
+  /**
+   * Two days after it arrived
+   */
+  respondBy?: string | null;
+  /**
+   * What was checked and what was done. Kept for the record.
+   */
+  resolution?: string | null;
+  handledBy?: (number | null) | User;
+  handledAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "access-codes".
  */
@@ -1243,6 +1281,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'owner-files';
         value: number | OwnerFile;
+      } | null)
+    | ({
+        relationTo: 'listing-reports';
+        value: number | ListingReport;
       } | null)
     | ({
         relationTo: 'access-codes';
@@ -1827,6 +1869,24 @@ export interface OwnerFilesSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "listing-reports_select".
+ */
+export interface ListingReportsSelect<T extends boolean = true> {
+  site?: T;
+  unitId?: T;
+  reason?: T;
+  message?: T;
+  email?: T;
+  status?: T;
+  respondBy?: T;
+  resolution?: T;
+  handledBy?: T;
+  handledAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
