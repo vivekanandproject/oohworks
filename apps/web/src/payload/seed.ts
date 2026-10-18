@@ -1,20 +1,22 @@
 /**
- * Local and staging seed: users, people, tags, companies and the source registry.
- * Idempotent: finds by slug or title before creating. Run with `pnpm --filter @ohworks/web seed`.
+ * The users and reference data every database needs: users, people, tags, companies and the source
+ * registry. No sample content. Idempotent: finds by slug or title before creating.
+ * Run with `pnpm --filter @ohworks/web seed`; a release runs it after the migrations (scripts/release.mjs).
  */
 import { randomBytes } from "node:crypto";
 import { getPayload, type Payload } from "payload";
 import config from "../payload.config";
 
 /**
- * The first users' password. On a development machine it is a known one, so anyone working on the
- * project can sign in. On a hosted build it is never that: it is SEED_ADMIN_PASSWORD if the host
- * has one set, and otherwise a random one nobody knows, so the admin is shut until one is set.
+ * The first users' password. On a development or test machine it is a known one, so anyone working on
+ * the project can sign in. In production it is never that: it is SEED_ADMIN_PASSWORD if one is set,
+ * and otherwise a random one nobody knows, so the admin is shut until one is set.
  * Users must exist either way, or the CMS would let the first visitor to /admin create an account.
  */
-const HOSTED = process.env.HOSTED_BUILD === "1";
+const PRODUCTION = process.env.NODE_ENV === "production";
 const GIVEN = process.env.SEED_ADMIN_PASSWORD;
-const PASSWORD = GIVEN ?? (HOSTED ? randomBytes(24).toString("base64url") : "ohworks-admin-local");
+const PASSWORD =
+  GIVEN ?? (PRODUCTION ? randomBytes(24).toString("base64url") : "ohworks-admin-local");
 const RETRIEVED = "2026-10-09";
 
 async function ensure<T extends Record<string, unknown>>(
@@ -51,8 +53,8 @@ async function main() {
       { email: { equals: u.email } },
       { ...u, password: PASSWORD },
     );
-    // A password set on the host after the first build takes effect on the next one.
-    if (HOSTED && GIVEN)
+    // A password set after the first release takes effect on the next one.
+    if (PRODUCTION && GIVEN)
       await payload.update({
         collection: "users",
         id: user.id,
@@ -60,9 +62,9 @@ async function main() {
         overrideAccess: true,
       });
   }
-  if (HOSTED && !GIVEN)
+  if (PRODUCTION && !GIVEN)
     console.log(
-      "No SEED_ADMIN_PASSWORD is set, so the admin users have a random password nobody knows. Set it on the host and build again to sign in at /admin.",
+      "No SEED_ADMIN_PASSWORD is set, so the admin users have a random password nobody knows. Set it and release again to sign in at /admin.",
     );
 
   const places = [

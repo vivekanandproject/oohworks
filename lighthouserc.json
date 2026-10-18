@@ -1,7 +1,7 @@
 {
   "ci": {
     "collect": {
-      "startServerCommand": "pnpm --filter @ohworks/web exec next start -p 3200",
+      "startServerCommand": "pnpm --filter @ohworks/web serve:test -p 3200",
       "startServerReadyPattern": "Ready",
       "url": [
         "http://127.0.0.1:3200/",

@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { mails } from "./helpers/admin";
 
-/** These run against the labelled sample sites loaded by `pnpm --filter @ohworks/web seed:sites`. */
+/** These run against the labelled sample sites in e2e/fixtures, loaded into the test database by `pnpm test:db`. */
 const day = (n: number) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
 
 /** The path and key of a link in an email, whatever host the email was written for. */

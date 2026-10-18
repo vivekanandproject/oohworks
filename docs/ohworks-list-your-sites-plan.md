@@ -289,9 +289,9 @@ None was particular to the owner's pages. The first two showed only on a busy ma
 
 The owner tests now fail on any script error on a page, and a test reads the raw HTML of five pages as a browser and as Googlebot and requires the tags in the head, so none of the three can return unseen.
 
-### A demonstration owner on this machine
+### No demonstration owner
 
-To look around without listing anything, go to `/sign-in/`, choose "Forgot it?" and ask for a code as `demo-owner@example.com`. The code is shown on the next page, because a development machine has no email service. It has one live site, one returned with a reason, and a media kit. It is labelled as a sample and is not part of the seeds.
+The demonstration owner (`demo-owner@example.com`) was removed with the other samples on 18 Oct 2026. To look around, list a company of your own at `/list-your-sites/` on a development machine: the code is shown on the next page, because there is no email service, and the team's side is in `/admin`.
 
 ### Not in step 1
 

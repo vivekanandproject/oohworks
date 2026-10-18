@@ -15,7 +15,9 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
     },
   });
   if (!login.ok())
-    throw new Error(`The seeded admin could not sign in (${login.status()}). Run the seeds first.`);
+    throw new Error(
+      `The seeded admin could not sign in (${login.status()}). Run pnpm test:db first.`,
+    );
   process.env.OHWORKS_ADMIN_TOKEN = ((await login.json()) as { token: string }).token;
   await api.dispose();
 }

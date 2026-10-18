@@ -19,7 +19,11 @@ export const OwnerFiles: CollectionConfig = {
   },
   access: { read: isStaff, create: () => false, update: isOps, delete: isAdmin },
   upload: {
-    staticDir: path.resolve(dirname, "../../../owner-files"),
+    // Under UPLOADS_DIR when it is set, as a test run does, so its files never mix with these.
+    staticDir: path.resolve(
+      process.env.UPLOADS_DIR || path.resolve(dirname, "../../.."),
+      "owner-files",
+    ),
     mimeTypes: [
       "application/pdf",
       "image/*",

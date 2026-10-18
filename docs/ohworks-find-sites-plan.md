@@ -258,7 +258,7 @@ Nothing reaches an owner from an unconfirmed address. Form posts from other site
 
 ### Sample sites
 
-`pnpm --filter @ohworks/web seed:sites` loads 5 sample owners and 37 sample sites across the six launch cities. Each is flagged as a sample: labelled on every card and page, with no photograph, never indexed and never in the sitemap. Roads and places are real; the sites, owners, permits and audience figures are not, and the audience source reads "Sample data". The script updates in place, so addresses stay the same between runs.
+Since 18 Oct 2026 the sample owners and sites exist only in the test database. `apps/web/e2e/fixtures/sites.ts` holds 5 sample owners and 37 sample sites across the six launch cities, and `pnpm --filter @ohworks/web test:db` loads them into `ohworks_test`; the script refuses any database whose name does not end in `_test`. The development database and production hold none. Each is still flagged as a sample: labelled on every card and page, with no photograph, never indexed and never in the sitemap. Roads and places are real; the sites, owners, permits and audience figures are not, and the audience source reads "Sample data".
 
 ### What search engines see
 
@@ -283,7 +283,7 @@ Unit tests cover the search state and its addresses, filtering, counts, ordering
 2. Add the owner under Marketplace, Owners. Tick "Verified owner" only after the documents are checked.
 3. Add each face under Marketplace, Sites, with real dated photographs, and publish it.
 4. Set `RESEND_API_KEY` and `EMAIL_FROM` so enquiries are emailed, and `MAP_STYLE_URL` to a MapTiler style.
-5. Remove the samples before launch: delete the sample sites, then the sample owners, in the admin.
+5. The samples were removed from the development database on 18 Oct 2026 and live only in the test database, so there is nothing to remove before launch.
 
 ## 15. What step 2 built (10 Oct 2026)
 
@@ -411,7 +411,7 @@ Step 3 of the build order is done: plans and reach. There were no wireframes for
 - A published hub is indexable, sits in the sitemap, and carries breadcrumb and item-list structured data. A site page's breadcrumb links to its hubs when they are open.
 - Links to another hub are followed. Links narrower than a hub go into filtered search and are marked `nofollow`.
 
-**Previews.** `HUB_PREVIEW=1` lets a local or test machine open hubs that are not yet published. A preview says so at the top, is `noindex`, has no structured data and is never in the sitemap. The setting is ignored on any site served over https. It is on in `.env.example` so the hubs can be seen and tested; do not set it in staging or production.
+**Previews.** `HUB_PREVIEW=1` lets a local or test machine open hubs that are not yet published. A preview says so at the top, is `noindex`, has no structured data and is never in the sitemap. The setting is ignored on any site served over https. Test runs set it themselves (`apps/web/scripts/test-env.mjs`); do not set it in staging or production.
 
 ### Typed searches read by Claude
 

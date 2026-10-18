@@ -11,18 +11,18 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "test:e2e": "playwright test",
+    "test:db": "node --env-file=../../.env scripts/test-db.mjs",
+    "build:test": "node scripts/copy-map-worker.mjs && node --env-file=../../.env scripts/test-env.mjs next build",
+    "serve:test": "node --env-file=../../.env scripts/test-env.mjs next start",
     "test:e2e:visual": "playwright test visual.e2e.ts --project=desktop --project=phone",
     "payload": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload",
     "payload:types": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:types",
     "payload:importmap": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:importmap",
     "seed": "node --env-file=../../.env --import tsx src/payload/seed.ts",
-    "verify:cms": "node --env-file=../../.env --import tsx src/payload/verify.ts",
-    "seed:demo": "node --env-file=../../.env --import tsx src/payload/seed-demo.ts",
-    "seed:sites": "node --env-file=../../.env --import tsx src/payload/seed-sites.ts",
-    "build:hosted": "node scripts/hosted-build.mjs"
+    "verify:cms": "node --env-file=../../.env scripts/test-env.mjs node --import tsx src/payload/verify.ts",
+    "release": "node scripts/release.mjs"
   },
   "dependencies": {
-    "@netlify/neon": "^0.1.2",
     "@ohworks/core": "workspace:*",
     "@ohworks/db": "workspace:*",
     "@ohworks/ui": "workspace:*",

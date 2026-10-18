@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-/** These run against the labelled sample sites loaded by `pnpm --filter @ohworks/web seed:sites`. */
+/** These run against the labelled sample sites in e2e/fixtures, loaded into the test database by `pnpm test:db`. */
 test.describe("find sites: results", () => {
   test("shows what it understood as removable chips, and the sites that match", async ({
     page,

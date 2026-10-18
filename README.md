@@ -41,8 +41,7 @@ One Docker image serves both Cloud Run services; `SERVICE_ROLE=jobs` restricts i
 The editorial side runs on the CMS at `/admin` and renders at `/newsroom/`, with one section each for news, analysis, guides, owner academy, data and showcase.
 
 ```bash
-pnpm --filter @ohworks/web seed        # users, tags, sources
-pnpm --filter @ohworks/web seed:demo   # nine sample pieces, for development and tests only
+pnpm --filter @ohworks/web seed        # users, tags, companies, sources: no sample content
 ```
 
 - A piece publishes only when an editor has ticked every Fact against its source and marked it fact-checked.
@@ -50,12 +49,24 @@ pnpm --filter @ohworks/web seed:demo   # nine sample pieces, for development and
 - Feeds: `/feed.xml`, `/feed.json`. Sitemaps: `/sitemap.xml`, `/news-sitemap.xml`.
 - After changing a CMS collection or block, restart the dev server. A server that was running during the change can serve stale routes and a broken editor.
 
-## Verifying without stopping the site
+## Tests
 
-Test builds go to their own folder, so the dev server can stay up:
+Tests have their own database (`ohworks_test`), uploads folder (`apps/web/test-data`), build
+(`.next-verify`) and address (`127.0.0.1:3100`), all set in `apps/web/scripts/test-env.mjs`. The sample
+owners, sites and pieces in `apps/web/e2e/fixtures` are loaded only there, and refuse any database whose
+name does not end in `_test`. The development database and production never hold sample content.
 
 ```bash
-NEXT_DIST_DIR=.next-verify pnpm build
-NEXT_DIST_DIR=.next-verify pnpm test:e2e
-NEXT_DIST_DIR=.next-verify CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" pnpm lighthouse
+pnpm --filter @ohworks/web test:db      # make the test database afresh, with its sample data
+pnpm --filter @ohworks/web verify:cms   # editorial workflow checks, on the test database
+pnpm --filter @ohworks/web build:test   # the test build; the dev server can stay up
+pnpm test:e2e
+CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" pnpm lighthouse
 ```
+
+## Releasing
+
+`pnpm --filter @ohworks/web release` prepares a database for a new version: it runs the migrations in
+`apps/web/src/migrations`, then makes sure the first users and reference data exist. Every change to a
+CMS collection needs a migration committed with it (`pnpm --filter @ohworks/web payload migrate:create name`).
+In production set `PAYLOAD_SECRET` and `SEED_ADMIN_PASSWORD`.

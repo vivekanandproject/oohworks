@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-/** These run against the sample pieces loaded by `pnpm --filter @ohworks/web seed:demo`. */
+/** These run against the sample pieces in e2e/fixtures, loaded into the test database by `pnpm test:db`. */
 const LEAD = "/analysis/most-billboards-cannot-be-found-online/";
 const NEWS = "/news/global-out-of-home-spend-2025-woo/";
 const GUIDE = "/guides/what-is-digital-out-of-home/";

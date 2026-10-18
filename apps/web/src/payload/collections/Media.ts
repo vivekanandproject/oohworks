@@ -13,7 +13,8 @@ export const Media: CollectionConfig = {
   },
   access: { read: () => true, create: isWriter, update: isOps, delete: isAdmin },
   upload: {
-    staticDir: path.resolve(dirname, "../../../media"),
+    // Under UPLOADS_DIR when it is set, as a test run does, so its files never mix with these.
+    staticDir: path.resolve(process.env.UPLOADS_DIR || path.resolve(dirname, "../../.."), "media"),
     mimeTypes: ["image/*"],
     imageSizes: [
       { name: "thumb", width: 400, height: 400, position: "centre" },

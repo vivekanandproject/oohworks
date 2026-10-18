@@ -27,8 +27,5 @@ apps/web/public/vendor/
 # Private files from owners: documents, spreadsheets, media kits
 apps/web/owner-files/
 
-# Pictures copied for a host with no disk (see scripts/hosted-build.mjs)
-apps/web/public/_media/
-
-# Left by Netlify's build tool when the hosted build is tried on a development machine
-.netlify/
+# The test run's uploads (see apps/web/scripts/test-env.mjs)
+apps/web/test-data/

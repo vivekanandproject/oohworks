@@ -1,5 +1,5 @@
 /**
- * Week-one exit check, run against a seeded database:
+ * Week-one exit check, run against the test database (`pnpm verify:cms`, after `pnpm test:db`):
  * an editor drafts a news piece with an unchecked Fact, cannot publish, ticks the Fact, publishes;
  * a writer can draft but cannot publish. Cleans up after itself.
  */

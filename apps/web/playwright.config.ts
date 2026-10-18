@@ -1,6 +1,12 @@
 import { defineConfig, devices } from "@playwright/test";
+import { TEST_PORT as PORT } from "./scripts/test-env.mjs";
 
-const PORT = 3100;
+/**
+ * Tests run against the test build and the test database, never the development ones:
+ *   pnpm --filter @ohworks/web test:db       the database, with its sample owners, sites and pieces
+ *   pnpm --filter @ohworks/web build:test    the build, in .next-verify
+ *   pnpm --filter @ohworks/web test:e2e      starts the server below if none is running
+ */
 
 export default defineConfig({
   testDir: "./e2e",
@@ -11,7 +17,7 @@ export default defineConfig({
   reporter: process.env.CI ? "github" : "list",
   use: { baseURL: `http://127.0.0.1:${PORT}`, trace: "retain-on-failure" },
   webServer: {
-    command: `pnpm exec next start -p ${PORT}`,
+    command: `pnpm serve:test -p ${PORT}`,
     url: `http://127.0.0.1:${PORT}/api/health/`,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,

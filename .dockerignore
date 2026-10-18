@@ -1,0 +1,24 @@
+# Kept out of the container build: secrets, local data, build output, and packages installed for this
+# machine. The image installs its own packages and builds from source (see Dockerfile).
+.git
+.env
+.env.*
+!.env.example
+**/node_modules
+**/.next
+**/.next-verify
+**/.turbo
+**/*.tsbuildinfo
+
+# Uploads and test output from a development machine
+apps/web/media
+apps/web/owner-files
+apps/web/test-data
+apps/web/test-results
+apps/web/playwright-report
+apps/web/public/vendor
+.lighthouseci
+
+# Not needed to build or run the app
+docs
+infra

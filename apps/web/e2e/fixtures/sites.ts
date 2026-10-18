@@ -1,14 +1,14 @@
 /**
- * Sample owners and sites for local development and automated tests, so Find sites has something to
- * show before a real owner's inventory is loaded. Every one is flagged as a sample: it is labelled on
- * the site, carries no photograph, is never indexed and never enters the sitemap. The owners are not
- * real companies, their addresses use example.com, and audience figures name "Sample data" as their
- * source. Never run against production.
+ * Sample owners and sites for the automated tests, loaded into the test database by `pnpm test:db`.
+ * Every one is flagged as a sample: it is labelled on the site, carries no photograph, is never indexed
+ * and never enters the sitemap. The owners are not real companies, their addresses use example.com,
+ * and audience figures name "Sample data" as their source. It refuses any database but a test one.
  * Re-runnable: each owner and site is matched by its slug or unit id and updated in place, so
  * addresses stay the same between runs.
  */
 import { getPayload } from "payload";
-import config from "../payload.config";
+import config from "../../src/payload.config";
+import { assertTestDatabase } from "./guard";
 
 const DAY = 24 * 3600 * 1000;
 const NOW = Date.now();
@@ -931,9 +931,7 @@ const ROWS: Row[] = [
 ];
 
 async function main() {
-  // Sample sites never go to a real site. A preview host says so itself with SAMPLE_DATA=allow.
-  if (process.env.NODE_ENV === "production" && process.env.SAMPLE_DATA !== "allow")
-    throw new Error("Sample sites are for development and previews only.");
+  assertTestDatabase();
   const payload = await getPayload({ config });
 
   const ownerIds = new Map<OwnerKey, number>();

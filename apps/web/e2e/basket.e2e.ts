@@ -1,7 +1,7 @@
 import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
 import { adminHeaders } from "./helpers/admin";
 
-/** These run against the labelled sample sites loaded by `pnpm --filter @ohworks/web seed:sites`. */
+/** These run against the labelled sample sites in e2e/fixtures, loaded into the test database by `pnpm test:db`. */
 const RESULTS = "/search/?city=bengaluru";
 const save = (page: Page, id: string) =>
   page.locator(`[data-site='${id}'] form[data-list-form='saved'] button`);

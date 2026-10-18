@@ -1,13 +1,14 @@
 /**
- * Sample pieces for local development and automated tests, so every template has something to render.
- * Figures come from the sources named in the strategy report; each piece says it is a sample and that
- * its figures need re-checking before publication. Never run against production.
+ * Sample pieces for the automated tests, loaded into the test database by `pnpm test:db`, so every
+ * template has something to render. Figures come from the sources named in the strategy report; each
+ * piece says it is a sample. It refuses any database but a test one.
  * Re-runnable: removes its own pieces by slug, then recreates them.
  */
 import { getPayload, type Payload } from "payload";
 import sharp from "sharp";
-import config from "../payload.config";
-import { countWords } from "../lib/editorial/lexical";
+import config from "../../src/payload.config";
+import { countWords } from "../../src/lib/editorial/lexical";
+import { assertTestDatabase } from "./guard";
 
 const RETRIEVED = "2026-10-09";
 const END_2025 = "2025-12-31";
@@ -93,9 +94,7 @@ async function ensure(
 }
 
 async function main() {
-  // Sample pieces never go to a real site. A preview host says so itself with SAMPLE_DATA=allow.
-  if (process.env.NODE_ENV === "production" && process.env.SAMPLE_DATA !== "allow")
-    throw new Error("seed-demo is for development, tests and previews only");
+  assertTestDatabase();
   const payload = await getPayload({ config });
   const hoursAgo = (h: number) => new Date(Date.now() - h * 3600_000).toISOString();
 

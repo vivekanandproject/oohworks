@@ -1,7 +1,7 @@
 import { expect, test, type APIRequestContext } from "@playwright/test";
 import { adminHeaders } from "./helpers/admin";
 
-/** These run against the labelled sample sites loaded by `pnpm --filter @ohworks/web seed:sites`. */
+/** These run against the labelled sample sites in e2e/fixtures, loaded into the test database by `pnpm test:db`. */
 const SITE = "/in/bengaluru/koramangala/hoarding-80-feet-road-ows0001/";
 const url = (rest: string) => `/in/${rest}/`;
 const day = (n: number) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
