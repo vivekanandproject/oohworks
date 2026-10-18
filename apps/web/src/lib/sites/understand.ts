@@ -1,3 +1,4 @@
+import { anthropicHeaders } from "@/lib/anthropic";
 import { parseQuery } from "@/lib/search-parse";
 import { readState, type RawParams, type ReadResult } from "./state";
 import { CITIES, FORMATS, LIGHTING, TRUST, type TrustKey } from "./taxonomy";
@@ -174,11 +175,7 @@ export async function understand(
   try {
     const res = await fetcher(ENDPOINT, {
       method: "POST",
-      headers: {
-        "x-api-key": key,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
+      headers: { ...anthropicHeaders(key), "content-type": "application/json" },
       signal: AbortSignal.timeout(TIMEOUT_MS),
       body: JSON.stringify({
         model: process.env.ANTHROPIC_MODEL || "claude-haiku-5-5",

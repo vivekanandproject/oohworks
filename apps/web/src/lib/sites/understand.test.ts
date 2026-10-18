@@ -114,6 +114,20 @@ describe("asking Claude", () => {
     expect(read.state.formats).toEqual(["led-screen"]);
   });
 
+  it("names the workspace when the key is not scoped to one", async () => {
+    process.env.ANTHROPIC_WORKSPACE_ID = "wrkspc_test";
+    try {
+      const fetcher = answer({ formats: ["hoarding"], lighting: [], trust: [] });
+      await understand("hoardings near the lake front", TODAY, fetcher);
+      const [, init] = fetcher.mock.calls[0] as unknown as [string, RequestInit];
+      expect((init.headers as Record<string, string>)["anthropic-workspace-id"]).toBe(
+        "wrkspc_test",
+      );
+    } finally {
+      delete process.env.ANTHROPIC_WORKSPACE_ID;
+    }
+  });
+
   it("sends the query with a forced tool call and reads the answer back", async () => {
     const fetcher = answer({
       formats: ["led-screen"],
@@ -136,6 +150,7 @@ describe("asking Claude", () => {
     const [url, init] = fetcher.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe("https://api.anthropic.com/v1/messages");
     expect((init.headers as Record<string, string>)["x-api-key"]).toBe("test-key");
+    expect(init.headers as Record<string, string>).not.toHaveProperty("anthropic-workspace-id");
     const body = JSON.parse(String(init.body)) as {
       model: string;
       tool_choice: unknown;

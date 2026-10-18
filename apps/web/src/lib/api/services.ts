@@ -1,4 +1,5 @@
 import type { Payload } from "payload";
+import { anthropicHeaders } from "@/lib/anthropic";
 import { provider as placesProvider } from "@/lib/places";
 import { siteEnv } from "./env";
 
@@ -142,9 +143,16 @@ async function claude(): Promise<ServiceReport> {
   // Listing models is free.
   const r = await timed(async () => {
     const res = await probeUrl("https://api.anthropic.com/v1/models?limit=1", {
-      headers: { "x-api-key": key, "anthropic-version": "2023-06-01" },
+      headers: anthropicHeaders(key),
     });
-    if (!res.ok) throw new Error(`Anthropic refused the key (${res.status}).`);
+    if (!res.ok) {
+      const body = (await res.json().catch(() => ({}))) as { error?: { message?: string } };
+      if (/workspace/i.test(body.error?.message ?? ""))
+        throw new Error(
+          "The key is not scoped to a workspace: set ANTHROPIC_WORKSPACE_ID, or use a workspace key.",
+        );
+      throw new Error(`Anthropic refused the key (${res.status}).`);
+    }
     return `Key works. Reads typed searches with ${process.env.ANTHROPIC_MODEL ?? "claude-haiku-5-5"}.`;
   });
   return {
