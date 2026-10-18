@@ -154,7 +154,7 @@ export default async function EnquiryThreadPage({
                         </td>
                         <td className="data">
                           {row.answer?.quote ? (
-                            `${inr(row.answer.quote)} a month`
+                            `${inr(row.answer.quote)} / month`
                           ) : (
                             <span className="text-ink-muted font-sans">No answer yet</span>
                           )}

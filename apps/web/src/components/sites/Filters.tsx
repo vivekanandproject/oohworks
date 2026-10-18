@@ -189,7 +189,7 @@ function SizeForm({ state, id }: { state: SearchState; id: string }) {
           <span />
         )}
         <button type="submit" className="oh-btn primary sm">
-          Apply
+          Show sites
         </button>
       </div>
     </form>
@@ -251,7 +251,7 @@ function PriceForm({ state, facets, id }: { state: SearchState; facets: Facets; 
             <span />
           )}
           <button type="submit" className="oh-btn primary sm">
-            Apply
+            Show sites
           </button>
         </div>
       </form>
@@ -311,7 +311,7 @@ function DatesForm({ state, id }: { state: SearchState; id: string }) {
           <span />
         )}
         <button type="submit" className="oh-btn primary sm">
-          Apply
+          Show sites
         </button>
       </div>
     </form>

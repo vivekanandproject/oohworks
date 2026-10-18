@@ -226,7 +226,7 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
               </div>
 
               <FormSection
-                title="For the Verified owner badge"
+                title="For the “Verified owner” badge"
                 part="badge"
                 note="Optional now. Our team checks the number against the document. Neither is ever shown, and only our team can open the file."
               >
@@ -283,7 +283,7 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
                   className="oh-btn primary lg w-full sm:w-auto"
                   data-action="save-company"
                 >
-                  {owner ? "Save the details" : "Save and add sites"}
+                  {owner ? "Save changes" : "Save and add sites"}
                 </button>
               </div>
             </form>
@@ -321,7 +321,7 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
                 </div>
               </dl>
             </Card>
-            <Card title="The Verified owner badge" section="badge-help">
+            <Card title="The “Verified owner” badge" section="badge-help">
               <p className="t-body text-ink-muted">
                 Buyers trust a site more when its owner is checked. Add your GSTIN and its
                 certificate, or a trade licence, and our team compares them, usually within a

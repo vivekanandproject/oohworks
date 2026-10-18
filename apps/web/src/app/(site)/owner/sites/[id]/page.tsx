@@ -93,7 +93,7 @@ export default async function OwnerSitePage({
     ["Where", `${site.road}, ${placeLine(site)}${site.landmark ? ` · ${site.landmark}` : ""}`],
     ["Position", coords(site.lat, site.lng)],
     ["Faces", facingText(site.facingDeg)],
-    ["Price", price.shown ? `${price.prefix}${price.amount} a month` : "Price on request"],
+    ["Price", price.shown ? `${price.prefix}${price.amount} / month` : "Price on request"],
     ["Availability", availability.label],
     ["Your reference", site.ownerRef ?? null],
   ];

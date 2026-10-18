@@ -67,6 +67,8 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
   const first = cards[0];
   const span = cards.length >= 2 ? spanKm(cards.map((c) => c.site)) : 0;
   const unsaved = live.filter((id) => !lists.saved.includes(id)).length;
+  // One enquiry is split into one request per owner, so the button says how many owners it reaches.
+  const owners = new Set(cards.map((c) => c.owner?.id ?? c.site.permanentId)).size;
   const here = linked ? `/compare/?sites=${live.join(",")}` : "/compare/";
 
   return (
@@ -117,7 +119,8 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                   <input type="hidden" name="ids" value={live.join(",")} />
                   <input type="hidden" name="return" value={here} />
                   <button type="submit" className="oh-btn primary sm">
-                    Save {unsaved === cards.length ? "all" : `the other ${unsaved}`} to my shortlist
+                    Save {unsaved === cards.length ? "all" : `the other ${unsaved}`} to your
+                    shortlist
                   </button>
                 </form>
               ) : (
@@ -132,7 +135,9 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                   className="oh-btn accent sm"
                   data-action="enquire-all"
                 >
-                  Send one enquiry for these
+                  {owners === 1
+                    ? "Send one enquiry for these sites"
+                    : `Send enquiry to ${owners} owners`}
                 </a>
               ) : null}
               <button

@@ -137,7 +137,7 @@ test.describe("one enquiry for a shortlist", () => {
     await expect(rows.filter({ hasText: "80 Feet Road" })).toContainText(
       "Available for these dates",
     );
-    await expect(rows.filter({ hasText: "80 Feet Road" })).toContainText("₹ 82,000 a month");
+    await expect(rows.filter({ hasText: "80 Feet Road" })).toContainText("₹ 82,000 / month");
     await expect(rows.filter({ hasText: "Linking Road" })).toContainText("No answer yet");
     await expect(
       page.locator("[data-section='request'][data-owner='sample-kaveri']"),

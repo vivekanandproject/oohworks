@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Badge, Container } from "@ohworks/ui";
+import { Badge, Container, NEUTRALITY_LINE } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { DateOrder } from "@/components/sites/Enhance";
 import { indiaDate } from "@/lib/sites/calendar";
@@ -144,7 +144,7 @@ export default async function PlanEnquiryPage({ searchParams }: { searchParams: 
                               </span>
                             </span>
                             <span className="shrink-0 text-right font-mono text-[14px] leading-5">
-                              {price.shown ? `${price.prefix}${price.amount}` : "On request"}
+                              {price.shown ? `${price.prefix}${price.amount}` : "Price on request"}
                             </span>
                           </label>
                         </li>
@@ -278,10 +278,7 @@ export default async function PlanEnquiryPage({ searchParams }: { searchParams: 
                 {owners === 1 ? "Send enquiry" : `Send enquiry to ${owners} owners`}
               </button>
             </div>
-            <p className="t-small text-ink-muted">
-              OOHWORKS never sells media or takes a media margin. Owners set prices and keep their
-              clients.
-            </p>
+            <p className="t-small text-ink-muted">{NEUTRALITY_LINE}</p>
           </div>
         </form>
       </Container>

@@ -236,7 +236,8 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                     Keep these in your own shortlist to come back to them.
                   </p>
                   <button type="submit" className="oh-btn primary sm">
-                    Save {unsaved === cards.length ? "all" : `the other ${unsaved}`} to my shortlist
+                    Save {unsaved === cards.length ? "all" : `the other ${unsaved}`} to your
+                    shortlist
                   </button>
                 </form>
               ) : null}

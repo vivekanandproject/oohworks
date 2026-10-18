@@ -108,7 +108,7 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
           className={`oh-btn primary lg w-full ${signIn ? "" : "sm:w-auto"}`}
           data-action="confirm"
         >
-          Confirm
+          {signIn ? "Confirm and sign in" : "Confirm and continue"}
         </button>
       </div>
     </>

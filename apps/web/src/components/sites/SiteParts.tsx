@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Badge, Icon, type IconName } from "@ohworks/ui";
+import { Badge, Icon, NEUTRALITY_LINE, type IconName } from "@ohworks/ui";
 import { formatDate } from "@/lib/editorial/format";
 import { picture } from "@/lib/editorial/media";
 import type { MonthView } from "@/lib/sites/calendar";
@@ -302,8 +302,8 @@ export function PriceBlock({
         {price.shown ? "Send enquiry" : "Ask for a quote"}
       </a>
       <p className="t-small text-ink-muted mt-4">
-        {owner ? `Goes straight to ${owner.name}. ` : ""}OOHWORKS never sells media or takes a media
-        margin. Owners set prices and keep their clients.
+        {owner ? `Goes straight to ${owner.name}. ` : ""}
+        {NEUTRALITY_LINE}
       </p>
     </section>
   );

@@ -1,3 +1,4 @@
+import { NEUTRALITY_LINE } from "@ohworks/ui";
 import ExcelJS from "exceljs";
 import { rateLimited } from "@/lib/forms";
 import { absolute } from "@/lib/seo";
@@ -10,8 +11,7 @@ import { cardsFor } from "@/lib/sites/queries";
 
 export const dynamic = "force-dynamic";
 
-const NOTE =
-  "Every figure is the owner's own. OOHWORKS never sells media or takes a media margin. Owners set prices and keep their clients.";
+const NOTE = `Every figure is the owner's own. ${NEUTRALITY_LINE}`;
 
 /**
  * A shortlist as a standard site sheet: one row a site, the same columns every time. Excel by default,

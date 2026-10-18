@@ -1,3 +1,4 @@
+import { NEUTRALITY_LINE } from "@ohworks/ui";
 import { formatDate, timeAgo } from "@/lib/editorial/format";
 import { ANSWERS, ARTWORK, dateRange, type Answer } from "@/lib/sites/enquiry";
 import type { Group, Request } from "@/lib/sites/enquiries";
@@ -105,7 +106,7 @@ export function Thread({
                     <span className="font-semibold">{site?.title ?? "Site"}:</span>{" "}
                     {[
                       a.availability ? ANSWERS[a.availability as Answer] : null,
-                      a.quote ? `${inr(a.quote)} a month` : null,
+                      a.quote ? `${inr(a.quote)} / month` : null,
                     ]
                       .filter(Boolean)
                       .join(" · ")}
@@ -160,8 +161,7 @@ export function GroupSummary({ group }: { group: Group }) {
         {group.requests.length > 1
           ? "One request goes to each owner. Each sees only their own sites, never the rest of your shortlist. "
           : `Goes straight to ${group.requests[0]?.owner.name}. `}
-        OOHWORKS never sells media or takes a media margin. Owners set prices and keep their
-        clients.
+        {NEUTRALITY_LINE}
       </p>
     </aside>
   );

@@ -230,7 +230,7 @@ export default async function OwnerHomePage({ searchParams }: { searchParams: Pr
                         <p className="t-small text-ink-muted">
                           {placeLine(site)} ·{" "}
                           {price.shown
-                            ? `${price.prefix}${price.amount} a month`
+                            ? `${price.prefix}${price.amount} / month`
                             : "Price on request"}
                           {site.ownerRef ? ` · ${site.ownerRef}` : ""}
                         </p>

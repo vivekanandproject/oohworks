@@ -1,3 +1,4 @@
+import { NEUTRALITY_LINE } from "@ohworks/ui";
 import type { Owner, Site } from "@/payload-types";
 import { availabilityOf, metaLine, priceOf, siteUrl } from "@/lib/sites/view";
 import { AvailabilityChip } from "./SiteCard";
@@ -49,8 +50,8 @@ export function EnquirySummary({
         </p>
       ) : null}
       <p className="t-small border-hairline text-ink-muted mt-4 border-t pt-4">
-        {owner ? `Goes straight to ${owner.name}. ` : ""}OOHWORKS never sells media or takes a media
-        margin. Owners set prices and keep their clients.
+        {owner ? `Goes straight to ${owner.name}. ` : ""}
+        {NEUTRALITY_LINE}
       </p>
     </aside>
   );

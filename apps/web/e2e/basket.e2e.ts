@@ -127,7 +127,7 @@ test.describe("shortlist", () => {
     await expect(page.locator("[data-section='plan-totals']")).toContainText("1 to 31 Jan 2027");
     await page
       .locator("[data-section='save-all']")
-      .getByRole("button", { name: "Save all to my shortlist" })
+      .getByRole("button", { name: "Save all to your shortlist" })
       .click();
     await expect(page).toHaveURL(/\/shortlist\/\?from=2027-01-01&to=2027-01-31$/);
     await expect(page.locator("h1")).toHaveText("Your shortlist");
@@ -219,7 +219,7 @@ test.describe("compare", () => {
       .getByRole("link", { name: /Remove/ })
       .click();
     await expect(page).toHaveURL(/\/compare\/\?sites=ows0001,ows0002,ows0003$/);
-    await page.getByRole("button", { name: "Save all to my shortlist" }).click();
+    await page.getByRole("button", { name: "Save all to your shortlist" }).click();
     await expect(page.getByRole("link", { name: "View shortlist" })).toBeVisible();
 
     await page.goto("/compare/?sites=ows0001");

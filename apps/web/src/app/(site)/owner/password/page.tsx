@@ -93,7 +93,7 @@ export default async function PasswordPage({ searchParams }: { searchParams: Pro
               </p>
             </div>
             <button type="submit" className="oh-btn primary lg w-full" data-action="save-password">
-              Save the password
+              Save password
             </button>
           </form>
           <p className="t-body text-ink-muted mt-5 text-center">

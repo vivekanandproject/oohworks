@@ -76,7 +76,7 @@ export default async function SignInCodePage({ searchParams }: { searchParams: P
               />
             </div>
             <button type="submit" className="oh-btn primary lg w-full" data-action="signin-code">
-              Send me a code
+              Send a code
             </button>
           </form>
           <p className="t-body text-ink-muted mt-5 text-center">

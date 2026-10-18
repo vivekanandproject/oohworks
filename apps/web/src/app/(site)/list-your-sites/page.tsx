@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Button, Container, NEUTRALITY_LINE } from "@ohworks/ui";
+import { Button, Container, NEUTRALITY_LINE, NEUTRALITY_LINE_OWNER } from "@ohworks/ui";
 import { PasswordField } from "@/components/PasswordField";
 import { PhoneField } from "@/components/PhoneField";
 import { PlaceField } from "@/components/PlaceField";
@@ -138,8 +138,8 @@ export default async function ListYourSitesPage({
         <div className={FORM_GRID}>
           <div className="min-w-0">
             <PageHead eyebrow="List your sites · step 1 of 4" title="List your sites. It is free.">
-              Tell us who is listing. Every enquiry then comes straight to you, at the price you
-              set. OOHWORKS never sells media or takes a margin.
+              Tell us who is listing. Every enquiry then comes straight to you.{" "}
+              {NEUTRALITY_LINE_OWNER}
             </PageHead>
 
             {one(q.out) === "1" ? (
@@ -341,7 +341,7 @@ export default async function ListYourSitesPage({
                 </div>
 
                 <FormSection
-                  title="For the Verified owner badge"
+                  title="For the “Verified owner” badge"
                   part="badge"
                   note="Optional now. Our team checks the number against your GST certificate or trade licence, which you add after this step. Neither is ever shown."
                 >
@@ -370,7 +370,7 @@ export default async function ListYourSitesPage({
                     className="oh-btn primary lg w-full sm:w-auto"
                     data-action="start"
                   >
-                    Save and send my code
+                    Save and send the code
                   </button>
                   <p className="t-small text-ink-muted mt-3">
                     We send a code to confirm your email. Already listed?{" "}

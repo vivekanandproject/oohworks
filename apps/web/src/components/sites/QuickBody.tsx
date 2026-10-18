@@ -1,4 +1,4 @@
-import { Badge } from "@ohworks/ui";
+import { Badge, NEUTRALITY_LINE } from "@ohworks/ui";
 import { formatDate } from "@/lib/editorial/format";
 import type { Lists } from "@/lib/sites/lists-server";
 import type { SitePage } from "@/lib/sites/queries";
@@ -162,8 +162,8 @@ export function QuickBody({ found, now, lists }: { found: SitePage; now: number;
         {price.shown ? "Send enquiry" : "Ask for a quote"}
       </a>
       <p className="t-small text-ink-muted">
-        {owner ? `Goes straight to ${owner.name}. ` : ""}OOHWORKS never sells media or takes a media
-        margin.
+        {owner ? `Goes straight to ${owner.name}. ` : ""}
+        {NEUTRALITY_LINE}
       </p>
     </>
   );

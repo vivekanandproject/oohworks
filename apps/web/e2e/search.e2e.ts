@@ -91,7 +91,7 @@ test.describe("find sites: results", () => {
     await page.goto("/search/?city=bengaluru&format=hoarding");
     await page.locator("[data-filter='price'] summary").click();
     await page.locator("[data-filter='price'] input[name='max']").fill("50000");
-    await page.locator("[data-filter='price']").getByRole("button", { name: "Apply" }).click();
+    await page.locator("[data-filter='price']").getByRole("button", { name: "Show sites" }).click();
     await expect(page).toHaveURL(/\/search\/\?city=bengaluru&format=hoarding&max=50000$/);
     await expect(page.locator("[data-section='heading']")).toHaveText("2 hoardings in Bengaluru");
   });

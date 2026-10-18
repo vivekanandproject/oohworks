@@ -181,7 +181,7 @@ test.describe("list your sites: the start", () => {
     await expect(form.locator("#lys-place")).toHaveAttribute("role", "combobox");
     expect(await form.locator("#lys-phone-country option").count()).toBeGreaterThan(200);
     await expect(form.locator("#lys-phone-country")).toHaveValue("IN");
-    await expect(form.locator("[data-action='start']")).toHaveText("Save and send my code");
+    await expect(form.locator("[data-action='start']")).toHaveText("Save and send the code");
     // The four steps are beside the form, with this one marked in words.
     await expect(page.locator("[data-section='steps'] li")).toHaveCount(4);
     await expect(page.locator("[data-section='steps'] [aria-current='step']")).toContainText(
@@ -1402,7 +1402,7 @@ test.describe("list your sites: the journey", () => {
       await expect(page.locator("[data-section='import-problems']")).toHaveCount(0);
       await page.goto("/owner/");
       await expect(page.locator("[data-section='owner-sites'] li")).toHaveCount(3);
-      await expect(page.locator("[data-section='owner-sites']")).toContainText("₹ 25,000 a month");
+      await expect(page.locator("[data-section='owner-sites']")).toContainText("₹ 25,000 / month");
       await expect(page.locator("[data-action='submit']")).toHaveText("Send 3 sites for review");
 
       // A file that is not the template is refused in words, and nothing is added.

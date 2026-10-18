@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Badge, Container } from "@ohworks/ui";
+import { Badge, Container, NEUTRALITY_LINE } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance, ListSync } from "@/components/sites/Basket";
 import { PlanBar } from "@/components/sites/PlanBar";
@@ -129,7 +129,7 @@ export default async function OwnerPublicPage({
           </p>
         ) : null}
         <p className="t-small text-ink-muted mt-4 max-w-[68ch]">
-          Every enquiry goes straight to {owner.name}. OOHWORKS never sells media or takes a margin.
+          Every enquiry goes straight to {owner.name}. {NEUTRALITY_LINE}
         </p>
 
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pt-8 pb-4">

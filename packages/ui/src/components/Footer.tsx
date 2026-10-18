@@ -1,7 +1,11 @@
 import { Wordmark } from "../brand/Wordmark";
 
+/** The neutrality line, word for word, wherever a buyer reads it (design system, copy rules). */
 export const NEUTRALITY_LINE =
   "OOHWORKS never sells media or takes a media margin. Owners set prices and keep their clients.";
+/** The same promise, addressed to an owner. */
+export const NEUTRALITY_LINE_OWNER =
+  "OOHWORKS never sells media or takes a media margin. You set the price and keep the client.";
 
 interface Col {
   title: string;

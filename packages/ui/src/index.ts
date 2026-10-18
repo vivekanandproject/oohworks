@@ -8,7 +8,7 @@ export { Container } from "./components/Container";
 export { SearchField } from "./components/SearchField";
 export { NavBar } from "./components/NavBar";
 export { EditionStrip, type Edition } from "./components/EditionStrip";
-export { Footer, NEUTRALITY_LINE } from "./components/Footer";
+export { Footer, NEUTRALITY_LINE, NEUTRALITY_LINE_OWNER } from "./components/Footer";
 export { ListingCard, type ListingCardProps } from "./components/ListingCard";
 export { ArticleCard, type ArticleCardProps } from "./components/ArticleCard";
 export { EmptyState } from "./components/EmptyState";

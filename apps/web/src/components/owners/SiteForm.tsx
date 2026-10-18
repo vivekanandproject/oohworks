@@ -500,7 +500,7 @@ export function SiteForm({
 
       <div className="flex flex-wrap items-center gap-4">
         <button type="submit" className="oh-btn primary lg" data-action="save-site">
-          {id ? "Save the changes" : "Save this site"}
+          {id ? "Save changes" : "Save site"}
         </button>
         <p className="t-small text-ink-muted">
           Saved as a draft. Only you can see it until you send it for review. Photographs come next.

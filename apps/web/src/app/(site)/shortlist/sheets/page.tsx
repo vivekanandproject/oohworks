@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Badge, Icon, Wordmark, type IconName } from "@ohworks/ui";
+import { Badge, Icon, NEUTRALITY_LINE, Wordmark, type IconName } from "@ohworks/ui";
 import { BasketEnhance } from "@/components/sites/Basket";
 import { SpecSheet } from "@/components/sites/SiteParts";
 import { formatDate } from "@/lib/editorial/format";
@@ -50,7 +50,7 @@ export default async function SheetsPage({ searchParams }: { searchParams: Promi
           </div>
           <div className="flex flex-wrap gap-2">
             <a href={back} className="oh-btn ghost sm" rel="nofollow">
-              Back to the shortlist
+              Back to your shortlist
             </a>
             <button type="button" className="oh-btn primary sm" data-print="">
               Print or save as PDF
@@ -167,7 +167,7 @@ export default async function SheetsPage({ searchParams }: { searchParams: Promi
                 </span>
                 <span className="w-full">
                   From OOHWORKS on {formatDate(new Date(now).toISOString())}. Every figure is the
-                  owner&rsquo;s own. OOHWORKS never sells media or takes a media margin.
+                  owner&rsquo;s own. {NEUTRALITY_LINE}
                 </span>
               </footer>
             </article>
