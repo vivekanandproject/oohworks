@@ -37,7 +37,7 @@ export default function CharterPage() {
           <blockquote className="border-navy text-ink t-body-lg mt-10 border-l-2 pl-5">
             {NEUTRALITY_LINE}
           </blockquote>
-          <p className="text-ink-muted t-small mt-6">
+          <p className="text-ink-muted t-body mt-6">
             Buyers use ohworks free. Contract, invoice and payment stay between buyer and owner;
             ohworks verifies the buyer and routes the request.
           </p>

@@ -103,7 +103,11 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
                 <label htmlFor="signin-password" className="oh-label">
                   Password
                 </label>
-                <a href="/sign-in/code/" className="oh-link t-small" data-action="forgot">
+                <a
+                  href="/sign-in/code/"
+                  className="oh-link t-small inline-flex min-h-11 items-center"
+                  data-action="forgot"
+                >
                   Forgot it?
                 </a>
               </div>

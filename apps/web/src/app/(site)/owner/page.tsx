@@ -256,8 +256,11 @@ export default async function OwnerHomePage({ searchParams }: { searchParams: Pr
                 <ul className="t-body text-ink mt-3 space-y-1">
                   {kits.map((k) => (
                     <li key={k.id}>
-                      <span className="font-mono text-[13px]">{formatDate(k.createdAt)}</span> ·{" "}
-                      {k.filename?.replace(/^.*?-\d{13}-/, "")} ·{" "}
+                      <span className="t-data">{formatDate(k.createdAt)}</span> ·{" "}
+                      <span className="[overflow-wrap:anywhere]">
+                        {k.filename?.replace(/^.*?-\d{13}-/, "")}
+                      </span>{" "}
+                      ·{" "}
                       {k.handled
                         ? "Entered. Check the drafts above."
                         : "With our team. We will email you when your sites are ready to check."}

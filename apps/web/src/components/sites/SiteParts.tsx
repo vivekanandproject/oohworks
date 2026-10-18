@@ -476,7 +476,7 @@ export function OwnerCard({ owner, siteCount }: { owner: Owner; siteCount: numbe
           <a
             href={`/search/?owner=${owner.slug}`}
             rel="nofollow"
-            className="oh-link t-body inline-flex min-h-9 items-center"
+            className="oh-link t-body inline-flex min-h-11 items-center"
           >
             See all their sites
           </a>

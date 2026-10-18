@@ -180,7 +180,7 @@ function SizeForm({ state, id }: { state: SearchState; id: string }) {
         {state.size ? (
           <a
             href={toUrl(without(state, "size"), firstPage)}
-            className="oh-link t-small"
+            className="oh-link t-small inline-flex min-h-11 items-center"
             rel="nofollow"
           >
             Any size
@@ -242,7 +242,7 @@ function PriceForm({ state, facets, id }: { state: SearchState; facets: Facets; 
           {state.min || state.max ? (
             <a
               href={toUrl(without(state, "min", "max"), firstPage)}
-              className="oh-link t-small"
+              className="oh-link t-small inline-flex min-h-11 items-center"
               rel="nofollow"
             >
               Any price
@@ -302,7 +302,7 @@ function DatesForm({ state, id }: { state: SearchState; id: string }) {
         {state.from ? (
           <a
             href={toUrl(without(state, "from", "to"), firstPage)}
-            className="oh-link t-small"
+            className="oh-link t-small inline-flex min-h-11 items-center"
             rel="nofollow"
           >
             Any dates
@@ -353,7 +353,7 @@ export function FilterBar({ state, facets }: { state: SearchState; facets: Facet
         : "Format";
   return (
     <div
-      className="border-hairline bg-paper sticky top-[65px] z-10 hidden border-b sm:block"
+      className="border-hairline bg-paper z-10 hidden border-b sm:block lg:sticky lg:top-[65px]"
       data-section="filterbar"
     >
       <Container className="py-2.5">
@@ -437,7 +437,11 @@ export function FilterBar({ state, facets }: { state: SearchState; facets: Facet
 }
 
 /** On a phone the same controls sit in a bar at the bottom of the screen: Filters, Sort and Map. */
-export function PhoneBar({ state }: { state: SearchState }) {
+/**
+ * The strip at the foot of a phone screen: filters, sort, the map, and the shortlist once something is
+ * saved. One strip, so that with the header it stays under a quarter of the screen.
+ */
+export function PhoneBar({ state, saved = 0 }: { state: SearchState; saved?: number }) {
   const n = activeCount(state);
   return (
     <div
@@ -455,6 +459,18 @@ export function PhoneBar({ state }: { state: SearchState }) {
       </details>
       <a href="#map" className="oh-btn primary sm flex-1">
         Map
+      </a>
+      <a
+        href="/shortlist/"
+        className="oh-btn primary sm flex-1"
+        hidden={saved === 0}
+        data-plan-saved=""
+        rel="nofollow"
+      >
+        Shortlist{" "}
+        <span className="font-mono" data-plan-saved-n="">
+          {saved}
+        </span>
       </a>
     </div>
   );
@@ -510,7 +526,12 @@ export function FilterPanel({
       >
         <div className="border-hairline flex items-center justify-between gap-3 border-b px-5 py-4">
           <h2 className="t-display-sm">All filters</h2>
-          <a href={closeUrl} className="oh-link t-body-strong" rel="nofollow" data-drawer-close="">
+          <a
+            href={closeUrl}
+            className="oh-link t-body-strong inline-flex min-h-11 items-center"
+            rel="nofollow"
+            data-drawer-close=""
+          >
             Close
           </a>
         </div>
@@ -585,8 +606,12 @@ export function FilterPanel({
             ))}
           </Group>
         </div>
-        <div className="border-hairline flex items-center justify-between gap-3 border-t px-5 py-3">
-          <a href={clearUrl} className="oh-link t-body-strong" rel="nofollow">
+        <div className="border-hairline flex items-center justify-between gap-3 border-t px-5 pt-3 pb-[max(12px,env(safe-area-inset-bottom))]">
+          <a
+            href={clearUrl}
+            className="oh-link t-body-strong inline-flex min-h-11 items-center"
+            rel="nofollow"
+          >
             Clear all
           </a>
           <a href={closeUrl} className="oh-btn primary" rel="nofollow" data-show-results="">

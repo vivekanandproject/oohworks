@@ -21,10 +21,16 @@ const LINKS: { key: NonNullable<NavBarProps["active"]>; href: string; label: str
  * same for everyone, and cached, and still show an owner the way to their sites.
  */
 export function NavBar({ active, listHref = "/list-your-sites/" }: NavBarProps) {
+  // On a short screen (a phone on its side) the bar scrolls away, so it and a page's own bottom bar
+  // together never take more than a quarter of the screen.
   return (
-    <header className="border-hairline bg-paper sticky top-0 z-30 border-b">
+    <header className="border-hairline bg-paper sticky top-0 z-30 border-b [@media(max-height:480px)]:static">
       <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center gap-3 px-4 sm:gap-6 lg:px-10">
-        <a href="/" aria-label="ohworks home" className="shrink-0 rounded-sm">
+        <a
+          href="/"
+          aria-label="ohworks home"
+          className="inline-flex min-h-11 shrink-0 items-center rounded-sm"
+        >
           <Wordmark size={28} />
         </a>
         <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex">
@@ -61,14 +67,14 @@ export function NavBar({ active, listHref = "/list-your-sites/" }: NavBarProps) 
               <a
                 key={l.key}
                 href={l.href}
-                className="text-ink hover:bg-navy-200 rounded-sm px-3 py-2.5 font-medium"
+                className="text-ink hover:bg-navy-200 flex min-h-11 items-center rounded-sm px-3 font-medium"
               >
                 {l.label}
               </a>
             ))}
             <a
               href="/sign-in/"
-              className="text-ink hover:bg-navy-200 rounded-sm px-3 py-2.5 font-medium sm:hidden"
+              className="text-ink hover:bg-navy-200 flex min-h-11 items-center rounded-sm px-3 font-medium sm:hidden"
               data-bar-when="out"
             >
               Sign in

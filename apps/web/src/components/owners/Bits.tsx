@@ -73,13 +73,17 @@ export function OwnerBar({
       className="border-hairline flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b pb-4"
       data-section="owner-bar"
     >
-      <nav aria-label="Your account" className="t-body flex flex-wrap gap-x-5 gap-y-1">
-        <a href="/owner/" className="oh-link" aria-current={here === "sites" ? "page" : undefined}>
+      <nav aria-label="Your account" className="t-body flex flex-wrap gap-x-5">
+        <a
+          href="/owner/"
+          className="oh-link inline-flex min-h-11 items-center"
+          aria-current={here === "sites" ? "page" : undefined}
+        >
           Your sites
         </a>
         <a
           href="/owner/company/"
-          className="oh-link"
+          className="oh-link inline-flex min-h-11 items-center"
           aria-current={here === "company" ? "page" : undefined}
         >
           Company details
@@ -90,10 +94,10 @@ export function OwnerBar({
         action="/api/owner/signout/"
         className="t-small text-ink-muted flex flex-wrap items-center gap-3"
       >
-        <span>
+        <span className="[overflow-wrap:anywhere]">
           {name} · <span className="font-mono">{email}</span>
         </span>
-        <button type="submit" className="oh-link cursor-pointer">
+        <button type="submit" className="oh-link inline-flex min-h-11 cursor-pointer items-center">
           Sign out
         </button>
       </form>

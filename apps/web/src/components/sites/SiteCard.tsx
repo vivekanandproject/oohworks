@@ -145,7 +145,7 @@ export function SiteCard({
               Quick view<span className="sr-only">: {title}</span>
             </a>
             <a
-              className="oh-btn accent sm ml-auto"
+              className="oh-btn secondary sm ml-auto"
               href={`/enquire/${site.permanentId}/`}
               rel="nofollow"
             >

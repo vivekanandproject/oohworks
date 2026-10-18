@@ -45,12 +45,16 @@ test.describe("find sites: results", () => {
     await expect(page.locator("[data-site='ows0003'] [data-price]")).toHaveText("Price on request");
   });
 
-  test("is never indexed, and the only accent buttons are the cards' Enquire", async ({ page }) => {
+  test("is never indexed, and no card carries the accent", async ({ page }) => {
     await page.goto("/search/?city=mumbai");
     expect(await page.locator('meta[name="robots"]').getAttribute("content")).toContain("noindex");
     await expect(page.locator("[data-section='heading']")).toHaveText("6 sites in Mumbai");
-    await expect(page.locator(".oh-btn.accent")).toHaveCount(6);
-    await expect(page.locator("main .oh-btn.accent").first()).toHaveText("Enquire");
+    // One accent per view at most (the design system). A results page has no single primary
+    // action, so it has none; each card's Enquire is secondary.
+    await expect(page.locator(".oh-btn.accent")).toHaveCount(0);
+    await expect(
+      page.locator("[data-site] .oh-btn.secondary", { hasText: "Enquire" }).first(),
+    ).toBeVisible();
   });
 
   test("filter menus change the address in a fixed order and show counts", async ({

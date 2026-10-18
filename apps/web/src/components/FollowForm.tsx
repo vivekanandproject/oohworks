@@ -55,7 +55,8 @@ export function FollowForm({
         className="oh-input flex-1"
         autoComplete="email"
       />
-      <Button variant="primary" type="submit">
+      {/* The label carries a place name, so it may wrap rather than push the page sideways. */}
+      <Button variant="primary" type="submit" className="text-center whitespace-normal">
         {label ?? `Tell me when ${what} are listed`}
       </Button>
     </form>

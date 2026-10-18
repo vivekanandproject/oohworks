@@ -130,7 +130,7 @@ function Row({
             back={back}
             className="oh-btn ghost sm px-2"
           />
-          <a href={`/enquire/${id}/${enquiry}`} rel="nofollow" className="oh-btn accent sm">
+          <a href={`/enquire/${id}/${enquiry}`} rel="nofollow" className="oh-btn secondary sm">
             Enquire
           </a>
         </div>
@@ -410,7 +410,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                 <a
                   href={`/enquire/plan/?sites=${live}${dates.size ? `&${dates.toString()}` : ""}`}
                   rel="nofollow"
-                  className="oh-btn accent lg w-full"
+                  className="oh-btn accent lg w-full text-center whitespace-normal"
                   data-action="enquire-all"
                 >
                   {cards.length === 1
@@ -454,7 +454,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                   type="text"
                   readOnly
                   value={shareUrl}
-                  className="oh-input data mt-1 text-[13px]"
+                  className="oh-input data mt-1"
                 />
                 <div className="mt-2 flex flex-wrap gap-2">
                   <button type="button" className="oh-btn secondary sm" data-copy={sharePath}>

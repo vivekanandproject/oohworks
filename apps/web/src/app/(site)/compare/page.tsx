@@ -129,7 +129,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                 <a
                   href={`/enquire/plan/?sites=${live.join(",")}`}
                   rel="nofollow"
-                  className="oh-btn secondary sm"
+                  className="oh-btn accent sm"
                   data-action="enquire-all"
                 >
                   Send one enquiry for these
@@ -186,7 +186,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                               live.length > 1 ? (
                                 <a
                                   href={`/compare/?sites=${live.filter((x) => x !== id).join(",")}`}
-                                  className="oh-link t-small"
+                                  className="oh-link t-small inline-flex min-h-11 items-center"
                                   rel="nofollow"
                                 >
                                   Remove<span className="sr-only">: {title}</span>
@@ -200,7 +200,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                                 <input type="hidden" name="return" value="/compare/" />
                                 <button
                                   type="submit"
-                                  className="oh-link t-small cursor-pointer font-normal"
+                                  className="oh-link t-small inline-flex min-h-11 cursor-pointer items-center font-normal"
                                 >
                                   Remove<span className="sr-only">: {title}</span>
                                 </button>
@@ -339,7 +339,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                       <a
                         href={`/enquire/${c.site.permanentId}/`}
                         rel="nofollow"
-                        className="oh-btn accent sm"
+                        className="oh-btn secondary sm"
                       >
                         Enquire<span className="sr-only">: {c.site.title}</span>
                       </a>

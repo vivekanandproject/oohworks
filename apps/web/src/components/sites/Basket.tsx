@@ -25,6 +25,11 @@ function apply(data: ListState) {
       if (label) label.textContent = WORDS[name][on ? 1 : 0];
     }
   }
+  // On a phone the shortlist count sits in the filter strip instead of its own bar.
+  const shortlist = document.querySelector<HTMLElement>("[data-plan-saved]");
+  if (shortlist) shortlist.hidden = data.saved.length === 0;
+  const savedN = document.querySelector("[data-plan-saved-n]");
+  if (savedN) savedN.textContent = String(data.saved.length);
   const bar = document.querySelector<HTMLElement>("[data-plan]");
   if (!bar) return;
   bar.hidden = data.saved.length === 0 && data.compare.length === 0;

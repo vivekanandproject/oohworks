@@ -231,12 +231,12 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <a
                 key={c.key}
                 href={c.remove}
-                className="oh-chip"
+                className="oh-chip max-w-full"
                 aria-current="page"
                 aria-label={`Remove ${c.label}`}
                 rel="nofollow"
               >
-                {c.label}
+                <span className="truncate">{c.label}</span>
                 <span className="x" aria-hidden="true">
                   ×
                 </span>
@@ -383,7 +383,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             data-section="save-search"
             open={followInvalid}
           >
-            <summary className="oh-link t-body-strong cursor-pointer">
+            <summary className="oh-link t-body-strong cursor-pointer py-3">
               Email me new sites for this search
             </summary>
             <p className="t-body text-ink-muted mt-2">
@@ -422,10 +422,14 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         ) : null}
       </Container>
 
-      {/* One strip at the foot of the screen: what is saved, and on a phone the filter, sort and map controls. */}
-      <div className="sticky bottom-0 z-20">
-        <PlanBar text={plan} saved={lists.saved.length} compare={lists.compare.length} />
-        <PhoneBar state={state} />
+      {/* One strip at the foot of the screen. From 640px up it is what the buyer has saved; on a phone it
+          is the filter, sort, map and shortlist controls, so the header and strip together stay under a
+          quarter of the screen. */}
+      <div className="bg-paper-raised sticky bottom-0 z-20 pb-[env(safe-area-inset-bottom)]">
+        <div className="hidden sm:block">
+          <PlanBar text={plan} saved={lists.saved.length} compare={lists.compare.length} />
+        </div>
+        <PhoneBar state={state} saved={lists.saved.length} />
       </div>
       {state.panel ? (
         <FilterPanel state={state} facets={result.facets} total={result.total} />

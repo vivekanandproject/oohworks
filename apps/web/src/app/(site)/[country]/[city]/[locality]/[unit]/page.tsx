@@ -270,7 +270,7 @@ export default async function SitePage({
               <a
                 href="/shortlist/"
                 rel="nofollow"
-                className="oh-link t-body ml-auto inline-flex min-h-9 items-center"
+                className="oh-link t-body ml-auto inline-flex min-h-11 items-center"
               >
                 View shortlist
               </a>
@@ -406,7 +406,7 @@ export default async function SitePage({
       </Container>
 
       <div
-        className="border-hairline bg-paper-raised sticky bottom-0 z-20 flex items-center justify-between gap-3 border-t px-4 py-2 lg:hidden"
+        className="border-hairline bg-paper-raised sticky bottom-0 z-20 flex items-center justify-between gap-3 border-t px-4 pt-2 pb-[max(8px,env(safe-area-inset-bottom))] lg:hidden"
         data-section="enquire-bar"
       >
         <div className="min-w-0">

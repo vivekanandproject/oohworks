@@ -574,7 +574,7 @@
     white-space: normal;
   }
   .oh-fact .ref {
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1;
     vertical-align: super;
     margin-left: 2px;
@@ -944,8 +944,8 @@
   .oh-spec .src {
     display: block;
     font-family: var(--font-sans);
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 13px;
+    line-height: 19px;
     color: var(--color-ink-muted);
   }
 
@@ -970,7 +970,7 @@
     gap: 4px;
   }
   .oh-cal .h {
-    font-size: 11px;
+    font-size: 12px;
     line-height: 16px;
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -1175,8 +1175,8 @@
   .oh-compare .src {
     display: block;
     font-family: var(--font-sans);
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 13px;
+    line-height: 19px;
     color: var(--color-ink-muted);
   }
 
@@ -1253,5 +1253,33 @@
     .oh-spec {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+  }
+}
+
+/* Touch. On a touch screen every control is at least 44px tall (the design system's tap target), while
+   a pointer keeps the compact 36px look. Text that acts as a control gets the same height in markup
+   with min-h-11. */
+@layer components {
+  @media (pointer: coarse) {
+    .oh-btn.sm,
+    .oh-chip,
+    .oh-opt {
+      min-height: 44px;
+    }
+    .oh-toc a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+    /* Breadcrumb links: one rule for the eight breadcrumbs until they share a component. */
+    nav[aria-label="Breadcrumb"] a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+  }
+  /* A badge in a compare cell may wrap: the cell is 200px and "Availability not confirmed yet" is wider. */
+  .oh-compare .oh-badge {
+    white-space: normal;
   }
 }

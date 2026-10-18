@@ -370,7 +370,10 @@ export default async function OwnerSitePage({
                             <form method="post" action="/api/owner/photo/remove/" className="mt-2">
                               <input type="hidden" name="id" value={id} />
                               <input type="hidden" name="media" value={media.id} />
-                              <button type="submit" className="oh-link t-small cursor-pointer">
+                              <button
+                                type="submit"
+                                className="oh-link t-small inline-flex min-h-11 cursor-pointer items-center"
+                              >
                                 Remove<span className="sr-only">: {KIND[p.kind]}</span>
                               </button>
                             </form>

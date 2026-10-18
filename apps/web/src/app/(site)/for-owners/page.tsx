@@ -85,7 +85,7 @@ export default function ForOwnersPage() {
               Read the charter
             </Button>
           </div>
-          <p className="t-small text-ink-muted mt-4 max-w-[60ch]">
+          <p className="t-body text-ink-muted mt-4 max-w-[60ch]">
             It starts with your work email and takes a few minutes. Add sites one at a time, upload
             a spreadsheet, or send your media kit and we enter them for you.
           </p>

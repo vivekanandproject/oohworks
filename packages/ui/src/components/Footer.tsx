@@ -47,7 +47,11 @@ export function Footer() {
       <div className="mx-auto w-full max-w-[1200px] px-4 py-12 lg:px-10">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <a href="/" aria-label="ohworks home" className="inline-block rounded-sm">
+            <a
+              href="/"
+              aria-label="ohworks home"
+              className="inline-flex min-h-11 items-center rounded-sm"
+            >
               <Wordmark size={28} />
             </a>
             <p className="text-ink-muted t-body mt-4 max-w-[36ch]">
@@ -57,10 +61,13 @@ export function Footer() {
           {COLS.map((c) => (
             <nav key={c.title} aria-label={c.title}>
               <h2 className="t-label text-ink-muted">{c.title}</h2>
-              <ul className="mt-3 flex flex-col gap-2">
+              <ul className="mt-2 flex flex-col">
                 {c.links.map((l) => (
                   <li key={l.href + l.label} data-bar-when={l.when}>
-                    <a href={l.href} className="text-ink hover:text-navy-700 inline-block py-1">
+                    <a
+                      href={l.href}
+                      className="text-ink hover:text-navy-700 inline-flex min-h-11 items-center"
+                    >
                       {l.label}
                     </a>
                   </li>

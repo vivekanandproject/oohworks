@@ -39,11 +39,11 @@ export default async function SheetsPage({ searchParams }: { searchParams: Promi
   return (
     <main id="main" className="bg-paper">
       <BasketEnhance />
-      <div className="oh-noprint border-hairline bg-paper-raised sticky top-0 z-10 border-b">
+      <div className="oh-noprint border-hairline bg-paper-raised z-10 border-b sm:sticky sm:top-0">
         <div className="mx-auto flex max-w-[860px] flex-wrap items-center justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
             <h1 className="t-display-sm">Site sheets</h1>
-            <p className="t-small text-ink-muted">
+            <p className="t-small text-ink-muted hidden sm:block">
               {cards.length === 1 ? "1 site" : `${cards.length} sites`}, one to a page. In the print
               window, choose &ldquo;Save as PDF&rdquo; to make a file.
             </p>
