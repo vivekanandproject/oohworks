@@ -65,9 +65,12 @@ export async function removeOwner(request: APIRequestContext, email: string) {
           `/api/sites?where[owner][equals]=${owner.id}&draft=true&limit=50&depth=0`,
           { headers },
         )
-      ).json()) as { docs: { id: number }[] }
+      ).json()) as { docs: { id: number; photos?: { image: number }[] }[] }
     ).docs;
-    for (const s of sites) await request.delete(`/api/sites/${s.id}`, { headers });
+    for (const s of sites) {
+      await request.delete(`/api/sites/${s.id}`, { headers });
+      for (const p of s.photos ?? []) await request.delete(`/api/media/${p.image}`, { headers });
+    }
     const files = (
       (await (
         await request.get(`/api/owner-files?where[owner][equals]=${owner.id}&limit=50&depth=0`, {

@@ -21,6 +21,7 @@ import type { AccessCode, Media, Owner, OwnerFile, Site } from "@/payload-types"
 import { readDetails, type StartDetails } from "./company-input";
 import { hashPassword, verifyPassword } from "./password";
 import { metresBetween, sameFace } from "./coords";
+import { SAME_PHOTO_BITS, fingerprintDistance } from "./photo-checks";
 import { freeSlug, stateOf } from "./progress";
 import { toSiteData, type SiteInput } from "./site-input";
 
@@ -517,7 +518,50 @@ export async function siteByRef(ownerId: number, ownerRef: string): Promise<Site
 const KIND_WORD = { approach: "Approach view", day: "Day view", night: "Night view" } as const;
 export const MAX_PHOTOS = 6;
 
-/** Adds a photograph to a site. It is stored as the owner's own, credited to them. */
+/**
+ * Another listing that carries the same photograph, by its fingerprint (src/lib/owners/photo-checks.ts):
+ * that site's permanent id and owner, or null. The site's own photographs do not count.
+ */
+export async function samePhotoElsewhere(fingerprint: string, site: Site): Promise<string | null> {
+  const payload = await client();
+  const own = new Set(
+    (site.photos ?? []).map((p) => (typeof p.image === "object" ? p.image.id : p.image)),
+  );
+  const prints = await payload.find({
+    collection: "media",
+    where: { fingerprint: { exists: true } },
+    select: { fingerprint: true },
+    pagination: false,
+    depth: 0,
+    overrideAccess: true,
+  });
+  const near = prints.docs
+    .filter(
+      (m) =>
+        m.fingerprint &&
+        !own.has(m.id) &&
+        fingerprintDistance(m.fingerprint, fingerprint) <= SAME_PHOTO_BITS,
+    )
+    .map((m) => m.id);
+  if (near.length === 0) return null;
+  const other = (
+    await payload.find({
+      collection: "sites",
+      where: { and: [{ "photos.image": { in: near } }, { id: { not_equals: site.id } }] },
+      draft: true,
+      limit: 1,
+      depth: 1,
+      overrideAccess: true,
+    })
+  ).docs[0];
+  if (!other) return null;
+  return `${other.permanentId} (${typeof other.owner === "object" ? other.owner.name : "another owner"})`;
+}
+
+/**
+ * Adds a photograph to a site. It is stored as the owner's own, credited to them, with its fingerprint;
+ * if the same photograph is on another listing (`twin`), the site says so for the team.
+ */
 export async function addPhoto(
   owner: Owner,
   site: Site,
@@ -526,6 +570,7 @@ export async function addPhoto(
   takenOn: string,
   /** Taken within reach of the site's pin, by the position in the file (src/lib/owners/photo-facts.ts). */
   gps = false,
+  checks: { fingerprint: string | null; twin: string | null } = { fingerprint: null, twin: null },
 ): Promise<void> {
   const payload = await client();
   const data = Buffer.from(await file.arrayBuffer());
@@ -537,6 +582,7 @@ export async function addPhoto(
       credit: owner.name,
       licence: "press",
       takenAt: takenOn,
+      ...(checks.fingerprint ? { fingerprint: checks.fingerprint } : {}),
     },
     file: {
       data,
@@ -556,10 +602,18 @@ export async function addPhoto(
   ];
   // The approach view leads, as it does on every card.
   photos.sort((a, b) => Number(b.kind === "approach") - Number(a.kind === "approach"));
+  const photoNote = checks.twin
+    ? [
+        site.photoNote,
+        `${KIND_WORD[kind]}, added ${indiaDate(Date.now())}: the same photograph is on ${checks.twin}.`,
+      ]
+        .filter(Boolean)
+        .join("\n")
+    : undefined;
   await payload.update({
     collection: "sites",
     id: site.id,
-    data: { photos },
+    data: { photos, ...(photoNote ? { photoNote } : {}) },
     draft: stateOf(site) !== "live",
     overrideAccess: true,
   });

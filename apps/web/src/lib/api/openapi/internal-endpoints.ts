@@ -1436,14 +1436,20 @@ export const ENDPOINTS: Endpoint[] = [
       "Owner record and the site must exist and belong to the owner, else 303 to /owner/.",
       "At most 6 photographs per site -> perror=many.",
       "File size and kind -> perror=missing|big|type.",
+      "The file's copyright, credit or source names a stock library (src/lib/owners/photo-checks.ts) -> perror=stock&lib={library}.",
       "takenOn -> perror=date.",
+      "The photograph's fingerprint is compared with every owner photograph on file; within 64 of 256 bits of one on another listing, it is still added, the site's photoNote names that listing for the team, and the answer carries twin=1.",
     ],
     answers: [
-      { status: 303, when: "Photograph added.", location: "/owner/sites/{id}/?photo=added#photos" },
       {
         status: 303,
-        when: "many (already 6), missing, big, type, date, read (the image could not be stored).",
-        location: "/owner/sites/{id}/?perror={many|missing|big|type|date|read}#photos",
+        when: "Photograph added. Also from=file (date read from the photograph), gps=1 or away={metres} (position against the pin), twin=1 (already on another listing).",
+        location: "/owner/sites/{id}/?photo=added#photos",
+      },
+      {
+        status: 303,
+        when: "many (already 6), missing, big, type, stock (credits a stock library), date, read (the image could not be stored).",
+        location: "/owner/sites/{id}/?perror={many|missing|big|type|stock|date|read}#photos",
       },
       {
         status: 303,

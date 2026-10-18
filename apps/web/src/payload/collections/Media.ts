@@ -51,6 +51,12 @@ export const Media: CollectionConfig = {
     },
     { name: "takenAt", type: "date" },
     {
+      // An owner's photograph's fingerprint (src/lib/owners/photo-checks.ts), to find it on other listings.
+      name: "fingerprint",
+      type: "text",
+      admin: { hidden: true },
+    },
+    {
       name: "place",
       type: "relationship",
       relationTo: "tags",

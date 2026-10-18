@@ -62,6 +62,17 @@ export const Sites: CollectionConfig = {
       },
     },
     {
+      name: "photoNote",
+      type: "textarea",
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        condition: (data) => Boolean(data?.photoNote),
+        description:
+          "Photographs that look the same as one on another listing. Check they are of this face before approving.",
+      },
+    },
+    {
       name: "ownerRef",
       type: "text",
       index: true,

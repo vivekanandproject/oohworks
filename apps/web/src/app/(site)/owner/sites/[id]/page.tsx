@@ -36,6 +36,8 @@ const PHOTO_ERRORS: Record<string, string> = {
   many: `A site holds up to ${MAX_PHOTOS} photographs. Remove one to add another.`,
   date: "This photograph does not record when it was taken. Give the date; it cannot be in the future.",
   read: "We could not read that file as a photograph. Try another.",
+  stock:
+    "That photograph's file says it comes from a stock library. Buyers need a photograph of this site, taken by you or for you.",
 };
 /** What happened to an added photograph: where its date came from, and whether it matched the pin. */
 function photoAdded(q: Record<string, string | string[] | undefined>): string {
@@ -345,10 +347,24 @@ export default async function OwnerSitePage({
                 {one(q.photo) === "removed" ? (
                   <Notice tone="success" title="Photograph removed." section="photo-removed" />
                 ) : null}
+                {one(q.twin) === "1" ? (
+                  <Notice
+                    tone="warning"
+                    title="This photograph is already on another listing."
+                    section="photo-twin"
+                  >
+                    If it is not of this face, remove it. Our team checks every photograph that
+                    appears twice before the site goes live.
+                  </Notice>
+                ) : null}
                 {PHOTO_ERRORS[one(q.perror)] ? (
                   <Notice
                     tone="error"
-                    title={PHOTO_ERRORS[one(q.perror)] ?? ""}
+                    title={
+                      one(q.perror) === "stock" && one(q.lib)
+                        ? `That photograph's file says it comes from ${one(q.lib).slice(0, 40)}. Buyers need a photograph of this site, taken by you or for you.`
+                        : (PHOTO_ERRORS[one(q.perror)] ?? "")
+                    }
                     section="photo-error"
                   />
                 ) : null}

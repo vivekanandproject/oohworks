@@ -4,6 +4,8 @@
  * cannot load the spreadsheet library. Input, if any, is JSON on stdin; output is JSON on stdout.
  *
  *   node files.mjs photo | scan          → { base64 }
+ *   node files.mjs textured              → { base64, copy }   a photograph with detail, and a resent copy
+ *   node files.mjs stock                 → { base64 }         one whose file credits a stock library
  *   node files.mjs template              ← { template }                → { head, example, guideRows }
  *   node files.mjs sheet                 ← { template, rows }          → { base64 }
  *   node files.mjs plain                 ← { rows }                    → { base64 }
@@ -44,6 +46,35 @@ if (command === "photo") {
         .toBuffer(),
     ),
   });
+} else if (command === "textured" || command === "stock") {
+  // Blurred noise stands in for a photograph with detail; flat test photographs have no fingerprint.
+  const noise = await sharp({
+    create: {
+      width: 400,
+      height: 300,
+      channels: 3,
+      background: { r: 128, g: 128, b: 128 },
+      noise: { type: "gaussian", mean: 128, sigma: 60 },
+    },
+  })
+    .png()
+    .toBuffer();
+  const photo = await sharp(noise).blur(12).resize(1200, 900).jpeg({ quality: 88 }).toBuffer();
+  if (command === "textured")
+    out({
+      base64: b64(photo),
+      // As a messaging app sends it on: smaller, and compressed again.
+      copy: b64(await sharp(photo).resize(800).jpeg({ quality: 50 }).toBuffer()),
+    });
+  else
+    out({
+      base64: b64(
+        await sharp(photo)
+          .withExif({ IFD0: { Copyright: "Image: Shutterstock / A. Person" } })
+          .jpeg()
+          .toBuffer(),
+      ),
+    });
 } else if (command === "template" || command === "sheet") {
   const input = await read();
   const book = new ExcelJS.Workbook();

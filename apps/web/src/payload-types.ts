@@ -184,6 +184,10 @@ export interface Site {
    */
   duplicateNote?: string | null;
   /**
+   * Photographs that look the same as one on another listing. Check they are of this face before approving.
+   */
+  photoNote?: string | null;
+  /**
    * The owner's own code for this site
    */
   ownerRef?: string | null;
@@ -427,6 +431,7 @@ export interface Media {
   credit: string;
   licence: 'owned' | 'licensed' | 'cc-by' | 'press';
   takenAt?: string | null;
+  fingerprint?: string | null;
   place?: (number | null) | Tag;
   updatedAt: string;
   createdAt: string;
@@ -1423,6 +1428,7 @@ export interface SitesSelect<T extends boolean = true> {
   reviewNote?: T;
   submittedAt?: T;
   duplicateNote?: T;
+  photoNote?: T;
   ownerRef?: T;
   source?: T;
   kitNote?: T;
@@ -1816,6 +1822,7 @@ export interface MediaSelect<T extends boolean = true> {
   credit?: T;
   licence?: T;
   takenAt?: T;
+  fingerprint?: T;
   place?: T;
   updatedAt?: T;
   createdAt?: T;
