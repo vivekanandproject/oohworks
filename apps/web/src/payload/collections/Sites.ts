@@ -75,8 +75,19 @@ export const Sites: CollectionConfig = {
         { label: "Entered by the team", value: "team" },
         { label: "The owner's form", value: "form" },
         { label: "The owner's spreadsheet", value: "sheet" },
+        { label: "The owner's media kit, read by Claude", value: "kit" },
       ],
       admin: { position: "sidebar" },
+    },
+    {
+      name: "kitNote",
+      type: "text",
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        condition: (data) => data?.source === "kit",
+        description: "Where in the media kit Claude found this site, and what it was unsure of",
+      },
     },
     {
       name: "permanentId",

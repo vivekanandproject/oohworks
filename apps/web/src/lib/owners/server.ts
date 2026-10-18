@@ -347,6 +347,7 @@ export async function saveOwnerFile(
   kind: OwnerFile["kind"],
   note: string | null,
   report?: unknown,
+  reading?: OwnerFile["reading"],
 ): Promise<OwnerFile> {
   const data = Buffer.from(await file.arrayBuffer());
   const safe = file.name.replace(/[^A-Za-z0-9._-]+/g, "-").slice(-80) || "file";
@@ -359,6 +360,7 @@ export async function saveOwnerFile(
       handled: false,
       ...(note ? { note } : {}),
       ...(report !== undefined ? { report: report as Record<string, unknown> } : {}),
+      ...(reading ? { reading } : {}),
     },
     file: {
       data,
@@ -466,8 +468,9 @@ export async function duplicateNote(
 export async function saveSite(
   owner: Owner,
   input: SiteInput,
-  source: "form" | "sheet",
+  source: "form" | "sheet" | "kit",
   existing?: Site | null,
+  kitNote?: string,
 ): Promise<Site> {
   const payload = await client();
   const today = indiaDate(Date.now());
@@ -476,6 +479,7 @@ export async function saveSite(
     ...toSiteData(input, today),
     owner: owner.id,
     duplicateNote: note,
+    ...(kitNote ? { kitNote } : {}),
     _status: "draft" as const,
   };
   if (existing) {

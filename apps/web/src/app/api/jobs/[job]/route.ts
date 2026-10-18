@@ -2,8 +2,8 @@ import { timingSafeEqual } from "node:crypto";
 import { JOBS, type JobName } from "@/lib/jobs";
 
 export const dynamic = "force-dynamic";
-// The weekly reminder can take a while on a large inventory.
-export const maxDuration = 300;
+// Claude can take several minutes over a long media kit; the service allows 15 (infra/terraform).
+export const maxDuration = 900;
 
 const notFound = () => new Response("Not found", { status: 404 });
 

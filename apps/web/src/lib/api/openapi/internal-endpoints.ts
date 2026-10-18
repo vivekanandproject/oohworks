@@ -260,8 +260,8 @@ export const ENDPOINTS: Endpoint[] = [
     tag: "Service",
     summary: "Run a job on the timer",
     description:
-      "The jobs Cloud Scheduler runs (src/lib/jobs): `alerts` hourly (new sites for confirmed follows, each told once), `availability` on Mondays (owners asked to confirm sites not confirmed for three weeks, with a one-tap link), `reply-times` nightly. Skips the origin-secret check; asks for its own secret instead. Without CRON_SECRET set, there are no jobs here.",
-    pathParams: [{ name: "job", description: "alerts, availability or reply-times" }],
+      "The jobs Cloud Scheduler runs (src/lib/jobs): `alerts` hourly (new sites for confirmed follows, each told once), `availability` on Mondays (owners asked to confirm sites not confirmed for three weeks, with a one-tap link), `reply-times` nightly, `media-kits` every ten minutes (the oldest PDF media kit waiting is read by Claude into draft sites; with no ANTHROPIC_API_KEY it answers `off: true` and reads nothing). Skips the origin-secret check; asks for its own secret instead. Without CRON_SECRET set, there are no jobs here.",
+    pathParams: [{ name: "job", description: "alerts, availability, reply-times or media-kits" }],
     checks: ["`Authorization: Bearer <CRON_SECRET>`, compared in constant time."],
     answers: [
       {
@@ -1258,7 +1258,7 @@ export const ENDPOINTS: Endpoint[] = [
     tag: "Owners: company and sites",
     summary: "Send a media kit for the team to enter",
     description:
-      "Takes an owner's media kit file for the ohworks team to enter as draft sites, and emails the team.\n\n- Works without JavaScript: a plain HTML form post answered with a 303 whose Location is a site-relative path (never a full URL).",
+      "Takes an owner's media kit file for the ohworks team to enter as draft sites, and emails the team. When ANTHROPIC_API_KEY is set, a PDF is stored with reading 'waiting', and the media-kits job has Claude read it into drafts (see /api/jobs/{job}/).\n\n- Works without JavaScript: a plain HTML form post answered with a 303 whose Location is a site-relative path (never a full URL).",
     body: "multipart",
     fields: [
       {
@@ -2344,6 +2344,41 @@ export const ENDPOINTS: Endpoint[] = [
       {
         status: 500,
         when: "Unhandled error: the body cannot be parsed as form data (req.formData() throws, e.g. a JSON body), or a database error. Next.js's default error response; the handler sets no body. (Exact body is Next.js's, not verified.)",
+      },
+    ],
+  },
+  {
+    path: "/api/owner/kit/sheet/",
+    method: "get",
+    tag: "Owners: company and sites",
+    summary: "Download the media kit sites to finish",
+    description:
+      "The sites Claude read from one of the owner's media kits that could not become drafts (most often for want of a position), as the spreadsheet template filled in from the kit. Each gap is shaded amber with a note saying what to put there; the first cell's note gives the kit page. The owner completes it and uploads it to /api/owner/import/.",
+    query: [
+      {
+        name: "file",
+        type: "integer",
+        required: true,
+        description: "The id of the owner's media kit file, as linked from /owner/kit/.",
+      },
+    ],
+    cookies: [
+      {
+        name: "oh_owner",
+        required: true,
+        description:
+          "Identifies the owner: HMAC-signed note of the owner's confirmed login email. The file must be theirs.",
+      },
+    ],
+    answers: [
+      {
+        status: 200,
+        when: 'The kit was read and has sites to finish. Content-Disposition: attachment; filename="ohworks-sites-from-{kit name}.xlsx"; Cache-Control: no-store; X-Robots-Tag: noindex.',
+        file: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      },
+      {
+        status: 404,
+        when: "Not signed in as an owner, no such file of theirs, not a media kit, not read yet, or nothing left to finish.",
       },
     ],
   },

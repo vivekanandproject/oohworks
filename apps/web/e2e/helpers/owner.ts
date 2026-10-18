@@ -68,6 +68,14 @@ export async function removeOwner(request: APIRequestContext, email: string) {
       ).json()) as { docs: { id: number }[] }
     ).docs;
     for (const s of sites) await request.delete(`/api/sites/${s.id}`, { headers });
+    const files = (
+      (await (
+        await request.get(`/api/owner-files?where[owner][equals]=${owner.id}&limit=50&depth=0`, {
+          headers,
+        })
+      ).json()) as { docs: { id: number }[] }
+    ).docs;
+    for (const f of files) await request.delete(`/api/owner-files/${f.id}`, { headers });
     await request.delete(`/api/owners/${owner.id}`, { headers });
   }
 }

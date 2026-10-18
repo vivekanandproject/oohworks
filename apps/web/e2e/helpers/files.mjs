@@ -7,6 +7,7 @@
  *   node files.mjs template              ← { template }                → { head, example, guideRows }
  *   node files.mjs sheet                 ← { template, rows }          → { base64 }
  *   node files.mjs plain                 ← { rows }                    → { base64 }
+ *   node files.mjs read                  ← { book }                    → { rows: [{ header: { value, note } }] }
  */
 import ExcelJS from "exceljs";
 import sharp from "sharp";
@@ -60,6 +61,22 @@ if (command === "photo") {
       head.forEach((h, i) => (sheet.getRow(Number(n)).getCell(i + 1).value = cell(values[h])));
     out({ base64: b64(await book.xlsx.writeBuffer()) });
   }
+} else if (command === "read") {
+  const input = await read();
+  const book = new ExcelJS.Workbook();
+  await book.xlsx.load(Buffer.from(input.book, "base64"));
+  const sheet = book.getWorksheet("Sites");
+  const head = sheet.getRow(1).values.slice(1);
+  const rows = [];
+  for (let n = 2; n <= sheet.rowCount; n += 1) {
+    const row = sheet.getRow(n);
+    const cells = head.map((h, i) => {
+      const c = row.getCell(i + 1);
+      return [h, { value: c.value ?? null, note: c.note ? String(c.note) : null }];
+    });
+    rows.push(Object.fromEntries(cells));
+  }
+  out({ rows });
 } else if (command === "plain") {
   const input = await read();
   const book = new ExcelJS.Workbook();

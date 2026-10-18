@@ -192,6 +192,16 @@ export default async function OwnerSitePage({
                   <span className="font-mono">{maskEmail(owner.contactEmail)}</span>.
                 </p>
               ) : null}
+              {site.source === "kit" && site.kitNote && state === "draft" ? (
+                <Notice
+                  tone="warning"
+                  title="Read from your media kit by Claude."
+                  section="kit-note"
+                >
+                  {site.kitNote} Check every detail before you send it for review: what your kit did
+                  not say is left empty, and a misread figure is possible.
+                </Notice>
+              ) : null}
               {site.duplicateNote ? (
                 <Notice
                   tone="warning"

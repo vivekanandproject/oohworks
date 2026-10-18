@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Container } from "@ohworks/ui";
+import { Button, Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { Notice, OwnerBar } from "@/components/owners/Bits";
 import { Aside, Card, FORM_GRID, FormSection, PageHead } from "@/components/owners/Frame";
 import { formatDate } from "@/lib/editorial/format";
+import { kitName, kitReadingOn, type KitReport } from "@/lib/owners/kit-reading";
 import { ownerFiles, requireOwner } from "@/lib/owners/server";
+import type { OwnerFile } from "@/payload-types";
 import { maskEmail } from "@/lib/sites/enquiry";
 
 export const dynamic = "force-dynamic";
@@ -24,10 +26,30 @@ type Query = Record<string, string | string[] | undefined>;
 const one = (v: string | string[] | undefined): string =>
   Array.isArray(v) ? (v[0] ?? "") : (v ?? "");
 
+/** Where a kit stands, in the owner's words, and the spreadsheet of what is left when there is one. */
+function kitState(k: OwnerFile): { words: string; left: number } {
+  const report = k.reading === "read" ? (k.report as KitReport | null) : null;
+  if (k.handled) return { words: "Entered", left: 0 };
+  if (k.reading === "waiting" || k.reading === "reading") return { words: "Being read", left: 0 };
+  if (!report) return { words: "With our team", left: 0 };
+  const d = report.drafts?.length ?? 0;
+  const n = report.needs?.length ?? 0;
+  return {
+    words: [
+      d === 1 ? "1 draft in your list" : `${d} drafts in your list`,
+      n ? (n === 1 ? "1 needs details from you" : `${n} need details from you`) : "",
+    ]
+      .filter(Boolean)
+      .join(", "),
+    left: n,
+  };
+}
+
 export default async function KitPage({ searchParams }: { searchParams: Promise<Query> }) {
   const q = await searchParams;
   const { email, owner } = await requireOwner();
   const kits = await ownerFiles(owner.id, "media_kit");
+  const byClaude = kitReadingOn();
 
   return (
     <Shell active="owners">
@@ -42,8 +64,9 @@ export default async function KitPage({ searchParams }: { searchParams: Promise<
             {one(q.sent) === "1" ? (
               <div className="mt-5">
                 <Notice tone="success" title="We have your file." section="kit-sent">
-                  Our team will enter the sites as drafts in your list, and email you when they are
-                  ready to check.
+                  {byClaude
+                    ? "A PDF is read into drafts in your list within the hour. We email you when they are ready to check."
+                    : "Our team will enter the sites as drafts in your list, and email you when they are ready to check."}
                 </Notice>
               </div>
             ) : null}
@@ -103,14 +126,37 @@ export default async function KitPage({ searchParams }: { searchParams: Promise<
 
             {kits.length ? (
               <FormSection title="What you have sent" part="kits">
-                <ul className="t-body text-ink space-y-1" data-section="kits">
-                  {kits.map((k) => (
-                    <li key={k.id}>
-                      <span className="font-mono text-[13px]">{formatDate(k.createdAt)}</span> ·{" "}
-                      {k.filename?.replace(/^.*?-\d{13}-/, "")} ·{" "}
-                      {k.handled ? "Entered" : "With our team"}
-                    </li>
-                  ))}
+                <ul className="t-body text-ink space-y-3" data-section="kits">
+                  {kits.map((k) => {
+                    const state = kitState(k);
+                    return (
+                      <li key={k.id} data-kit={k.id}>
+                        <span className="font-mono text-[13px]">{formatDate(k.createdAt)}</span> ·{" "}
+                        {kitName(k.filename)} · <span data-kit-state>{state.words}</span>
+                        {state.left ? (
+                          <div className="mt-2">
+                            <Button
+                              href={`/api/owner/kit/sheet/?file=${k.id}`}
+                              variant="secondary"
+                              data-action="kit-sheet"
+                            >
+                              {state.left === 1
+                                ? "Download the site to finish"
+                                : `Download the ${state.left} sites to finish`}
+                            </Button>
+                            <p className="t-small text-ink-muted mt-1">
+                              A spreadsheet filled in from your kit. Add what is marked in amber,
+                              most often the exact position, then{" "}
+                              <a href="/owner/import/" className="oh-link">
+                                upload it
+                              </a>
+                              .
+                            </p>
+                          </div>
+                        ) : null}
+                      </li>
+                    );
+                  })}
                 </ul>
               </FormSection>
             ) : null}
@@ -119,7 +165,11 @@ export default async function KitPage({ searchParams }: { searchParams: Promise<
           <Aside label="What happens to your file">
             <Card title="What happens to it">
               <ol className="t-body text-ink list-decimal space-y-1 pl-5">
-                <li>Our team reads it and enters each site as a draft in your list.</li>
+                <li>
+                  {byClaude
+                    ? "Claude, an AI, reads a PDF and enters each site as a draft in your list. Our team enters any other file."
+                    : "Our team reads it and enters each site as a draft in your list."}
+                </li>
                 <li>You get an email when they are ready.</li>
                 <li>You check each one, correct anything, and send them for review.</li>
               </ol>

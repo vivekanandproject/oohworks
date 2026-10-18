@@ -58,6 +58,41 @@ export const OwnerFiles: CollectionConfig = {
       defaultValue: false,
       label: "Done: checked, or the sites have been entered",
     },
+    {
+      name: "reading",
+      type: "select",
+      options: [
+        { label: "Waiting for Claude to read it", value: "waiting" },
+        { label: "Claude is reading it", value: "reading" },
+        { label: "Read: its sites are drafts", value: "read" },
+        { label: "Could not be read: enter it by hand", value: "failed" },
+      ],
+      admin: {
+        position: "sidebar",
+        condition: (data) => data?.kind === "media_kit",
+        description:
+          "A PDF kit is read by Claude into draft sites within the hour. Set it to Waiting to read it again; sites without the kit's own reference are then added a second time.",
+      },
+    },
+    {
+      name: "readingAt",
+      type: "date",
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+        condition: (data) => data?.kind === "media_kit",
+        date: { pickerAppearance: "dayAndTime" },
+      },
+    },
+    {
+      name: "readingNote",
+      type: "textarea",
+      admin: {
+        readOnly: true,
+        condition: (data) => data?.kind === "media_kit",
+        description: "What Claude made of the kit, and what it could not read",
+      },
+    },
     { name: "report", type: "json", admin: { hidden: true } },
   ],
 };

@@ -187,7 +187,11 @@ export interface Site {
    * The owner's own code for this site
    */
   ownerRef?: string | null;
-  source?: ('team' | 'form' | 'sheet') | null;
+  source?: ('team' | 'form' | 'sheet' | 'kit') | null;
+  /**
+   * Where in the media kit Claude found this site, and what it was unsure of
+   */
+  kitNote?: string | null;
   /**
    * Assigned once. Never changes.
    */
@@ -1164,6 +1168,15 @@ export interface OwnerFile {
    */
   note?: string | null;
   handled?: boolean | null;
+  /**
+   * A PDF kit is read by Claude into draft sites within the hour. Set it to Waiting to read it again; sites without the kit's own reference are then added a second time.
+   */
+  reading?: ('waiting' | 'reading' | 'read' | 'failed') | null;
+  readingAt?: string | null;
+  /**
+   * What Claude made of the kit, and what it could not read
+   */
+  readingNote?: string | null;
   report?:
     | {
         [k: string]: unknown;
@@ -1412,6 +1425,7 @@ export interface SitesSelect<T extends boolean = true> {
   duplicateNote?: T;
   ownerRef?: T;
   source?: T;
+  kitNote?: T;
   permanentId?: T;
   qualityScore?: T;
   sample?: T;
@@ -1941,6 +1955,9 @@ export interface OwnerFilesSelect<T extends boolean = true> {
   kind?: T;
   note?: T;
   handled?: T;
+  reading?: T;
+  readingAt?: T;
+  readingNote?: T;
   report?: T;
   updatedAt?: T;
   createdAt?: T;

@@ -199,6 +199,8 @@ resource "google_cloud_run_v2_service" "web" {
 
   template {
     service_account = google_service_account.web.email
+    # Requests may run 15 minutes: the media-kits job waits on Claude reading a long PDF.
+    timeout = "900s"
     scaling {
       min_instance_count = var.min_instances
       max_instance_count = var.max_instances
@@ -376,9 +378,10 @@ resource "google_billing_budget" "monthly" {
 # one there by hand with the secret if needed.
 locals {
   jobs = {
-    alerts        = { schedule = "0 * * * *", what = "Emails new sites to confirmed follows" }
-    availability  = { schedule = "30 9 * * 1", what = "Asks owners to confirm availability" }
-    "reply-times" = { schedule = "0 3 * * *", what = "Works out owners' reply times again" }
+    alerts        = { schedule = "0 * * * *", deadline = "180s", what = "Emails new sites to confirmed follows" }
+    availability  = { schedule = "30 9 * * 1", deadline = "180s", what = "Asks owners to confirm availability" }
+    "reply-times" = { schedule = "0 3 * * *", deadline = "180s", what = "Works out owners' reply times again" }
+    "media-kits"  = { schedule = "*/10 * * * *", deadline = "900s", what = "Has Claude read a waiting media kit" }
   }
 }
 
@@ -391,6 +394,8 @@ resource "google_cloud_scheduler_job" "jobs" {
   schedule    = each.value.schedule
   time_zone   = "Asia/Kolkata"
   paused      = !var.public
+  # How long the scheduler waits for an answer: Claude can take minutes over a media kit.
+  attempt_deadline = each.value.deadline
 
   retry_config {
     retry_count = 1
