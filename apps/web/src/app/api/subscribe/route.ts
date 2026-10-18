@@ -1,5 +1,7 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
+import { emailLink } from "@/lib/email-links";
+import { sendMail } from "@/lib/sites/mail";
 import { cleanEmail, rateLimited, safePath, seeOther } from "@/lib/forms";
 
 export const dynamic = "force-dynamic";
@@ -22,8 +24,9 @@ export async function POST(req: Request) {
     limit: 1,
     overrideAccess: true,
   });
-  if (existing.totalDocs === 0) {
-    await payload.create({
+  const subscriber =
+    existing.docs[0] ??
+    (await payload.create({
       collection: "subscribers",
       data: {
         email,
@@ -31,7 +34,20 @@ export async function POST(req: Request) {
         source: safePath(form.get("from"), "/newsroom/").slice(0, 200),
       },
       overrideAccess: true,
-    });
-  }
+    }));
+  // The briefing goes only to an address whose owner opened this link.
+  if (!subscriber.confirmed || subscriber.unsubscribedAt)
+    await sendMail({
+      kind: "confirm_email",
+      to: email,
+      subject: "Confirm: the ohworks daily briefing",
+      text: [
+        "Someone, we hope you, signed this address up for the ohworks daily briefing.",
+        "",
+        `Confirm with this link: ${emailLink("confirm-subscriber", subscriber.id)}`,
+        "",
+        "If it was not you, ignore this email. Nothing more will be sent.",
+      ].join("\n"),
+    }).catch(() => undefined);
   return seeOther(req, DONE);
 }

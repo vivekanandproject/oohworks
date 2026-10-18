@@ -254,6 +254,79 @@ export const ENDPOINTS: Endpoint[] = [
       { status: 403, when: "Posted from another site." },
     ],
   },
+  {
+    path: "/api/jobs/{job}/",
+    method: "post",
+    tag: "Service",
+    summary: "Run a job on the timer",
+    description:
+      "The jobs Cloud Scheduler runs (src/lib/jobs): `alerts` hourly (new sites for confirmed follows, each told once), `availability` on Mondays (owners asked to confirm sites not confirmed for three weeks, with a one-tap link), `reply-times` nightly. Skips the origin-secret check; asks for its own secret instead. Without CRON_SECRET set, there are no jobs here.",
+    pathParams: [{ name: "job", description: "alerts, availability or reply-times" }],
+    checks: ["`Authorization: Bearer <CRON_SECRET>`, compared in constant time."],
+    answers: [
+      {
+        status: 200,
+        when: "The job ran.",
+        json: {
+          type: "object",
+          properties: {
+            job: { type: "string" },
+            ok: { type: "boolean" },
+            ms: { type: "integer" },
+          },
+          additionalProperties: true,
+        },
+      },
+      { status: 401, when: "No secret, or the wrong one." },
+      { status: 404, when: "No such job, or CRON_SECRET is not set." },
+    ],
+  },
+  {
+    path: "/api/email-link/",
+    method: "get",
+    tag: "Newsletter and follows",
+    summary: "Act on a link in an email",
+    description:
+      "Confirms a follow (and remembers what it matches today, so only later sites are news) or a newsletter sign-up, ends either, or confirms all of an owner's live, unbooked sites as free today. Each link is signed for one record and one purpose (src/lib/email-links.ts); an availability link works for two weeks.",
+    query: [
+      {
+        name: "p",
+        type: "string",
+        required: true,
+        description: "confirm-follow, unfollow, confirm-subscriber, unsubscribe or availability",
+      },
+      {
+        name: "id",
+        type: "string",
+        required: true,
+        description: "The follow, subscriber or owner.",
+      },
+      {
+        name: "k",
+        type: "string",
+        required: true,
+        description: "The signature: 32 hex characters.",
+      },
+      { name: "d", type: "string", description: "For availability: the day the link was made." },
+    ],
+    answers: [
+      {
+        status: 303,
+        when: "Done.",
+        location: "/email/following|unfollowed|subscribed|unsubscribed|availability-confirmed/",
+      },
+      {
+        status: 303,
+        when: "A link that is not right, or for something that has gone.",
+        location: "/email/link-not-valid/",
+      },
+      {
+        status: 303,
+        when: "An availability link older than two weeks.",
+        location: "/email/link-expired/",
+      },
+    ],
+  },
   // The site's own endpoints, catalogued from each route handler on 18 Oct 2026.
   {
     path: "/api/enquire/",

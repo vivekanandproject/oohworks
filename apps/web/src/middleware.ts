@@ -7,6 +7,8 @@ import { hiddenFromSearch } from "@/lib/api/env";
  *    When ORIGIN_SECRET is unset (local dev) the check is off.
  * 2. Service role: the "jobs" service serves only the Inngest handler and health.
  * 3. Previews and staging (SITE_ENV) carry noindex on every answer, whatever a page says itself.
+ * Health and the jobs on a timer skip the origin check: the host's checks and Cloud Scheduler call
+ * Cloud Run directly, and /api/jobs/ asks for its own CRON_SECRET.
  */
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -19,7 +21,7 @@ export function middleware(req: NextRequest) {
   }
 
   const secret = process.env.ORIGIN_SECRET;
-  if (secret && !pathname.startsWith("/api/health")) {
+  if (secret && !pathname.startsWith("/api/health") && !pathname.startsWith("/api/jobs/")) {
     if (req.headers.get("x-origin-secret") !== secret) {
       return new NextResponse("Forbidden", { status: 403 });
     }

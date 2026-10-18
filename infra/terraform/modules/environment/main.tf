@@ -5,7 +5,7 @@
 
 locals {
   # Secrets Terraform makes itself. Their values sit in the state, which lives in a private bucket.
-  generated = ["DATABASE_URL", "PAYLOAD_SECRET", "ORIGIN_SECRET"]
+  generated = ["DATABASE_URL", "PAYLOAD_SECRET", "ORIGIN_SECRET", "CRON_SECRET"]
   # A release refuses to finish without a super admin (apps/web/scripts/release.mjs).
   release_secrets = ["SUPER_ADMIN_EMAILS", "SUPER_ADMIN_PASSWORD"]
   all_secrets     = toset(concat(local.generated, local.release_secrets, var.optional_secrets))
@@ -26,6 +26,7 @@ resource "google_project_service" "apis" {
     "servicenetworking.googleapis.com",
     "iap.googleapis.com",
     "billingbudgets.googleapis.com",
+    "cloudscheduler.googleapis.com",
   ])
   project            = var.project_id
   service            = each.value
@@ -126,6 +127,11 @@ resource "random_password" "origin" {
   special = false
 }
 
+resource "random_password" "cron" {
+  length  = 40
+  special = false
+}
+
 resource "google_secret_manager_secret" "s" {
   for_each  = local.all_secrets
   project   = var.project_id
@@ -141,6 +147,7 @@ resource "google_secret_manager_secret_version" "generated" {
     DATABASE_URL   = "postgres://ohworks:${random_password.db.result}@${google_sql_database_instance.db.private_ip_address}:5432/ohworks"
     PAYLOAD_SECRET = random_password.payload.result
     ORIGIN_SECRET  = random_password.origin.result
+    CRON_SECRET    = random_password.cron.result
   }
   secret      = google_secret_manager_secret.s[each.key].id
   secret_data = each.value
@@ -362,4 +369,40 @@ resource "google_billing_budget" "monthly" {
       threshold_percent = threshold_rules.value
     }
   }
+}
+
+# The jobs on a timer (apps/web/src/lib/jobs), called on the web service with the cron secret. Paused
+# where the service sits behind Google sign-in, which the scheduler's plain request cannot pass; run
+# one there by hand with the secret if needed.
+locals {
+  jobs = {
+    alerts        = { schedule = "0 * * * *", what = "Emails new sites to confirmed follows" }
+    availability  = { schedule = "30 9 * * 1", what = "Asks owners to confirm availability" }
+    "reply-times" = { schedule = "0 3 * * *", what = "Works out owners' reply times again" }
+  }
+}
+
+resource "google_cloud_scheduler_job" "jobs" {
+  for_each    = local.jobs
+  project     = var.project_id
+  region      = var.region
+  name        = "ohworks-${each.key}"
+  description = each.value.what
+  schedule    = each.value.schedule
+  time_zone   = "Asia/Kolkata"
+  paused      = !var.public
+
+  retry_config {
+    retry_count = 1
+  }
+
+  http_target {
+    http_method = "POST"
+    uri         = "${google_cloud_run_v2_service.web.uri}/api/jobs/${each.key}/"
+    headers = {
+      Authorization = "Bearer ${random_password.cron.result}"
+    }
+  }
+
+  depends_on = [google_project_service.apis]
 }

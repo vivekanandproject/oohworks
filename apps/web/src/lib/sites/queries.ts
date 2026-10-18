@@ -271,6 +271,17 @@ export async function indexableOwnerUrls(): Promise<{ url: string; updatedAt: st
     .map((o) => ({ url: `/owners/${o.slug}/`, updatedAt: o.updatedAt }));
 }
 
+/** Every published site a search matches, best first: for alerts, which need them all, not a page. */
+export async function matchingListings(state: SearchState): Promise<Listing[]> {
+  const cat = await catalogue();
+  const now = Date.now();
+  return sortListings(
+    cat.listings.filter((l) => matches(l, state, now)),
+    state,
+    now,
+  );
+}
+
 /** How many published sites each city and each format has. */
 export async function catalogueCounts(): Promise<{
   cities: Map<string, number>;

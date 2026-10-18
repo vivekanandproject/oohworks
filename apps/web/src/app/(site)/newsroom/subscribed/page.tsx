@@ -34,10 +34,11 @@ export default async function SubscribedPage({
             </>
           ) : (
             <>
-              <h1 className="t-display-lg">You are on the list</h1>
+              <h1 className="t-display-lg">Check your email</h1>
               <p className="t-body-lg text-ink-muted mt-4" role="status">
-                The first issue of the daily briefing reaches you when it starts. One email, and
-                every issue carries a one-click way out.
+                We sent a link to confirm your address. Once you open it, the first issue of the
+                daily briefing reaches you when it starts, and every issue carries a one-click way
+                out.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button href="/newsroom/" variant="primary">

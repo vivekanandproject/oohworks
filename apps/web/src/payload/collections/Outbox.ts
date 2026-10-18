@@ -1,7 +1,10 @@
 import type { CollectionConfig } from "payload";
 import { isAdmin, isSuperAdmin } from "../access";
 
-/** Emails that would have been sent. Filled only when no email service is configured, so the team can see them locally. */
+/**
+ * Emails that were not sent: with no email service configured, or, outside production, to an address
+ * not on EMAIL_ALLOWLIST. Kept so the team can read them.
+ */
 export const Outbox: CollectionConfig = {
   slug: "outbox",
   admin: {
@@ -9,7 +12,7 @@ export const Outbox: CollectionConfig = {
     group: "Operations",
     defaultColumns: ["to", "subject", "kind", "createdAt"],
     description:
-      "Emails that would have been sent. Filled only when no email service is configured.",
+      "Emails that were not sent: no email service is configured, or, outside production, the address is not on the allowlist.",
   },
   access: { read: isAdmin, create: () => false, update: () => false, delete: isSuperAdmin },
   fields: [
@@ -29,6 +32,8 @@ export const Outbox: CollectionConfig = {
         { label: "A sign-in code for an owner", value: "owner_code" },
         { label: "A notice to an owner about their sites", value: "owner_notice" },
         { label: "A notice to the ohworks team", value: "team_notice" },
+        { label: "New sites for a followed search", value: "alert" },
+        { label: "A link to confirm an email address", value: "confirm_email" },
       ],
     },
   ],

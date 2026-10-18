@@ -14,6 +14,8 @@ import { fileURLToPath } from "node:url";
 const here = path.dirname(fileURLToPath(import.meta.url));
 export const APP_DIR = path.resolve(here, "..");
 export const TEST_PORT = 3100;
+/** The jobs on a timer are run by the tests with this (e2e/jobs.e2e.ts). */
+export const TEST_CRON_SECRET = "test-cron-secret";
 
 /** The test database: TEST_DATABASE_URL, or the development address with the name `ohworks_test`. */
 export function testDatabaseUrl(env = process.env) {
@@ -46,6 +48,7 @@ export function testEnv(env = process.env) {
     NEXT_TELEMETRY_DISABLED: "1",
     // A test run, so the internal API reference is served and can be checked (src/lib/api/env.ts).
     SITE_ENV: "test",
+    CRON_SECRET: TEST_CRON_SECRET,
     // Hubs open below their threshold, marked as previews, so their pages can be tested on samples.
     HUB_PREVIEW: "1",
     // Tests read every email from the Outbox and never call an outside service, whatever .env holds.

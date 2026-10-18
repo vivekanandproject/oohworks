@@ -13,7 +13,9 @@ export interface Mail {
     | "buyer_message"
     | "owner_code"
     | "owner_notice"
-    | "team_notice";
+    | "team_notice"
+    | "alert"
+    | "confirm_email";
   /** Replies go here. An owner answers the buyer, never ohworks. */
   replyTo?: string | undefined;
 }

@@ -290,7 +290,7 @@ test.describe("sign-up and follow forms", () => {
       .fill("reader@ohworks.local");
     await page.getByRole("button", { name: "Get the briefing" }).click();
     await expect(page).toHaveURL(/\/newsroom\/subscribed\/$/);
-    await expect(page.locator("h1")).toHaveText("You are on the list");
+    await expect(page.locator("h1")).toHaveText("Check your email");
     expect(await page.locator('meta[name="robots"]').getAttribute("content")).toContain("noindex");
   });
 
@@ -330,7 +330,7 @@ test.describe("sign-up and follow forms", () => {
     await page.locator("[data-section='follow'] input[type='email']").fill("buyer@ohworks.local");
     await page.locator("[data-section='follow'] button").click();
     await expect(page).toHaveURL(/followed=1/);
-    await expect(page.getByRole("status")).toContainText("You are on the list");
+    await expect(page.getByRole("status")).toContainText("Check your email");
   });
 });
 

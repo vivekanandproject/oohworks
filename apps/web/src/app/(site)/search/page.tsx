@@ -290,11 +290,11 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           <div className="oh-toast success mb-6" role="status">
             <span className="dot" />
             <div>
-              <div className="t">You are on the list.</div>
+              <div className="t">Check your email.</div>
               <div className="d">
                 {result.total > 0
-                  ? `We will email you when new ${what} are listed. One email, then you choose.`
-                  : `We will email you when the first ${what} are listed. One email, then you choose.`}
+                  ? `We sent a link to confirm. After that, we will email you when new ${what} are listed, with a way to stop in every email.`
+                  : `We sent a link to confirm. After that, we will email you when the first ${what} are listed, with a way to stop in every email.`}
               </div>
             </div>
           </div>

@@ -41,8 +41,17 @@ export const Follows: CollectionConfig = {
       name: "confirmed",
       type: "checkbox",
       defaultValue: false,
-      admin: { description: "Double opt-in lands with the newsletter build" },
+      admin: { description: "They opened the link we emailed. Only confirmed follows get alerts." },
     },
+    {
+      name: "seen",
+      type: "json",
+      admin: {
+        readOnly: true,
+        description: "The sites already sent to them (unit ids), so no site is sent twice",
+      },
+    },
+    { name: "notifiedAt", type: "date", admin: { readOnly: true } },
     { name: "unsubscribedAt", type: "date" },
   ],
 };

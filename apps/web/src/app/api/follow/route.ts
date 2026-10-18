@@ -1,5 +1,8 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
+import { emailLink } from "@/lib/email-links";
+import { followWords } from "@/lib/jobs/alerts";
+import { sendMail } from "@/lib/sites/mail";
 
 export const dynamic = "force-dynamic";
 
@@ -70,8 +73,9 @@ export async function POST(req: Request) {
     limit: 1,
     overrideAccess: true,
   });
-  if (existing.totalDocs === 0) {
-    await payload.create({
+  const follow =
+    existing.docs[0] ??
+    (await payload.create({
       collection: "follows",
       data: {
         email,
@@ -82,7 +86,22 @@ export async function POST(req: Request) {
         ...(search ? { search } : {}),
       },
       overrideAccess: true,
-    });
+    }));
+  // Nothing more is sent until the address's owner opens this link.
+  if (!follow.confirmed || follow.unsubscribedAt) {
+    const words = followWords(follow);
+    await sendMail({
+      kind: "confirm_email",
+      to: email,
+      subject: `Confirm: email me new ${words}`,
+      text: [
+        `Someone, we hope you, asked ohworks to email this address when new ${words} are listed.`,
+        "",
+        `Confirm with this link: ${emailLink("confirm-follow", follow.id)}`,
+        "",
+        "If it was not you, ignore this email. Nothing more will be sent.",
+      ].join("\n"),
+    }).catch(() => undefined);
   }
   return redirect("followed", "1");
 }

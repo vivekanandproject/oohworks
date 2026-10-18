@@ -234,7 +234,7 @@ test.describe("find sites: results", () => {
 
   test("after following, the page confirms", async ({ page }) => {
     await page.goto("/search/?city=pune&format=gantry&followed=1");
-    await expect(page.getByRole("status")).toContainText("You are on the list");
+    await expect(page.getByRole("status")).toContainText("Check your email");
     await expect(page.locator("[data-section='follow']")).toHaveCount(0);
   });
 

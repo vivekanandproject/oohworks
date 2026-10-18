@@ -377,7 +377,7 @@ test.describe("saved search", () => {
     await box.getByRole("button", { name: "Email me new hoardings in Bengaluru" }).click();
     await expect(page).toHaveURL(/\/search\/\?city=bengaluru&format=hoarding&followed=1$/);
     await expect(page.getByRole("status").first()).toContainText(
-      "We will email you when new hoardings in Bengaluru are listed",
+      "we will email you when new hoardings in Bengaluru are listed",
     );
     await expect(page.locator("[data-section='save-search']")).toHaveCount(0);
     const stored = await follows(request, email);
