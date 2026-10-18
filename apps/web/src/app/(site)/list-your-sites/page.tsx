@@ -413,7 +413,7 @@ export default async function ListYourSitesPage({
             {WAYS.map((w) => (
               <div key={w.title} className="border-hairline bg-paper-raised rounded-md border p-5">
                 <span className="oh-badge neutral">{w.tag}</span>
-                <h3 className="mt-3 text-[16px] leading-[22px] font-semibold">{w.title}</h3>
+                <h3 className="t-title mt-3">{w.title}</h3>
                 <p className="t-body text-ink-muted mt-2">{w.text}</p>
               </div>
             ))}

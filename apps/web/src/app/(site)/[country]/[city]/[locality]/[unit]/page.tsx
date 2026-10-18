@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { permanentIdFromSlug } from "@ohworks/core";
 import { Badge, Button, Container } from "@ohworks/ui";
+import { PageHead } from "@/components/owners/Frame";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance } from "@/components/sites/Basket";
 import { ListToggle } from "@/components/sites/ListToggle";
@@ -418,7 +419,7 @@ export default async function SitePage({
         data-section="enquire-bar"
       >
         <div className="min-w-0">
-          <p className="truncate font-mono text-[16px] leading-[22px] font-medium">
+          <p className="t-price truncate">
             {price.shown ? `${price.prefix}${price.amount} / month` : "Price on request"}
           </p>
           <p className="t-small text-ink-muted truncate">{availability.label}</p>
@@ -447,11 +448,10 @@ async function Gone({ site, now }: { site: Site; now: number }) {
       <QuickView />
       <Container className="py-12 lg:py-16">
         <div className="mx-auto max-w-[560px] text-center" data-section="gone">
-          <h1 className="t-display-md">This site is no longer listed</h1>
-          <p className="text-ink-muted t-body mt-3">
+          <PageHead center eyebrow="Removed listing" title="This site is no longer listed">
             {site.title}, {placeLine(site)}, has been taken off OOHWORKS. Its owner may no longer
             sell it, or it was not as described. The sites below are nearby.
-          </p>
+          </PageHead>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Button href={`/search/?city=${site.city}`} variant="primary">
               Find sites in {city}

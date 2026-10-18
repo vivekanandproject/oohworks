@@ -101,7 +101,7 @@ function Fact({ label, children }: { label: string; children: ReactNode }) {
     <div className="bg-paper-raised px-4 py-3">
       <dt className="t-label text-ink-muted">{label}</dt>
       <dd
-        className="text-ink mt-1 font-mono text-[15px] leading-[22px] font-medium"
+        className="t-data text-ink mt-1 font-medium"
         style={{ fontVariantNumeric: "tabular-nums" }}
       >
         {children}
@@ -440,7 +440,7 @@ export function OwnerCard({ owner, siteCount }: { owner: Owner; siteCount: numbe
           {owner.name.charAt(0).toUpperCase()}
         </span>
         <div className="min-w-0">
-          <h2 className="text-[16px] leading-[22px] font-semibold">{owner.name}</h2>
+          <h2 className="t-title">{owner.name}</h2>
           <p className="t-small text-ink-muted">
             {[city, `${siteCount} ${siteCount === 1 ? "site" : "sites"} on OOHWORKS`]
               .filter(Boolean)
@@ -506,7 +506,7 @@ export function EnquirySteps({ ownerName }: { ownerName: string }) {
           <span className="t-data text-ink-muted" aria-hidden="true">
             0{i + 1}
           </span>
-          <h3 className="mt-1 text-[16px] leading-[22px] font-semibold">{s.t}</h3>
+          <h3 className="t-title mt-1">{s.t}</h3>
           <p className="t-small text-ink-muted mt-1">{s.d}</p>
         </li>
       ))}

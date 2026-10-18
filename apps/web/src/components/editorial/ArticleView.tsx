@@ -389,7 +389,7 @@ export async function ArticleView({ piece }: { piece: Piece }) {
                         return (
                           <li key={i} className="border-hairline border-t py-3 first:border-t-0">
                             <p
-                              className="text-ink font-mono text-[26px] leading-8 font-medium break-words"
+                              className="t-data-lg text-ink break-words"
                               style={{ fontVariantNumeric: "tabular-nums" }}
                             >
                               {f.value}

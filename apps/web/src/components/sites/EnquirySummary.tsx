@@ -21,16 +21,13 @@ export function EnquirySummary({
       data-section="enquiry-summary"
     >
       <p className="t-label text-ink-muted">You are asking about</p>
-      <p className="mt-2 text-[16px] leading-[22px] font-semibold">
+      <p className="t-title mt-2">
         <a href={siteUrl(site)} className="oh-link">
           {site.title}
         </a>
       </p>
       <p className="t-small text-ink-muted mt-1">{metaLine(site)}</p>
-      <p
-        className="mt-3 font-mono text-[18px] leading-6 font-medium"
-        style={{ fontVariantNumeric: "tabular-nums" }}
-      >
+      <p className="t-price mt-3" style={{ fontVariantNumeric: "tabular-nums" }}>
         {price.shown ? (
           <>
             {price.prefix}

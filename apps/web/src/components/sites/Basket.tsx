@@ -25,11 +25,23 @@ function apply(data: ListState) {
       if (label) label.textContent = WORDS[name][on ? 1 : 0];
     }
   }
-  // On a phone the shortlist count sits in the filter strip instead of its own bar.
+  // On a phone the shortlist and compare counts sit in the filter strip instead of their own bar.
   const shortlist = document.querySelector<HTMLElement>("[data-plan-saved]");
   if (shortlist) shortlist.hidden = data.saved.length === 0;
   const savedN = document.querySelector("[data-plan-saved-n]");
   if (savedN) savedN.textContent = String(data.saved.length);
+  const phoneCompare = document.querySelector<HTMLElement>("[data-plan-compare-phone]");
+  if (phoneCompare) phoneCompare.hidden = data.compare.length === 0;
+  const phoneCompareN = document.querySelector("[data-plan-compare-phone-n]");
+  if (phoneCompareN) phoneCompareN.textContent = String(data.compare.length);
+  // Said in every status line on the page (the bar's, and the phone strip's), whichever is shown.
+  const said =
+    data.full && data.list === "compare"
+      ? "You can compare four sites at a time. Remove one first."
+      : data.full
+        ? "Your shortlist is full. Remove a site first."
+        : "";
+  document.querySelectorAll("[data-list-status]").forEach((s) => (s.textContent = said));
   const bar = document.querySelector<HTMLElement>("[data-plan]");
   if (!bar) return;
   bar.hidden = data.saved.length === 0 && data.compare.length === 0;
@@ -39,14 +51,6 @@ function apply(data: ListState) {
   if (link) link.hidden = data.compare.length === 0;
   const n = bar.querySelector("[data-plan-compare-n]");
   if (n) n.textContent = String(data.compare.length);
-  const status = bar.querySelector("[data-list-status]");
-  if (status)
-    status.textContent =
-      data.full && data.list === "compare"
-        ? "You can compare four sites at a time. Remove one first."
-        : data.full
-          ? "Your shortlist is full. Remove a site first."
-          : "";
 }
 
 /**

@@ -697,7 +697,14 @@ test.describe("list your sites: one design", () => {
     const formPage = await frame(page);
     await page.goto("/shortlist/?sites=ows0001,ows0003");
     const contentPage = await frame(page);
-    expect(formPage.form, "the enquiry form").toBe(560);
+    // Since 19 Oct 2026 a form page and a page of content share one frame, the site page's 7:4,
+    // so the help beside a form starts and sizes exactly as the panel beside the shortlist does.
+    expect(formPage.asideLeft, "form and content pages: where the side panel starts").toBe(
+      contentPage.asideLeft,
+    );
+    expect(formPage.asideWidth, "form and content pages: how wide the side panel is").toBe(
+      contentPage.asideWidth,
+    );
 
     const check = async (path: string, kind: "form" | "content") => {
       await page.goto(path);
@@ -744,7 +751,9 @@ test.describe("list your sites: one design", () => {
     }
     const stamp = Date.now();
     await signIn(page, request, `owner-frame-${info.project.name}-${stamp}@example.org`);
-    expect((await frame(page)).form, "the company step, before a company exists").toBe(560);
+    expect((await frame(page)).form, "the company step, before a company exists").toBe(
+      formPage.form,
+    );
     await addCompany(page, `E2E Frame ${stamp}`);
     await check("/owner/", "content");
     await check("/owner/company/", "form");

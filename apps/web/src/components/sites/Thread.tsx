@@ -132,7 +132,7 @@ export function GroupSummary({ group }: { group: Group }) {
       data-section="group-summary"
     >
       <p className="t-label text-ink-muted">You are asking</p>
-      <p className="mt-2 text-[16px] leading-[22px] font-semibold">
+      <p className="t-title mt-2">
         {group.requests.length === 1
           ? group.requests[0]?.owner.name
           : `${group.requests.length} owners`}{" "}
@@ -148,7 +148,7 @@ export function GroupSummary({ group }: { group: Group }) {
             className="border-hairline border-t pt-3"
             data-owner={r.owner.slug}
           >
-            <p className="text-[15px] leading-[22px] font-semibold">{r.owner.name}</p>
+            <p className="t-body-strong">{r.owner.name}</p>
             <ul className="t-small text-ink-muted mt-1 space-y-0.5">
               {r.sites.map((s) => (
                 <li key={s.id}>{s.title}</li>

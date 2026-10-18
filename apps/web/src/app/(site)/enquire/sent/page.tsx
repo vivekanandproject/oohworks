@@ -42,7 +42,7 @@ export default async function SentPage({
       <Container className="py-10 lg:py-16">
         <div className="mx-auto max-w-[680px]" data-section="enquiry-sent">
           <p className="t-label text-verified">Enquiry sent</p>
-          <h1 className="t-display-lg mt-2">
+          <h1 className="t-display-md mt-2">
             Sent to {only ? only.owner.name : `${group.requests.length} owners`}.
           </h1>
           <p className="t-body-lg text-ink-muted mt-4">
@@ -84,7 +84,7 @@ export default async function SentPage({
                     data-owner={r.owner.slug}
                   >
                     <div className="min-w-0">
-                      <p className="text-[16px] leading-[22px] font-semibold">{r.owner.name}</p>
+                      <p className="t-title">{r.owner.name}</p>
                       <p className="t-small text-ink-muted">
                         {r.sites.length === 1 ? r.sites[0]?.title : `${r.sites.length} sites`} ·
                         typical reply: {reply(r.owner.medianReplyHours).toLowerCase()}

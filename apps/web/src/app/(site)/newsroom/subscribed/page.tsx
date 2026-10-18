@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Button, Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { BriefingBand } from "@/components/editorial/PieceBits";
+import { PageHead } from "@/components/owners/Frame";
 
 export const metadata: Metadata = {
   title: "The daily briefing",
@@ -34,12 +35,13 @@ export default async function SubscribedPage({
             </>
           ) : (
             <div className="text-center">
-              <h1 className="t-display-lg">Check your email</h1>
-              <p className="t-body-lg text-ink-muted mt-4" role="status">
-                We sent a link to confirm your address. Once you open it, the first issue of the
-                daily briefing reaches you when it starts, and every issue carries a one-click way
-                out.
-              </p>
+              <PageHead center eyebrow="The daily briefing" title="Check your email">
+                <span role="status">
+                  We sent a link to confirm your address. Once you open it, the first issue of the
+                  daily briefing reaches you when it starts, and every issue carries a one-click way
+                  out.
+                </span>
+              </PageHead>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
                 <Button href="/newsroom/" variant="primary">
                   Back to the newsroom

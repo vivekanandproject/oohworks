@@ -154,6 +154,11 @@
     background: var(--color-navy-200);
     color: var(--color-ink);
   }
+  /* Waiting on someone, such as a site in review. Amber like "fresh", told apart by its word. */
+  .oh-badge.pending {
+    background: var(--color-lit-tint);
+    color: var(--color-lit);
+  }
   .oh-badge.booked {
     background: var(--color-paper-sunken);
     color: var(--color-booked);

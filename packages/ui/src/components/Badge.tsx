@@ -1,7 +1,15 @@
 import { Icon, type IconName } from "../icons/Icon";
 
 export type BadgeKind =
-  "verified" | "permit" | "fresh" | "responsive" | "booked" | "critical" | "featured" | "neutral";
+  | "verified"
+  | "permit"
+  | "fresh"
+  | "responsive"
+  | "booked"
+  | "pending"
+  | "critical"
+  | "featured"
+  | "neutral";
 
 const ICON_FOR: Partial<Record<BadgeKind, IconName>> = {
   verified: "verified",

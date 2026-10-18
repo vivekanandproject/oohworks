@@ -179,7 +179,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                           </a>
                           <a
                             href={card.listing.url}
-                            className="oh-rowlink mt-2 block text-[15px] leading-[22px] font-semibold"
+                            className="oh-rowlink t-body-strong mt-2 block"
                           >
                             {title}
                           </a>

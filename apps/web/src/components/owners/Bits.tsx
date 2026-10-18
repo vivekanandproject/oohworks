@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 import { STATE_LABEL, type SiteState } from "@/lib/owners/progress";
 
+/** Each state in the badge kind that means it: waiting is pending, held back is critical, live is verified. */
 const TONE: Record<SiteState, string> = {
   draft: "neutral",
-  review: "booked",
-  changes: "fresh",
+  review: "pending",
+  changes: "critical",
   live: "verified",
 };
 
@@ -70,7 +71,7 @@ export function OwnerBar({
 }) {
   return (
     <div
-      className="border-hairline flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b pb-4"
+      className="border-hairline flex flex-wrap items-center gap-x-6 border-b pb-3"
       data-section="owner-bar"
     >
       <nav aria-label="Your account" className="t-body flex flex-wrap gap-x-5">
@@ -89,14 +90,15 @@ export function OwnerBar({
           Company details
         </a>
       </nav>
-      <form
-        method="post"
-        action="/api/owner/signout/"
-        className="t-small text-ink-muted flex flex-wrap items-center gap-3"
+      {/* On a phone the controls share one row and who is signed in sits under them on a line of its
+          own; from 640px everything is one row. */}
+      <p
+        className="t-small text-ink-muted order-last w-full truncate sm:order-none sm:ml-auto sm:w-auto"
+        title={`${name} · ${email}`}
       >
-        <span className="[overflow-wrap:anywhere]">
-          {name} · <span className="font-mono">{email}</span>
-        </span>
+        {name} · <span className="font-mono">{email}</span>
+      </p>
+      <form method="post" action="/api/owner/signout/" className="t-small ml-auto sm:ml-0">
         <button type="submit" className="oh-link inline-flex min-h-11 cursor-pointer items-center">
           Sign out
         </button>

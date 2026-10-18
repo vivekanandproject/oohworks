@@ -106,7 +106,7 @@ export function TextRow({ piece }: { piece: Piece }) {
       data-piece={piece.slug}
     >
       <span className="t-label text-ink-muted">{eyebrow(piece)}</span>
-      <span className="text-[16px] leading-[22px] font-semibold">{piece.title}</span>
+      <span className="t-title">{piece.title}</span>
       <time className="t-small text-ink-muted" dateTime={piece.publishedAt}>
         {timeAgo(piece.publishedAt)}
       </time>

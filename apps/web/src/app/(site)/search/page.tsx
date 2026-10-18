@@ -429,7 +429,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <div className="hidden sm:block">
           <PlanBar text={plan} saved={lists.saved.length} compare={lists.compare.length} />
         </div>
-        <PhoneBar state={state} saved={lists.saved.length} />
+        <PhoneBar state={state} saved={lists.saved.length} compare={lists.compare.length} />
       </div>
       {state.panel ? (
         <FilterPanel state={state} facets={result.facets} total={result.total} />

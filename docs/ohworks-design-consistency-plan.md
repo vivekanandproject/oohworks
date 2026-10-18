@@ -1,6 +1,6 @@
 # OOHWORKS design consistency: plan
 
-Date: 18 Oct 2026. Status: Phase A is done and tested (section 7); Phases B to D are not started. Measures the public site against `ohworks-design-system.md` and the live system (brand book and `tokens.json`), by code audit of `apps/web/src` and `packages/ui/src` and by screenshots of eleven pages at 390px and 1280px.
+Date: 18 Oct 2026. Status: Phase A done (section 7); content centring done (section 8); Phase B in progress (section 9); Phases C and D not started. The brand is OOHWORKS since 19 Oct 2026; fonts wait on the founder (Archivo, or Poppins). Measures the public site against `ohworks-design-system.md` and the live system (brand book and `tokens.json`), by code audit of `apps/web/src` and `packages/ui/src` and by screenshots of eleven pages at 390px and 1280px.
 
 ## 1. What the audit found, in one paragraph
 
@@ -94,3 +94,20 @@ The founder found the newsroom's empty state pinned to the left with the right o
 | Status page | A centred column with centred text and buttons, like the email-result page | 404, newsroom sign-up confirmation, email results |
 
 `.oh-empty` now centres itself at most 760px wide, so a new empty state is right without help. The search page's "Email me new sites" and "Widen your search" panels follow the same rule. Checked by measuring every page at 1440px for a box or column narrower than the page that hugs its left edge: none left, data-free pages on the development server and populated pages on the sample database. design-rules, responsive, newsroom and home passed on desktop and phone (161 passed).
+
+## 9. Phase B so far (19 Oct 2026)
+
+A second, page-by-page audit of the owner area, status pages and flows (by the other working session, measured at 1440 and 390) added fifteen findings. This section records what is done; the owner-page spacing items went to that session.
+
+| Plan item or finding | Done |
+| --- | --- |
+| 13. Copy | Buttons name the outcome ("Show sites", "Send a code", "Save and send the code", "Confirm and continue" or "Confirm and sign in", "Save password", "Save changes", "Save site"); "Send enquiry to N owners" on compare as on the shortlist; "your shortlist" everywhere; a price shown as a figure reads "/ month"; "Price on request"; the "Verified owner" badge in quotes |
+| 14. Neutrality line | One constant, NEUTRALITY_LINE, wherever a buyer reads it, and NEUTRALITY_LINE_OWNER for owners; three drifted copies fixed |
+| 7. Named type styles | t-title (16/22/600) for card and row titles and t-price (mono 18/24) for card, row and bar prices replace twelve and four ad hoc sizes; table and list figures use t-data, the article's key figures t-data-lg; 1px-off copies of t-body-strong are t-body-strong |
+| 8, in part. Form frame | FORM_GRID is the site page's 7fr/4fr with a 32px gap; a fixed 560 and 380 had left a 180px gutter between form and help. The enquiry pages import it instead of pasting it |
+| 11, in part. Review states | A pending badge kind (amber): "In review" is pending, "Needs changes" critical, instead of borrowing "booked" and "fresh" |
+| 6, in part. Status pages | 404, newsletter confirmation and the removed-listing page use PageHead center: a muted label over a t-display-md heading, as the email results already did |
+| Owner bar | One row of controls and one muted "name · email" line; it was three rows (113px) on a phone |
+| Phase A regression | On a phone the search page's strip lost "Compare N" and the list-full message when the saved-sites bar moved off phones. The strip now carries Filters, Map, Compare N and Shortlist N, and the message; sorting moved into the filters drawer on phones |
+
+Still in Phase B: empty states (item 5), notices (item 9) and PageHead for every page (item 6).

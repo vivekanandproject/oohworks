@@ -120,9 +120,7 @@ export default async function ReplyPage({
                 className="border-hairline bg-paper-raised rounded-md border p-4"
                 data-site={site.permanentId}
               >
-                <legend className="px-1 text-[15px] leading-[22px] font-semibold">
-                  {site.title}
-                </legend>
+                <legend className="t-body-strong px-1">{site.title}</legend>
                 <div className="flex flex-wrap gap-x-6">
                   {(Object.keys(ANSWERS) as Answer[]).map((a) => (
                     <label

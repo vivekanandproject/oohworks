@@ -76,7 +76,7 @@ function Row({
         <Thumb card={card} />
       </a>
       <div className="min-w-[180px] flex-1">
-        <h3 className="text-[16px] leading-[22px] font-semibold">
+        <h3 className="t-title">
           <a href={listing.url} className="oh-rowlink">
             {title}
           </a>
@@ -95,10 +95,7 @@ function Row({
         </p>
       </div>
       <div className="flex min-w-[150px] flex-col items-end gap-2 sm:ml-auto">
-        <p
-          className="font-mono text-[16px] leading-6 font-medium"
-          style={{ fontVariantNumeric: "tabular-nums" }}
-        >
+        <p className="t-price" style={{ fontVariantNumeric: "tabular-nums" }}>
           {price.shown ? (
             <>
               {price.prefix}
@@ -250,7 +247,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                     data-owner-group={owner?.slug ?? ownerId}
                   >
                     <header className="border-hairline bg-paper-sunken flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3">
-                      <h2 className="text-[16px] leading-[22px] font-semibold">
+                      <h2 className="t-title">
                         {owner?.name ?? "Owner"}{" "}
                         <span className="t-small text-ink-muted font-normal">
                           · {items.length === 1 ? "1 site" : `${items.length} sites`}
@@ -385,7 +382,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                   <div key={label} className="flex items-baseline justify-between gap-4 py-2">
                     <dt className="t-body text-ink-muted">{label}</dt>
                     <dd
-                      className="text-right font-mono text-[15px] leading-[22px] font-medium"
+                      className="t-data text-right"
                       style={{ fontVariantNumeric: "tabular-nums" }}
                     >
                       {value}

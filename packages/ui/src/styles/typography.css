@@ -95,6 +95,13 @@
   line-height: 23px;
   font-weight: 600;
 }
+/* The title of a card or a row: a site, a piece, an owner. */
+@utility t-title {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 600;
+}
 @utility t-small {
   font-family: var(--font-sans);
   font-size: 13px;
@@ -113,6 +120,14 @@
   font-family: var(--font-mono);
   font-size: 28px;
   line-height: 32px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+/* A price on a card, a row or a bar. The price block on a site page uses t-data-lg. */
+@utility t-price {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  line-height: 24px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }

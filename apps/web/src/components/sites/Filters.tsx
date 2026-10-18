@@ -441,37 +441,60 @@ export function FilterBar({ state, facets }: { state: SearchState; facets: Facet
  * The strip at the foot of a phone screen: filters, sort, the map, and the shortlist once something is
  * saved. One strip, so that with the header it stays under a quarter of the screen.
  */
-export function PhoneBar({ state, saved = 0 }: { state: SearchState; saved?: number }) {
+export function PhoneBar({
+  state,
+  saved = 0,
+  compare = 0,
+}: {
+  state: SearchState;
+  saved?: number;
+  compare?: number;
+}) {
   const n = activeCount(state);
   return (
     <div
-      className="border-hairline bg-paper-raised flex items-center gap-2 border-t px-4 py-2 sm:hidden"
+      className="border-hairline bg-paper-raised border-t px-4 py-2 sm:hidden"
       data-section="phonebar"
     >
-      <a href={toUrl(state, { panel: true })} className="oh-btn secondary sm flex-1" rel="nofollow">
-        Filters {n ? <span className="font-mono">{n}</span> : null}
-      </a>
-      <details className="oh-dd flex-1" data-filter="sort-phone">
-        <summary className="oh-btn secondary sm w-full">Sort</summary>
-        <div className="oh-pop up">
-          <SortOptions state={state} />
-        </div>
-      </details>
-      <a href="#map" className="oh-btn primary sm flex-1">
-        Map
-      </a>
-      <a
-        href="/shortlist/"
-        className="oh-btn primary sm flex-1"
-        hidden={saved === 0}
-        data-plan-saved=""
-        rel="nofollow"
-      >
-        Shortlist{" "}
-        <span className="font-mono" data-plan-saved-n="">
-          {saved}
-        </span>
-      </a>
+      {/* What the lists could not take, said where the buyer is looking. Empty, it takes no room. */}
+      <p role="status" className="t-small text-ink pb-2 empty:hidden" data-list-status="" />
+      {/* Sorting is in the filters drawer on a phone, which leaves room for both lists here. */}
+      <div className="flex items-center gap-2">
+        <a
+          href={toUrl(state, { panel: true })}
+          className="oh-btn secondary sm flex-1"
+          rel="nofollow"
+        >
+          Filters {n ? <span className="font-mono">{n}</span> : null}
+        </a>
+        <a href="#map" className="oh-btn secondary sm flex-1">
+          Map
+        </a>
+        <a
+          href="/compare/"
+          className="oh-btn secondary sm flex-1"
+          hidden={compare === 0}
+          data-plan-compare-phone=""
+          rel="nofollow"
+        >
+          Compare{" "}
+          <span className="font-mono" data-plan-compare-phone-n="">
+            {compare}
+          </span>
+        </a>
+        <a
+          href="/shortlist/"
+          className="oh-btn primary sm flex-1"
+          hidden={saved === 0}
+          data-plan-saved=""
+          rel="nofollow"
+        >
+          Shortlist{" "}
+          <span className="font-mono" data-plan-saved-n="">
+            {saved}
+          </span>
+        </a>
+      </div>
     </div>
   );
 }
@@ -536,6 +559,12 @@ export function FilterPanel({
           </a>
         </div>
         <div className="scroll">
+          {/* On a phone the strip at the foot has no room for sorting, so it starts the drawer. */}
+          <div className="sm:hidden" data-filter="sort-phone">
+            <Group title="Sort">
+              <SortOptions state={state} />
+            </Group>
+          </div>
           <Group title="Place">
             {state.bbox ? (
               <a

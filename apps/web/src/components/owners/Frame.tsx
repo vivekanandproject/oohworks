@@ -3,17 +3,16 @@ import type { ReactNode } from "react";
 /**
  * The owner's area uses the two page frames the rest of the site already has, and nothing else.
  *
- * A form page is laid out like the enquiry page: the form at 560 on the left, help at 380 on the
- * right. A page of content is laid out like the shortlist and the public site page: content in
- * seven parts, a panel in four.
+ * A form page and a page of content share one frame, the public site page's: the form or content
+ * in seven parts on the left, help or a panel in four on the right, 32px apart. A fixed 560 and
+ * 380 left a 180px gutter between them on a wide screen (design audit, 19 Oct 2026).
  *
  * Within them: fields sit straight on the page, as they do on the enquiry form. A long form is
  * split by a rule and a heading, never by boxes. Boxes are for the panels beside a form and for a
  * tool that sits among other content. A box's title is inside it.
  */
-export const FORM_GRID =
-  "grid gap-8 lg:grid-cols-[minmax(0,560px)_minmax(0,380px)] lg:justify-between";
 export const CONTENT_GRID = "grid items-start gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]";
+export const FORM_GRID = CONTENT_GRID;
 
 /**
  * A third frame, for the pages that only ask who you are: signing in, the code, a new password.
@@ -147,7 +146,7 @@ export function StepsCard({ at }: { at: 1 | 2 | 3 | 4 }) {
                 {n}
               </span>
               <div>
-                <p className="text-[15px] leading-[22px] font-semibold">
+                <p className="t-body-strong">
                   {step.t}
                   {now ? (
                     <span className="oh-badge neutral ml-2 align-middle">You are here</span>

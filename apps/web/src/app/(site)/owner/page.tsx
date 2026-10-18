@@ -222,7 +222,7 @@ export default async function OwnerHomePage({ searchParams }: { searchParams: Pr
                       data-state={stateOf(site)}
                     >
                       <div className="min-w-0">
-                        <h2 className="text-[16px] leading-[22px] font-semibold">
+                        <h2 className="t-title">
                           <a href={`/owner/sites/${site.permanentId}/`} className="oh-rowlink">
                             {site.title}
                           </a>

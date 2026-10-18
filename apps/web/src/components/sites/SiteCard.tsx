@@ -95,7 +95,7 @@ export function SiteCard({
         </a>
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <H className="text-[16px] leading-[22px] font-semibold">
+        <H className="t-title">
           <a href={listing.url} className="oh-rowlink">
             {site.title}
           </a>
@@ -114,7 +114,7 @@ export function SiteCard({
         ) : null}
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-1">
           <p
-            className="font-mono text-[18px] leading-6 font-medium"
+            className="t-price"
             style={{ fontVariantNumeric: "tabular-nums" }}
             data-price={price.shown ? "shown" : "request"}
           >

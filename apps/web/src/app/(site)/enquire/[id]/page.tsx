@@ -1,3 +1,4 @@
+import { FORM_GRID } from "@/components/owners/Frame";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
@@ -69,7 +70,7 @@ export default async function EnquirePage({
     <Shell active="find">
       <DateOrder />
       <Container className="py-8 lg:py-12">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,560px)_minmax(0,380px)] lg:justify-between">
+        <div className={FORM_GRID}>
           <div className="min-w-0">
             <p className="t-label text-ink-muted">Enquiry</p>
             <h1 className="t-display-md mt-2">

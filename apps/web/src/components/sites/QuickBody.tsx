@@ -30,7 +30,7 @@ function Fact({
   return (
     <div className="border-hairline flex items-baseline justify-between gap-4 border-b py-2 last:border-b-0">
       <dt className="t-label text-ink-muted shrink-0">{label}</dt>
-      <dd className="text-right font-mono text-[14px] leading-5">
+      <dd className="t-data text-right">
         {value ?? <span className="text-ink-muted font-sans">Not provided yet</span>}
         {source ? (
           <span className="text-ink-muted block font-sans text-[12px] leading-4">{source}</span>
@@ -135,7 +135,7 @@ export function QuickBody({ found, now, lists }: { found: SitePage; now: number;
             {owner.name.charAt(0).toUpperCase()}
           </span>
           <div className="min-w-0">
-            <p className="text-[15px] leading-[22px] font-semibold">{owner.name}</p>
+            <p className="t-body-strong">{owner.name}</p>
             <p className="t-small text-ink-muted">{ownerFacts.join(" · ")}</p>
           </div>
         </div>

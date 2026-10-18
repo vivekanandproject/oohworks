@@ -112,9 +112,7 @@ export default async function PlanEnquiryPage({ searchParams }: { searchParams: 
                   data-owner={owner?.slug ?? ownerId}
                 >
                   <header className="border-hairline bg-paper-sunken flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3">
-                    <h2 className="text-[16px] leading-[22px] font-semibold">
-                      {owner?.name ?? "Owner"}
-                    </h2>
+                    <h2 className="t-title">{owner?.name ?? "Owner"}</h2>
                     <div className="flex flex-wrap gap-1">
                       {owner?.verified ? <Badge kind="verified">Verified owner</Badge> : null}
                       {owner?.medianReplyHours != null && owner.medianReplyHours < 24 ? (
@@ -136,14 +134,12 @@ export default async function PlanEnquiryPage({ searchParams }: { searchParams: 
                               className="accent-navy mt-1 h-[18px] w-[18px] shrink-0"
                             />
                             <span className="min-w-0 flex-1">
-                              <span className="block text-[15px] leading-[22px] font-semibold">
-                                {card.site.title}
-                              </span>
+                              <span className="t-body-strong block">{card.site.title}</span>
                               <span className="t-small text-ink-muted block">
                                 {placeLine(card.site)}
                               </span>
                             </span>
-                            <span className="shrink-0 text-right font-mono text-[14px] leading-5">
+                            <span className="t-data shrink-0 text-right">
                               {price.shown ? `${price.prefix}${price.amount}` : "Price on request"}
                             </span>
                           </label>

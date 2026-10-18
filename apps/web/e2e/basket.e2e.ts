@@ -152,12 +152,13 @@ test.describe("compare", () => {
     await expect(page.locator("[data-plan-compare-n]")).toHaveText("4");
     await expect(compare(page, "ows0012").locator("[data-label]")).toHaveText("Comparing");
     await compare(page, "ows0002").click();
-    await expect(page.locator("[data-list-status]")).toHaveText(
+    // The bar says it from 640px; on a phone the strip at the foot does.
+    await expect(page.locator("[data-list-status]:visible")).toHaveText(
       "You can compare four sites at a time. Remove one first.",
     );
     await expect(compare(page, "ows0002")).toHaveAttribute("aria-pressed", "false");
 
-    await page.locator("[data-plan-compare]").click();
+    await page.locator("[data-plan-compare]:visible, [data-plan-compare-phone]:visible").click();
     await expect(page.locator("[data-section='compare-heading']")).toHaveText("Compare 4 sites");
     await expect(page.locator("[data-section='compare-table'] thead th[data-site]")).toHaveCount(4);
     await page

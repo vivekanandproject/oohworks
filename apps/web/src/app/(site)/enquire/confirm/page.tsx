@@ -1,3 +1,4 @@
+import { FORM_GRID } from "@/components/owners/Frame";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Container } from "@ohworks/ui";
@@ -50,7 +51,7 @@ export default async function ConfirmPage({ searchParams }: { searchParams: Prom
   return (
     <Shell active="find">
       <Container className="py-8 lg:py-12">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,560px)_minmax(0,380px)] lg:justify-between">
+        <div className={FORM_GRID}>
           <div className="min-w-0">
             <p className="t-label text-ink-muted">Enquiry · step 2 of 2</p>
             <h1 className="t-display-md mt-2">Confirm it&rsquo;s you</h1>
