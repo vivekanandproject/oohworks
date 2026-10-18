@@ -15,6 +15,7 @@
     "build:test": "node scripts/copy-map-worker.mjs && node scripts/copy-swagger-ui.mjs && node --env-file=../../.env scripts/test-env.mjs next build",
     "serve:test": "node --env-file=../../.env scripts/test-env.mjs next start",
     "openapi:lint": "node scripts/openapi-lint.mjs",
+    "test:workflow": "playwright test --config playwright.workflow.config.ts",
     "test:e2e:visual": "playwright test visual.e2e.ts --project=desktop --project=phone",
     "payload": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload",
     "payload:types": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload generate:types",
