@@ -17,5 +17,14 @@ export default defineConfig({
     // A plain summary for people, beside it: playwright-report/workflow/summary.html.
     ["./e2e/workflow-reporter.ts"],
   ],
-  projects: [{ name: "desktop", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    {
+      name: "desktop",
+      use: {
+        ...devices["Desktop Chrome"],
+        // To watch it: WORKFLOW_SLOWMO=250 pnpm test:workflow --headed
+        launchOptions: { slowMo: Number(process.env.WORKFLOW_SLOWMO ?? 0) },
+      },
+    },
+  ],
 });
