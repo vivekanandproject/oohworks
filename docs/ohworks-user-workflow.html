@@ -1,0 +1,1491 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ohworks user workflow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <style>
+      :root {
+        --paper: #f6f5f2;
+        --raised: #fff;
+        --sunken: #ecebe6;
+        --ink: #101c30;
+        --muted: #56606f;
+        --faint: #767f8d;
+        --hair: #d9d8d2;
+        --hair2: #aeb3bb;
+        --navy7: #1d3a66;
+        --navy2: #c9d6ea;
+        --ok: #1c7a4c;
+        --okt: #dcf2e6;
+        --lit: #8a5d00;
+        --litt: #fbeccb;
+        --crit: #b4321c;
+        --critt: #f9e0db;
+        --survey: #e8561f;
+        --surveyt: #fbe6dc;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font:
+          15px/23px Archivo,
+          system-ui,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: var(--navy7);
+      }
+      code {
+        font:
+          13px/20px "IBM Plex Mono",
+          monospace;
+        background: var(--sunken);
+        padding: 1px 5px;
+        border-radius: 4px;
+        white-space: nowrap;
+      }
+      .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 16px;
+      }
+      header.top {
+        border-bottom: 1px solid var(--hair);
+        padding: 40px 0 28px;
+      }
+      .eyebrow {
+        font:
+          500 12px/16px "IBM Plex Mono",
+          monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin: 0 0 10px;
+      }
+      h1 {
+        font-weight: 800;
+        font-stretch: 112%;
+        letter-spacing: -0.025em;
+        font-size: clamp(30px, 5vw, 46px);
+        line-height: 1.05;
+        margin: 0 0 14px;
+      }
+      h2 {
+        font-weight: 800;
+        font-stretch: 108%;
+        letter-spacing: -0.02em;
+        font-size: 28px;
+        line-height: 34px;
+        margin: 0 0 8px;
+      }
+      h3 {
+        font-weight: 700;
+        font-size: 19px;
+        line-height: 26px;
+        margin: 0 0 6px;
+      }
+      .lede {
+        font-size: 18px;
+        line-height: 28px;
+        color: var(--muted);
+        max-width: 760px;
+        margin: 0;
+      }
+      section {
+        padding: 44px 0 8px;
+      }
+      section > .intro {
+        color: var(--muted);
+        max-width: 760px;
+        margin: 0 0 22px;
+      }
+      nav.toc {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 18px;
+        margin-top: 22px;
+        font-size: 14px;
+      }
+
+      /* Status marks */
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 18px;
+        margin-top: 18px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .st {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font:
+          500 11px/16px "IBM Plex Mono",
+          monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 2px 8px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+      .st::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+      .st.ok {
+        color: var(--ok);
+        background: var(--okt);
+      }
+      .st.key {
+        color: var(--lit);
+        background: var(--litt);
+      }
+      .st.no {
+        color: var(--crit);
+        background: var(--critt);
+      }
+
+      /* The loop: lanes by stage */
+      .lanes-scroll {
+        overflow-x: auto;
+        border: 1px solid var(--hair);
+        border-radius: 12px;
+        background: var(--raised);
+      }
+      .lanes {
+        display: grid;
+        grid-template-columns: 112px repeat(9, minmax(150px, 1fr));
+        min-width: 1480px;
+      }
+      .lanes > div {
+        border-right: 1px solid var(--hair);
+        border-bottom: 1px solid var(--hair);
+        padding: 10px;
+        font-size: 13px;
+        line-height: 19px;
+      }
+      .lanes > div:nth-child(10n) {
+        border-right: 0;
+      }
+      .lanes .hd {
+        background: var(--sunken);
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .lanes .hd small {
+        display: block;
+        font:
+          500 11px/16px "IBM Plex Mono",
+          monospace;
+        color: var(--muted);
+        letter-spacing: 0.05em;
+      }
+      .lanes .who {
+        background: var(--sunken);
+        font-weight: 700;
+        font-size: 14px;
+        position: sticky;
+        left: 0;
+        z-index: 1;
+      }
+      .lanes .who small {
+        display: block;
+        font-weight: 400;
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .card {
+        border-radius: 8px;
+        padding: 8px 9px;
+        background: var(--paper);
+        border-left: 3px solid var(--ok);
+      }
+      .card + .card {
+        margin-top: 6px;
+      }
+      .card.key {
+        border-left-color: var(--lit);
+      }
+      .card.no {
+        border-left-color: var(--crit);
+        background: repeating-linear-gradient(-45deg, var(--paper) 0 6px, #f1efea 6px 12px);
+      }
+      .card b {
+        display: block;
+        font-size: 13px;
+      }
+      .mail {
+        display: inline-block;
+        margin-top: 4px;
+        font:
+          500 10.5px/14px "IBM Plex Mono",
+          monospace;
+        color: var(--navy7);
+        background: var(--navy2);
+        padding: 1px 6px;
+        border-radius: 4px;
+      }
+      .lane-note {
+        font-size: 13px;
+        color: var(--muted);
+        margin: 10px 0 0;
+      }
+
+      /* Journey tables */
+      .journey {
+        border: 1px solid var(--hair);
+        border-radius: 12px;
+        background: var(--raised);
+        margin-bottom: 26px;
+        overflow: hidden;
+      }
+      .journey > header {
+        padding: 18px 20px 14px;
+        border-bottom: 1px solid var(--hair);
+      }
+      .journey > header p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      ol.steps {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        counter-reset: s;
+      }
+      ol.steps > li {
+        counter-increment: s;
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1.25fr) minmax(0, 1fr) 150px;
+        gap: 4px 16px;
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--hair);
+      }
+      ol.steps > li:last-child {
+        border-bottom: 0;
+      }
+      ol.steps > li::before {
+        content: counter(s);
+        font:
+          800 20px/24px Archivo,
+          sans-serif;
+        font-stretch: 110%;
+        color: var(--hair2);
+      }
+      .steps .what b {
+        display: block;
+        font-size: 15px;
+      }
+      .steps .what span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .steps .where {
+        font-size: 13px;
+        line-height: 20px;
+        color: var(--muted);
+      }
+      .steps .where code {
+        font-size: 12px;
+        white-space: normal;
+        word-break: break-word;
+      }
+      .steps .state {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      .steps .state em {
+        font-style: normal;
+        font-size: 12px;
+        line-height: 17px;
+        color: var(--muted);
+      }
+
+      /* Hand-offs and gaps */
+      table.grid {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--raised);
+        border: 1px solid var(--hair);
+        border-radius: 12px;
+        overflow: hidden;
+        font-size: 14px;
+      }
+      .table-scroll {
+        overflow-x: auto;
+      }
+      table.grid th,
+      table.grid td {
+        text-align: left;
+        vertical-align: top;
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--hair);
+      }
+      table.grid th {
+        background: var(--sunken);
+        font-size: 13px;
+      }
+      table.grid tr:last-child td {
+        border-bottom: 0;
+      }
+      .callout {
+        border: 1px solid var(--survey);
+        background: var(--surveyt);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin: 18px 0 0;
+        max-width: 860px;
+      }
+      .callout b {
+        color: #a83a0c;
+      }
+      .gaps {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        counter-reset: g;
+        display: grid;
+        gap: 12px;
+      }
+      .gaps li {
+        counter-increment: g;
+        background: var(--raised);
+        border: 1px solid var(--hair);
+        border-radius: 12px;
+        padding: 16px 20px 16px 64px;
+        position: relative;
+      }
+      .gaps li::before {
+        content: counter(g);
+        position: absolute;
+        left: 20px;
+        top: 14px;
+        font:
+          800 24px/28px Archivo,
+          sans-serif;
+        font-stretch: 110%;
+        color: var(--survey);
+      }
+      .gaps p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .gaps .fix {
+        color: var(--ink);
+      }
+      .who-fix {
+        font:
+          500 11px/16px "IBM Plex Mono",
+          monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--navy7);
+        background: var(--navy2);
+        padding: 2px 7px;
+        border-radius: 999px;
+        margin-left: 6px;
+        white-space: nowrap;
+      }
+      .next {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 14px;
+      }
+      .next > div {
+        background: var(--raised);
+        border: 1px solid var(--hair);
+        border-radius: 12px;
+        padding: 18px 20px;
+      }
+      .next .n {
+        font:
+          500 12px/16px "IBM Plex Mono",
+          monospace;
+        color: var(--survey);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .next p {
+        margin: 6px 0 0;
+        font-size: 14px;
+        color: var(--muted);
+      }
+      .try {
+        background: var(--raised);
+        border: 1px solid var(--hair);
+        border-radius: 12px;
+        padding: 18px 22px;
+      }
+      .try ol {
+        margin: 0;
+        padding-left: 22px;
+      }
+      .try li {
+        margin: 6px 0;
+      }
+      footer {
+        color: var(--faint);
+        font-size: 13px;
+        padding: 40px 0 60px;
+      }
+      footer code {
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      @media (max-width: 760px) {
+        ol.steps > li {
+          grid-template-columns: 32px minmax(0, 1fr);
+        }
+        .steps .where,
+        .steps .state {
+          grid-column: 2;
+        }
+        .gaps li {
+          padding-left: 52px;
+        }
+        .gaps li::before {
+          left: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="wrap">
+        <p class="eyebrow">ohworks · 18 Oct 2026 · working document</p>
+        <h1>The user workflow, end to end</h1>
+        <p class="lede">
+          Everyone who uses ohworks, what each of them does from arriving to coming back, where
+          their work passes to someone else, and how much of it runs today. Built from the strategy,
+          the Find sites and List your sites plans, the editorial plan, and a check of the code as
+          it stands.
+        </p>
+        <div class="legend">
+          <span><span class="st ok">Built</span> works on this Mac today</span>
+          <span
+            ><span class="st key">Waits on a key</span> code is done; needs a service turned
+            on</span
+          >
+          <span><span class="st no">Not built</span> planned, no code yet</span>
+        </div>
+        <nav class="toc">
+          <a href="#loop">1. The loop</a>
+          <a href="#buyer">2. Buyer</a>
+          <a href="#owner">3. Owner</a>
+          <a href="#team">4. ohworks team</a>
+          <a href="#reader">5. Reader</a>
+          <a href="#handoffs">6. Hand-offs</a>
+          <a href="#gaps">7. Where it breaks</a>
+          <a href="#next">8. What to work on</a>
+          <a href="#try">9. Walk it on this Mac</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <!-- 1. The loop -->
+      <section id="loop">
+        <h2>1. The loop on one page</h2>
+        <p class="intro">
+          ohworks works when one loop keeps turning: an owner lists a site, the team checks it, a
+          buyer finds it and asks, the owner answers, and the two of them book it between
+          themselves. ohworks never sells and never takes a margin. Its jobs are the listing, the
+          check and the routing. Read across for the order, and down for who acts at each stage.
+          <span class="mail">email</span> marks a hand-off made by email.
+        </p>
+
+        <div
+          class="lanes-scroll"
+          role="region"
+          aria-label="The loop, by stage and by who acts"
+          tabindex="0"
+        >
+          <div class="lanes">
+            <div class="hd"></div>
+            <div class="hd">List<small>STAGE 1</small></div>
+            <div class="hd">Check<small>STAGE 2</small></div>
+            <div class="hd">Go live<small>STAGE 3</small></div>
+            <div class="hd">Find<small>STAGE 4</small></div>
+            <div class="hd">Decide<small>STAGE 5</small></div>
+            <div class="hd">Ask<small>STAGE 6</small></div>
+            <div class="hd">Reply<small>STAGE 7</small></div>
+            <div class="hd">Book<small>STAGE 8</small></div>
+            <div class="hd">Keep fresh<small>STAGE 9</small></div>
+
+            <div class="who">Owner<small>media owner</small></div>
+            <div>
+              <div class="card">
+                <b>Start form, then code</b>Company, person, phone, email, password
+              </div>
+              <div class="card"><b>Add sites</b>One by one, spreadsheet, or media kit</div>
+              <div class="card"><b>Send for review</b><span class="mail">email → team</span></div>
+            </div>
+            <div>
+              <div class="card">
+                <b>Fixes a returned site</b>Reads the team's reason, sends again
+              </div>
+            </div>
+            <div>
+              <div class="card"><b>Told it is live</b><span class="mail">email</span></div>
+            </div>
+            <div></div>
+            <div></div>
+            <div>
+              <div class="card">
+                <b>Gets the enquiry</b>Only their own sites, never the budget of a plan<br /><span
+                  class="mail"
+                  >email + reply link</span
+                >
+              </div>
+            </div>
+            <div>
+              <div class="card"><b>Answers per site</b>Free, not free, other dates; own rate</div>
+              <div class="card no"><b>Leads inbox</b>All enquiries in one place</div>
+            </div>
+            <div>
+              <div class="card"><b>Marks booked</b>Sets "booked until" on the site</div>
+            </div>
+            <div>
+              <div class="card"><b>Confirms availability</b>Changes price and dates at once</div>
+              <div class="card no"><b>Reminder to confirm</b>No scheduled jobs yet</div>
+            </div>
+
+            <div class="who">ohworks team<small>ops and editors</small></div>
+            <div>
+              <div class="card key">
+                <b>Enters a media kit</b>By hand; reading the PDF waits on a key
+              </div>
+            </div>
+            <div>
+              <div class="card"><b>Reviews in /admin</b>Publish, or return with a reason</div>
+              <div class="card"><b>Verifies</b>Owner from documents, location from the pin</div>
+            </div>
+            <div></div>
+            <div>
+              <div class="card"><b>Publishes guides</b>Newsroom brings buyers in</div>
+            </div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div>
+              <div class="card no"><b>Handles reports</b>"Report a listing" not built</div>
+            </div>
+
+            <div class="who">The site<small>automatic</small></div>
+            <div>
+              <div class="card">
+                <b>Checks every field</b>Price needs a rate, audience needs a source
+              </div>
+            </div>
+            <div>
+              <div class="card"><b>Flags duplicates</b>Within 25 m, facing within 30°</div>
+            </div>
+            <div>
+              <div class="card"><b>Site page appears</b>In search, shortlist, compare</div>
+              <div class="card">
+                <b>Indexed when it passes the bar</b>Verified owner, dated photo, position
+              </div>
+            </div>
+            <div>
+              <div class="card key"><b>Reads typed searches</b>Claude, when the key is set</div>
+            </div>
+            <div>
+              <div class="card"><b>Exports</b>Excel, CSV, print sheets</div>
+            </div>
+            <div>
+              <div class="card"><b>Checks the buyer</b>Code to a work email</div>
+              <div class="card"><b>Splits per owner</b>One request each, up to 25</div>
+            </div>
+            <div>
+              <div class="card">
+                <b>Times the reply</b>Earns "Replies in under a day" after five
+              </div>
+            </div>
+            <div>
+              <div class="card"><b>Stays out</b>No contract, invoice or payment</div>
+            </div>
+            <div>
+              <div class="card">
+                <b>Flags stale dates</b>"Last confirmed 6 weeks ago" after 30 days
+              </div>
+            </div>
+
+            <div class="who">Buyer<small>advertiser or agency</small></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div>
+              <div class="card"><b>Arrives</b>Home, search, a guide, a shared link</div>
+              <div class="card"><b>Searches</b>Place, format, size, price, dates, map</div>
+            </div>
+            <div>
+              <div class="card"><b>Looks closer</b>Quick view, full site page</div>
+              <div class="card"><b>Saves and compares</b>Shortlist of 50, compare four</div>
+            </div>
+            <div>
+              <div class="card">
+                <b>Enquires</b>One site or the whole shortlist<br /><span class="mail"
+                  >email code</span
+                >
+              </div>
+            </div>
+            <div>
+              <div class="card">
+                <b>Reads replies side by side</b>Writes back to one owner<br /><span class="mail"
+                  >email + thread link</span
+                >
+              </div>
+            </div>
+            <div>
+              <div class="card"><b>Books directly</b>With the owner, outside ohworks</div>
+            </div>
+            <div>
+              <div class="card no"><b>Comes back</b>Saved-search emails, buyer digest, sign-in</div>
+            </div>
+          </div>
+        </div>
+        <p class="lane-note">
+          Green edge: built. Amber edge: built, waiting on a key. Striped red edge: not built. On a
+          narrow screen the diagram scrolls sideways.
+        </p>
+
+        <div class="callout">
+          <b>The one thing that stops the loop today.</b> Every arrow between two people above is an
+          email, and no email service is configured. On this Mac every email is written to the
+          Outbox in <code>/admin</code> instead, so the loop can be walked by hand (section 9). On a
+          public host nobody would hear anything: the owner never gets the code, the enquiry or the
+          "live" notice, and the buyer never gets the reply.
+        </div>
+      </section>
+
+      <!-- 2. Buyer -->
+      <section id="buyer">
+        <h2>2. Buyer</h2>
+        <p class="intro">
+          A small business with a place and a rough budget, an agency with a brief across several
+          sites, or a digital planner new to outdoor advertising. Buyers never need an account. The
+          promise: decide in a minute, ask in one step, and never need to enquire just to learn a
+          basic fact.
+        </p>
+        <div class="journey">
+          <header>
+            <h3>From a need to a booked site</h3>
+            <p>
+              Find sites steps 1 to 3 are built in full and tested on sample sites, which now live
+              only in the test database. Nothing real is listed yet.
+            </p>
+          </header>
+          <ol class="steps">
+            <li>
+              <div class="what">
+                <b>Arrives</b
+                ><span
+                  >From the home search box, a newsroom guide, a link someone shared, or
+                  Google.</span
+                >
+              </div>
+              <div class="where">
+                <code>/</code> <code>/newsroom/</code> <code>/in/{city}/</code>
+              </div>
+              <div class="state">
+                <span class="st ok">Built</span
+                ><em
+                  >Google finds nothing yet: samples are never indexed and city pages open at 25
+                  real sites</em
+                >
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Searches</b
+                ><span
+                  >Types a place or a need, then narrows by format, size, price and dates. Every
+                  option shows its count. A list beside a map, with "Search this area".</span
+                >
+              </div>
+              <div class="where"><code>/search/</code></div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st key">Claude reading</span
+                ><em>Typed searches are read by Claude only with an Anthropic key</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Finds too little</b
+                ><span
+                  >With three results or fewer the page suggests one change at a time. With none, it
+                  offers to email when a site is listed.</span
+                >
+              </div>
+              <div class="where"><code>/search/</code> follow form</div>
+              <div class="state">
+                <span class="st ok">Stored</span><span class="st no">Not sent</span
+                ><em>Requests are saved; no job sends them</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Looks closer</b
+                ><span
+                  >Quick view from a card, or the full site page: photos, size, exact position,
+                  audience with its source, price, availability, the owner and what was
+                  checked.</span
+                >
+              </div>
+              <div class="where">
+                <code>/quick/{id}/</code> <code>/in/{city}/{area}/{site}/</code>
+              </div>
+              <div class="state">
+                <span class="st ok">Built</span
+                ><em>Nearby landmarks and street view wait on a Google Maps key</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Saves and compares</b
+                ><span
+                  >Saves up to 50 sites, grouped by owner, with dates and a budget. Compares four
+                  side by side. Shares by link or WhatsApp.</span
+                >
+              </div>
+              <div class="where"><code>/shortlist/</code> <code>/compare/</code></div>
+              <div class="state">
+                <span class="st ok">Built</span
+                ><em>Kept in one browser; across devices needs a buyer sign-in</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Takes it to the client</b
+                ><span
+                  >Downloads the shortlist as Excel or CSV, or prints one site sheet a page.</span
+                >
+              </div>
+              <div class="where">
+                <code>/shortlist/sheets/</code> <code>/api/export/shortlist/</code>
+              </div>
+              <div class="state">
+                <span class="st ok">Built</span><em>Slides and a server-made PDF are not built</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Enquires</b
+                ><span
+                  >For one site, or "Send enquiry to N owners" for the whole shortlist. Dates,
+                  brand, artwork, a message and a work email, once. A six-digit code confirms
+                  it.</span
+                >
+              </div>
+              <div class="where">
+                <code>/enquire/{id}/</code> <code>/enquire/plan/</code>
+                <code>/enquire/confirm/</code>
+              </div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st key">Email key</span
+                ><em>The code reaches the buyer only with an email service</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Reads the replies</b
+                ><span
+                  >One page shows every owner asked, who has answered, and each site's availability
+                  and quoted rate side by side. Writes back to one owner from there, or simply
+                  replies to the email.</span
+                >
+              </div>
+              <div class="where"><code>/enquiries/{ref}/?k=</code></div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st key">Email key</span
+                ><em>The link arrives by email</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Books</b
+                ><span
+                  >Agrees the contract, invoice and payment directly with the owner. ohworks is not
+                  in the money.</span
+                >
+              </div>
+              <div class="where">Outside ohworks</div>
+              <div class="state">
+                <span class="st ok">By design</span
+                ><em>Nothing to build; the charter forbids it</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Comes back</b
+                ><span
+                  >Emails for a saved search, a weekly buyer digest, a shortlist on every device,
+                  and an agency workspace with team seats and client folders.</span
+                >
+              </div>
+              <div class="where">Follows collection, newsletter, sign-in</div>
+              <div class="state">
+                <span class="st no">Not built</span
+                ><em>Needs scheduled jobs, the email service, and buyer sign-in</em>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 3. Owner -->
+      <section id="owner">
+        <h2>3. Owner</h2>
+        <p class="intro">
+          An independent owner with 5 to 50 sites, often on a phone; a larger owner with a
+          spreadsheet of hundreds; or an owner with only a PDF media kit. Listing is free, the owner
+          sets the price and how it shows, every enquiry goes straight to them, and nothing is
+          published until they have seen it and the team has checked it.
+        </p>
+        <div class="journey">
+          <header>
+            <h3>From a free listing to a booked face</h3>
+            <p>
+              List your sites step 1 is built. Steps 2 (trust and reach) and 3 (the owner's desk)
+              are planned and not started.
+            </p>
+          </header>
+          <ol class="steps">
+            <li>
+              <div class="what">
+                <b>Hears of ohworks</b
+                ><span
+                  >The "For owners" page, the "List your sites" button, Google, or the team's
+                  outreach and the founding-owner offer.</span
+                >
+              </div>
+              <div class="where"><code>/for-owners/</code> <code>/list-your-sites/</code></div>
+              <div class="state">
+                <span class="st ok">Built</span
+                ><em>Outreach and the founding-owner programme are business work, not code</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Starts</b
+                ><span
+                  >One form: company, where it is based (worldwide search), person, phone, work
+                  email, password, and an optional GSTIN. Then a six-digit code to the email.</span
+                >
+              </div>
+              <div class="where">
+                <code>/list-your-sites/</code> <code>/list-your-sites/confirm/</code>
+              </div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st key">Email key</span
+                ><span class="st no">WhatsApp code</span>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Sets up the company</b
+                ><span
+                  >Where enquiries go, and the GSTIN and a document that earn the "Verified owner"
+                  badge once the team checks them.</span
+                >
+              </div>
+              <div class="where"><code>/owner/company/</code></div>
+              <div class="state"><span class="st ok">Built</span></div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Adds sites</b
+                ><span
+                  >One at a time in five parts with a pin on a map; a spreadsheet template of 37
+                  columns with every problem named by row and column; or a media kit for the team to
+                  enter. Up to six dated photos a site.</span
+                >
+              </div>
+              <div class="where">
+                <code>/owner/sites/new/</code> <code>/owner/import/</code> <code>/owner/kit/</code>
+              </div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st no">Photo date and GPS</span
+                ><em>Sites must be in the six launch cities</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Improves them</b
+                ><span
+                  >Each site shows a score out of 100 and what would raise it: a photo, a sourced
+                  audience figure, a shown price, a permit number.</span
+                >
+              </div>
+              <div class="where"><code>/owner/</code> <code>/owner/sites/{id}/</code></div>
+              <div class="state"><span class="st ok">Built</span></div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Sends for review</b
+                ><span
+                  >Ready drafts go to the team in one step. A returned site comes back with the
+                  reviewer's own words.</span
+                >
+              </div>
+              <div class="where"><code>/owner/</code></div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st key">Email key</span>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Goes live</b
+                ><span
+                  >Emailed with the address. Can change the price, how it shows, and availability at
+                  once, or withdraw a site.</span
+                >
+              </div>
+              <div class="where"><code>/owner/sites/{id}/</code></div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st no">Edit a live site</span
+                ><em>Any other change to a live site means writing to the team</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Answers an enquiry</b
+                ><span
+                  >Opens the link in the email, answers each site as free, not free or other dates,
+                  can quote their own rate, adds a message. No sign-in needed.</span
+                >
+              </div>
+              <div class="where"><code>/reply/{ref}/?k=</code></div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st key">Email key</span
+                ><em>Replies sent by plain email are not timed</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Keeps it fresh</b
+                ><span
+                  >Marks a site booked until a date, or confirms it free today. After 30 days the
+                  page tells buyers the dates are unconfirmed.</span
+                >
+              </div>
+              <div class="where"><code>/owner/sites/{id}/</code></div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st no">Reminders</span
+                ><em>Nothing prompts the owner to confirm</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Grows</b
+                ><span
+                  >A public page of all their sites, a leads inbox across web, email and WhatsApp,
+                  figures per site, an availability calendar, and seats for a sales team. This
+                  becomes the paid Owner Pro.</span
+                >
+              </div>
+              <div class="where"><code>/owners/{name}/</code> and the owner's desk</div>
+              <div class="state">
+                <span class="st no">Not built</span><em>List your sites steps 2 and 3</em>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 4. Team -->
+      <section id="team">
+        <h2>4. ohworks team</h2>
+        <p class="intro">
+          Operations staff who check owners and sites, and editors who run the newsroom. They work
+          in the CMS at <code>/admin</code>.
+        </p>
+        <div class="journey">
+          <header>
+            <h3>What the team does, and when</h3>
+            <p>
+              The review queue and the editorial workflow are built. Moderation and anything on a
+              timer are not.
+            </p>
+          </header>
+          <ol class="steps">
+            <li>
+              <div class="what">
+                <b>Hears that sites are waiting</b
+                ><span
+                  >An email says how many, from whom, which look like duplicates, and links to the
+                  queue.</span
+                >
+              </div>
+              <div class="where">Sites list, filter "In review"</div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st key">Email key</span>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Checks the owner</b
+                ><span
+                  >Reads the GSTIN or licence against the document, then ticks "Verified
+                  owner".</span
+                >
+              </div>
+              <div class="where">Marketplace › Owners</div>
+              <div class="state">
+                <span class="st ok">Built</span><em>Documents are private to staff</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Checks each site</b
+                ><span
+                  >The pin is where the face is; the photos are of this face; a flagged duplicate is
+                  really two faces. Then publishes, or returns it with a written reason.</span
+                >
+              </div>
+              <div class="where">Marketplace › Sites</div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st key">Street view</span
+                ><em>Checking the pin against street level needs a Google Maps key</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Enters media kits</b
+                ><span
+                  >Types the owner's sites in as drafts under that owner, who approves them before
+                  review.</span
+                >
+              </div>
+              <div class="where">Marketplace › Owner files</div>
+              <div class="state">
+                <span class="st ok">Built</span><span class="st key">Read by Claude</span>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Handles reports</b
+                ><span
+                  >A buyer reports a wrong, illegal or double-sold site; the team reviews it within
+                  a set time and can take the site down.</span
+                >
+              </div>
+              <div class="where">—</div>
+              <div class="state">
+                <span class="st no">Not built</span
+                ><em>A removed site answers 404, not the planned 410</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Publishes the newsroom</b
+                ><span
+                  >Draft, in review, fact-checked, scheduled, published, updated. A piece cannot be
+                  published until every fact is ticked against its source.</span
+                >
+              </div>
+              <div class="where">Editorial › Articles, Guides, Reports</div>
+              <div class="state">
+                <span class="st ok">Built</span><em>Guides do not yet show live sites</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Follows up by hand</b
+                ><span
+                  >Until jobs exist, the team reads saved searches, follow requests and newsletter
+                  sign-ups in the CMS.</span
+                >
+              </div>
+              <div class="where">Follows, Subscribers, Outbox</div>
+              <div class="state">
+                <span class="st ok">Readable</span><span class="st no">Automatic</span>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 5. Reader -->
+      <section id="reader">
+        <h2>5. Reader</h2>
+        <p class="intro">
+          Owners, agencies and advertisers reading news, guides and data. The newsroom is how most
+          buyers will first meet ohworks, so its last step should lead into Find sites.
+        </p>
+        <div class="journey">
+          <header>
+            <h3>From an article to a search</h3>
+            <p>
+              The newsroom is built. Its first nine pieces wait as drafts for an editor to check
+              every figure.
+            </p>
+          </header>
+          <ol class="steps">
+            <li>
+              <div class="what">
+                <b>Reads</b
+                ><span
+                  >Front page, six sections, articles with sourced facts, authors, topics,
+                  corrections, feeds.</span
+                >
+              </div>
+              <div class="where">
+                <code>/newsroom/</code> <code>/news/</code> <code>/guides/</code> …
+              </div>
+              <div class="state"><span class="st ok">Built</span></div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Signs up</b><span>For the daily trade briefing or the weekly buyer digest.</span>
+              </div>
+              <div class="where"><code>/api/subscribe/</code></div>
+              <div class="state">
+                <span class="st ok">Stored</span><span class="st no">Confirm and send</span
+                ><em>No confirmation email and no issues are sent</em>
+              </div>
+            </li>
+            <li>
+              <div class="what">
+                <b>Moves to sites</b
+                ><span
+                  >A Bengaluru cost guide shows the live Bengaluru sites under it, and links to the
+                  search.</span
+                >
+              </div>
+              <div class="where">Listing strip in guides</div>
+              <div class="state">
+                <span class="st no">Not built</span><em>Waits on real listings</em>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 6. Hand-offs -->
+      <section id="handoffs">
+        <h2>6. Where one person's work passes to another</h2>
+        <p class="intro">
+          These are the joints of the workflow. Each is built in code, and each depends on an email
+          arriving.
+        </p>
+        <div class="table-scroll">
+          <table class="grid">
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>From</th>
+                <th>To</th>
+                <th>How they hear</th>
+                <th>Today</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>An owner starts or signs in by code</td>
+                <td>Site</td>
+                <td>Owner</td>
+                <td>Six-digit code</td>
+                <td><span class="st key">Outbox</span></td>
+              </tr>
+              <tr>
+                <td>Sites are sent for review</td>
+                <td>Owner</td>
+                <td>Team</td>
+                <td>Count, duplicates, link to the queue</td>
+                <td><span class="st key">Outbox</span></td>
+              </tr>
+              <tr>
+                <td>A media kit arrives</td>
+                <td>Owner</td>
+                <td>Team</td>
+                <td>The file and the owner's note</td>
+                <td><span class="st key">Outbox</span></td>
+              </tr>
+              <tr>
+                <td>A site is published or returned</td>
+                <td>Team</td>
+                <td>Owner</td>
+                <td>"It is live" with the address, or the reason</td>
+                <td><span class="st key">Outbox</span></td>
+              </tr>
+              <tr>
+                <td>A buyer enquires</td>
+                <td>Site</td>
+                <td>Buyer</td>
+                <td>Six-digit code</td>
+                <td><span class="st key">Outbox</span></td>
+              </tr>
+              <tr>
+                <td>The enquiry is confirmed</td>
+                <td>Buyer</td>
+                <td>Each owner</td>
+                <td>Their sites only, with a reply link</td>
+                <td><span class="st key">Outbox</span></td>
+              </tr>
+              <tr>
+                <td>The owner replies</td>
+                <td>Owner</td>
+                <td>Buyer</td>
+                <td>The answer, with a link to every reply</td>
+                <td><span class="st key">Outbox</span></td>
+              </tr>
+              <tr>
+                <td>The buyer writes back</td>
+                <td>Buyer</td>
+                <td>That owner</td>
+                <td>The message</td>
+                <td><span class="st key">Outbox</span></td>
+              </tr>
+              <tr>
+                <td>A matching site is listed</td>
+                <td>Site</td>
+                <td>Buyer who followed</td>
+                <td>New-sites email</td>
+                <td><span class="st no">Not built</span></td>
+              </tr>
+              <tr>
+                <td>Availability goes stale</td>
+                <td>Site</td>
+                <td>Owner</td>
+                <td>Reminder to confirm</td>
+                <td><span class="st no">Not built</span></td>
+              </tr>
+              <tr>
+                <td>A listing is reported</td>
+                <td>Buyer</td>
+                <td>Team</td>
+                <td>Report in the queue</td>
+                <td><span class="st no">Not built</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 7. Gaps -->
+      <section id="gaps">
+        <h2>7. Where the workflow breaks today</h2>
+        <p class="intro">
+          Most serious first. "You" means something only you can do; "Code" means work I can do.
+        </p>
+        <ol class="gaps">
+          <li>
+            <h3>No email is sent <span class="who-fix">You</span></h3>
+            <p>
+              Every hand-off in section 6 lands in the Outbox. Off this Mac, nobody can sign up,
+              confirm an enquiry or hear a reply.
+            </p>
+            <p class="fix">
+              Fix: a Resend account with the ohworks domain verified, then
+              <code>RESEND_API_KEY</code> and <code>EMAIL_FROM</code>.
+            </p>
+          </li>
+          <li>
+            <h3>No real sites yet <span class="who-fix">You</span></h3>
+            <p>
+              The sample sites and owners now live only in the test database. No page can be indexed
+              and no city page opens until real owners list real sites with photos.
+            </p>
+            <p class="fix">
+              Fix: the first owners. The founding-owner offer and assisted media-kit entry are the
+              plan's way in.
+            </p>
+          </li>
+          <li>
+            <h3>There is no production site yet <span class="who-fix">You + Code</span></h3>
+            <p>
+              Production runs on Google Cloud Run with Cloud SQL in Mumbai, as planned. Netlify has
+              been removed from the project. Vercel still deploys every push to oohworks.vercel.app,
+              where pages that need a database fail.
+            </p>
+            <p class="fix">
+              Fix: disconnect Vercel, create the Google Cloud projects, and deploy the container
+              with its release step.
+            </p>
+          </li>
+          <li>
+            <h3>Nothing happens on a timer <span class="who-fix">Code</span></h3>
+            <p>
+              Saved searches, "tell me when sites are listed", reminders to confirm availability,
+              and the newsletter are stored and never sent.
+            </p>
+            <p class="fix">
+              Fix: scheduled jobs (Inngest is in the approved stack), once email works.
+            </p>
+          </li>
+          <li>
+            <h3>An owner cannot change a live site <span class="who-fix">Code</span></h3>
+            <p>
+              Only price and availability can be changed. A new photo or a corrected size means
+              writing to the team.
+            </p>
+            <p class="fix">
+              Fix: edits to a live site that go back through review while the live version stays up
+              (List your sites step 2).
+            </p>
+          </li>
+          <li>
+            <h3>Buyers cannot report a listing <span class="who-fix">Code</span></h3>
+            <p>
+              The strategy names fake, double-sold and illegal sites as the trust problem in India,
+              and there is no way to flag one. A removed site gives 404, not 410.
+            </p>
+            <p class="fix">
+              Fix: "Report a listing" on every site page, a queue in the CMS, and the true "gone"
+              answer.
+            </p>
+          </li>
+          <li>
+            <h3>Owners have no public page and no inbox <span class="who-fix">Code</span></h3>
+            <p>
+              An owner cannot share one link to all their sites, and enquiries live only in their
+              email.
+            </p>
+            <p class="fix">
+              Fix: <code>/owners/{name}/</code> (step 2), then the leads inbox and per-site figures
+              (step 3).
+            </p>
+          </li>
+          <li>
+            <h3>Buyers are remembered by one browser only <span class="who-fix">Code</span></h3>
+            <p>
+              A shortlist does not follow an agency planner to a second device, and there are no
+              team seats or client folders.
+            </p>
+            <p class="fix">Fix: buyer sign-in, then the agency workspace.</p>
+          </li>
+          <li>
+            <h3>Sites only in six cities <span class="who-fix">Code</span></h3>
+            <p>
+              Companies can be anywhere, but a site must be in Bengaluru, Mumbai, Delhi NCR,
+              Hyderabad, Pune or Chennai.
+            </p>
+            <p class="fix">
+              Fix: open cities as data rather than a fixed list, before the Gulf wave.
+            </p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- 8. Next -->
+      <section id="next">
+        <h2>8. What I recommend we work on</h2>
+        <p class="intro">
+          Close the loop before widening it. A buyer and an owner should be able to complete stages
+          1 to 9 for real, on one public address, before anything new is added.
+        </p>
+        <div class="next">
+          <div>
+            <span class="n">First · you, about an hour</span>
+            <h3>Turn on email</h3>
+            <p>
+              Create the Resend account and verify the domain. I wire the key in, send a real code,
+              enquiry and reply end to end, and check what each email says.
+            </p>
+          </div>
+          <div>
+            <span class="n">Second · code, a few days</span>
+            <h3>Run things on a timer</h3>
+            <p>
+              Saved-search and "first sites listed" emails, a weekly "confirm your availability"
+              nudge to owners, and newsletter confirmation. These keep the loop turning without the
+              team.
+            </p>
+          </div>
+          <div>
+            <span class="n">Third · code, about a week</span>
+            <h3>Owner step 2</h3>
+            <p>
+              Edits to a live site with a second review, the public owner page, and photos matched
+              to sites by the date and position in each file.
+            </p>
+          </div>
+          <div>
+            <span class="n">Alongside · code, two days</span>
+            <h3>Report a listing</h3>
+            <p>
+              A report form on every site page, a queue for the team, and the "gone" answer with
+              similar sites for a removed one.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. Try -->
+      <section id="try">
+        <h2>9. Walk the whole loop on this Mac</h2>
+        <p class="intro">
+          With the dev server running at <a href="http://localhost:3000/">localhost:3000</a>. Codes
+          show on the confirm page and every email is in the Outbox.
+        </p>
+        <div class="try">
+          <ol>
+            <li>
+              <b>Owner lists.</b> Open
+              <a href="http://localhost:3000/list-your-sites/">List your sites</a>, fill the form,
+              type the code shown on the next page, add a site in one of the six cities, send it for
+              review.
+            </li>
+            <li>
+              <b>Team checks.</b> Sign in to <a href="http://localhost:3000/admin/">/admin</a>, open
+              Sites, filter by "In review", publish it (or return it with a reason and see the
+              owner's page change).
+            </li>
+            <li>
+              <b>Buyer finds.</b> Open <a href="http://localhost:3000/search/">Find sites</a>,
+              search the site's city, open the site page and save it. To try an enquiry across two
+              owners, list a second company the same way first.
+            </li>
+            <li>
+              <b>Buyer asks.</b> On the <a href="http://localhost:3000/shortlist/">shortlist</a>,
+              choose "Send enquiry to N owners", fill it in, and type the code shown.
+            </li>
+            <li>
+              <b>Owner replies.</b> In <code>/admin</code> › Operations › Outbox, open the email
+              sent to your test owner and follow its reply link. Answer each site.
+            </li>
+            <li>
+              <b>Buyer reads.</b> In the Outbox, open the buyer's email and follow its link: the
+              replies sit side by side, and you can write back to one owner.
+            </li>
+            <li>
+              <b>Owner keeps it fresh.</b> Back on the owner's site page, set "booked until" a date,
+              then search again and see the site marked booked.
+            </li>
+          </ol>
+        </div>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      Sources: <code>docs/ohworks.com OOH content and listings platform strategy.md</code>,
+      <code>docs/ohworks-find-sites-plan.md</code> sections 14 to 16,
+      <code>docs/ohworks-list-your-sites-plan.md</code> section 12,
+      <code>docs/ohworks-editorial-plan.md</code> section 13, and the code in
+      <code>apps/web</code> as of commit 5999aba.
+    </footer>
+  </body>
+</html>
