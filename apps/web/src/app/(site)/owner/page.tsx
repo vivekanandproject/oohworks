@@ -173,6 +173,11 @@ export default async function OwnerHomePage({ searchParams }: { searchParams: Pr
               <Button href="/owner/kit/" variant="secondary">
                 Send a media kit
               </Button>
+              {sites.length ? (
+                <Button href="/owner/photos/" variant="secondary">
+                  Add photographs
+                </Button>
+              ) : null}
             </div>
 
             {waiting.length ? (

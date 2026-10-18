@@ -6,6 +6,7 @@
  *   node files.mjs photo | scan          → { base64 }
  *   node files.mjs textured              → { base64, copy }   a photograph with detail, and a resent copy
  *   node files.mjs stock                 → { base64 }         one whose file credits a stock library
+ *   node files.mjs gps                   ← { lat, lng, at }   → { base64 }   taken there, at "2026:10:12 11:20:00"
  *   node files.mjs template              ← { template }                → { head, example, guideRows }
  *   node files.mjs sheet                 ← { template, rows }          → { base64 }
  *   node files.mjs plain                 ← { rows }                    → { base64 }
@@ -43,6 +44,46 @@ if (command === "photo") {
         create: { width: 600, height: 800, channels: 3, background: { r: 250, g: 250, b: 245 } },
       })
         .png()
+        .toBuffer(),
+    ),
+  });
+} else if (command === "gps") {
+  const input = await read();
+  /** Degrees as a phone writes them: whole degrees, whole minutes, seconds to two places. */
+  const dms = (value) => {
+    const v = Math.abs(value);
+    const d = Math.floor(v);
+    const m = Math.floor((v - d) * 60);
+    const s = Math.round(((v - d) * 60 - m) * 60 * 100);
+    return `${d}/1 ${m}/1 ${s}/100`;
+  };
+  const noise = await sharp({
+    create: {
+      width: 300,
+      height: 200,
+      channels: 3,
+      background: { r: 128, g: 128, b: 128 },
+      noise: { type: "gaussian", mean: 128, sigma: 60 },
+    },
+  })
+    .png()
+    .toBuffer();
+  out({
+    base64: b64(
+      await sharp(noise)
+        .blur(8)
+        .resize(900, 600)
+        .withExif({
+          IFD2: { DateTimeOriginal: input.at },
+          IFD3: {
+            GPSVersionID: "2 3 0 0",
+            GPSLatitudeRef: input.lat >= 0 ? "N" : "S",
+            GPSLatitude: dms(input.lat),
+            GPSLongitudeRef: input.lng >= 0 ? "E" : "W",
+            GPSLongitude: dms(input.lng),
+          },
+        })
+        .jpeg()
         .toBuffer(),
     ),
   });

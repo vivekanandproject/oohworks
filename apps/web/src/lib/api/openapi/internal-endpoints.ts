@@ -1253,6 +1253,84 @@ export const ENDPOINTS: Endpoint[] = [
     ],
   },
   {
+    path: "/api/owner/photos/",
+    method: "post",
+    tag: "Owners: company and sites",
+    summary: "Add many photographs, each placed on its site",
+    description:
+      "Takes up to 20 photographs. Each is placed on the owner's site it was taken at, by the GPS position in the file: within 150 m of the pin, and at least 40 m nearer than the owner's next site (src/lib/owners/photo-match.ts). One taken from 19:00 to 05:00 is the night view; otherwise the approach view if the site has none, else the day view. Each then gets every check a single photograph gets (src/lib/owners/take-photo.ts): stock credit refused, reuse flagged, six at most.\n\n- Works without JavaScript: a plain form post answered with a 303 to /owner/photos/?r={outcome}, a base64url JSON list of what became of each file.\n- With `Accept: application/json` the answer is JSON instead; the page's script sends one photograph a request.",
+    body: "multipart",
+    fields: [
+      {
+        name: "photos",
+        type: "file",
+        required: true,
+        description:
+          "The photographs, repeated. Each at most 10 MB, image/jpeg, image/png or image/webp, named to match. A file that fails is reported (missing, big, type) and the rest go on.",
+      },
+    ],
+    cookies: [
+      {
+        name: "oh_owner",
+        required: true,
+        description: "Identifies the owner, as for /api/owner/photo/.",
+      },
+    ],
+    checks: [
+      "Origin must be this site: see **The Origin check** at the top.",
+      'Rate limit: bucket "owner-photos", 60 requests per sliding 60 seconds per client IP. Refusal: 303 to /owner/?error=busy.',
+      "Signed-in owner with an owner record, else 303 to /list-your-sites/ or /owner/company/.",
+      "No files: error=missing. More than 20: error=many (400 JSON with Accept: application/json).",
+    ],
+    answers: [
+      {
+        status: 200,
+        when: "With Accept: application/json: each file's outcome.",
+        json: {
+          type: "object",
+          properties: {
+            results: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  added: { type: "boolean" },
+                  unit: { type: "string" },
+                  twin: { type: "boolean" },
+                  reason: {
+                    type: "string",
+                    enum: [
+                      "no-position",
+                      "far",
+                      "between",
+                      "missing",
+                      "big",
+                      "type",
+                      "many",
+                      "stock",
+                      "date",
+                      "read",
+                    ],
+                  },
+                  library: { type: "string" },
+                },
+                required: ["name", "added"],
+              },
+            },
+          },
+        },
+      },
+      { status: 303, when: "A plain form post.", location: "/owner/photos/?r={outcome}" },
+      {
+        status: 303,
+        when: "No files, or too many.",
+        location: "/owner/photos/?error={missing|many}",
+      },
+      { status: 400, when: "With Accept: application/json: no files, or too many." },
+    ],
+  },
+  {
     path: "/api/owner/kit/",
     method: "post",
     tag: "Owners: company and sites",

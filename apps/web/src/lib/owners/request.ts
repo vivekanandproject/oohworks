@@ -71,7 +71,14 @@ export function fileOf(
   name: string,
   rule: keyof typeof FILE_RULES,
 ): { file: File } | { problem: FileProblem } {
-  const value = form.get(name);
+  return checkFile(form.get(name), rule);
+}
+
+/** One sent value, checked as a file of this kind: there, not too big, and of an allowed type. */
+export function checkFile(
+  value: FormDataEntryValue | null,
+  rule: keyof typeof FILE_RULES,
+): { file: File } | { problem: FileProblem } {
   if (!(value instanceof File) || value.size === 0) return { problem: "missing" };
   const r = FILE_RULES[rule];
   if (value.size > r.max) return { problem: "big" };
