@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
+import { siteUrl } from "./hosting";
+
+export { siteUrl };
 
 export const SITE_NAME = "ohworks";
 export const TAGLINE = "Every billboard, findable.";
-
-export function siteUrl(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
-}
 
 export function absolute(path: string): string {
   return `${siteUrl()}${path.startsWith("/") ? path : `/${path}`}`;

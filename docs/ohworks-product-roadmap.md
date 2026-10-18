@@ -47,6 +47,18 @@ Nothing new for users. Everything that is built starts working for real, somewhe
 | 0.6 | **Super admin steps 2 and 3.** Audit log, platform settings (close sign-ups without a release), dashboard of queues, suspend and restore owners and staff, blocked senders, take down | Code | Every action in the super admin test appears in the log |
 | 0.7 | **Services page** in the admin: what each environment is connected to | Code | `/admin/services` on staging |
 
+### Where phase 0 stands (18 Oct 2026, evening)
+
+| # | Status |
+| --- | --- |
+| 0.1 | Done: everything open was committed and pushed |
+| 0.2 | Code done: `EMAIL_ALLOWLIST` keeps staging and previews from emailing strangers, and on this Mac a code that went to the Outbox shows on the confirm page. **Waiting on you:** verify `ohworks.com` in Resend |
+| 0.3 | Code done: builds with no database, a `release` image target, owner documents in a private R2 bucket (`R2_PRIVATE_BUCKET`), `SITE_ENV` noindex for previews and staging, `/api/health/services/`, Sentry (switched on by `SENTRY_DSN` and `NEXT_PUBLIC_SENTRY_DSN`), and the site address read at run time (`SITE_URL`) so one image serves every environment. Not yet built with Docker on this Mac, and R2 not yet tried with real credentials |
+| 0.4 | **Waiting on you** |
+| 0.5 | Terraform for shared, staging and production, and the deploy workflow, written and validated (`infra/terraform`, `infra/ci/github-actions-deploy.yml`). Applying waits on 0.4. Previews with their own database are not built |
+| 0.6 | Super admin step 1 done; steps 2 and 3 not started |
+| 0.7 | The data behind it is live (`/api/health/services/`); the admin page belongs with 0.6 |
+
 Exit: the end-to-end test in `ohworks-preview-and-api-plan.md` section 1 and the walk-through in `ohworks-user-workflow.html` section 9 both pass on staging with real email.
 
 ## 4. Phase 1: go live (4 weeks)

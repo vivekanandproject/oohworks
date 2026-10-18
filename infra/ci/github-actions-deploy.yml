@@ -4,6 +4,7 @@
 # Needs, from `terraform output` in infra/terraform/envs/shared (see infra/terraform/README.md):
 #   secrets  GCP_WORKLOAD_IDENTITY_PROVIDER, GCP_DEPLOY_SERVICE_ACCOUNT
 #   vars     GCP_SHARED_PROJECT, GCP_STAGING_PROJECT, GCP_PROD_PROJECT
+#            SENTRY_DSN (optional): browser error reports; the server reads its own from Secret Manager
 # The `production` GitHub environment can require a person to approve each production deploy.
 
 name: deploy
@@ -37,11 +38,9 @@ jobs:
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             echo "name=production" >> "$GITHUB_OUTPUT"
             echo "project=${{ vars.GCP_PROD_PROJECT }}" >> "$GITHUB_OUTPUT"
-            echo "site=https://ohworks.com" >> "$GITHUB_OUTPUT"
           else
             echo "name=staging" >> "$GITHUB_OUTPUT"
             echo "project=${{ vars.GCP_STAGING_PROJECT }}" >> "$GITHUB_OUTPUT"
-            echo "site=https://staging.ohworks.com" >> "$GITHUB_OUTPUT"
           fi
           echo "registry=$REGION-docker.pkg.dev/${{ vars.GCP_SHARED_PROJECT }}/ohworks" >> "$GITHUB_OUTPUT"
           echo "tag=${GITHUB_SHA::12}-$( [[ "$GITHUB_REF" == refs/tags/v* ]] && echo production || echo staging )" >> "$GITHUB_OUTPUT"
@@ -58,12 +57,12 @@ jobs:
         env:
           REGISTRY: ${{ steps.target.outputs.registry }}
           TAG: ${{ steps.target.outputs.tag }}
-          SITE: ${{ steps.target.outputs.site }}
         run: |
-          docker buildx build --push --build-arg NEXT_PUBLIC_SITE_URL="$SITE" \
+          docker buildx build --push \
+            --build-arg NEXT_PUBLIC_SENTRY_DSN="${{ vars.SENTRY_DSN }}" \
             --cache-from type=gha --cache-to type=gha,mode=max \
             -t "$REGISTRY/web:$TAG" .
-          docker buildx build --push --build-arg NEXT_PUBLIC_SITE_URL="$SITE" --target release \
+          docker buildx build --push --target release \
             --cache-from type=gha \
             -t "$REGISTRY/release:$TAG" .
 

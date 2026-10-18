@@ -4,6 +4,7 @@ import {
   type CollectionAfterDeleteHook,
   type CollectionBeforeChangeHook,
 } from "payload";
+import { siteUrl } from "../../lib/hosting";
 import { pieceUrl, pillarOf } from "../../lib/editorial/pillars";
 import { canPublish } from "../access";
 
@@ -93,7 +94,7 @@ export const editorialBeforeChange: CollectionBeforeChangeHook = async ({
 /** Tells IndexNow engines (Bing, Yandex, Naver, Seznam) about a changed URL. Off unless a key is set and the site is public. */
 async function pingIndexNow(path: string | undefined): Promise<void> {
   const key = process.env.INDEXNOW_KEY;
-  const site = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
+  const site = siteUrl();
   if (!key || !path || !site || site.includes("localhost") || site.includes("127.0.0.1")) return;
   try {
     await fetch("https://api.indexnow.org/indexnow", {

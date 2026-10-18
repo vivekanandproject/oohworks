@@ -692,16 +692,23 @@ export function photoOf(p: NonNullable<Site["photos"]>[number]): Media | null {
 }
 
 /**
- * Local development only: with no email service, the last code sent to an owner, read back from the
- * outbox so the flow can be walked through on one machine. Never available in production.
+ * Local development only: an owner's code that was kept in the outbox instead of sent (no email
+ * service, or an address outside EMAIL_ALLOWLIST), read back so the flow can be walked through on one
+ * machine. Only codes from the last ten minutes. Never available in production.
  */
 export async function devOwnerCode(email: string): Promise<string | null> {
-  if (process.env.RESEND_API_KEY || process.env.NODE_ENV === "production") return null;
+  if (process.env.NODE_ENV === "production") return null;
   const res = await (
     await client()
   ).find({
     collection: "outbox",
-    where: { and: [{ to: { equals: email } }, { kind: { equals: "owner_code" } }] },
+    where: {
+      and: [
+        { to: { equals: email } },
+        { kind: { equals: "owner_code" } },
+        { createdAt: { greater_than: new Date(Date.now() - 10 * 60_000).toISOString() } },
+      ],
+    },
     sort: "-createdAt",
     limit: 1,
     overrideAccess: true,

@@ -14,7 +14,7 @@ envs/prod             public, behind Cloudflare; one warm instance; backups with
 - **Cloud Run `web`**: the container from the `Dockerfile`. `SITE_ENV` is `staging` or `production`. Secrets arrive as environment variables from Secret Manager. Reaches the database over its private address only. At most one instance until Redis lands (roadmap 2.6).
 - **Cloud Run job `release`**: the Dockerfile's `release` target. Runs the migrations, then the first users and reference data. The deploy workflow runs it before every deploy.
 - **Cloud SQL Postgres 16**: private address only, daily backups kept 14 days; production adds seven days of point-in-time recovery and deletion protection.
-- **Secrets**: `DATABASE_URL`, `PAYLOAD_SECRET` and `ORIGIN_SECRET` are made by Terraform. `SUPER_ADMIN_EMAILS` and `SUPER_ADMIN_PASSWORD` are yours to fill (the release refuses to finish without them). Any other key (`RESEND_API_KEY`, `EMAIL_FROM`, `ANTHROPIC_API_KEY`, `GOOGLE_MAPS_API_KEY`, `MAP_STYLE_URL`, the `R2_*` settings, `SENTRY_DSN`) is mounted once you list it in `optional_secrets`.
+- **Secrets**: `DATABASE_URL`, `PAYLOAD_SECRET` and `ORIGIN_SECRET` are made by Terraform. `SUPER_ADMIN_EMAILS` and `SUPER_ADMIN_PASSWORD` are yours to fill (the release refuses to finish without them). Any other key (`RESEND_API_KEY`, `EMAIL_FROM`, `ANTHROPIC_API_KEY`, `GOOGLE_MAPS_API_KEY`, `MAP_STYLE_URL`, the `R2_*` settings including `R2_PRIVATE_BUCKET` for owners' documents, `SENTRY_DSN`, `EMAIL_ALLOWLIST`) is mounted once you list it in `optional_secrets`.
 - **Who can open it**: staging answers only to the Google accounts in `staff`, through Identity-Aware Proxy. Production is open, and the app refuses any request without Cloudflare's `X-Origin-Secret`.
 
 ## Applying it, once
@@ -73,7 +73,8 @@ then add `"RESEND_API_KEY"` to `optional_secrets` in that environment's `terrafo
 ## Still to decide or build
 
 - **Addresses.** Cloud Run domain mappings are not offered in every region. The plan is Cloudflare in front of production's `run.app` address, with a Transform Rule adding `X-Origin-Secret` (the value of the `ORIGIN_SECRET` secret) and an Origin Rule rewriting the Host header; if the Cloudflare plan cannot rewrite Host, a global load balancer with a serverless network endpoint group does the same for about 18 USD a month. `staging.ohworks.com` needs the same, or staff use the `run.app` address.
-- **One build per environment.** `NEXT_PUBLIC_SITE_URL` is written into the build, so the deploy workflow builds a commit once for staging and again for production. Reading the address at run time instead would let one image serve both, and is needed before previews (each preview has its own address): that is a code change in the app, not here.
+- **One image for every environment.** The app reads its address from `SITE_URL` when it needs it, so the same image serves staging, production and, later, each preview with its own address.
 - **Previews per pull request** with their own database (`docs/ohworks-preview-and-api-plan.md` section 5) need a job that creates the database inside the private network; not built yet.
-- **Owner documents** are still written to the container's disk, which Cloud Run does not keep. They move to a private R2 bucket before production (roadmap 0.3).
+- **Uploads need R2 on Cloud Run**, which keeps no disk between requests: photographs in `R2_BUCKET`, owners' documents in the private `R2_PRIVATE_BUCKET`. Without those settings they are written to the container and lost; the staff services check (`/api/health/services/`) shows which are set.
+- **Email outside production** reaches only addresses on `EMAIL_ALLOWLIST` (addresses or `@domains`); set it in staging to the team's addresses. Everything else is kept in the Outbox.
 - **State holds secrets.** The database password and the generated secrets are in Terraform's state; the state bucket is private, versioned and in the shared project only.

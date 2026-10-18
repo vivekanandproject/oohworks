@@ -17,7 +17,7 @@ import {
   type Answer,
   type Artwork,
 } from "./enquiry";
-import { emailConfigured, sendMail } from "./mail";
+import { sendMail } from "./mail";
 import { inr, placeLine, siteUrl } from "./view";
 
 export { ARTWORK, dateRange, type Artwork };
@@ -310,15 +310,22 @@ export async function countAttempt(enquiry: Enquiry): Promise<void> {
 }
 
 /**
- * Local development only: with no email service, the last code sent to an address, read back from the
- * outbox so the flow can be walked through on one machine. Never available in production.
+ * Local development only: a code that was kept in the outbox instead of sent (no email service, or an
+ * address outside EMAIL_ALLOWLIST), read back so the flow can be walked through on one machine. Only
+ * codes from the last ten minutes, the time a code works. Never available in production.
  */
 export async function devCode(email: string): Promise<string | null> {
-  if (emailConfigured() || process.env.NODE_ENV === "production") return null;
+  if (process.env.NODE_ENV === "production") return null;
   const payload = await getPayload({ config });
   const res = await payload.find({
     collection: "outbox",
-    where: { and: [{ to: { equals: email } }, { kind: { equals: "code" } }] },
+    where: {
+      and: [
+        { to: { equals: email } },
+        { kind: { equals: "code" } },
+        { createdAt: { greater_than: new Date(Date.now() - 10 * 60_000).toISOString() } },
+      ],
+    },
     sort: "-createdAt",
     limit: 1,
     overrideAccess: true,

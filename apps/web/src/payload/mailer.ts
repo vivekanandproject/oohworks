@@ -1,4 +1,5 @@
 import type { Payload, PayloadRequest } from "payload";
+import { mayEmail } from "../lib/email-allowlist";
 
 export interface Mail {
   to: string;
@@ -18,8 +19,9 @@ export interface Mail {
 }
 
 /**
- * Sends through the email service when one is configured. Without one, the message is kept in the
- * outbox so the team can read it locally. Nothing is ever silently dropped. It takes the running
+ * Sends through the email service when one is configured and the address may get real email (outside
+ * production, only addresses on EMAIL_ALLOWLIST: see src/lib/email-allowlist.ts). Otherwise the message
+ * is kept in the outbox so the team can read it. Nothing is ever silently dropped. It takes the running
  * Payload instance, so hooks can use it without loading the configuration again, and the request
  * when it is called from inside a save.
  */
@@ -29,7 +31,7 @@ export async function deliverMail(
   req?: PayloadRequest,
 ): Promise<"sent" | "outbox"> {
   const key = process.env.RESEND_API_KEY;
-  if (key) {
+  if (key && mayEmail(mail.to)) {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },

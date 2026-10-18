@@ -220,7 +220,7 @@ resource "google_cloud_run_v2_service" "web" {
         value = "web"
       }
       env {
-        name  = "NEXT_PUBLIC_SITE_URL"
+        name  = "SITE_URL"
         value = var.site_url
       }
       dynamic "env" {
@@ -313,7 +313,7 @@ resource "google_cloud_run_v2_job" "release" {
           value = local.site_env
         }
         env {
-          name  = "NEXT_PUBLIC_SITE_URL"
+          name  = "SITE_URL"
           value = var.site_url
         }
         dynamic "env" {

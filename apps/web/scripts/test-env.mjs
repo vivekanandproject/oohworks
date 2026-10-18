@@ -41,6 +41,7 @@ export function testEnv(env = process.env) {
     DATABASE_URL: testDatabaseUrl(env),
     UPLOADS_DIR: path.join(APP_DIR, "test-data"),
     NEXT_DIST_DIR: ".next-verify",
+    SITE_URL: `http://127.0.0.1:${TEST_PORT}`,
     NEXT_PUBLIC_SITE_URL: `http://127.0.0.1:${TEST_PORT}`,
     NEXT_TELEMETRY_DISABLED: "1",
     // A test run, so the internal API reference is served and can be checked (src/lib/api/env.ts).

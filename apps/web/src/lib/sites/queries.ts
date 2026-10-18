@@ -14,6 +14,7 @@ import {
   type Wider,
 } from "./filter";
 import { formatDate } from "@/lib/editorial/format";
+import { siteUrl as siteAddress } from "@/lib/hosting";
 import {
   hubFact,
   hubPath,
@@ -313,7 +314,7 @@ export async function ownerContact(
  * The flag is ignored on any site served over https.
  */
 export function hubPreview(): boolean {
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const site = siteAddress();
   return process.env.HUB_PREVIEW === "1" && !site.startsWith("https://");
 }
 

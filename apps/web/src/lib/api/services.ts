@@ -164,22 +164,27 @@ async function claude(): Promise<ServiceReport> {
   };
 }
 
-function storage(): ServiceReport {
-  const on = Boolean(
-    process.env.R2_ACCOUNT_ID &&
-    process.env.R2_ACCESS_KEY_ID &&
-    process.env.R2_SECRET_ACCESS_KEY &&
-    process.env.R2_BUCKET,
+function storage(): ServiceReport[] {
+  const keys = Boolean(
+    process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY,
   );
-  return {
-    name: "Photo storage",
-    state: on ? "ok" : "off",
-    detail: on
-      ? `Cloudflare R2, bucket ${process.env.R2_BUCKET}.`
-      : "On this machine's disk. A host with no disk needs the R2 settings.",
-    ms: null,
-    dashboard: on ? "https://dash.cloudflare.com/?to=/:account/r2" : null,
+  const bucket = (name: string, label: string, setting: string, what: string): ServiceReport => {
+    const value = process.env[setting];
+    return {
+      name,
+      state: keys && value ? "ok" : "off",
+      detail:
+        keys && value
+          ? `Cloudflare R2, ${label} bucket ${value}.`
+          : `${what} are on this machine's disk. A host with no disk needs the R2 keys and ${setting}.`,
+      ms: null,
+      dashboard: keys && value ? "https://dash.cloudflare.com/?to=/:account/r2" : null,
+    };
   };
+  return [
+    bucket("Photo storage", "public", "R2_BUCKET", "Photographs"),
+    bucket("Owner documents", "private", "R2_PRIVATE_BUCKET", "Owners' documents and media kits"),
+  ];
 }
 
 function errors(): ServiceReport {
@@ -209,7 +214,7 @@ const PLANNED: ServiceReport[] = [
 export async function serviceReports(payload: Payload) {
   const services = [
     ...(await Promise.all([database(payload), email(), places(), mapStyle(), claude()])),
-    storage(),
+    ...storage(),
     errors(),
     ...PLANNED,
   ];

@@ -1,6 +1,7 @@
 import { randomInt } from "node:crypto";
 import { APIError, type CollectionAfterChangeHook, type CollectionBeforeChangeHook } from "payload";
 import { deliverMail } from "../mailer";
+import { siteUrl } from "../../lib/hosting";
 import { formatDef } from "../../lib/sites/taxonomy";
 import { slugify } from "./index";
 
@@ -149,8 +150,7 @@ export const siteBeforeChange: CollectionBeforeChangeHook = async ({
   return d;
 };
 
-const base = (): string =>
-  (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+const base = (): string => siteUrl();
 
 /**
  * Tells an owner who listed their own site what the team decided: that it is live, or that it has come

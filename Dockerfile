@@ -26,9 +26,10 @@ FROM base AS build
 # source on top (.dockerignore keeps this machine's node_modules out).
 COPY --from=deps /app ./
 COPY . .
-# The public address is written into the build, so each environment has its own build of a commit.
-ARG NEXT_PUBLIC_SITE_URL=http://localhost:3000
-ENV NEXT_TELEMETRY_DISABLED=1 NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+# The site's address is not built in: the host sets SITE_URL, so one image serves every environment.
+# Browser error reports go to Sentry only when this is given (src/instrumentation-client.ts).
+ARG NEXT_PUBLIC_SENTRY_DSN=
+ENV NEXT_TELEMETRY_DISABLED=1 NEXT_PUBLIC_SENTRY_DSN=$NEXT_PUBLIC_SENTRY_DSN
 RUN pnpm --filter @ohworks/web build
 
 # Migrations, then the first users and reference data (apps/web/scripts/release.mjs). Needs the

@@ -5,6 +5,19 @@
  * Kept free of anything from Next.js, because the seed scripts and the CMS config read it too.
  */
 
+/**
+ * The address the site answers at, read when it is needed: SITE_URL, which the host sets for each
+ * environment and each preview, so one build serves them all. NEXT_PUBLIC_SITE_URL, the older name, is
+ * written into the build and is only the fallback.
+ */
+export function siteUrl(): string {
+  return (
+    process.env.SITE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "http://localhost:3000"
+  ).replace(/\/$/, "");
+}
+
 /** The database the running app talks to. */
 export function databaseUrl(): string {
   return process.env.DATABASE_URL || "";
