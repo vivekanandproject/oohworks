@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isOps } from "../access";
+import { isOps, isSuperAdmin } from "../access";
 import { slugify } from "../hooks";
 
 export const Tags: CollectionConfig = {
@@ -9,7 +9,7 @@ export const Tags: CollectionConfig = {
     group: "People and places",
     description: "One taxonomy for articles, listings and profiles.",
   },
-  access: { read: () => true, create: isOps, update: isOps, delete: isAdmin },
+  access: { read: () => true, create: isOps, update: isOps, delete: isSuperAdmin },
   hooks: {
     beforeChange: [
       ({ data }) => {

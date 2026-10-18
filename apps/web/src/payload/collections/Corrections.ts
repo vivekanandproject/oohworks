@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isEditor } from "../access";
+import { isEditor, isSuperAdmin } from "../access";
 
 export const Corrections: CollectionConfig = {
   slug: "corrections",
@@ -8,7 +8,7 @@ export const Corrections: CollectionConfig = {
     description: "Public. Shown on the piece and on the corrections page.",
     defaultColumns: ["article", "correctedAt"],
   },
-  access: { read: () => true, create: isEditor, update: isEditor, delete: isAdmin },
+  access: { read: () => true, create: isEditor, update: isEditor, delete: isSuperAdmin },
   fields: [
     {
       name: "article",

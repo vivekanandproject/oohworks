@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { CollectionConfig } from "payload";
-import { isAdmin, isOps, isStaff } from "../access";
+import { isOps, isStaff, isSuperAdmin } from "../access";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -17,7 +17,7 @@ export const OwnerFiles: CollectionConfig = {
     defaultColumns: ["filename", "owner", "kind", "handled", "createdAt"],
     description: "Company documents, spreadsheets and media kits from owners. Private: staff only.",
   },
-  access: { read: isStaff, create: () => false, update: isOps, delete: isAdmin },
+  access: { read: isStaff, create: () => false, update: isOps, delete: isSuperAdmin },
   upload: {
     // Under UPLOADS_DIR when it is set, as a test run does, so its files never mix with these.
     staticDir: path.resolve(

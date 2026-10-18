@@ -1,11 +1,11 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isOps } from "../access";
+import { isOps, isSuperAdmin } from "../access";
 import { slugify } from "../hooks";
 
 export const Companies: CollectionConfig = {
   slug: "companies",
   admin: { useAsTitle: "name", group: "People and places" },
-  access: { read: () => true, create: isOps, update: isOps, delete: isAdmin },
+  access: { read: () => true, create: isOps, update: isOps, delete: isSuperAdmin },
   hooks: {
     beforeChange: [
       ({ data }) => {

@@ -6,7 +6,7 @@
  *      offers "create the first user" to a stranger. No sample content is ever loaded.
  *
  * On Google Cloud Run this is the release job; on any machine it is
- *   DATABASE_URL=... SEED_ADMIN_PASSWORD=... node scripts/release.mjs
+ *   DATABASE_URL=... SUPER_ADMIN_EMAILS=... SUPER_ADMIN_PASSWORD=... node scripts/release.mjs
  *
  * Nothing is skipped quietly: a step that fails stops the release and says why.
  */

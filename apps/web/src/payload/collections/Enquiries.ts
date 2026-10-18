@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isStaff } from "../access";
+import { isStaff, isSuperAdmin } from "../access";
 
 /** A buyer's request about one site. Created only by the site's own API, and passed straight to the owner once verified. */
 export const Enquiries: CollectionConfig = {
@@ -9,7 +9,7 @@ export const Enquiries: CollectionConfig = {
     group: "Marketplace",
     defaultColumns: ["reference", "site", "owner", "status", "createdAt"],
   },
-  access: { read: isStaff, create: () => false, update: isStaff, delete: isAdmin },
+  access: { read: isStaff, create: () => false, update: isStaff, delete: isSuperAdmin },
   fields: [
     { name: "reference", type: "text", required: true, unique: true, index: true },
     {

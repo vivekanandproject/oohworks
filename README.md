@@ -69,4 +69,4 @@ CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" pnpm 
 `pnpm --filter @ohworks/web release` prepares a database for a new version: it runs the migrations in
 `apps/web/src/migrations`, then makes sure the first users and reference data exist. Every change to a
 CMS collection needs a migration committed with it (`pnpm --filter @ohworks/web payload migrate:create name`).
-In production set `PAYLOAD_SECRET` and `SEED_ADMIN_PASSWORD`.
+In production set `PAYLOAD_SECRET`, `SUPER_ADMIN_EMAILS` and `SUPER_ADMIN_PASSWORD` (see `docs/ohworks-super-admin-plan.md`). A release stops if it would leave no active super admin.

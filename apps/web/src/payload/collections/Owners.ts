@@ -1,5 +1,5 @@
 import type { CollectionConfig, FieldAccess } from "payload";
-import { isAdmin, isOps } from "../access";
+import { isOps, isSuperAdmin } from "../access";
 import { slugify } from "../hooks";
 import { CITY_SELECT } from "../../lib/sites/taxonomy";
 
@@ -13,7 +13,7 @@ export const Owners: CollectionConfig = {
     defaultColumns: ["name", "city", "verified", "source", "submittedAt"],
     description: "Media owners. The owner is always the seller.",
   },
-  access: { read: () => true, create: isOps, update: isOps, delete: isAdmin },
+  access: { read: () => true, create: isOps, update: isOps, delete: isSuperAdmin },
   hooks: {
     beforeChange: [
       ({ data }) => {

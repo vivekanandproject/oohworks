@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isWriter, ownDraftOrEditor, publishedOrStaff } from "../access";
+import { isSuperAdmin, isWriter, ownDraftOrEditor, publishedOrStaff } from "../access";
 import { editorialBeforeChange, refreshAfterChange, refreshAfterDelete } from "../hooks";
 import {
   createdByField,
@@ -20,7 +20,12 @@ export const Guides: CollectionConfig = {
     description: "Evergreen. Refreshed quarterly from live data.",
   },
   versions: { drafts: { autosave: { interval: 1500 } }, maxPerDoc: 50 },
-  access: { read: publishedOrStaff, create: isWriter, update: ownDraftOrEditor, delete: isAdmin },
+  access: {
+    read: publishedOrStaff,
+    create: isWriter,
+    update: ownDraftOrEditor,
+    delete: isSuperAdmin,
+  },
   hooks: {
     beforeChange: [editorialBeforeChange],
     afterChange: [refreshAfterChange],

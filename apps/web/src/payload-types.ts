@@ -678,13 +678,24 @@ export interface Person {
   createdAt: string;
 }
 /**
+ * The team. Only a super admin can add people, change roles, suspend or delete. Suspend instead of deleting, so the record of who did what stays.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
   name: string;
-  role: 'admin' | 'editor' | 'writer' | 'contributor' | 'ops';
+  role: 'superadmin' | 'admin' | 'editor' | 'writer' | 'contributor' | 'ops';
+  /**
+   * Untick to suspend: they are signed out at once and cannot sign in again.
+   */
+  active?: boolean | null;
+  /**
+   * On until they replace the password they were given. Until then the admin shows them only their account page.
+   */
+  mustChangePassword?: boolean | null;
+  lastSignInAt?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -1839,6 +1850,9 @@ export interface AccessCodesSelect<T extends boolean = true> {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   role?: T;
+  active?: T;
+  mustChangePassword?: T;
+  lastSignInAt?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

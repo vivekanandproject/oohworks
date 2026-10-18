@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isStaff } from "../access";
+import { isStaff, isSuperAdmin } from "../access";
 
 /** People who asked for the briefing. Created only by the site's own API; double opt-in arrives with the newsletter build. */
 export const Subscribers: CollectionConfig = {
@@ -9,7 +9,7 @@ export const Subscribers: CollectionConfig = {
     group: "Newsletter",
     defaultColumns: ["email", "lists", "confirmed", "createdAt"],
   },
-  access: { read: isStaff, create: () => false, update: isStaff, delete: isAdmin },
+  access: { read: isStaff, create: () => false, update: isStaff, delete: isSuperAdmin },
   fields: [
     { name: "email", type: "email", required: true, unique: true, index: true },
     {

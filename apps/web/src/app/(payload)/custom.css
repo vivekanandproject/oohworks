@@ -1,5 +1,120 @@
-/* Admin overrides: paper background and the brand ink, nothing else. */
+/*
+ * The admin in ohworks colours (docs/ohworks-design-system.md), Day theme only: payload.config.ts sets
+ * `theme: "light"`, so these values never meet Payload's dark ones.
+ *
+ * Payload draws everything from one grey ramp, --theme-elevation-0 (page) to -1000 (darkest). Here the
+ * ramp runs from paper-raised through paper, paper-sunken and the hairlines to ink, so text set in any
+ * of its middle steps is readable: Payload's own step 400, its usual colour for labels, descriptions
+ * and table text, is #9a9a9a at 2.8:1; here it is ink-muted at 5.9:1. Steps 0 to 250 are for fills
+ * and lines, 400 and darker for text. Payload's styles sit in a lower CSS layer, so these win.
+ */
 :root {
-  --theme-bg: #f6f5f2;
-  --theme-elevation-0: #f6f5f2;
+  --theme-bg: #f6f5f2; /* paper */
+  --theme-input-bg: #ffffff; /* paper-raised */
+  --theme-text: #101c30; /* ink */
+
+  --theme-elevation-0: #ffffff; /* paper-raised */
+  --theme-elevation-50: #f6f5f2; /* paper */
+  --theme-elevation-100: #ecebe6; /* paper-sunken */
+  --theme-elevation-150: #d9d8d2; /* hairline */
+  --theme-elevation-200: #c4c6c8;
+  --theme-elevation-250: #aeb3bb; /* hairline-strong */
+  --theme-elevation-300: #8f96a1;
+  --theme-elevation-350: #7a828e;
+  --theme-elevation-400: #56606f; /* ink-muted */
+  --theme-elevation-450: #4d5766;
+  --theme-elevation-500: #444e5d;
+  --theme-elevation-550: #3b4554;
+  --theme-elevation-600: #333d4c;
+  --theme-elevation-650: #2b3545;
+  --theme-elevation-700: #232d3e;
+  --theme-elevation-750: #1d3a66; /* navy-700: hover on dark controls */
+  --theme-elevation-800: #101c30; /* ink and navy */
+  --theme-elevation-850: #0d1729;
+  --theme-elevation-900: #0a1221;
+  --theme-elevation-950: #060c17;
+  --theme-elevation-1000: #03070e;
+
+  /* Success is verified green, warnings lit amber, errors critical red: tints for fills, the darker
+     steps for text and icons. */
+  --theme-success-50: #eef8f2;
+  --theme-success-100: #dcf2e6; /* verified-tint */
+  --theme-success-150: #c3e8d3;
+  --theme-success-200: #a6dcbe;
+  --theme-success-250: #86cda6;
+  --theme-success-300: #63bb8b;
+  --theme-success-350: #45a672;
+  --theme-success-400: #2f915e;
+  --theme-success-450: #238453;
+  --theme-success-500: #1c7a4c; /* verified */
+  --theme-success-550: #186d44;
+  --theme-success-600: #15613c;
+  --theme-success-650: #125434;
+  --theme-success-700: #0f482c;
+  --theme-success-750: #0c3c25;
+  --theme-success-800: #0a301e;
+  --theme-success-850: #072517;
+  --theme-success-900: #051a10;
+  --theme-success-950: #030f09;
+
+  --theme-warning-50: #fdf6e7;
+  --theme-warning-100: #fbeccb; /* lit-tint */
+  --theme-warning-150: #f6dca3;
+  --theme-warning-200: #efc976;
+  --theme-warning-250: #e3b24b;
+  --theme-warning-300: #d29a26;
+  --theme-warning-350: #bb850c;
+  --theme-warning-400: #a77503;
+  --theme-warning-450: #986900;
+  --theme-warning-500: #8a5d00; /* lit */
+  --theme-warning-550: #7b5300;
+  --theme-warning-600: #6c4900;
+  --theme-warning-650: #5d3f00;
+  --theme-warning-700: #4f3500;
+  --theme-warning-750: #422c00;
+  --theme-warning-800: #352300;
+  --theme-warning-850: #281a00;
+  --theme-warning-900: #1b1200;
+  --theme-warning-950: #0e0900;
+
+  --theme-error-50: #fcf0ed;
+  --theme-error-100: #f9e0db; /* critical-tint */
+  --theme-error-150: #f3c6bd;
+  --theme-error-200: #eba596;
+  --theme-error-250: #e1836f;
+  --theme-error-300: #d5634b;
+  --theme-error-350: #c84b31;
+  --theme-error-400: #bd3e24;
+  --theme-error-450: #b8381f;
+  --theme-error-500: #b4321c; /* critical */
+  --theme-error-550: #a02c19;
+  --theme-error-600: #8c2716;
+  --theme-error-650: #782113;
+  --theme-error-700: #651c10;
+  --theme-error-750: #52170d;
+  --theme-error-800: #40120a;
+  --theme-error-850: #2e0d07;
+  --theme-error-900: #1d0804;
+  --theme-error-950: #0e0402;
+
+  --accessibility-outline: 2px solid #1d3a66; /* focus */
+}
+
+/* Cards and panels sit on paper as paper-raised with a hairline, as on the site. */
+.card,
+.dashboard__card-list .card {
+  background: #ffffff;
+  border: 1px solid #d9d8d2;
+}
+
+/* Shown on the account page to someone who must replace the password they were given (PasswordGate). */
+.oh-password-gate {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 12px 24px;
+  background: #101c30; /* navy */
+  color: #f6f5f2; /* on-navy */
+  font-size: 15px;
+  line-height: 1.5;
 }

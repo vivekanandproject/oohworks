@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin } from "../access";
+import { isAdmin, isSuperAdmin } from "../access";
 
 /** Emails that would have been sent. Filled only when no email service is configured, so the team can see them locally. */
 export const Outbox: CollectionConfig = {
@@ -11,7 +11,7 @@ export const Outbox: CollectionConfig = {
     description:
       "Emails that would have been sent. Filled only when no email service is configured.",
   },
-  access: { read: isAdmin, create: () => false, update: () => false, delete: isAdmin },
+  access: { read: isAdmin, create: () => false, update: () => false, delete: isSuperAdmin },
   fields: [
     { name: "to", type: "email", required: true, index: true },
     { name: "subject", type: "text", required: true },

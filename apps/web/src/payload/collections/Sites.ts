@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isOps, publishedOrStaff } from "../access";
+import { isOps, isSuperAdmin, publishedOrStaff } from "../access";
 import { siteAfterChange, siteBeforeChange } from "../hooks/sites";
 import {
   CITY_SELECT,
@@ -18,7 +18,7 @@ export const Sites: CollectionConfig = {
     description: "One record per physical face. The id and address never change once published.",
   },
   versions: { drafts: true, maxPerDoc: 20 },
-  access: { read: publishedOrStaff, create: isOps, update: isOps, delete: isAdmin },
+  access: { read: publishedOrStaff, create: isOps, update: isOps, delete: isSuperAdmin },
   hooks: { beforeChange: [siteBeforeChange], afterChange: [siteAfterChange] },
   fields: [
     {

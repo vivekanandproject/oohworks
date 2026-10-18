@@ -1,22 +1,13 @@
 /**
- * The users and reference data every database needs: users, people, tags, companies and the source
- * registry. No sample content. Idempotent: finds by slug or title before creating.
+ * The users and reference data every database needs: the team's accounts (seed-team.ts), people, tags,
+ * companies and the source registry. No sample content. Idempotent: finds by slug or title before creating.
  * Run with `pnpm --filter @ohworks/web seed`; a release runs it after the migrations (scripts/release.mjs).
  */
-import { randomBytes } from "node:crypto";
 import { getPayload, type Payload } from "payload";
 import config from "../payload.config";
+import { seedTeam } from "./seed-team";
+import { TeamSetupError } from "./team-accounts";
 
-/**
- * The first users' password. On a development or test machine it is a known one, so anyone working on
- * the project can sign in. In production it is never that: it is SEED_ADMIN_PASSWORD if one is set,
- * and otherwise a random one nobody knows, so the admin is shut until one is set.
- * Users must exist either way, or the CMS would let the first visitor to /admin create an account.
- */
-const PRODUCTION = process.env.NODE_ENV === "production";
-const GIVEN = process.env.SEED_ADMIN_PASSWORD;
-const PASSWORD =
-  GIVEN ?? (PRODUCTION ? randomBytes(24).toString("base64url") : "ohworks-admin-local");
 const RETRIEVED = "2026-10-09";
 
 async function ensure<T extends Record<string, unknown>>(
@@ -42,30 +33,7 @@ async function ensure<T extends Record<string, unknown>>(
 async function main() {
   const payload = await getPayload({ config });
 
-  for (const u of [
-    { email: "admin@ohworks.local", name: "Local admin", role: "admin" },
-    { email: "editor@ohworks.local", name: "Local editor", role: "editor" },
-    { email: "writer@ohworks.local", name: "Local writer", role: "writer" },
-  ]) {
-    const user = await ensure(
-      payload,
-      "users",
-      { email: { equals: u.email } },
-      { ...u, password: PASSWORD },
-    );
-    // A password set after the first release takes effect on the next one.
-    if (PRODUCTION && GIVEN)
-      await payload.update({
-        collection: "users",
-        id: user.id,
-        data: { password: GIVEN },
-        overrideAccess: true,
-      });
-  }
-  if (PRODUCTION && !GIVEN)
-    console.log(
-      "No SEED_ADMIN_PASSWORD is set, so the admin users have a random password nobody knows. Set it and release again to sign in at /admin.",
-    );
+  await seedTeam(payload);
 
   const places = [
     "India",
@@ -213,11 +181,10 @@ async function main() {
     counts[c] = (await payload.count({ collection: c as never, overrideAccess: true })).totalDocs;
   }
   console.log("seeded:", JSON.stringify(counts));
-  console.log(`admin login: admin@ohworks.local / ${PASSWORD} (local only)`);
   process.exit(0);
 }
 
 main().catch((e) => {
-  console.error(e);
+  console.error(e instanceof TeamSetupError ? `\n${e.message}\n` : e);
   process.exit(1);
 });

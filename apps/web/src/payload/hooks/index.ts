@@ -5,6 +5,7 @@ import {
   type CollectionBeforeChangeHook,
 } from "payload";
 import { pieceUrl, pillarOf } from "../../lib/editorial/pillars";
+import { canPublish } from "../access";
 
 export function slugify(input: string): string {
   return input
@@ -61,15 +62,17 @@ export const editorialBeforeChange: CollectionBeforeChangeHook = async ({
   operation,
   originalDoc,
 }) => {
-  const role = (req.user as { role?: string } | null)?.role;
   if (operation === "create" && req.user) data.createdBy = req.user.id;
   if (!data.slug && typeof data.title === "string") data.slug = slugify(data.title);
   if (data.body) data.readingTime = Math.max(1, Math.round(wordCount(data.body) / 200));
 
   const publishing = data._status === "published";
   if (publishing) {
-    if (!["admin", "editor"].includes(role ?? "")) {
-      throw new APIError("Only an editor can publish. Move the piece to review instead.", 403);
+    if (!canPublish(req.user)) {
+      throw new APIError(
+        "Only an editor, an admin or a super admin can publish. Move the piece to review instead.",
+        403,
+      );
     }
     const unchecked = uncheckedFacts(data.body);
     if (unchecked > 0) {

@@ -58,6 +58,10 @@ export default buildConfig({
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
     meta: { titleSuffix: " · ohworks" },
+    components: { providers: ["/payload/admin/PasswordGate#PasswordGate"] },
+    // ohworks has one theme, Day (docs/ohworks-design-system.md). Without this the admin follows the
+    // computer's dark mode, and the brand colours in custom.css are made for paper, not for dark.
+    theme: "light",
   },
   collections: [
     Sites,

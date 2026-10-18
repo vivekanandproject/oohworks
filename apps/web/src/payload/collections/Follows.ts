@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isStaff } from "../access";
+import { isStaff, isSuperAdmin } from "../access";
 
 /** A buyer who wants to hear when the first sites in a city or format are listed. Created only by the site's own API. */
 export const Follows: CollectionConfig = {
@@ -9,7 +9,7 @@ export const Follows: CollectionConfig = {
     group: "Newsletter",
     defaultColumns: ["email", "city", "format", "source", "createdAt"],
   },
-  access: { read: isStaff, create: () => false, update: isStaff, delete: isAdmin },
+  access: { read: isStaff, create: () => false, update: isStaff, delete: isSuperAdmin },
   fields: [
     { name: "email", type: "email", required: true, index: true },
     {

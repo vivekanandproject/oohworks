@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isWriter } from "../access";
+import { isSuperAdmin, isWriter } from "../access";
 
 export const Sources: CollectionConfig = {
   slug: "sources",
@@ -8,7 +8,7 @@ export const Sources: CollectionConfig = {
     group: "Editorial",
     description: "The citation registry. Every Fact points at one of these.",
   },
-  access: { read: () => true, create: isWriter, update: isWriter, delete: isAdmin },
+  access: { read: () => true, create: isWriter, update: isWriter, delete: isSuperAdmin },
   fields: [
     { name: "title", type: "text", required: true },
     { name: "publisher", type: "text", required: true },

@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isStaff } from "../access";
+import { isStaff, isSuperAdmin } from "../access";
 
 /**
  * What an owner and a buyer write to each other about one request. Written only by the site's own
@@ -14,7 +14,7 @@ export const Messages: CollectionConfig = {
     defaultColumns: ["enquiry", "from", "body", "createdAt"],
     description: "Replies between owners and buyers. Read only: nobody at ohworks writes these.",
   },
-  access: { read: isStaff, create: () => false, update: () => false, delete: isAdmin },
+  access: { read: isStaff, create: () => false, update: () => false, delete: isSuperAdmin },
   fields: [
     { name: "enquiry", type: "relationship", relationTo: "enquiries", required: true, index: true },
     {

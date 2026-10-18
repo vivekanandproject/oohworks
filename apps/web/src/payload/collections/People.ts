@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { fieldEditorOnly, isAdmin, isEditor } from "../access";
+import { fieldEditorOnly, isEditor, isSuperAdmin } from "../access";
 import { slugify } from "../hooks";
 
 export const People: CollectionConfig = {
@@ -9,7 +9,7 @@ export const People: CollectionConfig = {
     group: "People and places",
     description: "Authors and verified contributors. Each gets a public page.",
   },
-  access: { read: () => true, create: isEditor, update: isEditor, delete: isAdmin },
+  access: { read: () => true, create: isEditor, update: isEditor, delete: isSuperAdmin },
   hooks: {
     beforeChange: [
       ({ data }) => {

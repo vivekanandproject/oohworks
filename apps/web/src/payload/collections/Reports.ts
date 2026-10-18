@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isEditor, publishedOrStaff } from "../access";
+import { isEditor, isSuperAdmin, publishedOrStaff } from "../access";
 import { editorialBeforeChange, refreshAfterChange, refreshAfterDelete } from "../hooks";
 import {
   createdByField,
@@ -18,7 +18,7 @@ export const Reports: CollectionConfig = {
     description: "The data pillar: price index and market reports with method notes.",
   },
   versions: { drafts: true, maxPerDoc: 20 },
-  access: { read: publishedOrStaff, create: isEditor, update: isEditor, delete: isAdmin },
+  access: { read: publishedOrStaff, create: isEditor, update: isEditor, delete: isSuperAdmin },
   hooks: {
     beforeChange: [editorialBeforeChange],
     afterChange: [refreshAfterChange],

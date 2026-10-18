@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { isAdmin, isEditor, isStaff } from "../access";
+import { isEditor, isStaff, isSuperAdmin } from "../access";
 
 export const Issues: CollectionConfig = {
   slug: "issues",
@@ -8,7 +8,7 @@ export const Issues: CollectionConfig = {
     group: "Newsletter",
     defaultColumns: ["subject", "kind", "sentAt"],
   },
-  access: { read: isStaff, create: isEditor, update: isEditor, delete: isAdmin },
+  access: { read: isStaff, create: isEditor, update: isEditor, delete: isSuperAdmin },
   fields: [
     {
       name: "kind",

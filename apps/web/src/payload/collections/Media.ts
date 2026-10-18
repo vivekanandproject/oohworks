@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { CollectionConfig } from "payload";
-import { isAdmin, isOps, isWriter } from "../access";
+import { isOps, isSuperAdmin, isWriter } from "../access";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -11,7 +11,7 @@ export const Media: CollectionConfig = {
     group: "Operations",
     description: "Real photography with a credit. No stock, no renders presented as photos.",
   },
-  access: { read: () => true, create: isWriter, update: isOps, delete: isAdmin },
+  access: { read: () => true, create: isWriter, update: isOps, delete: isSuperAdmin },
   upload: {
     // Under UPLOADS_DIR when it is set, as a test run does, so its files never mix with these.
     staticDir: path.resolve(process.env.UPLOADS_DIR || path.resolve(dirname, "../../.."), "media"),
