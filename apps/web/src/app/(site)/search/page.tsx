@@ -276,7 +276,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             {result.median ? (
               <p className="t-small text-ink-muted mt-1" data-section="median">
                 Median rate {inr(result.median.rate)} a month, from {result.median.n} sites that
-                show a price · ohworks data,{" "}
+                show a price · OOHWORKS data,{" "}
                 {formatDate(new Date(now).toISOString()).replace(/^\d+ /, "")}
               </p>
             ) : null}

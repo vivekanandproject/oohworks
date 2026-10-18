@@ -174,7 +174,7 @@ export default async function NewsroomPage() {
                   </Button>
                 }
               >
-                A daily trade briefing and a weekly buyer digest follow. Write to press@ohworks.com
+                A daily trade briefing and a weekly buyer digest follow. Write to press@oohworks.co
                 with a story or a correction.
               </EmptyState>
             </div>

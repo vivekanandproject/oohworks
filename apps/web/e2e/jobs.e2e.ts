@@ -70,7 +70,7 @@ test.describe("jobs on a timer", () => {
     await run(request, "alerts");
     const alerts = await mails(request, email, "alert");
     expect(alerts).toHaveLength(1);
-    expect(alerts[0]!.subject).toBe("6 new sites in Mumbai on ohworks");
+    expect(alerts[0]!.subject).toBe("6 new sites in Mumbai on OOHWORKS");
     expect(alerts[0]!.text).toMatch(/\/in\/mumbai\//);
     expect(alerts[0]!.text).toContain("/search/?city=mumbai");
     await run(request, "alerts");
@@ -89,7 +89,7 @@ test.describe("jobs on a timer", () => {
     const email = `e2e-brief-${info.project.name}-${Date.now()}@example.com`;
     await request.post("/api/subscribe/", { form: { email, from: "/newsroom/" }, maxRedirects: 0 });
     const confirm = (await mails(request, email, "confirm_email"))[0];
-    expect(confirm?.subject).toBe("Confirm: the ohworks daily briefing");
+    expect(confirm?.subject).toBe("Confirm: the OOHWORKS daily briefing");
     await page.goto(linkIn(confirm!.text));
     await expect(page.locator("h1")).toHaveText("You are on the list");
     const headers = await adminHeaders(request);

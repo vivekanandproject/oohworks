@@ -1,5 +1,5 @@
 variable "project_id" {
-  description = "The Google Cloud project for this environment, such as ohworks-staging."
+  description = "The Google Cloud project for this environment, such as oohworks-staging."
   type        = string
 }
 
@@ -18,7 +18,7 @@ variable "region" {
 }
 
 variable "site_url" {
-  description = "The address the site answers at, such as https://staging.ohworks.com."
+  description = "The address the site answers at, such as https://staging.oohworks.co."
   type        = string
 }
 
@@ -94,11 +94,11 @@ variable "budget_monthly_inr" {
 }
 
 variable "registry_project" {
-  description = "The shared project holding the image registry, such as ohworks-shared."
+  description = "The shared project holding the image registry, such as oohworks-shared."
   type        = string
 }
 
 variable "registry_repository" {
   type    = string
-  default = "ohworks"
+  default = "oohworks"
 }

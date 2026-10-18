@@ -23,7 +23,7 @@ import { inr, placeLine, siteUrl } from "./view";
 export { ARTWORK, dateRange, type Artwork };
 
 const NEUTRAL =
-  "ohworks never sells media or takes a media margin. Owners set prices and keep their clients.";
+  "OOHWORKS never sells media or takes a media margin. Owners set prices and keep their clients.";
 const rupees = (n: number): string => inr(n).replace(/ /g, " ");
 
 /** One request: what one buyer asked one owner, about one or more of that owner's sites. */
@@ -174,7 +174,7 @@ export async function issueCode(group: Group): Promise<void> {
   await sendMail({
     kind: "code",
     to: group.email,
-    subject: `${code} is your ohworks code`,
+    subject: `${code} is your OOHWORKS code`,
     text: [
       `Your code is ${code}. It works for ${CODE_MINUTES} minutes.`,
       "",
@@ -228,8 +228,8 @@ export async function deliverGroup(group: Group): Promise<void> {
       subject: `New enquiry: ${one ? one.title : `${sites.length} of your sites`} · ${dates}`,
       text: [
         one
-          ? "A buyer has asked about your site on ohworks."
-          : `A buyer has asked about ${sites.length} of your sites on ohworks.`,
+          ? "A buyer has asked about your site on OOHWORKS."
+          : `A buyer has asked about ${sites.length} of your sites on OOHWORKS.`,
         "",
         ...(one
           ? [
@@ -253,7 +253,7 @@ export async function deliverGroup(group: Group): Promise<void> {
         "",
         `Reference: ${enquiry.reference}`,
         "",
-        "ohworks never sells media or takes a media margin. You set the price and keep the client.",
+        "OOHWORKS never sells media or takes a media margin. You set the price and keep the client.",
       ].join("\n"),
     });
     await payload.update({
@@ -288,7 +288,7 @@ export async function deliverGroup(group: Group): Promise<void> {
         `See the replies in one place: ${absolute(threadPath(group.ref))}`,
         "Keep this link to yourself: it opens your enquiry without a password.",
         "",
-        "Contract, invoice and payment are between you and each owner. ohworks charges nothing.",
+        "Contract, invoice and payment are between you and each owner. OOHWORKS charges nothing.",
         "",
         NEUTRAL,
       ].join("\n"),
@@ -446,7 +446,7 @@ export async function buyerWrites(request: Request, body: string): Promise<void>
       `Answer here: ${replyLink(request.enquiry.reference)}`,
       `Or reply straight to the buyer: ${request.enquiry.email}`,
       "",
-      "ohworks never sells media or takes a media margin. You set the price and keep the client.",
+      "OOHWORKS never sells media or takes a media margin. You set the price and keep the client.",
     ].join("\n"),
   });
 }

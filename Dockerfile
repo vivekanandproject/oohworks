@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 # One image for both Cloud Run services; SERVICE_ROLE=web|jobs picks the behaviour at runtime.
 # A second target, `release`, is the Cloud Run job that prepares the database before each deploy:
-#   docker build --target release -t ohworks-release .
+#   docker build --target release -t oohworks-release .
 # The build needs no database: pages that read one fill in on their first request.
 
 FROM node:22-alpine AS base

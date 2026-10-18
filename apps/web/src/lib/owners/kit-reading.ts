@@ -28,7 +28,7 @@ export function kitReadingOn(): boolean {
 /**
  * The spreadsheet's fields that a media kit can honestly give. Facing, how the price shows and the
  * audience are left to the owner: a kit's "facing" is rarely a bearing, and its audience claims carry
- * no source or date, which a figure on ohworks needs.
+ * no source or date, which a figure on OOHWORKS needs.
  */
 const READ_KEYS = [
   "ownerRef",
@@ -144,13 +144,13 @@ export const KIT_SCHEMA = {
     notes: {
       type: "string",
       description:
-        "A few short sentences for the ohworks team: sites you could not read, pages you skipped and why, prices that are not monthly or include tax. Empty if there is nothing to say.",
+        "A few short sentences for the OOHWORKS team: sites you could not read, pages you skipped and why, prices that are not monthly or include tax. Empty if there is nothing to say.",
     },
   },
 } as const;
 
 const SYSTEM = [
-  "You copy the sites in an outdoor advertising owner's media kit into ohworks listing fields, for a team that checks your work before anything is published.",
+  "You copy the sites in an outdoor advertising owner's media kit into OOHWORKS listing fields, for a team that checks your work before anything is published.",
   "Copy only what the kit states. Leave a field empty when the kit does not state it: an empty field is filled in a minute, a wrong one can mislead a buyer. Never estimate a size, a price, a date or a position.",
   "Make one entry for each face that is sold on its own. A site with two faces sold separately is two entries. Skip sites the kit says are sold, under construction or no longer offered, and say so in the notes.",
   "Write rupee amounts in full digits without commas or symbols. Write dates as YYYY-MM-DD.",

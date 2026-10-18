@@ -6,7 +6,7 @@ describe("who may get a real email", () => {
 
   it("anyone, in production", () => {
     vi.stubEnv("SITE_ENV", "production");
-    vi.stubEnv("EMAIL_ALLOWLIST", "team@ohworks.com");
+    vi.stubEnv("EMAIL_ALLOWLIST", "team@oohworks.co");
     expect(mayEmail("owner@example.com")).toBe(true);
   });
 
@@ -20,9 +20,9 @@ describe("who may get a real email", () => {
 
   it("only listed addresses and domains, in staging", () => {
     vi.stubEnv("SITE_ENV", "staging");
-    vi.stubEnv("EMAIL_ALLOWLIST", " Tester@Example.com , @ohworks.com ");
+    vi.stubEnv("EMAIL_ALLOWLIST", " Tester@Example.com , @oohworks.co ");
     expect(mayEmail("tester@example.com")).toBe(true);
-    expect(mayEmail("vc@ohworks.com")).toBe(true);
+    expect(mayEmail("vc@oohworks.co")).toBe(true);
     expect(mayEmail("someone@example.com")).toBe(false);
     expect(mayEmail("a@notohworks.com")).toBe(false);
   });

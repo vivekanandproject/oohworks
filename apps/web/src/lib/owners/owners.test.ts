@@ -348,7 +348,7 @@ describe("a spreadsheet of sites", () => {
   });
   it("refuses a file that is not the template, and one that is too long", () => {
     expect(readSheet(["Name", "Address"], [["A", "B"]], TODAY).refused).toContain(
-      "does not look like the ohworks template",
+      "does not look like the OOHWORKS template",
     );
     const many = Array.from({ length: 501 }, () => rowOf(good));
     expect(readSheet(header, many, TODAY).refused).toContain("Upload up to 500 at a time");
@@ -497,7 +497,7 @@ describe("who is listing", () => {
     expect(bad.ok ? "ok" : bad.error).toBe("regno");
   });
 
-  it("finds the ohworks city from where the place is, or from its name", () => {
+  it("finds the OOHWORKS city from where the place is, or from its name", () => {
     const city = (change: Partial<typeof good>) => {
       const r = checkStart({ ...good, ...change });
       return r.ok ? r.details.city : "refused";
@@ -572,7 +572,7 @@ describe("places", () => {
     process.env = keep;
   });
 
-  it("matches a place to an ohworks city only when it is in one", () => {
+  it("matches a place to an OOHWORKS city only when it is in one", () => {
     expect(launchCity({ label: "Noida", lat: 28.5355, lng: 77.391 })).toBe("delhi-ncr");
     expect(launchCity({ label: "Mysuru", lat: 12.2958, lng: 76.6394 })).toBeNull();
     expect(launchCity({ label: "Bombay" })).toBe("mumbai");

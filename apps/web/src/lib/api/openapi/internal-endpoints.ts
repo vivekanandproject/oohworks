@@ -732,12 +732,12 @@ export const ENDPOINTS: Endpoint[] = [
     answers: [
       {
         status: 200,
-        when: "Default (format is not csv). Sheets: 'Sites' (header row frozen with the first two columns, autofilter, money column formatted #,##,##0; text cells starting =, +, -, @, tab or CR are prefixed with ' so they never run as formulas) and 'About this sheet'. Content-Disposition: attachment; filename=\"ohworks-shortlist-{YYYY-MM-DD}.xlsx\" (India date). Also Cache-Control: no-store and X-Robots-Tag: noindex.",
+        when: "Default (format is not csv). Sheets: 'Sites' (header row frozen with the first two columns, autofilter, money column formatted #,##,##0; text cells starting =, +, -, @, tab or CR are prefixed with ' so they never run as formulas) and 'About this sheet'. Content-Disposition: attachment; filename=\"oohworks-shortlist-{YYYY-MM-DD}.xlsx\" (India date). Also Cache-Control: no-store and X-Robots-Tag: noindex.",
         file: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       },
       {
         status: 200,
-        when: 'format=csv. UTF-8 with a byte-order mark, CRLF line ends, every cell double-quoted, same formula-escaping. Content-Disposition: attachment; filename="ohworks-shortlist-{YYYY-MM-DD}.csv". Also Cache-Control: no-store and X-Robots-Tag: noindex.',
+        when: 'format=csv. UTF-8 with a byte-order mark, CRLF line ends, every cell double-quoted, same formula-escaping. Content-Disposition: attachment; filename="oohworks-shortlist-{YYYY-MM-DD}.csv". Also Cache-Control: no-store and X-Robots-Tag: noindex.',
         file: "text/csv",
       },
       {
@@ -1336,7 +1336,7 @@ export const ENDPOINTS: Endpoint[] = [
     tag: "Owners: company and sites",
     summary: "Send a media kit for the team to enter",
     description:
-      "Takes an owner's media kit file for the ohworks team to enter as draft sites, and emails the team. When ANTHROPIC_API_KEY is set, a PDF is stored with reading 'waiting', and the media-kits job has Claude read it into drafts (see /api/jobs/{job}/).\n\n- Works without JavaScript: a plain HTML form post answered with a 303 whose Location is a site-relative path (never a full URL).",
+      "Takes an owner's media kit file for the OOHWORKS team to enter as draft sites, and emails the team. When ANTHROPIC_API_KEY is set, a PDF is stored with reading 'waiting', and the media-kits job has Claude read it into drafts (see /api/jobs/{job}/).\n\n- Works without JavaScript: a plain HTML form post answered with a 303 whose Location is a site-relative path (never a full URL).",
     body: "multipart",
     fields: [
       {
@@ -1370,7 +1370,7 @@ export const ENDPOINTS: Endpoint[] = [
     answers: [
       {
         status: 303,
-        when: "Stored; a notice is emailed to the team (OPS_EMAIL, default owners@ohworks.com; a failed email is ignored).",
+        when: "Stored; a notice is emailed to the team (OPS_EMAIL, default owners@oohworks.co; a failed email is ignored).",
         location: "/owner/kit/?sent=1",
       },
       { status: 303, when: "File refused.", location: "/owner/kit/?error={missing|big|type}" },
@@ -2186,7 +2186,7 @@ export const ENDPOINTS: Endpoint[] = [
     tag: "Owners: company and sites",
     summary: "Withdraw a live site",
     description:
-      "Takes one of the owner's live sites off ohworks at once; it returns to a draft that can be sent for review again.\n\n- Works without JavaScript: a plain HTML form post answered with a 303 whose Location is a site-relative path (never a full URL).",
+      "Takes one of the owner's live sites off OOHWORKS at once; it returns to a draft that can be sent for review again.\n\n- Works without JavaScript: a plain HTML form post answered with a 303 whose Location is a site-relative path (never a full URL).",
     body: "form",
     fields: [
       {
@@ -2387,7 +2387,7 @@ export const ENDPOINTS: Endpoint[] = [
     tag: "Owners: company and sites",
     summary: "Send sites for review",
     description:
-      "Sends all of the owner's draft and returned ('needs changes') sites to the ohworks team for review, and emails the team and the owner.\n\n- Works without JavaScript: a plain HTML form post answered with a 303 whose Location is a site-relative path (never a full URL).\n- Team address is OPS_EMAIL (default owners@ohworks.com).",
+      "Sends all of the owner's draft and returned ('needs changes') sites to the OOHWORKS team for review, and emails the team and the owner.\n\n- Works without JavaScript: a plain HTML form post answered with a 303 whose Location is a site-relative path (never a full URL).\n- Team address is OPS_EMAIL (default owners@oohworks.co).",
     body: "form",
     cookies: [
       {
@@ -2457,7 +2457,7 @@ export const ENDPOINTS: Endpoint[] = [
     answers: [
       {
         status: 200,
-        when: 'The kit was read and has sites to finish. Content-Disposition: attachment; filename="ohworks-sites-from-{kit name}.xlsx"; Cache-Control: no-store; X-Robots-Tag: noindex.',
+        when: 'The kit was read and has sites to finish. Content-Disposition: attachment; filename="oohworks-sites-from-{kit name}.xlsx"; Cache-Control: no-store; X-Robots-Tag: noindex.',
         file: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       },
       {
@@ -2479,7 +2479,7 @@ export const ENDPOINTS: Endpoint[] = [
     answers: [
       {
         status: 200,
-        when: "Always (under the rate limit). Content-Disposition: attachment; filename=\"ohworks-sites-template.xlsx\"; Cache-Control: no-store; X-Robots-Tag: noindex. Sheets: 'Sites' (one column per field, needed columns navy with notes, an italic example row whose 'Your reference' is EXAMPLE, drop-downs for Format, Unit, Lighting, City and Price shown as on rows 2 to 502) and 'How to fill it in'.",
+        when: "Always (under the rate limit). Content-Disposition: attachment; filename=\"oohworks-sites-template.xlsx\"; Cache-Control: no-store; X-Robots-Tag: noindex. Sheets: 'Sites' (one column per field, needed columns navy with notes, an italic example row whose 'Your reference' is EXAMPLE, drop-downs for Format, Unit, Lighting, City and Price shown as on rows 2 to 502) and 'How to fill it in'.",
         file: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       },
       {

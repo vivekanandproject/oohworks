@@ -35,7 +35,7 @@ export async function GET(req: Request) {
   return new Response(data, {
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": `attachment; filename="ohworks-sites-from-${base || "media-kit"}.xlsx"`,
+      "Content-Disposition": `attachment; filename="oohworks-sites-from-${base || "media-kit"}.xlsx"`,
       "Cache-Control": "no-store",
       "X-Robots-Tag": "noindex",
     },

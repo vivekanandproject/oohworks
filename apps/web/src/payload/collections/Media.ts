@@ -43,7 +43,7 @@ export const Media: CollectionConfig = {
       required: true,
       defaultValue: "owned",
       options: [
-        { label: "ohworks owns it", value: "owned" },
+        { label: "OOHWORKS owns it", value: "owned" },
         { label: "Licensed", value: "licensed" },
         { label: "Creative Commons (attribution)", value: "cc-by" },
         { label: "Press or supplied", value: "press" },

@@ -110,7 +110,7 @@ export default async function SentPage({
 
           <p className="t-body text-ink mt-6">
             Contract, invoice and payment are between you and {many ? "each owner" : "the owner"}.
-            ohworks charges nothing.
+            OOHWORKS charges nothing.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             {mine ? (

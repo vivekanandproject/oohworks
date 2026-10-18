@@ -109,7 +109,7 @@ async function photonSearch(q: string, scope: Scope): Promise<Suggestion[]> {
   if (scope === "city")
     for (const layer of ["city", "locality", "district"]) url.searchParams.append("layer", layer);
   const data = (await getJson(url.toString(), {
-    headers: { "user-agent": "ohworks.com place search (development)" },
+    headers: { "user-agent": "oohworks.co place search (development)" },
   })) as { features?: PhotonFeature[] };
   const out: Suggestion[] = [];
   const seen = new Set<string>();
@@ -303,7 +303,7 @@ function km(a: { lat: number; lng: number }, b: { lat: number; lng: number }): n
 }
 
 /**
- * Which of the cities ohworks has hubs for a place belongs to, if any. A position within 60 km of
+ * Which of the cities OOHWORKS has hubs for a place belongs to, if any. A position within 60 km of
  * a city's centre counts, which takes in Gurugram and Noida for Delhi NCR. With no position, the
  * name is tried instead.
  */

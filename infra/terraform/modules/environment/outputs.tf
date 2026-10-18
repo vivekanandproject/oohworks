@@ -1,5 +1,5 @@
 output "service_url" {
-  description = "The service's own run.app address. In production, Cloudflare points ohworks.com here."
+  description = "The service's own run.app address. In production, Cloudflare points oohworks.co here."
   value       = google_cloud_run_v2_service.web.uri
 }
 

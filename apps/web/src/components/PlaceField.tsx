@@ -17,7 +17,7 @@ export interface PickedPlace {
   countryCode: string | null;
   lat: number | null;
   lng: number | null;
-  /** The ohworks city this place belongs to, if it is in one. */
+  /** The OOHWORKS city this place belongs to, if it is in one. */
   city: string | null;
 }
 

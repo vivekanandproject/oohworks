@@ -3,7 +3,7 @@ import { siteUrl } from "./hosting";
 
 export { siteUrl };
 
-export const SITE_NAME = "ohworks";
+export const SITE_NAME = "OOHWORKS";
 export const TAGLINE = "Every billboard, findable.";
 
 export function absolute(path: string): string {
@@ -41,7 +41,7 @@ export function organizationJsonLd() {
     slogan: TAGLINE,
     description:
       "The open map of out-of-home advertising. Verified, public pages for billboards, hoardings and screens, where the media owner is always the seller.",
-    contactPoint: [{ "@type": "ContactPoint", contactType: "press", email: "press@ohworks.com" }],
+    contactPoint: [{ "@type": "ContactPoint", contactType: "press", email: "press@oohworks.co" }],
   };
 }
 

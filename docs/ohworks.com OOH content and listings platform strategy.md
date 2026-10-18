@@ -1,10 +1,10 @@
-# ohworks.com: OOH content and listings platform strategy
+# oohworks.co: OOH content and listings platform strategy
 
 Oct 9, 2026&#32;
 
 ## Executive summary
 
-ohworks.com can own a lane no one holds today: a neutral, verified, Google-indexed page for every billboard and screen, paired with independent industry news, with every enquiry going straight to the media owner. OOH is a $54.2bn market that grew 15% in 2025, yet most of it is still found and booked offline.
+oohworks.co can own a lane no one holds today: a neutral, verified, Google-indexed page for every billboard and screen, paired with independent industry news, with every enquiry going straight to the media owner. OOH is a $54.2bn market that grew 15% in 2025, yet most of it is still found and booked offline.
 
 **The opportunity**
 
@@ -13,7 +13,7 @@ ohworks.com can own a lane no one holds today: a neutral, verified, Google-index
 - **Search is won by thin pages.** AdQuick, Blip and BillboardsIn stop at city level. The Media Ant's per-hoarding pages in India lack real photos, size, map, audience and owner name.
 - **No one combines news with live listings.** Trade titles carry no inventory, and marketplaces publish no journalism.
 
-**Recommended positioning:** "The open map of out-of-home, where the owner is always the seller." Buyers use it free. Owners list free, set their own price and keep their clients. ohworks never sells media, and says so in a published charter.
+**Recommended positioning:** "The open map of out-of-home, where the owner is always the seller." Buyers use it free. Owners list free, set their own price and keep their clients. OOHWORKS never sells media, and says so in a published charter.
 
 **The moves that matter most**
 
@@ -26,7 +26,7 @@ ohworks.com can own a lane no one holds today: a neutral, verified, Google-index
 
 ## Market context
 
-OOH is a $54.2bn market that grew 15% in 2025, yet only 8.4% of its digital inventory trades programmatically. The rest, and all static inventory, is still found and booked through phone calls, emails and personal networks. That offline discovery gap is the job ohworks.com is built to do.
+OOH is a $54.2bn market that grew 15% in 2025, yet only 8.4% of its digital inventory trades programmatically. The rest, and all static inventory, is still found and booked through phone calls, emails and personal networks. That offline discovery gap is the job oohworks.co is built to do.
 
 | Region | 2025 OOH spend (US$ bn) | DOOH share of OOH | Largest markets (US$ bn) |
 | --- | --- | --- | --- |
@@ -46,7 +46,7 @@ Source: [WOO Global OOH Expenditure Report 2026](https://www.worldooh.org/news/w
 
 ## The OOH content and blogging landscape
 
-No global OOH publication exists. Each region has one or two small specialist titles, and none of them shows live inventory or prices. Buyer searches such as "how much does a billboard cost" are won instead by marketplaces running thin, often stale template pages. ohworks can be the first platform to combine real trade journalism with live, priced listings.
+No global OOH publication exists. Each region has one or two small specialist titles, and none of them shows live inventory or prices. Buyer searches such as "how much does a billboard cost" are won instead by marketplaces running thin, often stale template pages. OOHWORKS can be the first platform to combine real trade journalism with live, priced listings.
 
 | Region | Main OOH titles today | How they make money |
 | --- | --- | --- |
@@ -73,7 +73,7 @@ Marketplaces win buyer queries with programmatic page sets, not publishers. AdQu
 
 Quality is weak across the board. AdQuick's Redwood City page has a template error in its meta text. The Media Ant's top Mumbai guide was last updated in 2019. Spam pages on hijacked domains rank for "billboard cost 2026". AdQuick has already added "summarise with ChatGPT or Claude" buttons, so the leaders are optimising for AI answers.
 
-### Gaps ohworks can own
+### Gaps OOHWORKS can own
 
 1. **Dated, sourced prices** by city and format, especially outside the US.
 2. **Emerging markets in local terms**: "hoarding" in India, "vía pública" and "espectacular" in Spanish, "mídia exterior" in Brazil.
@@ -88,7 +88,7 @@ The nearest models from other B2B markets are Houzz (inspiration content, a prof
 
 No platform anywhere combines owner-branded, public, indexable pages for every billboard with neutral enquiry routing and real editorial. The closest models are DOmedia/BillboardsIn in the US and The Media Ant in India. The biggest threat is not a rival but a pattern: India's best-known listings marketplaces drifted into being agencies.
 
-| Player | Region | What it is | How it makes money | Public page per billboard? | Threat to ohworks |
+| Player | Region | What it is | How it makes money | Public page per billboard? | Threat to OOHWORKS |
 | --- | --- | --- | --- | --- | --- |
 | [The Media Ant](https://www.themediaant.com/outdoor/hoarding-marathahalli-bengaluru-95480) | India | Multi-media marketplace, now calls itself a full-service agency | Free listing for owners; sells at its own discounted rate | Yes, with day rates, but generic images, no size, map, audience or owner name | High: holds 7 of 10 results for "billboard rates Bangalore" |
 | [DOmedia / BillboardsIn](https://www.domedia.com/sellers) | US, Canada; APAC supply via Moving Walls | RFP platform for agencies plus a self-serve site for local advertisers | Sellers pay 0%, 0.5% or a custom share of contracted media | No; about 387 city pages plus ZIP pages | High: same lead-routing model, claims 2,000+ sellers |
@@ -103,11 +103,11 @@ No platform anywhere combines owner-branded, public, indexable pages for every b
 
 Sources: company pages linked above, plus [Billboard Insider](https://billboardinsider.com/broadsign-announces-acquisition-of-place-exchange/), [YourStory](https://yourstory.com/2018/03/gohoardings-make-advertising-transparent) and [exchange4media](https://www.exchange4media.com/out-of-home-news/2025-the-year-that-rewired-indias-ooh-market-150589.html).
 
-### What this means for ohworks
+### What this means for OOHWORKS
 
 - **Per-billboard pages are an open lane.** AdQuick, Blip, BillboardsIn and Blindspot stop at city, ZIP or format level. Unit detail sits behind logins or crawler-blocked maps; Lamar's 360,000-display finder blocks search engines.
-- **Free listing is not a differentiator.** DOmedia's base tier is 0%, Blip charges no upfront fees and The Media Ant lists for free. ohworks must win on demand, page quality and owner tools.
-- **Agency drift is the main business risk.** The Media Ant (free listings in 2015) and GoHoardings (2016) now call themselves agencies; earlier entrants EatAds (2013) and MeraHoardings (2015) went quiet. ohworks needs non-agency revenue from launch.
+- **Free listing is not a differentiator.** DOmedia's base tier is 0%, Blip charges no upfront fees and The Media Ant lists for free. OOHWORKS must win on demand, page quality and owner tools.
+- **Agency drift is the main business risk.** The Media Ant (free listings in 2015) and GoHoardings (2016) now call themselves agencies; earlier entrants EatAds (2013) and MeraHoardings (2015) went quiet. OOHWORKS needs non-agency revenue from launch.
 - **Big owners are picking sides.** Outfront backs AdQuick, JCDecaux owns VIOOH and Displayce, and T-Mobile agreed to buy Vistar for $600M. Independents may prefer a neutral venue.
 - **Capital went to programmatic, not listings.** T-Mobile agreed to buy Vistar for $600M and Perion bought Hivestack for $100M; AdQuick raised about $15M in total. A directory is defensible only through owner workflow lock-in and real demand.
 - **Trust is weak.** AdQuick quotes 900, 1,700+ and 423 media owners on different pages. Blip scores 2.1 out of 5 on G2, with complaints about no proof that ads played and no board addresses ([G2](https://www.g2.com/products/blip-billboards/reviews)).
@@ -115,9 +115,9 @@ Sources: company pages linked above, plus [Billboard Insider](https://billboardi
 
 ## User behaviour
 
-Buying OOH is still slow, relationship-led and opaque on every side. Agencies send requests to dozens of vendors and wait about a week, small businesses look for a price and find a contact form, and independent owners leave 30–40% of their inventory unsold. ohworks wins if it makes the first step fast: finding comparable, trustworthy site data and reaching the right owner.
+Buying OOH is still slow, relationship-led and opaque on every side. Agencies send requests to dozens of vendors and wait about a week, small businesses look for a price and find a contact form, and independent owners leave 30–40% of their inventory unsold. OOHWORKS wins if it makes the first step fast: finding comparable, trustworthy site data and reaching the right owner.
 
-| Audience | How they act today | What frustrates them | What they need from ohworks |
+| Audience | How they act today | What frustrates them | What they need from OOHWORKS |
 | --- | --- | --- | --- |
 | Agencies and OOH specialists | Send RFPs to many vendors; proposals take about a week; keep a private list of independents | Slow replies, stale availability, inconsistent site data | Standard site data, fast multi-owner availability requests, exportable plans, no contact with their clients |
 | Digital and programmatic planners new to OOH | Buy DOOH through private deals on exchanges; money comes from other digital budgets | No digital-grade data, hard to compare with online channels | Audience figures with a named source, specs, a "programmatic via" flag, education content |
@@ -155,13 +155,13 @@ Buying OOH is still slow, relationship-led and opaque on every side. Agencies se
 
 Verification, not volume, is therefore the trust feature that matters: a checked owner, a permit reference, geotagged photos and a "last verified" date on every listing.
 
-## Positioning for ohworks.com
+## Positioning for oohworks.co
 
-Position ohworks as the open, verified map of the world's OOH inventory, where the media owner is always the seller. Owners list free, keep their price and their client, and receive enquiries directly. Agencies and brands use ohworks free to find, check and request sites. ohworks earns from owner tools and visibility, never from a media margin.
+Position OOHWORKS as the open, verified map of the world's OOH inventory, where the media owner is always the seller. Owners list free, keep their price and their client, and receive enquiries directly. Agencies and brands use OOHWORKS free to find, check and request sites. OOHWORKS earns from owner tools and visibility, never from a media margin.
 
 **Tagline options:** "Every billboard, findable." · "The open map of out-of-home." · "Where OOH works."
 
-### What ohworks promises, and never does
+### What OOHWORKS promises, and never does
 
 These five rules answer the fears owners and agencies raised in the research. Publish them on the site as a charter.
 
@@ -183,7 +183,7 @@ These five rules answer the fears owners and agencies raised in the research. Pu
 
 ### How this beats each rival
 
-- **The Media Ant:** the owner is the named seller, pages carry real photos, size, map and audience, and ohworks never discounts the owner's rate.
+- **The Media Ant:** the owner is the named seller, pages carry real photos, size, map and audience, and OOHWORKS never discounts the owner's rate.
 - **DOmedia / BillboardsIn:** public, indexable pages for every site, editorial that brings buyers, and coverage beyond North America.
 - **AdQuick:** neutral, not backed by one owner, and no campaign minimum.
 - **Moving Walls storefronts:** the same owner-friendly enquiry model, but aggregated, indexed by Google and paired with demand.
@@ -201,7 +201,7 @@ Run two content tracks on one platform and wire both into live listings. The tra
 | Pillar | Main reader | Formats | Example | Cadence |
 | --- | --- | --- | --- | --- |
 | News and analysis | Owners, agencies | News, contracts, people moves, regulation, weekly analysis | "What Bengaluru's draft hoarding auction rules mean for owners" | Daily news, one analysis a week |
-| ohworks data | Trade, press, buyers | Price index by city and format, market reports built from listing data | "India hoarding price index, Q1 2027" | Quarterly |
+| OOHWORKS data | Trade, press, buyers | Price index by city and format, market reports built from listing data | "India hoarding price index, Q1 2027" | Quarterly |
 | Buyer guides | Brands, small businesses, digital planners | City and format cost guides, "what is DOOH", format comparisons, how to measure a first campaign | "Billboard advertising cost in Bengaluru" | Evergreen, refreshed quarterly from live data |
 | Creative showcase | Everyone | Billboard of the week, 3D anamorphic roundups, case studies linked to the sites used | "10 best Gulf DOOH campaigns of 2026" | Weekly |
 | Owner academy | Media owners | Permits by city, site leases, pricing a board, converting to digital, joining programmatic exchanges | "How to get a hoarding licence in Hyderabad" | Two guides a month |
@@ -237,7 +237,7 @@ Run two content tracks on one platform and wire both into live listings. The tra
 - Fast server-rendered pages, a table of contents on long guides, reading time and dark mode.
 - Follow a city, format, owner or topic, and get alerts for new articles and new sites.
 - Interactive price charts and maps inside articles.
-- Every fact carries its source and date, which helps both readers and AI answer engines cite ohworks.
+- Every fact carries its source and date, which helps both readers and AI answer engines cite OOHWORKS.
 
 ### CMS and workflow
 
@@ -253,21 +253,21 @@ Use a headless CMS (Payload, Sanity or Strapi) with structured content types: Ar
 
 ## Product blueprint 2: the inventory marketplace
 
-Build the marketplace around one page per physical advertising face, owned by a verified media owner, with every enquiry routed straight to that owner. ohworks stays out of the money flow. It supplies the listing, the demand and the tools around the enquiry.
+Build the marketplace around one page per physical advertising face, owned by a verified media owner, with every enquiry routed straight to that owner. OOHWORKS stays out of the money flow. It supplies the listing, the demand and the tools around the enquiry.
 
 ### Media owner onboarding
 
 1. **Sign up and verify the company** with registration documents (GSTIN in India, a trade licence in the UAE) and a phone or WhatsApp code.
-2. **Import inventory** from an Excel template, bulk photo upload or API. Offer free assisted onboarding: the ohworks team turns an owner's PDF media kit or spreadsheet into listings. Inventory-loading effort is a documented reason owners abandon marketplaces.
+2. **Import inventory** from an Excel template, bulk photo upload or API. Offer free assisted onboarding: the OOHWORKS team turns an owner's PDF media kit or spreadsheet into listings. Inventory-loading effort is a documented reason owners abandon marketplaces.
 3. **Pin each face on a map** and check it against Street View. The system flags likely duplicates of faces already listed.
-4. **Add photos** of the face by day, by night and from the approach road. Photos taken in the ohworks app carry GPS and time stamps and earn a verified-photo badge.
+4. **Add photos** of the face by day, by night and from the approach road. Photos taken in the OOHWORKS app carry GPS and time stamps and earn a verified-photo badge.
 5. **Set commercial terms:** price display (exact, "from" or on request), minimum period, printing and mounting costs, and categories accepted.
 6. **Set availability** in a simple calendar, or sync it from the owner's system.
 7. **Go live.** Each listing gets a quality score. Listings below the indexing bar stay visible to signed-in buyers but hidden from Google until enriched.
 
 ### Verification badges
 
-| Badge | What ohworks checks |
+| Badge | What OOHWORKS checks |
 | --- | --- |
 | Verified owner | Company documents and contact details |
 | Verified location | Coordinates match Street View or a GPS-stamped site photo |
@@ -295,19 +295,19 @@ Align fields to industry standards from day one so listings can feed agency tool
 - **Search** by map or list, by place ("near Silk Board junction"), format, size, lighting, price band, dates, audience and programmatic availability. Add natural-language search: "20×10 hoardings on Outer Ring Road under ₹1 lakh a month in November".
 - **Listing page:** photos, static map, specs, audience with its source, price, availability, an owner card with badges and reply time, campaigns that ran on the site, and similar sites nearby.
 - **Plans:** save sites into a plan, share it by link, and export a standard site sheet as PDF, Excel or slides. Agencies can white-label exports.
-- **Enquiries:** one form for one site or a whole plan. ohworks splits a multi-owner plan into one request per owner, with dates, budget, brand category and creative status.
+- **Enquiries:** one form for one site or a whole plan. OOHWORKS splits a multi-owner plan into one request per owner, with dates, budget, brand category and creative status.
 - **Agency workspace:** team seats, private client folders, enquiry history, and owner replies side by side.
 
 &#91;embedded content: enquiry flow · 3 parties, 6 steps\]
 
-ohworks's only job in the flow is to check the buyer and route the request. Contract, invoice and payment stay between buyer and owner, and the owner's calendar updates when the site is marked booked.
+OOHWORKS's only job in the flow is to check the buyer and route the request. Contract, invoice and payment stay between buyer and owner, and the owner's calendar updates when the site is marked booked.
 
 ### Media owner dashboard
 
 - **Leads inbox** across web, email and WhatsApp, with reply templates and quotes. WhatsApp matters: Indian, Gulf and African owners already sell this way.
 - **Analytics per site:** page views, search appearances, shortlists, enquiries and replies.
 - **Availability and occupancy** calendar.
-- **Storefront page** at `ohworks.com/owners/{name}`, a free mini-site for owners with no web presence.
+- **Storefront page** at `oohworks.co/owners/{name}`, a free mini-site for owners with no web presence.
 - **Proof of posting:** upload geotagged photos that the buyer can see.
 - **Team seats** for sales staff.
 
@@ -321,9 +321,9 @@ ohworks's only job in the flow is to check the buyer and route the request. Cont
 
 ### Bridges to the rest of the industry
 
-- **Programmatic:** digital listings show "available programmatically via" a named exchange (Lemma, Moving Walls, Place Exchange, VIOOH), so ohworks complements rather than competes.
+- **Programmatic:** digital listings show "available programmatically via" a named exchange (Lemma, Moving Walls, Place Exchange, VIOOH), so OOHWORKS complements rather than competes.
 - **Owner systems:** import and sync from Broadsign, Billboard Planet and similar tools.
-- **AI assistants:** a public listings API, and later an MCP server, so ChatGPT and Claude can quote ohworks inventory. OneScreen already exposes about 1M US listings this way.
+- **AI assistants:** a public listings API, and later an MCP server, so ChatGPT and Claude can quote OOHWORKS inventory. OneScreen already exposes about 1M US listings this way.
 
 ## Location SEO architecture
 
@@ -380,7 +380,7 @@ A unit page goes into the sitemap only when it has all of these. Below the bar i
 - **No billboard type exists in schema.org.** Use `Product` or `Place` with an `Offer` marked as a lease, a price per week or month, coordinates, and `additionalProperty` for size, lighting and specs.
 - **Mark up a price only when the page shows one.** Google's docs don't say whether rented ad space qualifies for product rich results.
 - **FAQ rich results ended on 7 May 2026.** Keep FAQs as visible text only.
-- **No Google Business Profile per billboard.** Billboards have no staff or opening hours, and rental properties are ineligible. Owners' offices can have profiles that link to their ohworks storefront.
+- **No Google Business Profile per billboard.** Billboards have no staff or opening hours, and rental properties are ineligible. Owners' offices can have profiles that link to their OOHWORKS storefront.
 
 ### Rendering and speed
 
@@ -393,7 +393,7 @@ A unit page goes into the sitemap only when it has all of these. Below the bar i
 
 - Google's AI Overviews and AI Mode need nothing beyond normal indexing, and Google Search does not use `llms.txt` ([Google](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)).
 - Allow ChatGPT's and Perplexity's search crawlers (OAI-SearchBot, PerplexityBot). Decide separately whether to allow AI training crawlers.
-- Open every hub with a dated fact from ohworks data, such as "Bengaluru has N listed hoardings; median 20×10 ft rate ₹X a month (ohworks, Oct 2026)". Original figures like this are what answer engines quote.
+- Open every hub with a dated fact from OOHWORKS data, such as "Bengaluru has N listed hoardings; median 20×10 ft rate ₹X a month (OOHWORKS, Oct 2026)". Original figures like this are what answer engines quote.
 
 ## Business model and go-to-market
 
@@ -414,7 +414,7 @@ Keep buyers free forever and charge media owners for visibility and tools, never
 
 Set Pro and Network prices after a pilot with 20–30 owners. Anchor them to the value of one extra booking a year, not to rival SaaS price lists.
 
-**What to avoid:** a commission on bookings. It puts ohworks in the money flow, reawakens agency fears and needs payment handling. Revisit only as an optional, flat-fee payment-protection service if owners ask for it; slow payment (90–120 days, up to a year in India) is a real pain.
+**What to avoid:** a commission on bookings. It puts OOHWORKS in the money flow, reawakens agency fears and needs payment handling. Revisit only as an optional, flat-fee payment-protection service if owners ask for it; slow payment (90–120 days, up to a year in India) is a real pain.
 
 ### Winning supply
 
@@ -431,7 +431,7 @@ Set Pro and Network prices after a pilot with 20–30 owners. Anchor them to the
 - **Search ads** on "hoarding advertising cost {city}" queries to seed early enquiries while organic rankings build.
 - **A free agency workspace,** demonstrated to OOH specialist agencies with the neutrality charter up front.
 - **The newsletter** from day one; a quarterly price index from the first quarter with enough priced listings.
-- **Owner-driven traffic:** every owner storefront link an owner shares brings buyers to ohworks.
+- **Owner-driven traffic:** every owner storefront link an owner shares brings buyers to OOHWORKS.
 
 ### Market sequence
 

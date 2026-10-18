@@ -41,7 +41,7 @@ export const CHARTER = [
   },
   {
     title: "The owner sets the price.",
-    body: "An exact rate, a “from” price or price on request. ohworks never discounts an owner’s rate.",
+    body: "An exact rate, a “from” price or price on request. OOHWORKS never discounts an owner’s rate.",
   },
   {
     title: "The owner owns the client.",

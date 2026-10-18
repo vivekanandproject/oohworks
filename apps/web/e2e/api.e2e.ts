@@ -155,7 +155,7 @@ test.describe("API documentation", () => {
     });
     const res = await page.goto("/api/docs/");
     expect(res?.headers()["x-robots-tag"]).toBe("noindex");
-    await expect(page.locator(".swagger-ui .info .title")).toContainText("ohworks public API");
+    await expect(page.locator(".swagger-ui .info .title")).toContainText("OOHWORKS public API");
     await expect(page.locator(".opblock-summary-path").first()).toBeVisible();
     expect(await page.locator(".opblock-summary-path").count()).toBe(6);
 

@@ -27,7 +27,7 @@ const BUYER = `wf-buyer-${stamp}@example.com`;
 const ROAD = `Road No. ${String(stamp).slice(-4)}`;
 const NEW_ROAD = `${ROAD} Extension`;
 const PIN = { lat: 17.4152, lng: 78.4411 };
-const TEAM = "owners@ohworks.com";
+const TEAM = "owners@oohworks.co";
 const PASSWORD = "e2e three plain words";
 
 const day = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);

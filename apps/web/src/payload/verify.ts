@@ -2,7 +2,7 @@
  * Week-one exit check, run against the test database (`pnpm verify:cms`, after `pnpm test:db`):
  * an editor drafts a news piece with an unchecked Fact, cannot publish, ticks the Fact, publishes;
  * a writer can draft but cannot publish. Then the team: what a super admin alone may do, suspension,
- * given passwords, and that ohworks always keeps a super admin. Cleans up after itself.
+ * given passwords, and that OOHWORKS always keeps a super admin. Cleans up after itself.
  */
 import { createLocalReq, getPayload, type Payload, type PayloadRequest } from "payload";
 import type { Article, User } from "../payload-types";

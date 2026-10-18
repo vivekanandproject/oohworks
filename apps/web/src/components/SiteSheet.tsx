@@ -362,8 +362,8 @@ export function SiteSheet() {
           </span>
         </div>
         <figcaption className="text-ink-muted t-small mt-3" data-fade style={d(1160)}>
-          Every site on ohworks is recorded like this: measured, checked and dated. Sample data, not
-          a live listing.
+          Every site on OOHWORKS is recorded like this: measured, checked and dated. Sample data,
+          not a live listing.
         </figcaption>
       </figure>
     </Reveal>

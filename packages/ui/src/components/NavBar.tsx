@@ -28,7 +28,7 @@ export function NavBar({ active, listHref = "/list-your-sites/" }: NavBarProps) 
       <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center gap-3 px-4 sm:gap-6 lg:px-10">
         <a
           href="/"
-          aria-label="ohworks home"
+          aria-label="OOHWORKS home"
           className="inline-flex min-h-11 shrink-0 items-center rounded-sm"
         >
           <Wordmark size={28} />

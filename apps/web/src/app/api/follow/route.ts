@@ -95,7 +95,7 @@ export async function POST(req: Request) {
       to: email,
       subject: `Confirm: email me new ${words}`,
       text: [
-        `Someone, we hope you, asked ohworks to email this address when new ${words} are listed.`,
+        `Someone, we hope you, asked OOHWORKS to email this address when new ${words} are listed.`,
         "",
         `Confirm with this link: ${emailLink("confirm-follow", follow.id)}`,
         "",

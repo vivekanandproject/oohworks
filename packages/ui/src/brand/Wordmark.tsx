@@ -18,14 +18,15 @@ export function Wordmark({ onDark = false, size = 32, className }: WordmarkProps
       <span
         className="font-display leading-none max-[379px]:sr-only"
         style={{
-          fontSize: Math.round(size * 0.78),
+          // The name is in capitals, so on a narrow phone it gives up a little size before the bar overflows.
+          fontSize: `min(${Math.round(size * 0.78)}px, 4.8vw)`,
           fontWeight: 800,
           fontStretch: "106%",
           fontVariationSettings: '"wdth" 106',
           letterSpacing: "-0.03em",
         }}
       >
-        ohworks
+        OOHWORKS
       </span>
     </span>
   );

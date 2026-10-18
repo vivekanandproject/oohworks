@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Sign in",
   description:
-    "Media owners sign in to ohworks with their work email and password. Buyers need no account.",
+    "Media owners sign in to OOHWORKS with their work email and password. Buyers need no account.",
   robots: { index: false, follow: true },
 };
 

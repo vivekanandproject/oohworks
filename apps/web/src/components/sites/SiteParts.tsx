@@ -302,7 +302,7 @@ export function PriceBlock({
         {price.shown ? "Send enquiry" : "Ask for a quote"}
       </a>
       <p className="t-small text-ink-muted mt-4">
-        {owner ? `Goes straight to ${owner.name}. ` : ""}ohworks never sells media or takes a media
+        {owner ? `Goes straight to ${owner.name}. ` : ""}OOHWORKS never sells media or takes a media
         margin. Owners set prices and keep their clients.
       </p>
     </section>
@@ -442,7 +442,7 @@ export function OwnerCard({ owner, siteCount }: { owner: Owner; siteCount: numbe
         <div className="min-w-0">
           <h2 className="text-[16px] leading-[22px] font-semibold">{owner.name}</h2>
           <p className="t-small text-ink-muted">
-            {[city, `${siteCount} ${siteCount === 1 ? "site" : "sites"} on ohworks`]
+            {[city, `${siteCount} ${siteCount === 1 ? "site" : "sites"} on OOHWORKS`]
               .filter(Boolean)
               .join(" · ")}
           </p>
@@ -496,7 +496,7 @@ export function EnquirySteps({ ownerName }: { ownerName: string }) {
     { t: "They reply to you", d: "The owner answers by email, to the address you confirm." },
     {
       t: "You deal directly",
-      d: "Contract, invoice and payment stay between you and them. ohworks charges nothing.",
+      d: "Contract, invoice and payment stay between you and them. OOHWORKS charges nothing.",
     },
   ];
   return (

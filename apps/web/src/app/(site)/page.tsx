@@ -12,7 +12,6 @@ import {
 } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { SiteSheet } from "@/components/SiteSheet";
-import { ReferenceSites } from "@/components/ReferenceSites";
 import { PieceCard } from "@/components/editorial/PieceBits";
 import { latestForHome } from "@/lib/editorial/queries";
 import { JsonLd, SITE_NAME, alternates, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
@@ -111,8 +110,6 @@ export default async function HomePage() {
           </div>
         </Container>
       </section>
-
-      <ReferenceSites />
 
       {/* How it works, with the site sheet as the illustration */}
       <section className="border-hairline border-b" data-section="how-it-works">
@@ -286,8 +283,12 @@ export default async function HomePage() {
       <section className="bg-paper-sunken" data-section="neutrality">
         <Container className="py-12 lg:py-16">
           <Reveal>
-            <p className="t-label text-ink-muted">Our charter, in one line</p>
-            <blockquote className="t-display-md mt-4 max-w-[30ch]">{NEUTRALITY_LINE}</blockquote>
+            <div className="text-center">
+              <p className="t-label text-ink-muted">Our charter, in one line</p>
+              <blockquote className="t-display-md mx-auto mt-4 max-w-[30ch]">
+                {NEUTRALITY_LINE}
+              </blockquote>
+            </div>
           </Reveal>
         </Container>
       </section>

@@ -1,4 +1,4 @@
-# ohworks editorial platform: news, guides and data
+# OOHWORKS editorial platform: news, guides and data
 
 Date: 9 Oct 2026. Status: plan, awaiting go. Builds on the strategy report (Product blueprint 1), `ohworks-architecture.md` (Payload, SEO rules), the design system (ArticlePage, ArticleCard, voice) and the landing page already shipped.
 
@@ -6,9 +6,9 @@ The editorial platform is the business's primary goal now, so it moves ahead of 
 
 ## 1. What "one of the best" means here, concretely
 
-Most OOH trade titles are press-release feeds on slow, ad-cluttered pages with unsourced numbers. The bar to clear is not them; it is the best specialist publishers in any B2B niche (Stratechery, The Information, Digiday at its best, Sifted). Translated to ohworks, ten things make the difference, and each has a mechanism below:
+Most OOH trade titles are press-release feeds on slow, ad-cluttered pages with unsourced numbers. The bar to clear is not them; it is the best specialist publishers in any B2B niche (Stratechery, The Information, Digiday at its best, Sifted). Translated to OOHWORKS, ten things make the difference, and each has a mechanism below:
 
-1. **Every number is sourced and dated, by construction.** A figure cannot be published without a source record. Readers, the trade press and AI answer engines can quote ohworks safely.
+1. **Every number is sourced and dated, by construction.** A figure cannot be published without a source record. Readers, the trade press and AI answer engines can quote OOHWORKS safely.
 2. **Original data nobody else has.** A quarterly price index and market reports computed from listings, published with method notes. This is what gets re-reported.
 3. **Articles are wired to the real world.** A guide on Bengaluru costs embeds the live Bengaluru sites. A case study links to the faces the campaign ran on. A news piece about a regulation links to the locality hub it affects.
 4. **Faster than any competitor.** Lighthouse 100, under 0.6 s to first text, zero layout shift, on a 680 px measure that reads like print.
@@ -47,7 +47,7 @@ Rules carried over from the SEO architecture: every article is indexed; topic hu
 | `people` | name, slug, role, bio, credentials[], photo, links, verified (bool), email | Authors and verified contributors; emits Person JSON-LD |
 | `companies` | name, slug, type (owner, agency, brand, vendor, authority), logo, links | Entities articles mention; later the same company can own listings |
 | `tags` | name, slug, kind (place, format, company, theme), description | One taxonomy shared with the marketplace |
-| `sources` | title, publisher, url, publishedOn, retrievedOn, type (report, filing, interview, ohworks data), notes | The citation registry; a Fact block must point at one |
+| `sources` | title, publisher, url, publishedOn, retrievedOn, type (report, filing, interview, OOHWORKS data), notes | The citation registry; a Fact block must point at one |
 | `issues` | kind (daily, weekly), subject, blocks[], sentAt, stats | Newsletter issues composed from articles |
 | `corrections` | article, note, correctedAt | Shown on the article and on a public corrections page |
 | `media` | file, alt, credit, licence, takenAt, place | Images on R2 through Cloudflare Images; alt and credit required |
@@ -60,7 +60,7 @@ Workflow states: draft → in review → fact-checked → scheduled → publishe
 
 These blocks are what make the content different from a page of paragraphs:
 
-- **Fact.** A number, its unit, a source record and a date. Renders inline as "₹ 78,000 a month, ohworks data, Oct 2026" with the source in a hover and in the sources list. Cannot be saved without a source.
+- **Fact.** A number, its unit, a source record and a date. Renders inline as "₹ 78,000 a month, OOHWORKS data, Oct 2026" with the source in a hover and in the sources list. Cannot be saved without a source.
 - **Listing strip.** "Sites in this area": a face ID list or an area plus format query. Renders ListingCards from live data; renders nothing if empty, never placeholders.
 - **Price chart.** A series from the price index by city and format. Rendered server-side as SVG with the chart tokens; interactive on hover without a chart library.
 - **Map.** A static map of the places mentioned, interactive on tap.
@@ -79,7 +79,7 @@ These blocks are what make the content different from a page of paragraphs:
 
 **Author page.** Person header with photo, role and credentials, a short bio, and their articles. Verified contributors show the Verified badge with what was checked.
 
-**Topic page.** The tag's description as a dated opening fact where data exists ("Bengaluru has 42 listed hoardings, ohworks, Oct 2026"), then articles, then, when the marketplace exists, the hub link.
+**Topic page.** The tag's description as a dated opening fact where data exists ("Bengaluru has 42 listed hoardings, OOHWORKS, Oct 2026"), then articles, then, when the marketplace exists, the hub link.
 
 **Newsletter page.** What you get, sample issues, sign-up with double opt-in, preference centre for daily and weekly, and the archive.
 
@@ -89,9 +89,9 @@ These blocks are what make the content different from a page of paragraphs:
 
 - **Structured data.** `NewsArticle` for news, `Article` for the rest, `Person` for authors, `Organization` as publisher with logo, `BreadcrumbList`, and `ImageObject` with credit. Dates are `datePublished` and `dateModified`, kept honest: `dateModified` only moves on a real content change.
 - **Sitemaps.** `sitemap-articles.xml` (all), `sitemap-news.xml` (Google News format, articles from the last 48 hours), both in the sitemap index. IndexNow on every publish and update.
-- **Feeds.** RSS and JSON Feed per pillar and site-wide. Feeds are how aggregators, Feedly readers and some AI systems pick ohworks up.
+- **Feeds.** RSS and JSON Feed per pillar and site-wide. Feeds are how aggregators, Feedly readers and some AI systems pick OOHWORKS up.
 - **Social cards.** Open Graph and Twitter cards with a generated 1200×630 image per article: title in Archivo on paper, the mark, the pillar and the date. Generated at publish and stored on R2.
-- **Canonical and syndication.** Self-canonical always. If a piece is syndicated elsewhere, the partner carries the canonical back to ohworks.
+- **Canonical and syndication.** Self-canonical always. If a piece is syndicated elsewhere, the partner carries the canonical back to OOHWORKS.
 - **Top Stories readiness.** Clear bylines, dates, an About page, a corrections page, a contact page, and a masthead. These are the publisher signals Google looks for.
 - **AI answer engines.** The first paragraph of every analysis and guide states the key fact with its date. Feeds and the sources section make the piece easy to quote and attribute.
 - **Internal links.** Every article links to at least one topic page and, where one exists, one hub or storefront. Guides link to the glossary. The glossary links back.
@@ -143,7 +143,7 @@ Marketplace work (M1 data layer onwards) starts in parallel from week 3, so the 
 
 1. Pillar names: News, Analysis, Guides, Owner academy, Data, Showcase. Any to rename or drop?
 2. Comments: none at launch (recommended) or a moderated thread per article?
-3. Newsletter sender name and domain, for example "ohworks briefing" from news.ohworks.com.
+3. Newsletter sender name and domain, for example "OOHWORKS briefing" from news.oohworks.co.
 4. The first editor: in-house or a contracted trade journalist for India.
 5. Whether the price index launches with partial data labelled as such, or waits for a full quarter.
 

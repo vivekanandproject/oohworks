@@ -18,7 +18,7 @@ export async function GET() {
     <loc>${xml(absolute(p.url))}</loc>
     <news:news>
       <news:publication>
-        <news:name>ohworks</news:name>
+        <news:name>OOHWORKS</news:name>
         <news:language>en</news:language>
       </news:publication>
       <news:publication_date>${xml(p.publishedAt)}</news:publication_date>

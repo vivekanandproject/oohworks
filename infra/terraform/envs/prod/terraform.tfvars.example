@@ -1,6 +1,6 @@
 # Copy to terraform.tfvars (ignored by git) and fill in.
-registry_project = "ohworks-shared"
-project_id      = "ohworks-prod"
+registry_project = "oohworks-shared"
+project_id      = "oohworks-prod"
 staff           = [] # production is public, behind Cloudflare
 billing_account = "000000-000000-000000"
 # Add each name only after `gcloud secrets versions add NAME` has given it a value.

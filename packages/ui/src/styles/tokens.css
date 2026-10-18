@@ -1,6 +1,6 @@
-/* ohworks design tokens (Day theme, the only theme). Source: design system tokens.json. */
+/* OOHWORKS design tokens (Day theme, the only theme). Source: design system tokens.json. */
 @theme {
-  /* Clear Tailwind's palette so only ohworks colours exist as utilities. */
+  /* Clear Tailwind's palette so only OOHWORKS colours exist as utilities. */
   --color-*: initial;
   --color-paper: #f6f5f2;
   --color-paper-raised: #ffffff;

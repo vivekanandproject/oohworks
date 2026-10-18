@@ -40,7 +40,7 @@ async function otherSuperAdmins(req: PayloadRequest, id: number | string): Promi
 }
 
 const LAST_SUPER_ADMIN =
-  "ohworks must always have an active super admin. Make someone else a super admin first.";
+  "OOHWORKS must always have an active super admin. Make someone else a super admin first.";
 
 export const guardTeamChange: CollectionBeforeChangeHook = async ({
   data,

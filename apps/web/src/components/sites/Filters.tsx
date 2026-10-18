@@ -591,7 +591,7 @@ export function FilterPanel({
               <DatesForm state={state} id="panel" />
             </div>
           </Group>
-          <Group title="Checked by ohworks">
+          <Group title="Checked by OOHWORKS">
             {facets.trust.map((t) => (
               <Opt
                 key={t.slug}

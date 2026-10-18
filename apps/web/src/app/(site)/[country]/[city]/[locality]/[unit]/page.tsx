@@ -449,7 +449,7 @@ async function Gone({ site, now }: { site: Site; now: number }) {
         <div className="mx-auto max-w-[560px] text-center" data-section="gone">
           <h1 className="t-display-md">This site is no longer listed</h1>
           <p className="text-ink-muted t-body mt-3">
-            {site.title}, {placeLine(site)}, has been taken off ohworks. Its owner may no longer
+            {site.title}, {placeLine(site)}, has been taken off OOHWORKS. Its owner may no longer
             sell it, or it was not as described. The sites below are nearby.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">

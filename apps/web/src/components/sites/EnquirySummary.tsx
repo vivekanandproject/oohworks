@@ -49,7 +49,7 @@ export function EnquirySummary({
         </p>
       ) : null}
       <p className="t-small border-hairline text-ink-muted mt-4 border-t pt-4">
-        {owner ? `Goes straight to ${owner.name}. ` : ""}ohworks never sells media or takes a media
+        {owner ? `Goes straight to ${owner.name}. ` : ""}OOHWORKS never sells media or takes a media
         margin. Owners set prices and keep their clients.
       </p>
     </aside>

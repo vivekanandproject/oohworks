@@ -1,4 +1,4 @@
-# ohworks design consistency: plan
+# OOHWORKS design consistency: plan
 
 Date: 18 Oct 2026. Status: Phase A is done and tested (section 7); Phases B to D are not started. Measures the public site against `ohworks-design-system.md` and the live system (brand book and `tokens.json`), by code audit of `apps/web/src` and `packages/ui/src` and by screenshots of eleven pages at 390px and 1280px.
 

@@ -30,7 +30,7 @@ export function GET(): Response {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
-    <title>ohworks API</title>
+    <title>OOHWORKS API</title>
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/vendor/swagger-ui/swagger-ui.css" />
     <style>

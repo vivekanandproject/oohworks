@@ -31,7 +31,7 @@ export const Owners: CollectionConfig = {
       options: CITY_SELECT,
       admin: {
         description:
-          "The ohworks city the company is in, when it is in one. Set from the place below.",
+          "The OOHWORKS city the company is in, when it is in one. Set from the place below.",
       },
     },
     {

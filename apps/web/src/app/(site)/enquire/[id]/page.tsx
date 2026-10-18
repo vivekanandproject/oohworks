@@ -76,8 +76,8 @@ export default async function EnquirePage({
               {action === "Send enquiry" ? "Send an enquiry" : "Ask for a quote"}
             </h1>
             <p className="t-body text-ink-muted mt-2">
-              It goes straight to {owner.name}, who replies to you by email. ohworks charges nothing
-              and never sits in between.
+              It goes straight to {owner.name}, who replies to you by email. OOHWORKS charges
+              nothing and never sits in between.
             </p>
 
             {error ? (

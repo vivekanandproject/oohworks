@@ -1,5 +1,5 @@
 /*
- * The admin in ohworks colours (docs/ohworks-design-system.md), Day theme only: payload.config.ts sets
+ * The admin in OOHWORKS colours (docs/ohworks-design-system.md), Day theme only: payload.config.ts sets
  * `theme: "light"`, so these values never meet Payload's dark ones.
  *
  * Payload draws everything from one grey ramp, --theme-elevation-0 (page) to -1000 (darkest). Here the

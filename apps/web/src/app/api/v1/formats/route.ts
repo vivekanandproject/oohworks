@@ -5,7 +5,7 @@ import { FORMATS } from "@/lib/sites/taxonomy";
 
 export const dynamic = "force-dynamic";
 
-/** The kinds of advertising face ohworks lists, with how many published sites each has. */
+/** The kinds of advertising face OOHWORKS lists, with how many published sites each has. */
 export async function GET(): Promise<Response> {
   const { formats } = await catalogueCounts();
   return apiJson(

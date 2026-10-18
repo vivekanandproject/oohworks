@@ -13,7 +13,7 @@ variable "project_id" {
 }
 
 variable "registry_project" {
-  description = "The shared project, such as ohworks-shared."
+  description = "The shared project, such as oohworks-shared."
   type        = string
 }
 
@@ -49,7 +49,7 @@ module "ohworks" {
   project_id                = var.project_id
   registry_project          = var.registry_project
   name                      = "production"
-  site_url                  = "https://ohworks.com"
+  site_url                  = "https://oohworks.co"
   public                    = true
   staff                     = var.staff
   db_tier                   = "db-custom-2-8192"

@@ -63,7 +63,7 @@ export default async function ReplyPage({
             <a href={`mailto:${request.enquiry.email}`} className="oh-link">
               {request.enquiry.email}
             </a>
-            . You set the price and keep the client; ohworks never sits in between.
+            . You set the price and keep the client; OOHWORKS never sits in between.
           </p>
 
           {sent && !error ? (

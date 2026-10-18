@@ -162,7 +162,7 @@ export function QuickBody({ found, now, lists }: { found: SitePage; now: number;
         {price.shown ? "Send enquiry" : "Ask for a quote"}
       </a>
       <p className="t-small text-ink-muted">
-        {owner ? `Goes straight to ${owner.name}. ` : ""}ohworks never sells media or takes a media
+        {owner ? `Goes straight to ${owner.name}. ` : ""}OOHWORKS never sells media or takes a media
         margin.
       </p>
     </>

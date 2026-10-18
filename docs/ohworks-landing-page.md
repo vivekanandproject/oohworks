@@ -1,4 +1,4 @@
-# ohworks.com landing page: plan, style and SEO contract
+# oohworks.co landing page: plan, style and SEO contract
 
 Date: 9 Oct 2026. Status: built and verified on 9 Oct 2026 (32 Playwright checks, Lighthouse budgets in CI). Builds on `ohworks-architecture.md` (rendering and SEO rules), the strategy report (location SEO architecture) and the design system (`ohworks-design-system.md`). SEO shaped every decision below; where SEO and visual preference conflicted, SEO won.
 
@@ -7,7 +7,7 @@ Date: 9 Oct 2026. Status: built and verified on 9 Oct 2026 (32 Playwright checks
 The homepage is the most-linked page on the domain and the page Google crawls first. Its three SEO jobs:
 
 1. **Distribute authority.** The strategy names "homepage 'new sites' modules" as an internal-link mechanism. Every indexable city hub, guide and owner storefront must be reachable from the homepage within one click, and new unit pages within two.
-2. **Earn the brand and category queries.** Title and opening copy target "ohworks", "billboard advertising India", "hoarding advertising" and "OOH advertising sites". The hub and guide pages handle the long tail.
+2. **Earn the brand and category queries.** Title and opening copy target "OOHWORKS", "billboard advertising India", "hoarding advertising" and "OOH advertising sites". The hub and guide pages handle the long tail.
 3. **Be quotable by answer engines.** The first paragraph is a dated, sourced sentence that ChatGPT, Perplexity and Google AI Mode can lift verbatim.
 
 What the homepage must never do: link to a hub that returns 404 (wastes crawl budget and signals broken internals), show a number without a source and date, shift layout after load, or be thin.
@@ -19,7 +19,7 @@ What the homepage must never do: link to a hub that returns 404 (wastes crawl bu
 | 1 | Edition strip: "Global edition · India edition" links, always rendered, fixed height | Replaces IP redirects; zero CLS because it is static and always present |
 | 2 | Nav bar: wordmark, Find sites, Guides, News, For owners, Sign in, List your sites | Site-wide links to the four crawl entry points |
 | 3 | Hero: H1, one-sentence standfirst, search box, dated sourc ed fact | H1 is the LCP element (text, not image); the fact is the quotable sentence |
-| 4 | How ohworks works: Find, Enquire, Hear back | Substantive copy; answers "how does ohworks work" |
+| 4 | How OOHWORKS works: Find, Enquire, Hear back | Substantive copy; answers "how does OOHWORKS work" |
 | 5 | The charter: five rules | Unique content no competitor has; strong E-E-A-T signal |
 | 6 | New sites: up to 8 ListingCards from the newest indexable faces | The "new sites module" the strategy names; links straight to unit pages. Hidden until the first indexable face exists |
 | 7 | Launch cities: Bengaluru, Mumbai, Delhi NCR, Hyderabad, Pune, Chennai | Links to `/in/{city}/` only when the hub is above threshold; otherwise a non-link card with "Opens with the first owners" and a link to owner sign-up |
@@ -38,15 +38,15 @@ Checked by Playwright and Lighthouse CI on every PR.
 **Document**
 
 - Exactly one `<h1>`: "Every billboard, findable." Section titles are `<h2>`; no skipped levels.
-- `<title>`: "ohworks: every billboard, findable. The open map of out-of-home advertising" (under 70 characters).
-- Meta description, under 160 characters: "Search billboards, hoardings and digital screens, see the verified owner and ask in one step. Owners list free and always sell direct. ohworks never takes a media margin."
-- Self-canonical `https://ohworks.com/`. `hreflang`: `x-default` and `en` to `/`, `en-IN` to `/in/` once the India home exists. Generated from editions that actually exist, never hard-coded.
+- `<title>`: "OOHWORKS: every billboard, findable. The open map of out-of-home advertising" (under 70 characters).
+- Meta description, under 160 characters: "Search billboards, hoardings and digital screens, see the verified owner and ask in one step. Owners list free and always sell direct. OOHWORKS never takes a media margin."
+- Self-canonical `https://oohworks.co/`. `hreflang`: `x-default` and `en` to `/`, `en-IN` to `/in/` once the India home exists. Generated from editions that actually exist, never hard-coded.
 - `robots` meta: index, follow. The search results route is `noindex` and `/search/` is disallowed in robots.txt alongside the existing `/*?*` rule.
 - Language attribute `en` on `<html>`.
 
 **Structured data (JSON-LD, one script)**
 
-- `Organization`: name ohworks, url, logo (the mark as PNG at 512 px), `sameAs` for social profiles once they exist, `contactPoint` for press.
+- `Organization`: name OOHWORKS, url, logo (the mark as PNG at 512 px), `sameAs` for social profiles once they exist, `contactPoint` for press.
 - `WebSite` with `potentialAction: SearchAction` targeting `/search/?q={search_term_string}` so Google can show a sitelinks search box.
 - No `Product`, `Offer` or `FAQPage` on the homepage. FAQ rich results ended 7 May 2026; any FAQ is visible text only.
 
@@ -66,7 +66,7 @@ Checked by Playwright and Lighthouse CI on every PR.
 
 **Content**
 
-- The hero fact at launch: "Global OOH spend was $54.2 bn in 2025, up 15%. Source: WOO Global OOH Expenditure Report 2026." It switches to an ohworks figure the moment we have one: "N verified sites across 6 Indian cities (ohworks, Oct 2026)."
+- The hero fact at launch: "Global OOH spend was $54.2 bn in 2025, up 15%. Source: WOO Global OOH Expenditure Report 2026." It switches to an OOHWORKS figure the moment we have one: "N verified sites across 6 Indian cities (OOHWORKS, Oct 2026)."
 - Every number on the page carries unit, source and date, in the format the design system fixes.
 - No machine-translated copy. Hindi and Arabic homepages are written by people when those editions open.
 
@@ -88,10 +88,10 @@ Checked by Playwright and Lighthouse CI on every PR.
 ## 5. Copy to approve
 
 - H1: "Every billboard, findable."
-- Standfirst: "ohworks is the open map of out-of-home advertising. Search any site, see the owner, ask in one step. The owner always sells."
+- Standfirst: "OOHWORKS is the open map of out-of-home advertising. Search any site, see the owner, ask in one step. The owner always sells."
 - Search placeholder: "Try: hoarding on Outer Ring Road, Bengaluru"
 - Hero fact: as in section 3.
-- Neutrality line: "ohworks never sells media or takes a media margin. Owners set prices and keep their clients."
+- Neutrality line: "OOHWORKS never sells media or takes a media margin. Owners set prices and keep their clients."
 
 ## 6. Technical setup before the page
 

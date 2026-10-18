@@ -69,7 +69,7 @@ function Byline({ piece }: { piece: Piece }) {
                   )}
                 </span>
               ))
-            : "ohworks"}
+            : "OOHWORKS"}
         </p>
         <p className="t-small text-ink-muted">
           {first?.role ? `${first.role} · ` : ""}

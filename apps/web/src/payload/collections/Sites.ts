@@ -381,7 +381,7 @@ export const Sites: CollectionConfig = {
                   name: "gps",
                   type: "checkbox",
                   defaultValue: false,
-                  label: "GPS-stamped in the ohworks app",
+                  label: "GPS-stamped in the OOHWORKS app",
                 },
               ],
             },

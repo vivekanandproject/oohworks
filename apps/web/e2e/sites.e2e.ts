@@ -97,7 +97,7 @@ test.describe("site page", () => {
   test("the owner's phone stays hidden until a buyer asks for it", async ({ page }) => {
     await page.goto(SITE);
     const owner = page.locator("[data-section='owner']");
-    await expect(owner).toContainText("16 sites on ohworks");
+    await expect(owner).toContainText("16 sites on OOHWORKS");
     const phone = owner.locator("[data-section='owner-phone'] p");
     await expect(phone).toBeHidden();
     await owner.getByText("Show phone").click();
@@ -268,7 +268,7 @@ test.describe("enquiry", () => {
     await expect(page.locator("h1")).toHaveText("Sent to Kaveri Outdoor (sample).");
     await expect(page.locator("[data-section='enquiry-sent']")).toContainText("Under a day");
     await expect(page.locator("[data-section='enquiry-sent']")).toContainText(
-      "ohworks charges nothing",
+      "OOHWORKS charges nothing",
     );
     const reference = (await page.locator("[data-section='reference']").textContent()) ?? "";
     expect(reference).toMatch(/^ENQ-[0-9A-Z]{8}$/);
@@ -285,7 +285,7 @@ test.describe("enquiry", () => {
     expect(toOwner?.text).toMatch(
       /Answer in one step, with availability and your rate: \S+\/reply\/ENQ-[0-9A-Z]{8}\/\?k=[0-9a-f]{32}/,
     );
-    expect(toOwner?.text).toContain("ohworks never sells media");
+    expect(toOwner?.text).toContain("OOHWORKS never sells media");
     expect(
       (await mails(request, email, "buyer_confirmation")).some((m) =>
         m.subject.includes(reference),

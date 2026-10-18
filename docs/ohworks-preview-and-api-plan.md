@@ -1,4 +1,4 @@
-# ohworks previews, services and API docs: plan
+# OOHWORKS previews, services and API docs: plan
 
 Date: 18 Oct 2026. Status: step 4 (Swagger and the public API) is built, see section 7; the other steps are planned. Builds on `ohworks-build-plan.md` (Google Cloud, `asia-south1`, three projects), ADR 0001 (Cloud Run), and the clean-up of 18 Oct 2026, which left sample data only in the test database and removed Netlify. Staff accounts for these environments come from `ohworks-super-admin-plan.md`.
 
@@ -39,8 +39,8 @@ Three things the founder asked for on 18 Oct 2026:
 | | Local | Preview | Staging | Production |
 | --- | --- | --- | --- | --- |
 | Made by | `pnpm dev` | Opening or updating a pull request | Merging to `main` | Pushing a tag `v*` |
-| Address | `localhost:3000` | `pr-123---web-….a.run.app` (Cloud Run revision tag) | `staging.ohworks.com` | `ohworks.com` |
-| Google Cloud project | none | `ohworks-staging` | `ohworks-staging` | `ohworks-prod` |
+| Address | `localhost:3000` | `pr-123---web-….a.run.app` (Cloud Run revision tag) | `staging.oohworks.co` | `oohworks.co` |
+| Google Cloud project | none | `oohworks-staging` | `oohworks-staging` | `oohworks-prod` |
 | Database | `ohworks` on the Mac | `pr_123_preview` in the staging instance, made fresh | `ohworks` in the staging instance | `ohworks` in the production instance, backups and 7-day point-in-time recovery |
 | Data in it | Reference data and drafts | Reference data plus the labelled sample sites, owners and pieces | Reference data, staff, and pilot content entered by the team. No samples | Real only |
 | Who can open it | You | Staff, after Google sign-in | Staff, after Google sign-in | Everyone |
@@ -70,9 +70,9 @@ One new setting, `SITE_ENV` (`local`, `preview`, `staging`, `production`), drive
 | --- | --- | --- | --- | --- | --- |
 | Postgres | Yes | On the Mac | Cloud SQL, smallest tier | Cloud SQL, 2 vCPU, 8 GB | Cloud SQL page, Cloud SQL Studio |
 | App and logs | Yes | Terminal | Cloud Run `web`, scales to zero | Cloud Run `web`, one warm instance | Cloud Run revisions, Logs Explorer |
-| Photos | Yes, when keys are set | Disk | R2 bucket `ohworks-media-staging` | R2 bucket `ohworks-media` | Cloudflare dashboard |
+| Photos | Yes, when keys are set | Disk | R2 bucket `oohworks-media-staging` | R2 bucket `oohworks-media` | Cloudflare dashboard |
 | Owner documents and media kits | Yes | Disk | Private R2 bucket, signed links for staff only | Private R2 bucket | Cloudflare dashboard |
-| Email | Yes | Outbox | Resend, staging domain, allowlist | Resend, `ohworks.com` | Resend dashboard and the Outbox |
+| Email | Yes | Outbox | Resend, staging domain, allowlist | Resend, `oohworks.co` | Resend dashboard and the Outbox |
 | Place search | Yes | Photon, or Google with a key | Google Places, staging key | Google Places | Google Cloud APIs page |
 | Map style | Yes | OpenFreeMap | MapTiler, staging key | MapTiler | MapTiler dashboard |
 | Claude | Yes, when the key is set | Off | On, staging key with a low limit | On | Anthropic console |
@@ -99,7 +99,7 @@ The public API follows the same rules as the pages: only published, non-sample s
 
 - **Swagger UI is served by the app** at `/api/docs`, with a choice of specification at the top. Its files come from the `swagger-ui-dist` package and are copied into the build, as the map worker is, so the page loads nothing from another site.
 - The specifications are served as JSON at `/api/v1/openapi.json` and, in preview and staging, `/api/internal/openapi.json`.
-- In production, `developers.ohworks.com` can point at the same page later. It needs no separate hosting.
+- In production, `developers.oohworks.co` can point at the same page later. It needs no separate hosting.
 
 ### How it stays true
 
@@ -138,13 +138,13 @@ Each step ends in something you can open and judge. "You" marks what only you ca
 
 | Step | Who | What | You can open |
 | --- | --- | --- | --- |
-| 0 | You | Create the Google Cloud organisation and billing account; add ohworks.com to Cloudflare; give GitHub a token with the workflow permission; disconnect Vercel from the repository | Nothing yet. About an hour of your time |
+| 0 | You | Create the Google Cloud organisation and billing account; add oohworks.co to Cloudflare; give GitHub a token with the workflow permission; disconnect Vercel from the repository | Nothing yet. About an hour of your time |
 | 1 | Code | **Make the container deployable.** Build without a database (the home page renders on its first request instead of at build). A `release` image stage with the CMS tools for the release job. Owner documents to a private R2 bucket. `SITE_ENV` with the noindex header, robots and email allowlist. `/api/health/services`. Sentry. Prove it with a local container build | The app running from its container on this Mac, against the local database |
-| 2 | Code, You approve | **Terraform for `shared` and `staging`:** Artifact Registry, Workload Identity for GitHub, Cloud SQL, Secret Manager, the Cloud Run service and release job, Google sign-in in front, budget alerts at 50%, 90% and 100% of a monthly cap. You put the service keys into Secret Manager | `staging.ohworks.com` after Google sign-in, with `/admin` |
+| 2 | Code, You approve | **Terraform for `shared` and `staging`:** Artifact Registry, Workload Identity for GitHub, Cloud SQL, Secret Manager, the Cloud Run service and release job, Google sign-in in front, budget alerts at 50%, 90% and 100% of a monthly cap. You put the service keys into Secret Manager | `staging.oohworks.co` after Google sign-in, with `/admin` |
 | 3 | Code | **Deploy workflows.** CI moves from `infra/ci` to `.github/workflows`. On a pull request: build the image, make `pr_N_preview`, run the release step and fixtures, deploy a tagged revision, comment the link. On close: drop the database and the tag. On `main`: staging. On a tag: production, release job first, then traffic 10% and 100% | A preview link on a test pull request |
 | 4 | Code | **Swagger.** Both specifications, Swagger UI at `/api/docs`, the public v1 endpoints, the contract test, Redocly in CI | `/api/docs` on the preview, with Try it out |
 | 5 | Code | **The Services page** in the admin, and Cloud SQL Studio access for staff | `/admin/services` on staging |
-| 6 | Code, You | **Production.** The `ohworks-prod` project from the same Terraform, Cloud SQL with backups and point-in-time recovery, the super admin seeding from `ohworks-super-admin-plan.md`, Resend on `ohworks.com`, Cloudflare in front with the origin secret, alerts. A dry run: restore a backup into a scratch database | `ohworks.com`, empty and ready for the first owners |
+| 6 | Code, You | **Production.** The `oohworks-prod` project from the same Terraform, Cloud SQL with backups and point-in-time recovery, the super admin seeding from `ohworks-super-admin-plan.md`, Resend on `oohworks.co`, Cloudflare in front with the origin secret, alerts. A dry run: restore a backup into a scratch database | `oohworks.co`, empty and ready for the first owners |
 
 Steps 1 and 4 need no cloud account and can start now. Step 2 starts when step 0 is done. Planned services (Redis, Inngest, Typesense, PostHog) join when the code that calls them lands; Redis must land before production is allowed more than one instance.
 
@@ -173,7 +173,7 @@ Steps 1 and 4 need no cloud account and can start now. Step 2 starts when step 0
 
 1. **A database per preview** (recommended), or all previews sharing the staging database as the build plan first said.
 2. **Who may open previews and staging:** the Google accounts to allow. Each needs a Google account; a work address is best.
-3. **The public API in production:** live at launch (recommended, the strategy wants assistants and agencies to quote ohworks), or staff-only until there are real sites.
+3. **The public API in production:** live at launch (recommended, the strategy wants assistants and agencies to quote OOHWORKS), or staff-only until there are real sites.
 4. **The CMS API in the internal reference:** try the plugin (recommended), or document by hand.
-5. **Addresses:** `staging.ohworks.com` for staging, and the Cloud Run tag links for previews (recommended, nothing to set up per preview), or a custom address per preview through Cloudflare, which needs a small Worker.
+5. **Addresses:** `staging.oohworks.co` for staging, and the Cloud Run tag links for previews (recommended, nothing to set up per preview), or a custom address per preview through Cloudflare, which needs a small Worker.
 6. **Sentry from step 1** (recommended) or later.

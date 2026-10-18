@@ -1,4 +1,4 @@
-# One ohworks environment: its network, database, secrets, the web service and the release job.
+# One oohworks environment: its network, database, secrets, the web service and the release job.
 # Used by envs/staging and envs/prod. Images come from the shared project's Artifact Registry and are
 # deployed by GitHub Actions; Terraform creates the service with a placeholder and then leaves the
 # image alone.
@@ -36,7 +36,7 @@ resource "google_project_service" "apis" {
 # Network: the database has a private address only; Cloud Run reaches it by direct VPC egress.
 resource "google_compute_network" "vpc" {
   project                 = var.project_id
-  name                    = "ohworks"
+  name                    = "oohworks"
   auto_create_subnetworks = false
   depends_on              = [google_project_service.apis]
 }
@@ -66,7 +66,7 @@ resource "google_service_networking_connection" "sql" {
 
 resource "google_sql_database_instance" "db" {
   project             = var.project_id
-  name                = "ohworks"
+  name                = "oohworks"
   region              = var.region
   database_version    = "POSTGRES_16"
   deletion_protection = var.deletion_protection
@@ -102,7 +102,7 @@ resource "google_sql_database_instance" "db" {
 resource "google_sql_database" "ohworks" {
   project  = var.project_id
   instance = google_sql_database_instance.db.name
-  name     = "ohworks"
+  name     = "oohworks"
 }
 
 resource "random_password" "db" {
@@ -113,7 +113,7 @@ resource "random_password" "db" {
 resource "google_sql_user" "ohworks" {
   project  = var.project_id
   instance = google_sql_database_instance.db.name
-  name     = "ohworks"
+  name     = "oohworks"
   password = random_password.db.result
 }
 
@@ -144,7 +144,7 @@ resource "google_secret_manager_secret" "s" {
 
 resource "google_secret_manager_secret_version" "generated" {
   for_each = {
-    DATABASE_URL   = "postgres://ohworks:${random_password.db.result}@${google_sql_database_instance.db.private_ip_address}:5432/ohworks"
+    DATABASE_URL   = "postgres://oohworks:${random_password.db.result}@${google_sql_database_instance.db.private_ip_address}:5432/oohworks"
     PAYLOAD_SECRET = random_password.payload.result
     ORIGIN_SECRET  = random_password.origin.result
     CRON_SECRET    = random_password.cron.result
@@ -166,8 +166,8 @@ resource "google_artifact_registry_repository_iam_member" "pull" {
 # The identity the service and the release job run as.
 resource "google_service_account" "web" {
   project      = var.project_id
-  account_id   = "ohworks-web"
-  display_name = "ohworks web service and release job"
+  account_id   = "oohworks-web"
+  display_name = "oohworks web service and release job"
 }
 
 resource "google_secret_manager_secret_iam_member" "web" {
@@ -352,7 +352,7 @@ resource "google_cloud_run_v2_job" "release" {
 resource "google_billing_budget" "monthly" {
   count           = var.budget_billing_account == "" ? 0 : 1
   billing_account = var.budget_billing_account
-  display_name    = "ohworks ${var.name}"
+  display_name    = "oohworks ${var.name}"
 
   budget_filter {
     projects = ["projects/${data.google_project.this.number}"]
@@ -389,7 +389,7 @@ resource "google_cloud_scheduler_job" "jobs" {
   for_each    = local.jobs
   project     = var.project_id
   region      = var.region
-  name        = "ohworks-${each.key}"
+  name        = "oohworks-${each.key}"
   description = each.value.what
   schedule    = each.value.schedule
   time_zone   = "Asia/Kolkata"

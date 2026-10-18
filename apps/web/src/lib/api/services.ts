@@ -61,7 +61,7 @@ async function database(payload: Payload): Promise<ServiceReport> {
 
 async function email(): Promise<ServiceReport> {
   const key = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM ?? "ohworks <enquiries@ohworks.com>";
+  const from = process.env.EMAIL_FROM ?? "OOHWORKS <enquiries@oohworks.co>";
   if (!key)
     return {
       name: "Email (Resend)",

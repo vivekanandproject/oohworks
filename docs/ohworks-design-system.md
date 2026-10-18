@@ -1,4 +1,4 @@
-# ohworks Design System
+# OOHWORKS Design System
 
 Source of truth: https://claude.ai/artifact/3tDxnSkArm2nu7sEWMhzxb · Day theme only · 9 Oct 2026
 
@@ -6,7 +6,7 @@ Source of truth: https://claude.ai/artifact/3tDxnSkArm2nu7sEWMhzxb · Day theme 
 
 # Brand book
 
-ohworks is the open map of out-of-home advertising: a verified, public page for every billboard and screen in the world, where the media owner is always the seller. This system makes every surface feel like a trustworthy registry with the warmth of a real street. Build from it as follows.
+OOHWORKS is the open map of out-of-home advertising: a verified, public page for every billboard and screen in the world, where the media owner is always the seller. This system makes every surface feel like a trustworthy registry with the warmth of a real street. Build from it as follows.
 
 ## The five qualities, and how the system carries them
 
@@ -21,7 +21,7 @@ ohworks is the open map of out-of-home advertising: a verified, public page for 
 ## Content fundamentals
 
 - Write in plain Indian English first; other editions follow the same rules in their language. Short sentences, active voice, specific nouns. "Front-lit 20 × 10 ft hoarding facing north-bound traffic", never "premium high-visibility outdoor asset".
-- Use "you" for the person and "we" for ohworks. Owners are "media owners" or "owners"; never "vendors" in the interface. Buyers are "advertisers" or "agencies". Never "users".
+- Use "you" for the person and "we" for OOHWORKS. Owners are "media owners" or "owners"; never "vendors" in the interface. Buyers are "advertisers" or "agencies". Never "users".
 - Sentence case everywhere, including buttons and headings. Uppercase only in the `label` style.
 - Every number carries its unit, its source and its date: "₹ 85,000 / month · owner rate · updated 3 Oct 2026". A figure with no source is not shown.
 - Buttons name the outcome: "Send enquiry", "Mark as booked", "Verify location". Never "Submit", "OK" or "Click here".
@@ -82,7 +82,7 @@ Use the components exactly as their previews and guidelines describe. The market
 
 # Brand identity
 
-ohworks is written lowercase, one word, always. It is a registry, not a shout.
+OOHWORKS is written in capitals, one word, always: OOH for out-of-home, then WORKS (the founder's decision, 19 Oct 2026; it replaced "ohworks"). The web address is oohworks.co. Never "ohworks", "OOHworks" or "Oohworks".
 
 ## Purpose
 
@@ -104,7 +104,7 @@ The mark is a map pin whose head is a billboard face: a rounded rectangle (`radi
 - Minimum size: 20px on screen, 12mm in print. On a hoarding, 600mm.
 - The mark is `navy` on paper and `on-navy` on a navy band or a photo; the dot is always `survey`.
 - The wordmark (`ohworks-wordmark.svg`) sets the name in Bricolage Grotesque 700 at display-sm tracking with the mark to its left. Lock-up only in the horizontal form.
-- Co-branding with an owner: owner logo left, a `hairline` divider, ohworks wordmark right, both at the same cap height.
+- Co-branding with an owner: owner logo left, a `hairline` divider, OOHWORKS wordmark right, both at the same cap height.
 - On physical hoardings and site plates, use the mark alone with the unit ID in `mono` beneath it: this is how a buyer finds the page from the street.
 
 ## Tagline
@@ -116,7 +116,7 @@ The mark is a map pin whose head is a billboard face: a rounded rectangle (`radi
 - Never uses a gradient, a drop shadow on type, or a 3D effect.
 - Never shows a billboard without saying where it is.
 - Never uses stock photography.
-- Never implies ohworks runs campaigns or sells media.
+- Never implies OOHWORKS runs campaigns or sells media.
 - Never uses red and green as the only difference between two states.
 
 
@@ -124,7 +124,7 @@ The mark is a map pin whose head is a billboard face: a rounded rectangle (`radi
 
 # Voice and microcopy
 
-ohworks talks like a knowledgeable surveyor who likes people: precise, plain, never cold.
+OOHWORKS talks like a knowledgeable surveyor who likes people: precise, plain, never cold.
 
 ## Principles
 
@@ -138,7 +138,7 @@ ohworks talks like a knowledgeable surveyor who likes people: precise, plain, ne
 
 | Situation | Copy |
 | --- | --- |
-| Primary call to action on a listing | **Send enquiry** · helper: "Goes straight to Lakshmi Ads. ohworks never sells media." |
+| Primary call to action on a listing | **Send enquiry** · helper: "Goes straight to Lakshmi Ads. OOHWORKS never sells media." |
 | Price shown | `₹ 85,000 / month` · "owner rate · 3-month minimum" |
 | Price hidden | "Price on request" · "Ask the owner; most reply within a day." |
 | Verified owner badge | "Verified owner" · tooltip: "Company registration and contact checked on 2 Oct 2026." |
@@ -154,7 +154,7 @@ ohworks talks like a knowledgeable surveyor who likes people: precise, plain, ne
 | Report a listing | "Something wrong with this listing?" · "Tell us what you saw. We check every report within two working days." |
 | Buyer verification | "Confirm it's you" · "A code is on its way to +91 98··· ··312. Owners only see verified enquiries." |
 | Featured label | "Featured · paid placement" |
-| Neutrality line in footer | "ohworks never sells media or takes a media margin. Owners set prices and keep their clients." |
+| Neutrality line in footer | "OOHWORKS never sells media or takes a media margin. Owners set prices and keep their clients." |
 
 ## Numbers and units
 
@@ -190,7 +190,7 @@ The page for one physical face. Its job: let a buyer decide in a minute and ask 
 
 ## Hub page (`HubPage`)
 
-City, locality or format browse page. Opens with a dated fact in `body-lg` ("Koramangala has 42 listed hoardings. Median 20 × 10 ft rate ₹ 78,000 a month, ohworks data, Oct 2026."), then filters as Chips, then a two-column grid of ListingCards beside a sticky map with clustered MapPins. Pagination is real links. The cost guide for the place links from the fact.
+City, locality or format browse page. Opens with a dated fact in `body-lg` ("Koramangala has 42 listed hoardings. Median 20 × 10 ft rate ₹ 78,000 a month, OOHWORKS data, Oct 2026."), then filters as Chips, then a two-column grid of ListingCards beside a sticky map with clustered MapPins. Pagination is real links. The cost guide for the place links from the fact.
 
 ## Owner storefront (`OwnerStorefront`)
 
@@ -213,7 +213,7 @@ Editorial. Title in `display-lg`, standfirst in `body-lg`, author card with cred
 
 ## Exports
 
-- PDF site sheet: A4, one face per page, the same SpecSheet fields, photo top, map bottom, owner and ohworks marks in the footer with the page URL.
+- PDF site sheet: A4, one face per page, the same SpecSheet fields, photo top, map bottom, owner and OOHWORKS marks in the footer with the page URL.
 - Newsletter: single column 600px, `sans` only, `navy` header, ListingCards rendered as table rows.
 
 
@@ -364,7 +364,7 @@ Month view of one face. Free days are `verified-tint`, booked days `paper-sunken
 
 # Badge
 
-Badges state what ohworks checked and when. Each kind means one thing and always carries its word and, for the five verification badges, its icon.
+Badges state what OOHWORKS checked and when. Each kind means one thing and always carries its word and, for the five verification badges, its icon.
 
 | Kind | Meaning | Colour |
 | --- | --- | --- |

@@ -166,8 +166,8 @@ export default async function SheetsPage({ searchParams }: { searchParams: Promi
                   {absolute(card.listing.url)}
                 </span>
                 <span className="w-full">
-                  From ohworks on {formatDate(new Date(now).toISOString())}. Every figure is the
-                  owner&rsquo;s own. ohworks never sells media or takes a media margin.
+                  From OOHWORKS on {formatDate(new Date(now).toISOString())}. Every figure is the
+                  owner&rsquo;s own. OOHWORKS never sells media or takes a media margin.
                 </span>
               </footer>
             </article>

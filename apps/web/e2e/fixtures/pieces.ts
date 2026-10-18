@@ -275,7 +275,7 @@ async function main() {
     const data = await sharp(Buffer.from(svg)).png().toBuffer();
     placeholder = await payload.create({
       collection: "media",
-      data: { alt: placeholderAlt, credit: "ohworks, placeholder", licence: "owned" },
+      data: { alt: placeholderAlt, credit: "OOHWORKS, placeholder", licence: "owned" },
       file: { data, mimetype: "image/png", name: "dev-placeholder.png", size: data.length },
       overrideAccess: true,
     });
@@ -368,7 +368,7 @@ async function main() {
           ),
           callout(
             "charter",
-            "ohworks never sells media or takes a media margin. Owners set prices and keep their clients.",
+            "OOHWORKS never sells media or takes a media margin. Owners set prices and keep their clients.",
           ),
           callout("note", SAMPLE),
         ),
@@ -620,7 +620,7 @@ async function main() {
         ...base,
         pillar: "academy",
         layout: "standard",
-        title: "How to list your sites on ohworks, and what each badge checks",
+        title: "How to list your sites on OOHWORKS, and what each badge checks",
         standfirst:
           "Listing is free. Five steps take a site from your media kit to a public page, and five badges show buyers what has been checked.",
         tags: [T.permits, T.trust],
@@ -631,7 +631,7 @@ async function main() {
             "Verify your company with its registration documents and a phone or WhatsApp code.",
             "Send your inventory as a spreadsheet, a set of photos or your PDF media kit.",
             "Pin each face on the map and check it against street-level imagery.",
-            "Add day, night and approach photos. Photos taken in the ohworks app carry GPS and time stamps.",
+            "Add day, night and approach photos. Photos taken in the OOHWORKS app carry GPS and time stamps.",
             "Set your terms: an exact rate, a “from” price or price on request, with your minimum period.",
           ]),
           h2("What each badge checks"),
@@ -644,11 +644,11 @@ async function main() {
           ]),
           h2("What happens to enquiries"),
           p(
-            "Every enquiry goes straight to you. ohworks does not resell it, reroute it or sit between you and the buyer.",
+            "Every enquiry goes straight to you. OOHWORKS does not resell it, reroute it or sit between you and the buyer.",
           ),
           callout(
             "charter",
-            "ohworks never sells media or takes a media margin. Owners set prices and keep their clients.",
+            "OOHWORKS never sells media or takes a media margin. Owners set prices and keep their clients.",
           ),
         ),
       },
@@ -661,7 +661,7 @@ async function main() {
         pillar: "showcase",
         layout: "immersive",
         hero: placeholder.id,
-        title: "How ohworks will show a campaign",
+        title: "How OOHWORKS will show a campaign",
         standfirst:
           "Every showcase piece names the sites a campaign ran on, with real, credited photographs. This sample shows the layout.",
         publishedAt: hoursAgo(120),

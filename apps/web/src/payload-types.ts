@@ -343,7 +343,7 @@ export interface Owner {
   name: string;
   slug?: string | null;
   /**
-   * The ohworks city the company is in, when it is in one. Set from the place below.
+   * The OOHWORKS city the company is in, when it is in one. Set from the place below.
    */
   city?: ('bengaluru' | 'mumbai' | 'delhi-ncr' | 'hyderabad' | 'pune' | 'chennai') | null;
   /**
@@ -605,14 +605,14 @@ export interface Enquiry {
   verifiedAt?: string | null;
   sentAt?: string | null;
   /**
-   * The owner's first reply through ohworks
+   * The owner's first reply through OOHWORKS
    */
   repliedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * Replies between owners and buyers. Read only: nobody at ohworks writes these.
+ * Replies between owners and buyers. Read only: nobody at OOHWORKS writes these.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "messages".
@@ -782,7 +782,7 @@ export interface Source {
   title: string;
   publisher: string;
   /**
-   * Leave empty for interviews and ohworks data
+   * Leave empty for interviews and OOHWORKS data
    */
   url?: string | null;
   publishedOn?: string | null;
@@ -1019,7 +1019,7 @@ export interface Issue {
               value: number | Report;
             } | null);
         /**
-         * For a link outside ohworks
+         * For a link outside OOHWORKS
          */
         externalUrl?: string | null;
         /**

@@ -132,7 +132,7 @@ export async function seedTeam(payload: Payload, env = process.env): Promise<voi
   });
   if (supers.totalDocs === 0)
     throw new TeamSetupError(
-      "There is no active super admin, so nobody could run ohworks. Set SUPER_ADMIN_EMAILS and SUPER_ADMIN_PASSWORD and release again.",
+      "There is no active super admin, so nobody could run OOHWORKS. Set SUPER_ADMIN_EMAILS and SUPER_ADMIN_PASSWORD and release again.",
     );
 
   if (plan.production) {

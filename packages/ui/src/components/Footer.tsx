@@ -1,7 +1,7 @@
 import { Wordmark } from "../brand/Wordmark";
 
 export const NEUTRALITY_LINE =
-  "ohworks never sells media or takes a media margin. Owners set prices and keep their clients.";
+  "OOHWORKS never sells media or takes a media margin. Owners set prices and keep their clients.";
 
 interface Col {
   title: string;
@@ -35,7 +35,7 @@ const COLS: Col[] = [
       { href: "/charter/", label: "What we never do" },
       { href: "/newsroom/corrections/", label: "Corrections" },
       { href: "/feed.xml", label: "RSS feed" },
-      { href: "mailto:hello@ohworks.com", label: "Contact" },
+      { href: "mailto:hello@oohworks.co", label: "Contact" },
     ],
   },
 ];
@@ -49,7 +49,7 @@ export function Footer() {
           <div className="lg:col-span-2">
             <a
               href="/"
-              aria-label="ohworks home"
+              aria-label="OOHWORKS home"
               className="inline-flex min-h-11 items-center rounded-sm"
             >
               <Wordmark size={28} />
@@ -79,7 +79,7 @@ export function Footer() {
 
         <div className="border-hairline text-ink-muted t-small mt-12 flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-[60ch]">{NEUTRALITY_LINE}</p>
-          <p>© {year} ohworks</p>
+          <p>© {year} OOHWORKS</p>
         </div>
       </div>
     </footer>

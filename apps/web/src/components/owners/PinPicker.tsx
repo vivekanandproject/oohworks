@@ -67,7 +67,7 @@ export function PinPicker({
     if (placeRef.current) placeRef.current.value = "";
     setMissed(false);
     setOpen({ start: [p.lng, p.lat], pin: [p.lng, p.lat] });
-    // The site's city follows the place, when the place is in a city ohworks has pages for.
+    // The site's city follows the place, when the place is in a city OOHWORKS has pages for.
     const city = document.querySelector<HTMLSelectElement>("select[name='city']");
     if (city && p.city && [...city.options].some((o) => o.value === p.city)) city.value = p.city;
     setFound({ label: p.label, outside: !p.city });
@@ -99,7 +99,7 @@ export function PinPicker({
         >
           {found
             ? found.outside
-              ? `The pin is at ${found.label}. That is outside ${CITIES.map((c) => c.label).join(", ")}, the cities ohworks has pages for today.`
+              ? `The pin is at ${found.label}. That is outside ${CITIES.map((c) => c.label).join(", ")}, the cities OOHWORKS has pages for today.`
               : `The pin is at ${found.label}. Drag it to the exact spot the site stands on.`
             : "Search anywhere in the world. The pin goes there, and you can then drag it to the exact spot."}
         </p>

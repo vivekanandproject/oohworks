@@ -1,10 +1,10 @@
-# ohworks Find sites: plan
+# OOHWORKS Find sites: plan
 
 Date: 10 Oct 2026. Status: all three steps are built (sections 14, 15 and 16). What still waits on outside services is listed at the end of section 16. Builds on the strategy report (Product blueprint 2), `ohworks-architecture.md`, the design system's marketplace components and the search page that existed before.
 
 ## 1. What this page must achieve
 
-Find sites is where ohworks earns its place: a buyer arrives with a need and leaves having asked the right owner about the right site. It should work like a good shop: browse, filter, compare, see everything, then act. The difference from a shop is that ohworks never sells. The action is an enquiry that goes straight to the owner.
+Find sites is where OOHWORKS earns its place: a buyer arrives with a need and leaves having asked the right owner about the right site. It should work like a good shop: browse, filter, compare, see everything, then act. The difference from a shop is that OOHWORKS never sells. The action is an enquiry that goes straight to the owner.
 
 **The targets it serves** (Gate 1 in the strategy):
 
@@ -106,7 +106,7 @@ One form for one site or a whole plan: dates, brand and category, an optional bu
 
 These come from the charter and apply to every part of this page.
 
-- The owner is named as the seller on every card and site page. ohworks never appears as one.
+- The owner is named as the seller on every card and site page. OOHWORKS never appears as one.
 - The owner chooses how the price shows. A private price is "Price on request", never a penalty, though a "price shown" filter exists for buyers who want it.
 - Every figure carries its source and date. An audience figure without a source is not shown at all.
 - No invented urgency or scarcity: no countdowns, no "3 people are looking". Availability is the owner's calendar and its confirmation date.
@@ -130,7 +130,7 @@ A "How results are ordered" link beside the sort control explains this in plain 
 ## 7. What search engines see
 
 - The search page stays out of the index, as today. Filtered and sorted addresses are blocked in robots.
-- The same cards, filters and map power the indexable hubs: `/in/bengaluru/`, `/in/bengaluru/koramangala/`, `/in/bengaluru/hoardings/`. A hub is published only above its inventory threshold and opens with a dated ohworks fact.
+- The same cards, filters and map power the indexable hubs: `/in/bengaluru/`, `/in/bengaluru/koramangala/`, `/in/bengaluru/hoardings/`. A hub is published only above its inventory threshold and opens with a dated OOHWORKS fact.
 - Each site page is indexed once it meets the content bar, with Product or Place structured data and an Offer marked as a lease. A price is marked up only when the page shows one.
 - Budgets hold: first text within 2.5 s, taps answered within 200 ms, no layout shift.
 
@@ -387,8 +387,8 @@ Step 3 of the build order is done: plans and reach. There were no wireframes for
 - The reply is emailed straight to the buyer and kept on the thread.
 - The buyer's confirmation email carries their own link. It shows every owner asked, who has replied, and a table of answers side by side: site, owner, availability and the rate quoted.
 - The buyer can write back to one owner from that page. It goes to that owner alone.
-- Both sides can still simply reply by email. Every email's reply-to is the other party, never ohworks.
-- A quoted rate is the owner's own quote to that buyer. ohworks does not set it, change it or add to it, and the page says so.
+- Both sides can still simply reply by email. Every email's reply-to is the other party, never OOHWORKS.
+- A quoted rate is the owner's own quote to that buyer. OOHWORKS does not set it, change it or add to it, and the page says so.
 
 **Keys.** An owner's key never opens the buyer's view and the reverse. A key for one enquiry opens no other. The pages are `noindex`, closed in robots, and send no referrer to other sites, so the address cannot leak through a link.
 

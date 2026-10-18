@@ -13,7 +13,7 @@ test.describe("an owner's public page", () => {
     expect(res?.status()).toBe(200);
     await expect(page.locator("h1")).toHaveText("Kaveri Outdoor (sample)");
     await expect(page.locator("[data-section='owner-badges']")).toContainText("Sample owner");
-    await expect(page.locator("[data-section='owner-fact']")).toContainText("16 sites on ohworks");
+    await expect(page.locator("[data-section='owner-fact']")).toContainText("16 sites on OOHWORKS");
     await expect(page.locator("[data-section='results'] [data-site]")).toHaveCount(12);
     await expect(page.locator("[data-section='heading']")).toHaveText("Sites 1 to 12 of 16");
 

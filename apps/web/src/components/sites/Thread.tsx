@@ -160,7 +160,8 @@ export function GroupSummary({ group }: { group: Group }) {
         {group.requests.length > 1
           ? "One request goes to each owner. Each sees only their own sites, never the rest of your shortlist. "
           : `Goes straight to ${group.requests[0]?.owner.name}. `}
-        ohworks never sells media or takes a media margin. Owners set prices and keep their clients.
+        OOHWORKS never sells media or takes a media margin. Owners set prices and keep their
+        clients.
       </p>
     </aside>
   );

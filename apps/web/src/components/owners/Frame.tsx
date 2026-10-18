@@ -173,7 +173,7 @@ export function BetterPlace() {
       <p className="t-body text-ink-muted">
         Real photographs, a price or a clear &ldquo;price on request&rdquo;, an audience figure with
         its source, a permit number and a landmark. Each adds to the score out of 100. Paying
-        ohworks never does.
+        OOHWORKS never does.
       </p>
       <p className="mt-2">
         <a href="/how-results-are-ordered/" className="oh-link t-body">

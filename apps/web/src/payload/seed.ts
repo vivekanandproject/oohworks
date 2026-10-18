@@ -82,11 +82,11 @@ async function main() {
     "people",
     { slug: { equals: "editorial-desk" } },
     {
-      name: "ohworks editorial desk",
+      name: "OOHWORKS editorial desk",
       slug: "editorial-desk",
       role: "Editorial desk",
       bio: "Pieces without a single author: data reports, briefings and corrections. Every figure carries its source and date.",
-      credentials: [{ item: "Publishes the ohworks price index" }],
+      credentials: [{ item: "Publishes the OOHWORKS price index" }],
     },
   );
 
@@ -162,8 +162,8 @@ async function main() {
       publishedOn: "2026-08-28",
     },
     {
-      title: "ohworks listing data",
-      publisher: "ohworks",
+      title: "OOHWORKS listing data",
+      publisher: "OOHWORKS",
       type: "ohworks",
       notes: "Computed from live listings. Each report states its method, sample and period.",
     },

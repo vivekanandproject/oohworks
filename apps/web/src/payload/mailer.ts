@@ -16,7 +16,7 @@ export interface Mail {
     | "team_notice"
     | "alert"
     | "confirm_email";
-  /** Replies go here. An owner answers the buyer, never ohworks. */
+  /** Replies go here. An owner answers the buyer, never OOHWORKS. */
   replyTo?: string | undefined;
 }
 
@@ -38,7 +38,7 @@ export async function deliverMail(
       method: "POST",
       headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
       body: JSON.stringify({
-        from: process.env.EMAIL_FROM ?? "ohworks <enquiries@ohworks.com>",
+        from: process.env.EMAIL_FROM ?? "OOHWORKS <enquiries@oohworks.co>",
         to: [mail.to],
         subject: mail.subject,
         text: mail.text,

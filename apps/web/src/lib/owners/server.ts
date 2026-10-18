@@ -26,9 +26,9 @@ import { freeSlug, stateOf } from "./progress";
 import { toSiteData, type SiteInput } from "./site-input";
 
 const NEUTRAL =
-  "Listing on ohworks is free. ohworks never sells media or takes a media margin. You set the price and keep the client.";
+  "Listing on OOHWORKS is free. OOHWORKS never sells media or takes a media margin. You set the price and keep the client.";
 const client = () => getPayload({ config });
-export const teamEmail = (): string => process.env.OPS_EMAIL || "owners@ohworks.com";
+export const teamEmail = (): string => process.env.OPS_EMAIL || "owners@oohworks.co";
 
 /** The email this browser has confirmed as an owner's, or null. */
 export async function ownerEmail(): Promise<string | null> {
@@ -68,11 +68,11 @@ async function mailCode(email: string, code: string): Promise<void> {
   await sendMail({
     kind: "owner_code",
     to: email,
-    subject: `${code} is your ohworks code`,
+    subject: `${code} is your OOHWORKS code`,
     text: [
       `Your code is ${code}. It works for ${CODE_MINUTES} minutes.`,
       "",
-      "Enter it to list and manage your sites on ohworks.",
+      "Enter it to list and manage your sites on OOHWORKS.",
       "",
       "If you did not ask for this, ignore this email. Nothing happens without the code.",
       "",
@@ -323,11 +323,11 @@ export async function setPassword(owner: Owner, password: string): Promise<void>
     await sendMail({
       kind: "owner_notice",
       to: owner.loginEmail,
-      subject: first ? "Your ohworks password is set" : "Your ohworks password was changed",
+      subject: first ? "Your OOHWORKS password is set" : "Your OOHWORKS password was changed",
       text: [
         first
-          ? "You can now sign in to ohworks with your work email and your password."
-          : "The password you sign in to ohworks with was changed just now.",
+          ? "You can now sign in to OOHWORKS with your work email and your password."
+          : "The password you sign in to OOHWORKS with was changed just now.",
         "",
         `Sign in: ${absolute("/sign-in/")}`,
         "",
@@ -650,7 +650,7 @@ export async function removeDraft(site: Site): Promise<void> {
   await (await client()).delete({ collection: "sites", id: site.id, overrideAccess: true });
 }
 
-/** Takes a live site off ohworks at its owner's word. It returns to a draft and can be sent for review again. */
+/** Takes a live site off OOHWORKS at its owner's word. It returns to a draft and can be sent for review again. */
 export async function withdraw(site: Site): Promise<void> {
   await (
     await client()
@@ -735,7 +735,7 @@ export async function submitAll(owner: Owner): Promise<number> {
     to: owner.loginEmail ?? owner.contactEmail,
     subject: `We have your ${n} for review`,
     text: [
-      `Thank you. ${waiting.length === 1 ? "Your site is" : `Your ${waiting.length} sites are`} with the ohworks team.`,
+      `Thank you. ${waiting.length === 1 ? "Your site is" : `Your ${waiting.length} sites are`} with the OOHWORKS team.`,
       "",
       "We check the owner, the location and the photographs of each one before it goes live, usually within a working day. You will get an email for each site, saying it is live or what to fix.",
       "",

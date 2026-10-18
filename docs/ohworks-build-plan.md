@@ -1,4 +1,4 @@
-# ohworks.com: end-to-end build plan (Phase 1, India launch)
+# oohworks.co: end-to-end build plan (Phase 1, India launch)
 
 Date: 9 Oct 2026. Companion to `ohworks-architecture.md` (the what) and the strategy report (the why). This document is the how and when: cloud setup, environments, milestones, team split, costs and the checklist we run on day one.
 
@@ -35,9 +35,9 @@ GitHub Actions ──(Workload Identity Federation)──► Artifact Registry �
 
 | Project | Purpose | Notes |
 | --- | --- | --- |
-| `ohworks-prod` | Production | Cloud SQL with HA off at launch, daily backups, 7-day PITR, deletion protection on |
-| `ohworks-staging` | Staging and per-PR previews | Cloud Run scales to zero; Cloud SQL smallest tier; shared by previews |
-| `ohworks-shared` | Artifact Registry, Terraform state bucket, WIF pool, DNS of nothing | One place for build artefacts |
+| `oohworks-prod` | Production | Cloud SQL with HA off at launch, daily backups, 7-day PITR, deletion protection on |
+| `oohworks-staging` | Staging and per-PR previews | Cloud Run scales to zero; Cloud SQL smallest tier; shared by previews |
+| `oohworks-shared` | Artifact Registry, Terraform state bucket, WIF pool, DNS of nothing | One place for build artefacts |
 
 Local development uses Docker Compose (Postgres+PostGIS, Redis, Typesense, Inngest dev server, Mailpit) and needs no cloud account.
 
@@ -93,10 +93,10 @@ Each milestone has an exit check. Nothing moves to the next until the exit check
 
 ### M0, Foundations (weeks 1 to 2)
 
-- Accounts: Google Cloud organisation and billing, three projects, Cloudflare zone for ohworks.com, GitHub organisation and repo, Typesense Cloud, Inngest Cloud, Clerk, Resend, Google Maps Platform (Geocoding, Places, Street View Static), MapTiler, Sentry, PostHog, Anthropic API, Meta Business account (WhatsApp verification takes weeks, so it starts here).
+- Accounts: Google Cloud organisation and billing, three projects, Cloudflare zone for oohworks.co, GitHub organisation and repo, Typesense Cloud, Inngest Cloud, Clerk, Resend, Google Maps Platform (Geocoding, Places, Street View Static), MapTiler, Sentry, PostHog, Anthropic API, Meta Business account (WhatsApp verification takes weeks, so it starts here).
 - Terraform bootstrap: state bucket, projects, enabled APIs, VPC and subnet, Cloud SQL, Memorystore, Artifact Registry, Secret Manager, Cloud Run `web`, `jobs` and `migrate`, WIF pool and provider, budgets, Cloudflare DNS and Transform Rule.
 - Monorepo scaffold, Docker Compose, Dockerfile, GitHub Actions build and deploy.
-- Exit: `https://staging.ohworks.com` serves a hello page from Cloud Run through Cloudflare; a PR gets a preview URL; `main` auto-deploys to staging; a direct hit on the `run.app` URL without the origin header returns 403.
+- Exit: `https://staging.oohworks.co` serves a hello page from Cloud Run through Cloudflare; a PR gets a preview URL; `main` auto-deploys to staging; a direct hit on the `run.app` URL without the origin header returns 403.
 
 ### M1, Data foundation (weeks 3 to 4)
 
@@ -202,7 +202,7 @@ Set budget alerts at 800 and 1,500 for prod. Re-estimate at M8 with real traffic
 | When | Action | Why |
 | --- | --- | --- |
 | Week 1 | Create the Google Cloud organisation and billing account (card required), then grant the engineering account Billing Account User and Organization Admin | Terraform creates everything else |
-| Week 1 | Add ohworks.com to Cloudflare and point the registrar's nameservers at it | All traffic flows through Cloudflare |
+| Week 1 | Add oohworks.co to Cloudflare and point the registrar's nameservers at it | All traffic flows through Cloudflare |
 | Week 1 | Create the GitHub organisation; invite the team | CI/CD identity |
 | Week 1 | Start Meta Business verification and WhatsApp Business API access | Takes two to six weeks |
 | Week 1 to 2 | Create accounts for Typesense, Inngest, Clerk, Resend, Sentry, PostHog, MapTiler, Google Maps Platform, Anthropic; put keys in Secret Manager (I will give exact names) | Hosted services |

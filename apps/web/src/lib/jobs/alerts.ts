@@ -87,7 +87,7 @@ export async function sendAlerts(): Promise<{ follows: number; emailed: number }
       subject:
         fresh.length === 1
           ? `A new site: ${fresh[0]!.title}`
-          : `${fresh.length} new ${words} on ohworks`,
+          : `${fresh.length} new ${words} on OOHWORKS`,
       text: [
         `New ${words}, listed since we last wrote:`,
         "",
@@ -96,7 +96,7 @@ export async function sendAlerts(): Promise<{ follows: number; emailed: number }
         "",
         `See them all: ${searchAddress(follow)}`,
         "",
-        "Every enquiry goes straight to the owner. ohworks never sells media.",
+        "Every enquiry goes straight to the owner. OOHWORKS never sells media.",
         `Stop these emails: ${emailLink("unfollow", follow.id)}`,
       ].join("\n"),
     });

@@ -42,7 +42,7 @@ jobs:
             echo "name=staging" >> "$GITHUB_OUTPUT"
             echo "project=${{ vars.GCP_STAGING_PROJECT }}" >> "$GITHUB_OUTPUT"
           fi
-          echo "registry=$REGION-docker.pkg.dev/${{ vars.GCP_SHARED_PROJECT }}/ohworks" >> "$GITHUB_OUTPUT"
+          echo "registry=$REGION-docker.pkg.dev/${{ vars.GCP_SHARED_PROJECT }}/oohworks" >> "$GITHUB_OUTPUT"
           echo "tag=${GITHUB_SHA::12}-$( [[ "$GITHUB_REF" == refs/tags/v* ]] && echo production || echo staging )" >> "$GITHUB_OUTPUT"
 
       - uses: google-github-actions/auth@v2

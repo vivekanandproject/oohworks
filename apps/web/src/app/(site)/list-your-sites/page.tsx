@@ -24,7 +24,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "List your billboards, hoardings and screens free",
   description:
-    "Put your outdoor advertising sites on ohworks at no cost. You set the price and how it shows, and every enquiry comes straight to you. Add sites one at a time, from a spreadsheet, or send us your media kit.",
+    "Put your outdoor advertising sites on OOHWORKS at no cost. You set the price and how it shows, and every enquiry comes straight to you. Add sites one at a time, from a spreadsheet, or send us your media kit.",
   alternates: alternates("/list-your-sites/"),
 };
 
@@ -139,7 +139,7 @@ export default async function ListYourSitesPage({
           <div className="min-w-0">
             <PageHead eyebrow="List your sites · step 1 of 4" title="List your sites. It is free.">
               Tell us who is listing. Every enquiry then comes straight to you, at the price you
-              set. ohworks never sells media or takes a margin.
+              set. OOHWORKS never sells media or takes a margin.
             </PageHead>
 
             {one(q.out) === "1" ? (

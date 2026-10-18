@@ -27,7 +27,11 @@ export const Issues: CollectionConfig = {
       fields: [
         { name: "heading", type: "text" },
         { name: "article", type: "relationship", relationTo: ["articles", "guides", "reports"] },
-        { name: "externalUrl", type: "text", admin: { description: "For a link outside ohworks" } },
+        {
+          name: "externalUrl",
+          type: "text",
+          admin: { description: "For a link outside OOHWORKS" },
+        },
         { name: "note", type: "textarea", admin: { description: "One line. Say the thing." } },
       ],
     },

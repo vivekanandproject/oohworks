@@ -138,11 +138,11 @@ describe("hubs", () => {
     ).toBe("Outdoor advertising sites in HSR Layout, Bengaluru");
     const items = [...many(3), listing({ id: 9, format: "unipole", ownerId: 2 })];
     expect(hubFact({ kind: "city", city: "bengaluru" }, items, null, "Oct 2026")).toBe(
-      "Bengaluru has 4 listed sites from 2 owners. Hoardings are the most common, with 3. (ohworks, Oct 2026)",
+      "Bengaluru has 4 listed sites from 2 owners. Hoardings are the most common, with 3. (OOHWORKS, Oct 2026)",
     );
     expect(
       hubFact({ kind: "format", city: "bengaluru", format: "hoarding" }, many(1), null, "Oct 2026"),
-    ).toBe("Bengaluru has 1 listed hoarding from 1 owner. (ohworks, Oct 2026)");
+    ).toBe("Bengaluru has 1 listed hoarding from 1 owner. (OOHWORKS, Oct 2026)");
     expect(
       hubFact(
         { kind: "locality", city: "bengaluru", locality: "koramangala" },
@@ -152,7 +152,7 @@ describe("hubs", () => {
         "Koramangala",
       ),
     ).toBe(
-      "Koramangala, Bengaluru, has 6 listed sites from 1 owner. The median rate of the 6 that show a price is ₹ 70,000 a month. (ohworks, Oct 2026)",
+      "Koramangala, Bengaluru, has 6 listed sites from 1 owner. The median rate of the 6 that show a price is ₹ 70,000 a month. (OOHWORKS, Oct 2026)",
     );
   });
 });
@@ -273,7 +273,7 @@ describe("the site sheet export", () => {
     sample: true,
   } as unknown as Site;
   const owner = { name: "Kaveri Outdoor", verified: true, medianReplyHours: 6 } as Owner;
-  const abs = (path: string) => `https://ohworks.com${path}`;
+  const abs = (path: string) => `https://oohworks.co${path}`;
 
   it("puts one site on each row under the same columns", () => {
     const { columns, rows } = exportTable([{ listing: listing({}), site, owner }], NOW, abs);
@@ -289,7 +289,7 @@ describe("the site sheet export", () => {
     expect(row["Audience source"]).toBe("RoadStar");
     expect(row["Owner verified"]).toBe("Yes");
     expect(row["Listing"]).toBe(
-      "https://ohworks.com/in/bengaluru/koramangala/hoarding-80-feet-road-ows0001/",
+      "https://oohworks.co/in/bengaluru/koramangala/hoarding-80-feet-road-ows0001/",
     );
     expect(row["Note"]).toBe("Sample listing, not a real site");
     expect(columns.filter((c) => c.money).map((c) => c.header)).toEqual(["Rate a month (INR)"]);

@@ -3,7 +3,7 @@ import { submitAll } from "@/lib/owners/server";
 
 export const dynamic = "force-dynamic";
 
-/** Sends the owner's drafts and returned sites to the ohworks team for their check. */
+/** Sends the owner's drafts and returned sites to the OOHWORKS team for their check. */
 export async function POST(req: Request) {
   const gate = await ownerGate(req, "submit", 10);
   if (!gate.ok) return gate.response;

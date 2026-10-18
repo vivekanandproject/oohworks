@@ -1,12 +1,12 @@
-# ohworks super admin: plan
+# OOHWORKS super admin: plan
 
 Date: 18 Oct 2026. Status: step 1 is built (section 12); steps 2 to 6 are planned and not started. Builds on the Payload admin at `/admin`, which `ohworks-architecture.md` already names as the ops console, and on the team review of owner sites built in List your sites step 1. Production is Google Cloud Run with secrets in Secret Manager; the Netlify preview has been removed.
 
 ## 1. What this must achieve
 
-ohworks needs one level of control above everyone else: someone who decides who works on the platform, what each person may do, and how the platform behaves, who can publish to the website, and who can stop anything that goes wrong.
+OOHWORKS needs one level of control above everyone else: someone who decides who works on the platform, what each person may do, and how the platform behaves, who can publish to the website, and who can stop anything that goes wrong.
 
-**The promise to the founders:** nobody can sign in to run ohworks unless a super admin put them there, every action the team takes is recorded and cannot be erased, and there is always a way back in.
+**The promise to the founders:** nobody can sign in to run OOHWORKS unless a super admin put them there, every action the team takes is recorded and cannot be erased, and there is always a way back in.
 
 **The test this must pass:** a fresh production database is released, a named super admin signs in with the password from the secret store, is made to change it, publishes an article, adds an editor, suspends a spam owner, closes owner sign-ups for an hour, and every one of those steps appears in the audit log with who did it and when.
 
@@ -31,7 +31,7 @@ ohworks needs one level of control above everyone else: someone who decides who 
 3. **Team logins are seeded, never signed up.** There is no sign-up page for staff. Accounts come from lists held in the secret store and written into the database by the seed on every release (section 5). After that, a super admin can add people from the console.
 4. **Nothing about the team is committed.** The repository is public, so names, emails and passwords live only in the secret store: Google Secret Manager on Cloud Run, `.env` on a development machine.
 5. **Suspend instead of delete.** Team members and owners are suspended, which takes effect on their next request. Deleting a person is a separate, super-admin-only privacy action.
-6. **Three super admins from the start.** The founders named three addresses (kept in the secret store and the local `.env`, not here), so one person losing access never locks ohworks out.
+6. **Three super admins from the start.** The founders named three addresses (kept in the secret store and the local `.env`, not here), so one person losing access never locks OOHWORKS out.
 
 ## 4. Roles and what each may do
 
@@ -203,7 +203,7 @@ Every collection change ships with a committed Payload migration, and CI proves 
 | Question                                                                         | Answer or default                                                 |
 | -------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | Who are the first super admins?                                                  | Answered 18 Oct 2026: three addresses, held outside the repository |
-| A backup super admin?                                                            | Answered: three, so one losing access never locks ohworks out     |
+| A backup super admin?                                                            | Answered: three, so one losing access never locks OOHWORKS out     |
 | Who else goes in `TEAM_ACCOUNTS`, with which role?                               | Nobody yet; the super admins add people from the console          |
 | Second step at sign-in: Cloudflare Access, or an authenticator app in the admin? | Cloudflare Access, at the move to production                      |
 | Should admins also see the full audit log?                                       | Only the rows for owners, sites and enquiries                     |

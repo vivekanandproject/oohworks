@@ -379,7 +379,7 @@ export function readSheet(header: unknown[], rows: unknown[][], today: string): 
   if (missing.length)
     return {
       ...empty,
-      refused: `This does not look like the ohworks template. It has no column called ${missing.map((c) => `“${c.header}”`).join(", ")}. Download the template and copy your sites into it.`,
+      refused: `This does not look like the OOHWORKS template. It has no column called ${missing.map((c) => `“${c.header}”`).join(", ")}. Download the template and copy your sites into it.`,
     };
 
   const filled = rows

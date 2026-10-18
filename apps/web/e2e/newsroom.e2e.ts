@@ -36,7 +36,7 @@ test.describe("newsroom front page", () => {
 
   test("metadata, feed links and structured data", async ({ page }) => {
     await page.goto("/newsroom/");
-    await expect(page).toHaveTitle(/^Newsroom · ohworks$/);
+    await expect(page).toHaveTitle(/^Newsroom · OOHWORKS$/);
     expect(await page.locator('link[rel="canonical"]').getAttribute("href")).toMatch(
       /\/newsroom\/$/,
     );
@@ -132,7 +132,7 @@ test.describe("article page", () => {
   test("metadata and Article structured data are complete", async ({ page }) => {
     await page.goto(LEAD);
     await expect(page).toHaveTitle(
-      "Most billboards still cannot be found or booked online · ohworks",
+      "Most billboards still cannot be found or booked online · OOHWORKS",
     );
     expect(await page.locator('link[rel="canonical"]').getAttribute("href")).toMatch(
       new RegExp(`${LEAD}$`),
@@ -149,7 +149,7 @@ test.describe("article page", () => {
     expect(article.headline).toBe("Most billboards still cannot be found or booked online");
     expect(String(article.datePublished)).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     expect(String(article.dateModified)).toMatch(/^\d{4}-\d{2}-\d{2}T/);
-    expect((article.author as Array<{ name: string }>)[0]!.name).toBe("ohworks editorial desk");
+    expect((article.author as Array<{ name: string }>)[0]!.name).toBe("OOHWORKS editorial desk");
     expect((article.citation as string[]).length).toBeGreaterThanOrEqual(5);
     const crumbs = data.find((d) => d["@type"] === "BreadcrumbList") as {
       itemListElement: unknown[];
@@ -209,7 +209,7 @@ test.describe("article page", () => {
 test.describe("authors, topics and corrections", () => {
   test("an author page lists their pieces and carries Person data", async ({ page }) => {
     await page.goto("/authors/editorial-desk/");
-    await expect(page.locator("h1")).toHaveText("ohworks editorial desk");
+    await expect(page.locator("h1")).toHaveText("OOHWORKS editorial desk");
     await expect(page.locator("[data-section='stream'] [data-piece]")).toHaveCount(9);
     expect((await jsonLd(page)).map((d) => d["@type"])).toContain("Person");
   });
@@ -239,7 +239,7 @@ test.describe("feeds, sitemaps and social cards", () => {
     expect(rss.headers()["content-type"]).toContain("application/rss+xml");
     const xml = await rss.text();
     expect(xml.match(/<item>/g)?.length).toBe(9);
-    expect(xml).toContain("<dc:creator>ohworks editorial desk</dc:creator>");
+    expect(xml).toContain("<dc:creator>OOHWORKS editorial desk</dc:creator>");
     const json = (await (await request.get("/feed.json")).json()) as {
       version: string;
       items: Array<{ url: string; date_published: string }>;
@@ -255,7 +255,7 @@ test.describe("feeds, sitemaps and social cards", () => {
     expect(sitemap).toContain("/newsroom/");
     expect(sitemap).toContain("/authors/editorial-desk/");
     const news = await (await request.get("/news-sitemap.xml")).text();
-    expect(news).toContain("<news:name>ohworks</news:name>");
+    expect(news).toContain("<news:name>OOHWORKS</news:name>");
     expect(news).toContain(NEWS);
     expect(news).not.toContain("/analysis/");
     const robots = await (await request.get("/robots.txt")).text();

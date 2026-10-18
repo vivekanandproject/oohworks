@@ -15,7 +15,7 @@ export const Sources: CollectionConfig = {
     {
       name: "url",
       type: "text",
-      admin: { description: "Leave empty for interviews and ohworks data" },
+      admin: { description: "Leave empty for interviews and OOHWORKS data" },
     },
     { name: "publishedOn", type: "date" },
     { name: "retrievedOn", type: "date", required: true },

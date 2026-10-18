@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
   htmlLimitedBots: /.*/,
   images: {
     formats: ["image/avif", "image/webp"],
-    remotePatterns: [{ protocol: "https", hostname: "**.ohworks.com" }],
+    remotePatterns: [{ protocol: "https", hostname: "**.oohworks.co" }],
   },
   outputFileTracingRoot: new URL("../../", import.meta.url).pathname,
 };

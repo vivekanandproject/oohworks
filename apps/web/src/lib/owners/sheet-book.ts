@@ -21,7 +21,7 @@ export interface BookRow {
  */
 export async function sitesBook(rows: BookRow[] | null): Promise<ArrayBuffer> {
   const book = new ExcelJS.Workbook();
-  book.creator = "ohworks";
+  book.creator = "OOHWORKS";
   const sheet = book.addWorksheet("Sites", { views: [{ state: "frozen", xSplit: 1, ySplit: 1 }] });
   sheet.columns = SHEET_COLUMNS.map((c) => ({ header: c.header, width: c.width }));
   const head = sheet.getRow(1);
@@ -105,7 +105,7 @@ export async function sitesBook(rows: BookRow[] | null): Promise<ArrayBuffer> {
     "One row for each site. Up to 500 sites in one file.",
     "Leave a cell empty if you do not know it. An empty cell is better than a guess: every figure a buyer sees must be yours.",
     "An audience figure is accepted only with its source and the date it was measured.",
-    "Listing is free. ohworks never sells media or takes a media margin. You set the price and keep the client.",
+    "Listing is free. OOHWORKS never sells media or takes a media margin. You set the price and keep the client.",
   ])
     guide.addRow([line]);
   return (await book.xlsx.writeBuffer()) as ArrayBuffer;

@@ -12,7 +12,7 @@ terraform {
 }
 
 variable "project_id" {
-  description = "The shared project, such as ohworks-shared."
+  description = "The shared project, such as oohworks-shared."
   type        = string
 }
 
@@ -28,7 +28,7 @@ variable "github_repository" {
 }
 
 variable "environment_projects" {
-  description = "The projects GitHub may deploy to, such as [\"ohworks-staging\", \"ohworks-prod\"]."
+  description = "The projects GitHub may deploy to, such as [\"oohworks-staging\", \"oohworks-prod\"]."
   type        = list(string)
 }
 
@@ -66,7 +66,7 @@ resource "google_storage_bucket" "state" {
 
 resource "google_artifact_registry_repository" "images" {
   location      = var.region
-  repository_id = "ohworks"
+  repository_id = "oohworks"
   format        = "DOCKER"
   description   = "The web and release images."
   cleanup_policies {

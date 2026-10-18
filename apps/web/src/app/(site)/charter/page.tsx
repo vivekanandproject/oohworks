@@ -7,7 +7,7 @@ import { alternates } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "The charter",
   description:
-    "Five things ohworks will never do: sell media, set prices, take the client, contact a buyer's clients, or show a number without its source.",
+    "Five things OOHWORKS will never do: sell media, set prices, take the client, contact a buyer's clients, or show a number without its source.",
   alternates: alternates("/charter/"),
 };
 
@@ -20,7 +20,7 @@ export default function CharterPage() {
           <h1 className="t-display-lg mt-3">Five things we will never do</h1>
           <p className="text-ink-muted t-body-lg mt-5">
             India&rsquo;s best-known listings marketplaces drifted into agency work and started
-            selling against the owners who listed with them. These rules keep ohworks neutral. They
+            selling against the owners who listed with them. These rules keep OOHWORKS neutral. They
             are published, and they do not change.
           </p>
           <ol className="divide-hairline border-hairline mt-10 divide-y border-y">
@@ -38,8 +38,8 @@ export default function CharterPage() {
             {NEUTRALITY_LINE}
           </blockquote>
           <p className="text-ink-muted t-body mt-6">
-            Buyers use ohworks free. Contract, invoice and payment stay between buyer and owner;
-            ohworks verifies the buyer and routes the request.
+            Buyers use OOHWORKS free. Contract, invoice and payment stay between buyer and owner;
+            OOHWORKS verifies the buyer and routes the request.
           </p>
         </div>
       </Container>

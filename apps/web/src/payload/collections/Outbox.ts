@@ -31,7 +31,7 @@ export const Outbox: CollectionConfig = {
         { label: "A buyer's follow-up, to the owner", value: "buyer_message" },
         { label: "A sign-in code for an owner", value: "owner_code" },
         { label: "A notice to an owner about their sites", value: "owner_notice" },
-        { label: "A notice to the ohworks team", value: "team_notice" },
+        { label: "A notice to the OOHWORKS team", value: "team_notice" },
         { label: "New sites for a followed search", value: "alert" },
         { label: "A link to confirm an email address", value: "confirm_email" },
       ],

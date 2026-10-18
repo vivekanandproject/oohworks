@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "ohworks: run the site",
+      "name": "OOHWORKS: run the site",
       "type": "node-terminal",
       "request": "launch",
       "command": "pnpm --filter @ohworks/web dev",
@@ -17,7 +17,7 @@
       }
     },
     {
-      "name": "ohworks: run the site and debug the browser too",
+      "name": "OOHWORKS: run the site and debug the browser too",
       "type": "node-terminal",
       "request": "launch",
       "command": "pnpm --filter @ohworks/web dev",

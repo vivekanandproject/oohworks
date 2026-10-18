@@ -26,7 +26,7 @@ const named = (values: string[]) => ({
 const SiteSummary = {
   type: "object",
   description:
-    "A site as it appears in search results. The owner is always the seller; ohworks never is.",
+    "A site as it appears in search results. The owner is always the seller; OOHWORKS never is.",
   required: [
     "unitId",
     "title",
@@ -51,7 +51,7 @@ const SiteSummary = {
       examples: ["ows0001"],
     },
     title: { type: "string", examples: ["20 × 10 ft hoarding, 80 Feet Road"] },
-    url: { type: "string", format: "uri", description: "The site's page on ohworks." },
+    url: { type: "string", format: "uri", description: "The site's page on OOHWORKS." },
     enquireUrl: {
       type: "string",
       format: "uri",
@@ -127,7 +127,7 @@ const SiteSummary = {
       type: "array",
       items: { type: "string" },
       description:
-        "What ohworks has checked, in words, such as Verified owner, Verified location, Permit on file. Only checks the site has passed.",
+        "What OOHWORKS has checked, in words, such as Verified owner, Verified location, Permit on file. Only checks the site has passed.",
     },
     owner: {
       type: "object",
@@ -301,18 +301,18 @@ const query = (name: string, schema: Record<string, unknown>, description?: stri
 export const publicSpec = {
   openapi: "3.1.0",
   info: {
-    title: "ohworks public API",
+    title: "OOHWORKS public API",
     version: "1.0.0",
     summary: "Read-only access to the open map of out-of-home advertising.",
     description: [
-      "Every published billboard, hoarding and screen on ohworks, with who sells it and what it costs, as JSON.",
+      "Every published billboard, hoarding and screen on OOHWORKS, with who sells it and what it costs, as JSON.",
       "",
       "- **Read-only and free.** No key is needed. Please keep to about one request a second.",
-      "- **The owner is always the seller.** ohworks never sells media. To ask about a site, send the buyer to its `enquireUrl`; owners' contact details are never in the API.",
+      "- **The owner is always the seller.** OOHWORKS never sells media. To ask about a site, send the buyer to its `enquireUrl`; owners' contact details are never in the API.",
       "- **Same rules as the site.** A private price is `null`, an audience figure appears only with its source and date, and only checks a site has passed are listed.",
       "- **Versioned.** A change that breaks a field becomes `/api/v2/`.",
     ].join("\n"),
-    contact: { name: "ohworks", email: "hello@ohworks.com", url: "https://ohworks.com" },
+    contact: { name: "OOHWORKS", email: "hello@oohworks.co", url: "https://oohworks.co" },
   },
   servers: [{ url: "/", description: "This site" }],
   // No key or sign-in: every operation is open.
@@ -417,7 +417,7 @@ export const publicSpec = {
             },
           },
           "404": problemResponse("No published site has this ID."),
-          "410": problemResponse("The site was taken off ohworks."),
+          "410": problemResponse("The site was taken off OOHWORKS."),
         },
       },
     },
@@ -450,7 +450,7 @@ export const publicSpec = {
         tags: ["Reference"],
         operationId: "listCities",
         summary: "List cities",
-        description: "The cities ohworks lists sites in, with how many published sites each has.",
+        description: "The cities OOHWORKS lists sites in, with how many published sites each has.",
         responses: {
           "200": {
             description: "Every city.",
@@ -474,7 +474,7 @@ export const publicSpec = {
         tags: ["Reference"],
         operationId: "listFormats",
         summary: "List formats",
-        description: "The kinds of face ohworks lists, with how many published sites each has.",
+        description: "The kinds of face OOHWORKS lists, with how many published sites each has.",
         responses: {
           "200": {
             description: "Every format.",
@@ -574,7 +574,7 @@ export const publicSpec = {
             },
           },
           sample: { type: "boolean" },
-          url: { type: "string", format: "uri", description: "The owner's page on ohworks." },
+          url: { type: "string", format: "uri", description: "The owner's page on OOHWORKS." },
           sitesUrl: { type: "string", format: "uri", description: "Their sites, in this API." },
         },
       },

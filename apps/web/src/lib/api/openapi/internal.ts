@@ -342,7 +342,7 @@ const TAGS = [...new Set(ENDPOINTS.map((e) => e.tag)), "CMS"];
 export const internalSpec = {
   openapi: "3.1.0",
   info: {
-    title: "ohworks internal reference",
+    title: "OOHWORKS internal reference",
     version: "1.0.0",
     description: [
       "Every endpoint the site serves, for the team. **Not shown in production.**",

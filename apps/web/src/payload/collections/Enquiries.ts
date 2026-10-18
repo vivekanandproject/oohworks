@@ -80,7 +80,7 @@ export const Enquiries: CollectionConfig = {
       admin: {
         position: "sidebar",
         readOnly: true,
-        description: "The owner's first reply through ohworks",
+        description: "The owner's first reply through OOHWORKS",
       },
     },
   ],

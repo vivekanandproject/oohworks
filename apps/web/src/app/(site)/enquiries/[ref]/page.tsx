@@ -165,7 +165,7 @@ export default async function EnquiryThreadPage({
                 </table>
               </div>
               <p className="t-small text-ink-muted mt-2">
-                Each rate is that owner&rsquo;s own quote to you. ohworks does not set, change or
+                Each rate is that owner&rsquo;s own quote to you. OOHWORKS does not set, change or
                 add to it.
               </p>
             </section>

@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "ohworks: dev server",
+      "label": "OOHWORKS: dev server",
       "type": "shell",
       "command": "pnpm --filter @ohworks/web dev",
       "isBackground": true,
@@ -20,13 +20,13 @@
       "presentation": { "reveal": "always", "panel": "dedicated" }
     },
     {
-      "label": "ohworks: seed the development database",
+      "label": "OOHWORKS: seed the development database",
       "type": "shell",
       "command": "pnpm --filter @ohworks/web seed",
       "problemMatcher": []
     },
     {
-      "label": "ohworks: unit tests",
+      "label": "OOHWORKS: unit tests",
       "type": "shell",
       "command": "pnpm --filter @ohworks/web test",
       "group": "test",

@@ -3,7 +3,7 @@ import { isStaff, isSuperAdmin } from "../access";
 
 /**
  * What an owner and a buyer write to each other about one request. Written only by the site's own
- * reply and thread pages, each opened from a signed link in an email. ohworks routes these; it never
+ * reply and thread pages, each opened from a signed link in an email. OOHWORKS routes these; it never
  * answers for either side.
  */
 export const Messages: CollectionConfig = {
@@ -12,7 +12,7 @@ export const Messages: CollectionConfig = {
     useAsTitle: "body",
     group: "Marketplace",
     defaultColumns: ["enquiry", "from", "body", "createdAt"],
-    description: "Replies between owners and buyers. Read only: nobody at ohworks writes these.",
+    description: "Replies between owners and buyers. Read only: nobody at OOHWORKS writes these.",
   },
   access: { read: isStaff, create: () => false, update: () => false, delete: isSuperAdmin },
   fields: [

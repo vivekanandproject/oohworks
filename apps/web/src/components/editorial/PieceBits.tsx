@@ -12,7 +12,7 @@ export function eyebrow(piece: Piece): string {
 
 export function authorNames(piece: Piece): string {
   const names = piece.authors.map((a) => a.name);
-  if (names.length <= 1) return names[0] ?? "ohworks";
+  if (names.length <= 1) return names[0] ?? "OOHWORKS";
   return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
 }
 

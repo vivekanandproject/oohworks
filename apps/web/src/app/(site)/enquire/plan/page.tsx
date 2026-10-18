@@ -279,7 +279,7 @@ export default async function PlanEnquiryPage({ searchParams }: { searchParams: 
               </button>
             </div>
             <p className="t-small text-ink-muted">
-              ohworks never sells media or takes a media margin. Owners set prices and keep their
+              OOHWORKS never sells media or takes a media margin. Owners set prices and keep their
               clients.
             </p>
           </div>

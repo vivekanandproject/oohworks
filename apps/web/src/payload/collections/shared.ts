@@ -21,7 +21,7 @@ import {
 } from "@payloadcms/richtext-lexical";
 import { Callout, Fact, Figure, Quote } from "../blocks";
 
-/** The editorial editor: headings h2 and h3 only, the four ohworks blocks, Fact inline. */
+/** The editorial editor: headings h2 and h3 only, the four OOHWORKS blocks, Fact inline. */
 export const editorialEditor = lexicalEditor({
   features: () => [
     ParagraphFeature(),

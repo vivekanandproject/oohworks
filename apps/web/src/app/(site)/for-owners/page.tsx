@@ -7,7 +7,7 @@ import { alternates } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "For media owners",
   description:
-    "List every billboard, hoarding and screen free. Set your own price, get enquiries straight to you, keep your client. ohworks never takes a media margin.",
+    "List every billboard, hoarding and screen free. Set your own price, get enquiries straight to you, keep your client. OOHWORKS never takes a media margin.",
   alternates: alternates("/for-owners/"),
 };
 
@@ -150,7 +150,7 @@ export default function ForOwnersPage() {
               </div>
               <div className="flex items-center gap-3">
                 <Icon name="pin" size={24} />
-                <Button href="mailto:owners@ohworks.com?subject=Founding%20owner" variant="on-navy">
+                <Button href="mailto:owners@oohworks.co?subject=Founding%20owner" variant="on-navy">
                   Claim a founding place
                 </Button>
               </div>

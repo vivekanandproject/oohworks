@@ -9,7 +9,7 @@ export async function GET() {
   const pieces = await allPieces(50);
   const feed = {
     version: "https://jsonfeed.org/version/1.1",
-    title: "ohworks newsroom",
+    title: "OOHWORKS newsroom",
     home_page_url: absolute("/newsroom/"),
     feed_url: absolute("/feed.json"),
     description: "Independent news, analysis and data on out-of-home advertising.",

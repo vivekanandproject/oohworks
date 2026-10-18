@@ -7,7 +7,7 @@ import { addCompany, removeOwner, signInByCode, visitor } from "./helpers/owner"
  * and availability still change at once, and the team approves or returns them.
  */
 const expect = baseExpect.configure({ timeout: 20_000 });
-const TEAM = "owners@ohworks.com";
+const TEAM = "owners@oohworks.co";
 
 test.describe("changes to a live site", () => {
   test.skip(({ isMobile }) => Boolean(isMobile), "the owner's desk is tested on desktop");

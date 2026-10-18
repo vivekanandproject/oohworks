@@ -5,7 +5,7 @@ import { CITIES } from "@/lib/sites/taxonomy";
 
 export const dynamic = "force-dynamic";
 
-/** The cities ohworks lists sites in, with how many published sites each has. */
+/** The cities OOHWORKS lists sites in, with how many published sites each has. */
 export async function GET(): Promise<Response> {
   const { cities } = await catalogueCounts();
   return apiJson(

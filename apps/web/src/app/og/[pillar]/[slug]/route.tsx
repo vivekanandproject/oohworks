@@ -39,7 +39,7 @@ export async function GET(
     place ? `${PILLARS[piece.pillar].label} · ${place}` : PILLARS[piece.pillar].label
   ).toUpperCase();
   const size = piece.title.length > 90 ? 50 : piece.title.length > 60 ? 58 : 68;
-  const byline = `${piece.authors[0]?.name ?? "ohworks"} · ${formatDate(piece.publishedAt)}`;
+  const byline = `${piece.authors[0]?.name ?? "OOHWORKS"} · ${formatDate(piece.publishedAt)}`;
 
   return new ImageResponse(
     <div
@@ -63,7 +63,7 @@ export async function GET(
           <circle cx="32" cy="23" r="6" fill={SURVEY} />
         </svg>
         <div style={{ display: "flex", fontSize: 40, fontWeight: 800, letterSpacing: -1.2 }}>
-          ohworks
+          OOHWORKS
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>

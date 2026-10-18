@@ -117,5 +117,5 @@ export function hubFact(
     parts.push(
       `The median rate of the ${median.n} that show a price is ${inr(median.rate)} a month.`,
     );
-  return `${parts.join(" ")} (ohworks, ${monthYear})`;
+  return `${parts.join(" ")} (OOHWORKS, ${monthYear})`;
 }

@@ -26,7 +26,7 @@ export async function GET(req: Request) {
   return new Response(data.slice(0), {
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": 'attachment; filename="ohworks-sites-template.xlsx"',
+      "Content-Disposition": 'attachment; filename="oohworks-sites-template.xlsx"',
       "Cache-Control": "no-store",
       "X-Robots-Tag": "noindex",
     },

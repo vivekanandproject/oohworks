@@ -462,7 +462,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                   </button>
                   <a
                     className="oh-btn secondary sm"
-                    href={`https://wa.me/?text=${encodeURIComponent(`A shortlist of ${summary.sites} out-of-home ${summary.sites === 1 ? "site" : "sites"} on ohworks: ${shareUrl}`)}`}
+                    href={`https://wa.me/?text=${encodeURIComponent(`A shortlist of ${summary.sites} out-of-home ${summary.sites === 1 ? "site" : "sites"} on OOHWORKS: ${shareUrl}`)}`}
                     target="_blank"
                     rel="noopener noreferrer nofollow"
                   >

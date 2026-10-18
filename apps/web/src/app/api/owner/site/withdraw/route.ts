@@ -5,7 +5,7 @@ import { ownerSite, withdraw } from "@/lib/owners/server";
 
 export const dynamic = "force-dynamic";
 
-/** Takes a live site off ohworks at once, at its owner's word. */
+/** Takes a live site off OOHWORKS at once, at its owner's word. */
 export async function POST(req: Request) {
   const gate = await ownerGate(req, "withdraw");
   if (!gate.ok) return gate.response;

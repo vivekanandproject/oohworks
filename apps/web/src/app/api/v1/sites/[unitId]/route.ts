@@ -17,7 +17,7 @@ export async function GET(
   const [listing] = /^[a-z0-9-]{1,40}$/.test(id) ? await listingsFor([id]) : [];
   const page = /^[a-z0-9-]{1,40}$/.test(id) ? await getSite(id) : null;
   if (page?.site.removed)
-    return problem(410, "Site removed", `The site "${unitId}" was taken off ohworks.`);
+    return problem(410, "Site removed", `The site "${unitId}" was taken off OOHWORKS.`);
   if (!listing || !page)
     return problem(404, "Site not found", `No published site has the unit ID "${unitId}".`);
   return apiJson(siteDetail(listing, page.site, page.owner, page.ownerSiteCount, Date.now()), 60);

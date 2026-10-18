@@ -68,7 +68,7 @@ export const ENVIRONMENTS = [
   { slug: "indoor", label: "Indoor" },
 ] as const;
 
-/** What ohworks checked. The keys are what the address bar carries. */
+/** What OOHWORKS checked. The keys are what the address bar carries. */
 export const TRUST = [
   { key: "owner", label: "Verified owner" },
   { key: "location", label: "Verified location" },

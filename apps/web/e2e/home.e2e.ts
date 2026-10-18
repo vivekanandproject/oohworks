@@ -18,7 +18,7 @@ test.describe("landing page SEO contract", () => {
   test("title, description, canonical and robots are set", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveTitle(
-      /ohworks: every billboard, findable\. The open map of out-of-home advertising/,
+      /OOHWORKS: every billboard, findable\. The open map of out-of-home advertising/,
     );
     const description = await page.locator('meta[name="description"]').getAttribute("content");
     expect(description?.length ?? 0).toBeGreaterThan(80);
@@ -128,7 +128,7 @@ test.describe("landing page SEO contract", () => {
     test(`${path} renders with the shared shell`, async ({ page }) => {
       const res = await page.goto(path);
       expect(res?.status()).toBe(200);
-      await expect(page.getByRole("link", { name: "ohworks home" }).first()).toBeVisible();
+      await expect(page.getByRole("link", { name: "OOHWORKS home" }).first()).toBeVisible();
       await expect(page.locator("footer")).toContainText("never sells media");
     });
   }

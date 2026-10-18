@@ -3,7 +3,7 @@ import { adminHeaders, mails } from "./helpers/admin";
 
 /** Reporting a listing, against the labelled sample sites loaded into the test database by `pnpm test:db`. */
 const SITE = "/in/bengaluru/koramangala/hoarding-80-feet-road-ows0001/";
-const TEAM = "owners@ohworks.com";
+const TEAM = "owners@oohworks.co";
 
 interface Report {
   id: number;

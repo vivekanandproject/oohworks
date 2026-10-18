@@ -96,7 +96,7 @@ a { color:var(--navy); }
 <body>
 <div class="wrap">
 <header>
-  <p class="eyebrow">ohworks · workflow test · ${esc(this.started.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }))} India time</p>
+  <p class="eyebrow">OOHWORKS · workflow test · ${esc(this.started.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }))} India time</p>
   <h1>The marketplace loop, end to end</h1>
   <p class="muted">One owner and one buyer, from the owner's first visit to a site taken down. Each stage is checked on the screen, in the email the site sends (the Outbox), in the public API and in the database rows themselves.</p>
   <div class="facts">

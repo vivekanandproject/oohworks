@@ -180,12 +180,12 @@ export const siteAfterChange: CollectionAfterChangeHook = async ({ doc, previous
             to: owner.loginEmail,
             subject: `Your site is live: ${doc.title}`,
             text: [
-              `${doc.title} is now live on ohworks.`,
+              `${doc.title} is now live on OOHWORKS.`,
               "",
               `See it as a buyer does: ${page}`,
               `Change its price or availability at any time: ${manage}`,
               "",
-              "Enquiries come straight to you. ohworks never sells media or takes a media margin.",
+              "Enquiries come straight to you. OOHWORKS never sells media or takes a media margin.",
             ].join("\n"),
           }
         : {

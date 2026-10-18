@@ -40,9 +40,9 @@ export async function POST(req: Request) {
     await sendMail({
       kind: "confirm_email",
       to: email,
-      subject: "Confirm: the ohworks daily briefing",
+      subject: "Confirm: the OOHWORKS daily briefing",
       text: [
-        "Someone, we hope you, signed this address up for the ohworks daily briefing.",
+        "Someone, we hope you, signed this address up for the OOHWORKS daily briefing.",
         "",
         `Confirm with this link: ${emailLink("confirm-subscriber", subscriber.id)}`,
         "",

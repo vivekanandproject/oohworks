@@ -11,7 +11,7 @@ import { cardsFor } from "@/lib/sites/queries";
 export const dynamic = "force-dynamic";
 
 const NOTE =
-  "Every figure is the owner's own. ohworks never sells media or takes a media margin. Owners set prices and keep their clients.";
+  "Every figure is the owner's own. OOHWORKS never sells media or takes a media margin. Owners set prices and keep their clients.";
 
 /**
  * A shortlist as a standard site sheet: one row a site, the same columns every time. Excel by default,
@@ -41,13 +41,13 @@ export async function GET(req: Request) {
       headers: {
         ...common,
         "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="ohworks-shortlist-${today}.csv"`,
+        "Content-Disposition": `attachment; filename="oohworks-shortlist-${today}.csv"`,
       },
     });
   }
 
   const book = new ExcelJS.Workbook();
-  book.creator = "ohworks";
+  book.creator = "OOHWORKS";
   book.created = new Date(now);
   const sheet = book.addWorksheet("Sites", { views: [{ state: "frozen", xSplit: 2, ySplit: 1 }] });
   sheet.columns = columns.map((c) => ({
@@ -67,7 +67,7 @@ export async function GET(req: Request) {
   const about = book.addWorksheet("About this sheet");
   about.columns = [{ width: 110 }];
   for (const line of [
-    `Exported from ohworks on ${today}. ${cards.length} ${cards.length === 1 ? "site" : "sites"}.`,
+    `Exported from OOHWORKS on ${today}. ${cards.length} ${cards.length === 1 ? "site" : "sites"}.`,
     "A blank cell means the owner has not given that fact. Ask them.",
     "Rates are a month, before taxes, printing and mounting. A “from” price is a floor, not the rate.",
     "An audience figure is shown only with its named source and the date it was measured.",
@@ -80,7 +80,7 @@ export async function GET(req: Request) {
     headers: {
       ...common,
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": `attachment; filename="ohworks-shortlist-${today}.xlsx"`,
+      "Content-Disposition": `attachment; filename="oohworks-shortlist-${today}.xlsx"`,
     },
   });
 }

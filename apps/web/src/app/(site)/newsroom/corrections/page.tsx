@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Corrections",
   description:
-    "Every correction ohworks has made to a published piece, with the date and what changed.",
+    "Every correction OOHWORKS has made to a published piece, with the date and what changed.",
   alternates: alternates("/newsroom/corrections/"),
 };
 
@@ -28,7 +28,7 @@ export default async function CorrectionsPage() {
           <h1 className="t-display-lg mt-4">Corrections</h1>
           <p className="t-body-lg text-ink-muted mt-4">
             When a published piece is wrong, we fix it and say so here and on the piece: the date,
-            what was wrong, and what it says now. Write to press@ohworks.com if you spot an error.
+            what was wrong, and what it says now. Write to press@oohworks.co if you spot an error.
           </p>
           {corrections.length ? (
             <ol className="border-hairline mt-8 border-b">

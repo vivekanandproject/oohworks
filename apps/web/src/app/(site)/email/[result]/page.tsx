@@ -44,7 +44,7 @@ const RESULTS = {
     action: { label: "Sign in", href: "/sign-in/" },
   },
   "link-not-valid": {
-    eyebrow: "ohworks",
+    eyebrow: "OOHWORKS",
     title: "This link does not work",
     text: "It may have been copied only in part, or what it was for has gone. Nothing was changed.",
     action: { label: "Go to the homepage", href: "/" },

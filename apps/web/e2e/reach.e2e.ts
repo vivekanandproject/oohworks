@@ -268,7 +268,7 @@ test.describe("exports", () => {
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     );
     expect(xlsx.headers()["content-disposition"]).toMatch(
-      /^attachment; filename="ohworks-shortlist-\d{4}-\d{2}-\d{2}\.xlsx"$/,
+      /^attachment; filename="oohworks-shortlist-\d{4}-\d{2}-\d{2}\.xlsx"$/,
     );
     expect(xlsx.headers()["x-robots-tag"]).toBe("noindex");
     const bytes = await xlsx.body();
@@ -329,7 +329,7 @@ test.describe("city, area and format pages", () => {
     expect(res?.status()).toBe(200);
     await expect(page.locator("h1")).toHaveText("Outdoor advertising sites in Bengaluru");
     await expect(page.locator("[data-section='hub-fact']")).toHaveText(
-      /^Bengaluru has 16 listed sites from 1 owner\. Hoardings are the most common, with 9\. \(ohworks, [A-Z][a-z]{2} \d{4}\)$/,
+      /^Bengaluru has 16 listed sites from 1 owner\. Hoardings are the most common, with 9\. \(OOHWORKS, [A-Z][a-z]{2} \d{4}\)$/,
     );
     expect(await page.locator('link[rel="canonical"]').getAttribute("href")).toMatch(
       /\/in\/bengaluru\/$/,

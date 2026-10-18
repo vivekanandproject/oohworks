@@ -1,8 +1,8 @@
-# ohworks.com: app architecture and tech stack
+# oohworks.co: app architecture and tech stack
 
 ## Context
 
-The strategy report (9 Oct 2026) defines ohworks.com as two products on one platform: a listings marketplace with one Google-indexed page per physical advertising face, where the media owner is always the seller, and an editorial platform (trade newsroom plus buyer guides) wired into live listings. ohworks never touches the money flow. It verifies owners and buyers, routes enquiries, and earns from owner tools, visibility, sponsorship and data.
+The strategy report (9 Oct 2026) defines oohworks.co as two products on one platform: a listings marketplace with one Google-indexed page per physical advertising face, where the media owner is always the seller, and an editorial platform (trade newsroom plus buyer guides) wired into live listings. OOHWORKS never touches the money flow. It verifies owners and buyers, routes enquiries, and earns from owner tools, visibility, sponsorship and data.
 
 This plan turns that report into a buildable architecture and a concrete tech stack for a team of 4 to 8 engineers, with the India launch (Phase 1, months 0 to 6) as the first deliverable and a path to the Gulf, US and UK.
 
@@ -122,7 +122,7 @@ Geography reference tables **country**, **city**, **locality** hold slugs, names
 1. Buyer verified by Clerk (work email or phone OTP). Buyer builds a plan or picks one face.
 2. `enquiries.submit` creates one `enquiry` and one `enquiry_request` per owner organization with dates, budget, brand category and creative status.
 3. Inngest fan-out sends each owner an email (Resend) and a WhatsApp template message (Cloud API) with a deep link to the leads inbox.
-4. Owner replies in the inbox, by email reply (inbound parse), or by WhatsApp (webhook). All land in `message` on the same thread. ohworks never sees contract or payment.
+4. Owner replies in the inbox, by email reply (inbound parse), or by WhatsApp (webhook). All land in `message` on the same thread. OOHWORKS never sees contract or payment.
 5. Reply-time stats recomputed nightly feed the Responsive badge. The buyer sees owner replies side by side in the workspace.
 
 **Assisted onboarding (media kit to listings)**

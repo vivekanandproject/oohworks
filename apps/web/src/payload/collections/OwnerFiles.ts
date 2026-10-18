@@ -6,7 +6,7 @@ import { isOps, isStaff, isSuperAdmin } from "../access";
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
- * Files an owner hands to ohworks: a company document to verify them, a spreadsheet of sites, or a media
+ * Files an owner hands to OOHWORKS: a company document to verify them, a spreadsheet of sites, or a media
  * kit for the team to enter. They are private. Only staff can open them, and they are never shown on the site.
  */
 export const OwnerFiles: CollectionConfig = {

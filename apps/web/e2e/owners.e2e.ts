@@ -294,7 +294,7 @@ test.describe("list your sites: the start", () => {
     expect(res.status()).toBe(200);
     expect(res.headers()["content-type"]).toBe(XLSX);
     expect(res.headers()["content-disposition"]).toBe(
-      'attachment; filename="ohworks-sites-template.xlsx"',
+      'attachment; filename="oohworks-sites-template.xlsx"',
     );
     const got = make<{ head: string[]; example: string; guideRows: number }>("template", {
       template: (await res.body()).toString("base64"),
@@ -369,7 +369,7 @@ test.describe("list your sites: the first form", () => {
     const made = await ownersWith(request, email);
     expect(made).toHaveLength(1);
     expect(made[0]?.gstin).toBe("29AAGCB7383J1Z4");
-    // The place is kept as chosen and matched to the ohworks city it is in. The phone is kept in
+    // The place is kept as chosen and matched to the OOHWORKS city it is in. The phone is kept in
     // the form that can be dialled from anywhere.
     expect(made[0]?.location).toMatchObject({ label: HYDERABAD, country: "IN" });
     expect(made[0]?.city).toBe("hyderabad");
@@ -638,7 +638,7 @@ test.describe("list your sites: anywhere in the world", () => {
     await expect(page.locator("#site-lat")).toHaveValue("18.52040");
     await expect(page.locator("#site-lng")).toHaveValue("73.85670");
     await expect(page.locator("select[name='city']")).toHaveValue("pune");
-    // A place outside the cities ohworks has pages for is said to be so.
+    // A place outside the cities OOHWORKS has pages for is said to be so.
     await find.fill("");
     await find.pressSequentially("Singap", { delay: 20 });
     await expect(page.locator("[data-section='pin-picker'] [role='option']").first()).toBeVisible();
@@ -872,7 +872,7 @@ test.describe("list your sites: the ways in", () => {
     // They are told by email, so a change they did not make would be noticed.
     await expect
       .poll(async () => (await mails(request, email, "owner_notice"))[0]?.subject ?? "")
-      .toBe("Your ohworks password is set");
+      .toBe("Your OOHWORKS password is set");
 
     await page.locator("form[action='/api/owner/signout/'] button").first().click();
     await expect(page.locator("[data-section='signed-out']")).toBeVisible();
@@ -1037,7 +1037,7 @@ test.describe("list your sites: the journey", () => {
       await expect(page.locator(`[data-site='${id}']`)).toHaveAttribute("data-state", "review");
       await expect(page.locator("[data-section='submit']")).toHaveCount(0);
       expect(
-        (await mails(request, "owners@ohworks.com", "team_notice")).some(
+        (await mails(request, "owners@oohworks.co", "team_notice")).some(
           (m) => m.subject === `1 site to review from ${company}` && m.text.includes(id),
         ),
       ).toBe(true);
@@ -1419,7 +1419,7 @@ test.describe("list your sites: the journey", () => {
       });
       await page.locator("[data-action='import']").click();
       await expect(page.locator("[data-section='import-refused']")).toContainText(
-        "does not look like the ohworks template",
+        "does not look like the OOHWORKS template",
         { timeout: 30_000 },
       );
       await page.locator("#sheet-file").setInputFiles({
@@ -1472,7 +1472,7 @@ test.describe("list your sites: the journey", () => {
       });
       await expect(page.locator("[data-section='kits']")).toContainText("kit.csv");
       await expect(page.locator("[data-section='kits']")).toContainText("With our team");
-      const note = (await mails(request, "owners@ohworks.com", "team_notice")).find(
+      const note = (await mails(request, "owners@oohworks.co", "team_notice")).find(
         (m) => m.subject === `A media kit to enter, from ${company}`,
       );
       expect(note?.text).toContain("Rates are for the festival season.");

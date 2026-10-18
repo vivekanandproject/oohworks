@@ -10,7 +10,7 @@ const ICON_FOR: Partial<Record<BadgeKind, IconName>> = {
   responsive: "responsive",
 };
 
-/** States what ohworks checked and when. Every badge carries its word; verification badges also carry their icon. */
+/** States what OOHWORKS checked and when. Every badge carries its word; verification badges also carry their icon. */
 export function Badge({ kind, children }: { kind: BadgeKind; children: React.ReactNode }) {
   const icon = ICON_FOR[kind];
   return (

@@ -24,7 +24,7 @@ ${p.authors.map((a) => `      <dc:creator>${xml(a.name)}</dc:creator>`).join("\n
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ohworks newsroom</title>
+    <title>OOHWORKS newsroom</title>
     <link>${xml(absolute("/newsroom/"))}</link>
     <atom:link href="${xml(absolute("/feed.xml"))}" rel="self" type="application/rss+xml" />
     <description>Independent news, analysis and data on out-of-home advertising.</description>

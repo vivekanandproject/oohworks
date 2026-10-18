@@ -52,7 +52,7 @@ export const PILLARS: Record<PillarKey, PillarDef> = {
     label: "Data",
     path: "/data",
     collection: "reports",
-    blurb: "The ohworks price index and market reports, published with their method.",
+    blurb: "The OOHWORKS price index and market reports, published with their method.",
     schemaType: "Report",
   },
   showcase: {

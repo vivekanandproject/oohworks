@@ -3,7 +3,7 @@ import { fieldSuperAdminOnly, isSuperAdmin, ROLES, staffOrSelf, superAdminOrSelf
 import { guardTeamChange, guardTeamDelete, recordSignIn, refuseSuspended } from "../hooks/team";
 
 /**
- * The ohworks team. Nobody signs up: accounts come from the release seed (src/payload/seed-team.ts)
+ * The OOHWORKS team. Nobody signs up: accounts come from the release seed (src/payload/seed-team.ts)
  * or from a super admin here. Owners and buyers are not users; they sign in on the site itself.
  */
 export const Users: CollectionConfig = {

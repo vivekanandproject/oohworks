@@ -1,10 +1,10 @@
-# ohworks List your sites: plan
+# OOHWORKS List your sites: plan
 
 Date: 11 Oct 2026. Status: step 1 is built (section 12), on the defaults in section 10, after the founder said to go ahead. Steps 2 and 3 are planned and not started. Builds on the strategy report (owner onboarding, verification badges), `ohworks-architecture.md`, milestone M3 of `ohworks-build-plan.md`, and Find sites, which is complete on sample sites.
 
 ## 1. What this must achieve
 
-Find sites works, but it runs on samples. Nothing a buyer sees is real, no page can reach a search engine, and no enquiry can reach a real owner, until owners can put their own sites on ohworks. "List your sites" is that door.
+Find sites works, but it runs on samples. Nothing a buyer sees is real, no page can reach a search engine, and no enquiry can reach a real owner, until owners can put their own sites on OOHWORKS. "List your sites" is that door.
 
 | Target (Gate 1 in the strategy)   | What List your sites contributes                                                                      |
 | --------------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -23,8 +23,8 @@ Find sites works, but it runs on samples. Nothing a buyer sees is real, no page 
 | --------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
 | An independent owner with 5 to 50 sites, often on a phone | Photos on the phone, rates in their head | One site at a time, in plain words, with a pin on a map; no account to set up |
 | A larger owner with hundreds of sites                     | A spreadsheet or an inventory system     | A template to fill and upload, with every problem named by row and column     |
-| An owner who has only a PDF media kit                     | The PDF                                  | To hand it over and have ohworks enter it, then approve the result            |
-| The ohworks team                                          | A queue of new owners and sites          | To see what is waiting, check it, publish it or send it back with a reason    |
+| An owner who has only a PDF media kit                     | The PDF                                  | To hand it over and have OOHWORKS enter it, then approve the result            |
+| The OOHWORKS team                                          | A queue of new owners and sites          | To see what is waiting, check it, publish it or send it back with a reason    |
 
 What owners fear, from the strategy: losing clients, rates being undercut, and being listed wrongly. The flow answers each: the owner is always the named seller, the owner chooses whether a price shows at all, and the owner sees every listing before anyone else does.
 
@@ -57,9 +57,9 @@ There is no password and no account to create. The owner's email is the key, pro
 | State         | Meaning                                                | Who moves it on                                                        |
 | ------------- | ------------------------------------------------------ | ---------------------------------------------------------------------- |
 | Draft         | The owner is still working on it. Only they can see it | The owner sends it for review                                          |
-| In review     | Waiting for the ohworks team                           | The team publishes it, or returns it                                   |
+| In review     | Waiting for the OOHWORKS team                           | The team publishes it, or returns it                                   |
 | Needs changes | Returned with a written reason                         | The owner fixes it and sends it again                                  |
-| Live          | Published on ohworks                                   | The owner can update price and availability; the team can take it down |
+| Live          | Published on OOHWORKS                                   | The owner can update price and availability; the team can take it down |
 
 Before a site goes live the team checks that the owner is who they say, that the pin is where the site is, and that the photographs are of that site. What was checked becomes the badges a buyer sees: Verified owner, Verified location, Permit on file. A site can go live without every badge; it earns them as each check is done. A site below the content bar is live for buyers but held back from search engines, as the SEO rules say.
 
@@ -76,8 +76,8 @@ These take effect at once. A change to what the site is or where it is goes back
 
 ## 7. Rules that keep it honest
 
-- Listing is free, with no commission. ohworks never sells media or takes a media margin.
-- The owner is the named seller on every listing. ohworks is never shown as one.
+- Listing is free, with no commission. OOHWORKS never sells media or takes a media margin.
+- The owner is the named seller on every listing. OOHWORKS is never shown as one.
 - An audience figure is accepted only with its source and the date it was measured. Otherwise the field stays empty.
 - Real photographs only. A site with none says "No photo yet"; it is never given a stock image.
 - Nothing is published that the owner has not seen. The team's own entries from a media kit wait for the owner's approval.
@@ -122,7 +122,7 @@ These are the recommended options. Each can be changed.
 
 ## 12. What step 1 built (10 Oct 2026)
 
-Step 1 of the build order is done: the door. An owner can now put their own sites on ohworks, and the team can check and publish them.
+Step 1 of the build order is done: the door. An owner can now put their own sites on OOHWORKS, and the team can check and publish them.
 
 ### Pages
 
@@ -181,7 +181,7 @@ The pages that only ask who you are (sign in, the code after "forgot it", a new 
 
 Added on 11 Oct 2026 at the founder's direction: the place is found with a worldwide search, and the phone can be from any country.
 
-- **Where the company is based** is a search box, on the start page and the company page. As the owner types, places are offered. Choosing one records the place, its country, and the ohworks city it is in, if it is in one. The six-city list is gone from these forms.
+- **Where the company is based** is a search box, on the start page and the company page. As the owner types, places are offered. Choosing one records the place, its country, and the OOHWORKS city it is in, if it is in one. The six-city list is gone from these forms.
 - **Three services can answer the search**, and the page never knows which did. With `GOOGLE_MAPS_API_KEY` set it is Google Places, which is the one meant for real use. Without a key, a development machine uses Photon, the open search built on OpenStreetMap, and a production build uses a list of about 130 cities held in the code. If the chosen service fails, the list answers. The key never leaves the server: the page asks `/api/places/`, which only this site's own pages may call.
 - **Nobody is turned away for where they are.** The box is an ordinary text box first. With no script, or with a place the search does not know, what was typed is what is kept.
 - **The phone** is a country list and a number typed the way it is written in that country. It is checked against that country's own rules with `libphonenumber-js` and kept in the international form, such as `+971 50 123 4567`. A number typed with its own plus carries its country, whatever the list says. The list opens on the visitor's country when the edge network says which it is, and follows the chosen place while the number is still empty.
@@ -256,7 +256,7 @@ A site published for an owner who is not yet verified is live for buyers and hel
 
 ### After it is live
 
-The owner can change the price, how it shows, and availability at once, with no review. Saving also confirms availability as of that day. What the site is and where it is cannot be edited once live, because that is what the badges vouch for. The owner can withdraw a site at any time, and it comes off ohworks at once.
+The owner can change the price, how it shows, and availability at once, with no review. Saving also confirms availability as of that day. What the site is and where it is cannot be edited once live, because that is what the badges vouch for. The owner can withdraw a site at any time, and it comes off OOHWORKS at once.
 
 ### What the owner sees about quality
 

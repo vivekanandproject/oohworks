@@ -152,7 +152,7 @@ test.describe("a media kit read by Claude", () => {
       const download = await page.request.get(sheetPath);
       expect(download.status()).toBe(200);
       expect(download.headers()["content-disposition"]).toContain(
-        "ohworks-sites-from-Hebbal-kit.xlsx",
+        "oohworks-sites-from-Hebbal-kit.xlsx",
       );
       const [row] = rowsOf(await download.body());
       expect(row?.["Road"]?.value).toBe("Outer Ring Road");

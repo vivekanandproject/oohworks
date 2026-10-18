@@ -152,7 +152,7 @@ export default async function OwnerSitePage({
                 </Notice>
               ) : null}
               {one(q.withdrawn) === "1" ? (
-                <Notice tone="success" title="This site is off ohworks." section="withdrawn">
+                <Notice tone="success" title="This site is off OOHWORKS." section="withdrawn">
                   It is a draft again. Send it for review when you want it back.
                 </Notice>
               ) : null}
@@ -167,7 +167,7 @@ export default async function OwnerSitePage({
               ) : null}
               {state === "review" ? (
                 <p className="t-body text-ink" data-section="state-note">
-                  With the ohworks team since {formatDate(site.submittedAt)}. We check the owner,
+                  With the OOHWORKS team since {formatDate(site.submittedAt)}. We check the owner,
                   the location and the photographs, usually within a working day.
                 </p>
               ) : null}
@@ -582,7 +582,7 @@ export default async function OwnerSitePage({
                 </p>
               )}
               <p className="t-small text-ink-muted mt-4">
-                A fuller listing ranks higher. Paying ohworks never does.
+                A fuller listing ranks higher. Paying OOHWORKS never does.
               </p>
             </section>
             {state === "live" ? (
@@ -595,11 +595,11 @@ export default async function OwnerSitePage({
                 <input type="hidden" name="id" value={id} />
                 <h2 className="t-display-sm">Withdraw this site</h2>
                 <p className="t-body text-ink-muted mt-3">
-                  It comes off ohworks at once and becomes a draft. You can send it for review again
-                  later.
+                  It comes off OOHWORKS at once and becomes a draft. You can send it for review
+                  again later.
                 </p>
                 <button type="submit" className="oh-btn danger mt-4" data-action="withdraw">
-                  Withdraw from ohworks
+                  Withdraw from OOHWORKS
                 </button>
               </form>
             ) : state === "review" ? null : (

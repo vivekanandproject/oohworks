@@ -6,7 +6,7 @@ import { isGstin, tidyGstin } from "./gstin";
 import { isPasswordHash } from "./password";
 
 /**
- * What ohworks asks of someone listing: the company buyers will see as the seller, where it is, and
+ * What OOHWORKS asks of someone listing: the company buyers will see as the seller, where it is, and
  * who to reach. A company can be anywhere in the world, and so can its phone number. It is checked
  * here whether it arrives from the start page or the company page.
  */
@@ -22,7 +22,7 @@ export interface CompanyPlace {
 export interface StartDetails {
   name: string;
   place: CompanyPlace;
-  /** The ohworks city the company is in, when it is in one. */
+  /** The OOHWORKS city the company is in, when it is in one. */
   city: CitySlug | null;
   contactName: string;
   /** In the international form, such as +91 98450 00000. */

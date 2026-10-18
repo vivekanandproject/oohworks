@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: tag.name,
     description:
-      tag.description ?? `News, analysis and guides about ${tag.name} from the ohworks newsroom.`,
+      tag.description ?? `News, analysis and guides about ${tag.name} from the OOHWORKS newsroom.`,
     alternates: alternates(`/topics/${tag.slug}/`),
     robots:
       pieces.length >= INDEX_FROM ? { index: true, follow: true } : { index: false, follow: true },

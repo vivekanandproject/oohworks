@@ -5,7 +5,7 @@ export interface MarkProps {
   className?: string;
 }
 
-/** The ohworks mark: a map pin whose head is a billboard face with a survey dot. Geometry from ohworks-mark.svg. */
+/** The OOHWORKS mark: a map pin whose head is a billboard face with a survey dot. Geometry from ohworks-mark.svg. */
 export function Mark({ size = 32, onDark = false, className }: MarkProps) {
   const ink = onDark ? "#f6f5f2" : "#101c30";
   const dot = onDark ? "#ff8a5b" : "#e8561f";

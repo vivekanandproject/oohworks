@@ -6,7 +6,7 @@ import { alternates } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "How results are ordered",
   description:
-    "The order of ohworks search results is not for sale. It follows how well a site fits the search, how complete and current its listing is, and what has been checked.",
+    "The order of OOHWORKS search results is not for sale. It follows how well a site fits the search, how complete and current its listing is, and what has been checked.",
   alternates: alternates("/how-results-are-ordered/"),
 };
 
@@ -61,7 +61,7 @@ export default function OrderPage() {
           </ol>
           <h2 className="t-display-sm mt-10">What never changes the order</h2>
           <p className="t-body text-ink-muted mt-2">
-            Whether an owner pays ohworks, and whether they show a price. A private price is the
+            Whether an owner pays OOHWORKS, and whether they show a price. A private price is the
             owner&rsquo;s choice. When paid placement exists, it sits in slots labelled
             &ldquo;Featured · paid placement&rdquo;, limited in number, and never mixed into best
             match.
