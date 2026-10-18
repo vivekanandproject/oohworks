@@ -15,7 +15,6 @@ import { SiteSheet } from "@/components/SiteSheet";
 import { ReferenceSites } from "@/components/ReferenceSites";
 import { PieceCard } from "@/components/editorial/PieceBits";
 import { latestForHome } from "@/lib/editorial/queries";
-import { CHARTER } from "@/lib/site";
 import { JsonLd, SITE_NAME, alternates, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 
 /** Cached, then refreshed every minute and whenever something is published. */
@@ -149,45 +148,6 @@ export default async function HomePage() {
               </Reveal>
             </div>
             <SiteSheet />
-          </div>
-        </Container>
-      </section>
-
-      {/* Charter */}
-      <section className="border-hairline bg-survey-tint border-b" data-section="charter">
-        <Container className="py-12 lg:py-16">
-          <div className="grid gap-8 lg:grid-cols-[5fr_7fr] lg:gap-14">
-            <Reveal>
-              <p className="t-label text-survey-text">The charter</p>
-              <h2 className="t-display-md mt-3">Five things we will never do</h2>
-              <p className="t-body text-ink-muted mt-4 max-w-[40ch]">
-                They answer the fears owners and agencies told us about. They are published here and
-                they do not change.
-              </p>
-              <div className="mt-6">
-                <Button href="/charter/" variant="secondary">
-                  Read the charter
-                </Button>
-              </div>
-            </Reveal>
-            <Reveal stagger>
-              <ol className="divide-hairline border-hairline bg-paper-raised divide-y rounded-md border">
-                {CHARTER.map((rule, i) => (
-                  <li
-                    key={rule.title}
-                    className="flex gap-4 p-4 sm:gap-6 sm:p-5"
-                    data-stagger-item
-                    style={at(i)}
-                  >
-                    <span className="t-data-lg text-ink-faint w-8 shrink-0">{i + 1}</span>
-                    <div>
-                      <h3 className="t-body-strong text-ink">{rule.title}</h3>
-                      <p className="t-body text-ink-muted mt-1 max-w-[56ch]">{rule.body}</p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </Reveal>
           </div>
         </Container>
       </section>

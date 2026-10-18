@@ -40,14 +40,6 @@ const COLS: Col[] = [
   },
 ];
 
-const LOCAL_TERMS = [
-  { term: "hoarding", where: "India" },
-  { term: "48-sheet", where: "UK" },
-  { term: "bulletin", where: "US" },
-  { term: "vía pública", where: "Spanish" },
-  { term: "mídia exterior", where: "Brazil" },
-];
-
 export function Footer() {
   const year = new Date().getFullYear();
   return (
@@ -78,19 +70,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="border-hairline mt-12 border-t pt-6">
-          <h2 className="t-label text-ink-muted">One medium, many names</h2>
-          <ul className="text-ink t-body mt-3 flex flex-wrap gap-x-6 gap-y-2">
-            {LOCAL_TERMS.map((t) => (
-              <li key={t.term}>
-                <span className="font-medium">{t.term}</span>
-                <span className="text-ink-muted"> · {t.where}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="border-hairline text-ink-muted t-small mt-10 flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="border-hairline text-ink-muted t-small mt-12 flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-[60ch]">{NEUTRALITY_LINE}</p>
           <p>© {year} ohworks</p>
         </div>
