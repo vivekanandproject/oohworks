@@ -399,7 +399,8 @@ export const publicSpec = {
         tags: ["Sites"],
         operationId: "getSite",
         summary: "Get one site",
-        description: "Everything the site's page shows. A draft or withdrawn site answers 404.",
+        description:
+          "Everything the site's page shows. A draft or withdrawn site answers 404; a site the team took down answers 410.",
         parameters: [
           {
             name: "unitId",
@@ -416,6 +417,7 @@ export const publicSpec = {
             },
           },
           "404": problemResponse("No published site has this ID."),
+          "410": problemResponse("The site was taken off ohworks."),
         },
       },
     },

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { permanentIdFromSlug } from "@ohworks/core";
-import { Badge, Container } from "@ohworks/ui";
+import { Badge, Button, Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance } from "@/components/sites/Basket";
 import { ListToggle } from "@/components/sites/ListToggle";
@@ -19,6 +19,7 @@ import {
   SpecSheet,
 } from "@/components/sites/SiteParts";
 import { StillMap } from "@/components/sites/StillMap";
+import type { Site } from "@/payload-types";
 import { picture } from "@/lib/editorial/media";
 import { absolute, alternates, JsonLd } from "@/lib/seo";
 import { monthView } from "@/lib/sites/calendar";
@@ -51,19 +52,25 @@ interface Params {
   unit: string;
 }
 
-/** The permanent id at the end of the address is what finds the site. A site that was taken down is gone. */
+/**
+ * The permanent id at the end of the address is what finds the site. A site that was taken down is still
+ * found: its page says it is gone, with the middleware answering 410 (src/middleware.ts).
+ */
 async function load(params: Params) {
   const id = permanentIdFromSlug(params.unit);
   if (!id) return null;
-  const found = await getSite(id);
-  if (!found || found.site.removed) return null;
-  return found;
+  return getSite(id);
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const found = await load(await params);
   if (!found) return {};
   const { site, owner } = found;
+  if (site.removed)
+    return {
+      title: `No longer listed: ${site.title}, ${placeLine(site)}`,
+      robots: { index: false, follow: true },
+    };
   const price = priceOf(site);
   return {
     title: `${site.title}, ${placeLine(site)}`,
@@ -99,6 +106,7 @@ export default async function SitePage({
     permanentRedirect(canonical);
 
   const now = Date.now();
+  if (site.removed) return <Gone site={site} now={now} />;
   const asked = await searchParams;
   const m = asked.m;
   const month = monthView(Array.isArray(m) ? m[0] : m, site.bookedUntil, now);
@@ -424,6 +432,54 @@ export default async function SitePage({
           {action}
         </a>
       </div>
+    </Shell>
+  );
+}
+
+/** A site that was taken down: what happened, where to look instead, and the sites nearby. */
+async function Gone({ site, now }: { site: Site; now: number }) {
+  const similar = await similarSites(site, 6);
+  const lists = await readLists();
+  const city = cityDef(site.city)?.label ?? site.city;
+  return (
+    <Shell active="find">
+      <BasketEnhance />
+      <QuickView />
+      <Container className="py-12 lg:py-16">
+        <div className="mx-auto max-w-[560px] text-center" data-section="gone">
+          <h1 className="t-display-md">This site is no longer listed</h1>
+          <p className="text-ink-muted t-body mt-3">
+            {site.title}, {placeLine(site)}, has been taken off ohworks. Its owner may no longer
+            sell it, or it was not as described. The sites below are nearby.
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Button href={`/search/?city=${site.city}`} variant="primary">
+              Find sites in {city}
+            </Button>
+            <Button href="/" variant="ghost">
+              Go to the homepage
+            </Button>
+          </div>
+        </div>
+        {similar.length ? (
+          <section className="mt-14" data-section="similar">
+            <h2 className="t-display-sm">Similar sites nearby</h2>
+            <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {similar.map((card) => (
+                <SiteCard
+                  key={card.site.id}
+                  card={card}
+                  now={now}
+                  lists={lists}
+                  back={sitePath(site)}
+                  level={3}
+                  distance={away(card.km)}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
+      </Container>
     </Shell>
   );
 }
