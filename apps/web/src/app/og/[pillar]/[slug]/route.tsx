@@ -10,8 +10,8 @@ export const dynamic = "force-dynamic";
 let fontFiles: Promise<[Buffer, Buffer]> | null = null;
 function fonts(): Promise<[Buffer, Buffer]> {
   fontFiles ??= Promise.all([
-    readFile(join(process.cwd(), "src/assets/fonts/archivo-800.woff")),
-    readFile(join(process.cwd(), "src/assets/fonts/archivo-500.woff")),
+    readFile(join(process.cwd(), "src/assets/fonts/poppins-700.woff")),
+    readFile(join(process.cwd(), "src/assets/fonts/poppins-500.woff")),
   ]);
   return fontFiles;
 }
@@ -52,7 +52,7 @@ export async function GET(
         background: PAPER,
         color: INK,
         padding: "64px 72px",
-        fontFamily: "Archivo",
+        fontFamily: "Poppins",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -62,7 +62,7 @@ export async function GET(
           <rect x="22" y="52" width="20" height="4" rx="2" fill={INK} />
           <circle cx="32" cy="23" r="6" fill={SURVEY} />
         </svg>
-        <div style={{ display: "flex", fontSize: 40, fontWeight: 800, letterSpacing: -1.2 }}>
+        <div style={{ display: "flex", fontSize: 40, fontWeight: 700, letterSpacing: -1.2 }}>
           OOHWORKS
         </div>
       </div>
@@ -76,7 +76,7 @@ export async function GET(
           style={{
             display: "flex",
             fontSize: size,
-            fontWeight: 800,
+            fontWeight: 700,
             lineHeight: 1.04,
             letterSpacing: -2,
           }}
@@ -104,8 +104,8 @@ export async function GET(
       width: 1200,
       height: 630,
       fonts: [
-        { name: "Archivo", data: bold, weight: 800, style: "normal" },
-        { name: "Archivo", data: medium, weight: 500, style: "normal" },
+        { name: "Poppins", data: bold, weight: 700, style: "normal" },
+        { name: "Poppins", data: medium, weight: 500, style: "normal" },
       ],
       headers: { "cache-control": "public, max-age=3600" },
     },
