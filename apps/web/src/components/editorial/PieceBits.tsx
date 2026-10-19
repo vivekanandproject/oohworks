@@ -197,7 +197,7 @@ export function Pager({ base, page, pages }: { base: string; page: number; pages
 export function BriefingBand({ from, id }: { from: string; id: string }) {
   return (
     <section
-      className="border-hairline bg-paper-sunken flex flex-wrap items-center gap-6 rounded-md border p-5 sm:p-6"
+      className="border-hairline bg-paper-sunken flex flex-wrap items-start gap-6 rounded-md border p-5 sm:p-6"
       data-section="briefing"
     >
       <div className="min-w-0 flex-[999_1_300px]">
@@ -210,7 +210,7 @@ export function BriefingBand({ from, id }: { from: string; id: string }) {
       <form
         method="post"
         action="/api/subscribe/"
-        className="flex min-w-0 flex-[1_1_300px] flex-col gap-1.5"
+        className="flex min-w-0 flex-[1_1_300px] flex-col gap-2"
       >
         <input type="hidden" name="from" value={from} />
         <input
@@ -221,7 +221,7 @@ export function BriefingBand({ from, id }: { from: string; id: string }) {
           aria-hidden="true"
           className="sr-only"
         />
-        <label htmlFor={id} className="text-[14px] leading-5 font-semibold">
+        <label htmlFor={id} className="oh-label">
           Work email
         </label>
         <div className="flex flex-wrap gap-2">

@@ -56,7 +56,7 @@ export default async function NewsroomPage() {
       <Container className="py-10 lg:py-14">
         <div className="flex flex-col gap-10">
           <header className="flex flex-col gap-4">
-            <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3">
               <div>
                 <h1 className="t-display-lg">{TITLE}</h1>
                 <p className="t-body text-ink-muted mt-3 max-w-[62ch]">{BLURB}</p>
