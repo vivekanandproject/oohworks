@@ -29,6 +29,32 @@ test.describe("landing page SEO contract", () => {
     expect(robots ?? "index").toContain("index");
   });
 
+  test("every answer carries the security headers, and the policy lets the page run", async ({
+    page,
+    request,
+  }) => {
+    const res = await request.get("/");
+    const h = res.headers();
+    expect(h["x-frame-options"]).toBe("DENY");
+    expect(h["x-content-type-options"]).toBe("nosniff");
+    expect(h["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+    expect(h["strict-transport-security"]).toContain("max-age=");
+    expect(h["content-security-policy"]).toMatch(/script-src 'self' 'nonce-[A-Za-z0-9+/=]+'/);
+    expect(h["content-security-policy"]).toContain("frame-ancestors 'none'");
+    // A new nonce every time, never the same script allowed twice.
+    expect((await request.get("/")).headers()["content-security-policy"]).not.toBe(
+      h["content-security-policy"],
+    );
+    // The policy blocks nothing the page needs: no refusal reaches the console.
+    const refused: string[] = [];
+    page.on("console", (m) => {
+      if (/Content Security Policy|Refused to/.test(m.text())) refused.push(m.text());
+    });
+    await page.goto("/");
+    await page.goto("/search/?city=bengaluru");
+    expect(refused).toEqual([]);
+  });
+
   test("Organization and WebSite JSON-LD with a SearchAction", async ({ page }) => {
     await page.goto("/");
     const raw = await page.locator('script[type="application/ld+json"]').first().textContent();

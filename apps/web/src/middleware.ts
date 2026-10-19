@@ -14,6 +14,8 @@ const SITE_PAGE = /^\/[a-z]{2}\/[^/]+\/[^/]+\/([^/]+)\/?$/;
  * 3. Previews and staging (SITE_ENV) carry noindex on every answer, whatever a page says itself.
  * 4. A site that was taken down answers 410 Gone, and its page says so with similar sites nearby
  *    (src/lib/sites/gone.ts). A page cannot set its own status; the status set here is kept.
+ * 5. Security headers on every answer, with a Content Security Policy that names each host the
+ *    browser may load from and a nonce for the page's own scripts (securityHeaders below).
  * Health and the jobs on a timer skip the origin check: the host's checks and Cloud Scheduler call
  * Cloud Run directly, and /api/jobs/ asks for its own CRON_SECRET.
  */
@@ -35,9 +37,88 @@ export async function middleware(req: NextRequest) {
   }
   const slug = SITE_PAGE.exec(pathname)?.[1];
   const id = slug ? permanentIdFromSlug(slug) : null;
-  const res = id && (await isGone(id)) ? NextResponse.next({ status: 410 }) : NextResponse.next();
+  // Web Crypto, which the dev bundler accepts for either runtime; node:crypto it does not.
+  const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
+  // Next reads the nonce from this request header and puts it on every script it writes.
+  const headers = new Headers(req.headers);
+  const secure =
+    req.nextUrl.protocol === "https:" || req.headers.get("x-forwarded-proto") === "https";
+  headers.set("Content-Security-Policy", policy(nonce, pathname, secure));
+  const init = { request: { headers } };
+  const res =
+    id && (await isGone(id))
+      ? NextResponse.next({ ...init, status: 410 })
+      : NextResponse.next(init);
+  for (const [name, value] of securityHeaders(nonce, pathname, secure))
+    res.headers.set(name, value);
   if (hiddenFromSearch()) res.headers.set("X-Robots-Tag", "noindex, nofollow");
   return res;
+}
+
+/** The hosts the browser may load from, beyond this site. */
+const MAP_HOST = (() => {
+  try {
+    return new URL(process.env.MAP_STYLE_URL || "https://tiles.openfreemap.org").origin;
+  } catch {
+    return "https://tiles.openfreemap.org";
+  }
+})();
+const IMAGE_HOST = (() => {
+  try {
+    return process.env.R2_PUBLIC_BASE_URL ? new URL(process.env.R2_PUBLIC_BASE_URL).origin : "";
+  } catch {
+    return "";
+  }
+})();
+const SENTRY_HOST = (() => {
+  try {
+    return process.env.NEXT_PUBLIC_SENTRY_DSN
+      ? new URL(process.env.NEXT_PUBLIC_SENTRY_DSN).origin
+      : "";
+  } catch {
+    return "";
+  }
+})();
+
+/**
+ * What the page may load: its own files, the map's tiles, fonts and sprites, photographs from the
+ * public bucket, and error reports to Sentry. Scripts need the nonce; the one inline style the
+ * reveal fallback writes needs 'unsafe-inline' for styles, which the map library also needs. The
+ * CMS (/admin) and the API reference (/api/docs) run vendored scripts of their own, so they get the
+ * same policy without the nonce rule on scripts.
+ */
+function policy(nonce: string, pathname: string, secure: boolean): string {
+  const own = pathname.startsWith("/admin") || pathname.startsWith("/api/docs");
+  const scripts = own ? "'self' 'unsafe-inline'" : `'self' 'nonce-${nonce}' 'strict-dynamic'`;
+  const connect = ["'self'", MAP_HOST, SENTRY_HOST].filter(Boolean).join(" ");
+  const images = ["'self'", "data:", "blob:", MAP_HOST, IMAGE_HOST].filter(Boolean).join(" ");
+  return [
+    "default-src 'self'",
+    `script-src ${scripts}`,
+    "style-src 'self' 'unsafe-inline'",
+    `img-src ${images}`,
+    "font-src 'self' data:",
+    `connect-src ${connect}`,
+    "worker-src 'self' blob:",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "object-src 'none'",
+    // Only once the page itself came over https: a test build on plain http must not be upgraded.
+    ...(secure ? ["upgrade-insecure-requests"] : []),
+  ].join("; ");
+}
+
+function securityHeaders(nonce: string, pathname: string, secure: boolean): [string, string][] {
+  return [
+    ["Content-Security-Policy", policy(nonce, pathname, secure)],
+    ["X-Content-Type-Options", "nosniff"],
+    ["X-Frame-Options", "DENY"],
+    ["Referrer-Policy", "strict-origin-when-cross-origin"],
+    ["Permissions-Policy", "camera=(), microphone=(), geolocation=(self), payment=(), usb=()"],
+    ["Strict-Transport-Security", "max-age=31536000; includeSubDomains"],
+    ["Cross-Origin-Opener-Policy", "same-origin"],
+  ];
 }
 
 export const config = {
