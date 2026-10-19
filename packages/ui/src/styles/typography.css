@@ -1,70 +1,58 @@
 /*
- * Named type styles. One primary family, Archivo, on its weight and width axes: body at normal
- * width, titles semi-expanded and heavy like signboard lettering. Mono for anything measured.
- * Width is set through font-variation-settings as well as font-stretch so every engine applies it.
+ * Named type styles. One family, Poppins: titles at 600 and 700, text at 400, emphasis at 500 and
+ * 600. Mono for anything measured. Poppins is wide and tall, so titles sit close to the design
+ * system's 64/44/30/22 with open line heights, and capitals take a little less tracking.
  */
 @utility t-display-xl {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-stretch: 112%;
-  font-variation-settings: "wdth" 112;
-  font-size: clamp(38px, 9.5vw + 8px, 60px);
-  line-height: 0.96;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  font-size: clamp(34px, 8vw + 6px, 52px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
   text-wrap: balance;
   overflow-wrap: anywhere;
-  @media (width >= 640px) {
-    line-height: 0.94;
-    letter-spacing: -0.035em;
-  }
   @media (width >= 1024px) {
-    font-size: 76px;
-    line-height: 0.92;
-    letter-spacing: -0.04em;
+    font-size: 64px;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
   }
 }
 @utility t-display-lg {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-stretch: 110%;
-  font-variation-settings: "wdth" 110;
-  font-size: clamp(30px, 7vw + 6px, 34px);
-  line-height: 1;
-  letter-spacing: -0.025em;
+  font-weight: 700;
+  font-size: clamp(28px, 6vw + 6px, 32px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
   text-wrap: balance;
   overflow-wrap: anywhere;
   @media (width >= 640px) {
-    font-size: 48px;
-    line-height: 0.98;
-    letter-spacing: -0.03em;
+    font-size: 44px;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
   }
 }
 @utility t-display-md {
   font-family: var(--font-display);
-  font-weight: 750;
-  font-stretch: 108%;
-  font-variation-settings: "wdth" 108;
-  font-size: 27px;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
   text-wrap: balance;
   @media (width >= 640px) {
-    font-size: 34px;
-    line-height: 1.06;
-    letter-spacing: -0.025em;
+    font-size: 30px;
+    line-height: 1.16;
+    letter-spacing: -0.02em;
   }
 }
 @utility t-display-sm {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-stretch: 106%;
-  font-variation-settings: "wdth" 106;
-  font-size: 21px;
-  line-height: 1.16;
-  letter-spacing: -0.015em;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
   text-wrap: balance;
   @media (width >= 640px) {
-    font-size: 23px;
+    font-size: 22px;
   }
 }
 @utility t-body-xl {
@@ -113,7 +101,7 @@
   font-size: 12px;
   line-height: 16px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 @utility t-data-lg {

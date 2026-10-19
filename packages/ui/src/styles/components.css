@@ -498,12 +498,10 @@
   }
   .oh-prose h2 {
     font-family: var(--font-display);
-    font-weight: 750;
-    font-stretch: 108%;
-    font-variation-settings: "wdth" 108;
-    font-size: 28px;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
     margin-top: 44px;
     scroll-margin-top: 96px;
     text-wrap: balance;
@@ -619,11 +617,9 @@
   }
   .oh-pullquote p {
     font-family: var(--font-display);
-    font-weight: 700;
-    font-stretch: 106%;
-    font-variation-settings: "wdth" 106;
-    font-size: 24px;
-    line-height: 1.25;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.35;
     text-wrap: balance;
   }
   .oh-pullquote figcaption {

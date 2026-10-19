@@ -25,7 +25,7 @@ export function NavBar({ active, listHref = "/list-your-sites/" }: NavBarProps) 
   // together never take more than a quarter of the screen.
   return (
     <header className="border-hairline bg-paper sticky top-0 z-30 border-b [@media(max-height:480px)]:static">
-      <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center gap-3 px-4 sm:gap-6 lg:px-10">
+      <div className="mx-auto flex h-16 w-full max-w-[1200px] items-center gap-2 px-4 sm:gap-6 lg:px-10">
         <a
           href="/"
           aria-label="OOHWORKS home"

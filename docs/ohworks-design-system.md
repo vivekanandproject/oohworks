@@ -39,8 +39,8 @@ OOHWORKS is the open map of out-of-home advertising: a verified, public page for
 - One theme only: Day. There is no theme switch and no dark mode. Night photography is shown on `paper` with a `lit-tint` glow, never on a dark page.
 
 ### Type
-- `display` (Bricolage Grotesque) for titles only: it has character and should be seen a few times a page, not everywhere.
-- `sans` (IBM Plex Sans) for all interface and body text. The same superfamily ships Devanagari and Arabic faces, so Hindi and Arabic editions look like the same product. Load from Google Fonts: `IBM Plex Sans:wght@400;500;600`, `IBM Plex Sans Devanagari`, `IBM Plex Sans Arabic`, `IBM Plex Mono:wght@400;500`, `Bricolage Grotesque:opsz,wght@12..96,600;12..96,700`.
+- One family, Poppins (since 19 Oct 2026, the founder's choice), for titles and all interface and body text: titles at 600 and 700, text at 400, emphasis at 500 and 600. It is geometric and wide, so titles sit at open line heights and capitals take slightly less tracking. Poppins also draws Devanagari, so a Hindi edition stays in the same family.
+- Served by `next/font` from the site itself (no Google Fonts request at run time): `Poppins:wght@400;500;600;700` and `IBM Plex Mono:wght@400;500`. IBM Plex Sans Arabic stays the fallback for an Arabic edition.
 - `mono` (IBM Plex Mono) for anything measured or identified: coordinates, unit IDs, permit numbers, dimensions, prices, timestamps. Always `font-variant-numeric: tabular-nums`.
 - Body measure stays between 60 and 70 characters. Headings use `text-wrap: balance`.
 - Minimum sizes: 15px body, 13px small. Nothing smaller is read on a phone in sunlight.
@@ -103,7 +103,7 @@ The mark is a map pin whose head is a billboard face: a rounded rectangle (`radi
 - Clear space: the height of the post on all sides.
 - Minimum size: 20px on screen, 12mm in print. On a hoarding, 600mm.
 - The mark is `navy` on paper and `on-navy` on a navy band or a photo; the dot is always `survey`.
-- The wordmark (`ohworks-wordmark.svg`) sets the name in Bricolage Grotesque 700 at display-sm tracking with the mark to its left. Lock-up only in the horizontal form.
+- The wordmark sets the name OOHWORKS in Poppins 700, in capitals, with the mark to its left. Lock-up only in the horizontal form. On a phone the name scales with the screen (at most 22px, 4.3% of the width) and gives way to the mark alone below 380px.
 - Co-branding with an owner: owner logo left, a `hairline` divider, OOHWORKS wordmark right, both at the same cap height.
 - On physical hoardings and site plates, use the mark alone with the unit ID in `mono` beneath it: this is how a buyer finds the page from the street.
 
@@ -258,24 +258,26 @@ Editorial. Title in `display-lg`, standfirst in `body-lg`, author card with cred
 
 ## Type families
 
-- `display`: "Bricolage Grotesque", "IBM Plex Sans", system-ui, sans-serif
-- `sans`: "IBM Plex Sans", "IBM Plex Sans Devanagari", "IBM Plex Sans Arabic", system-ui, sans-serif
+- `display`: "Poppins", system-ui, sans-serif
+- `sans`: "Poppins", "IBM Plex Sans Arabic", system-ui, sans-serif
 - `mono`: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace
 
 ## Type styles
 
 | Style | Family | Size | Line height | Weight | Usage |
 | --- | --- | --- | --- | --- | --- |
-| `display-xl` | display | 64px | 0.95 | 700 | Homepage and campaign heroes only. One per page. |
-| `display-lg` | display | 44px | 1 | 700 | Hub page titles, article titles, owner storefront names. |
-| `display-md` | display | 30px | 1.1 | 600 | Listing page title, section titles inside long pages, dashboard page titles. |
-| `display-sm` | display | 22px | 1.2 | 600 | Card titles, modal titles, subsection headings. |
+| `display-xl` | display | 64px (34 to 52px on phones) | 1.04 | 700 | Homepage and campaign heroes only. One per page. |
+| `display-lg` | display | 44px (28 to 32px on phones) | 1.08 | 700 | Hub page titles, article titles, owner storefront names. |
+| `display-md` | display | 30px (24px on phones) | 1.16 | 600 | Listing page title, section titles inside long pages, dashboard page titles. |
+| `display-sm` | display | 22px (20px on phones) | 1.25 | 600 | Card titles, modal titles, subsection headings. |
 | `body-lg` | sans | 18px | 28px | 400 | Article body copy and guide intros. Measure 60–70 characters. |
 | `body` | sans | 15px | 23px | 400 | Default UI text, descriptions, table cells, form help. |
 | `body-strong` | sans | 15px | 23px | 600 | Button labels, emphasised values, table header cells. |
+| `title` | sans | 16px | 22px | 600 | The title of a card or a row: a site, a piece, an owner. |
 | `small` | sans | 13px | 19px | 400 | Metadata, captions, badge labels, timestamps. Never below 13px. |
 | `label` | sans | 12px | 16px | 600 | Uppercase eyebrow labels above values and section groups. Always uppercase with this tracking. |
 | `data-lg` | mono | 28px | 32px | 500 | Prices on listing pages, headline figures on dashboards. Tabular numerals. |
+| `price` | mono | 18px | 24px | 500 | A price on a card, a row or a bar. Tabular numerals. |
 | `data` | mono | 14px | 20px | 400 | Coordinates, unit IDs, permit numbers, dimensions in spec sheets, chart axis labels. |
 | `data-sm` | mono | 12px | 16px | 400 | Timestamps in tables, map coordinates under pins, code samples. |
 
@@ -330,7 +332,7 @@ The mark is a map pin whose head is a billboard face with a survey dot. Use the 
 
 - `ohworks-mark.svg`: navy mark with survey dot, for light grounds (`paper`, `paper-raised`).
 - `ohworks-mark-on-dark.svg`: paper mark with a lighter survey dot, for the `navy` storefront band and dark photographs.
-- `ohworks-wordmark.svg` and `ohworks-wordmark-on-dark.svg`: horizontal lock-up. The name is live text in Bricolage Grotesque; embed the font or convert to outlines before print.
+- `ohworks-wordmark.svg` and `ohworks-wordmark-on-dark.svg`: horizontal lock-up. The name is live text in Poppins 700; embed the font or convert to outlines before print.
 - Clear space equals the post height (14 units on the 64 grid). Minimum 20px on screen.
 
 

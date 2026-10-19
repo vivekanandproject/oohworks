@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { archivo, plexMono } from "./fonts";
+import { plexMono, poppins } from "./fonts";
 import { SITE_NAME, siteUrl } from "@/lib/seo";
 import { OWNER_BAR_COOKIE } from "@/lib/sites/enquiry";
+import { scriptNonce } from "@/lib/nonce";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,17 +23,21 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const nonce = await scriptNonce();
   return (
     // The script below adds data-bar to this element before React wakes up, which is expected.
-    <html lang="en" className={`${archivo.variable} ${plexMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${poppins.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <head>
         {/* The page crossfade is asked for here as well as in the stylesheet: a browser decides
             before the body is read, which can be before the stylesheet has arrived. */}
         <style>{`@media (prefers-reduced-motion:no-preference){@view-transition{navigation:auto}}`}</style>
         {/* A signed-in owner's browser carries a marker. Reading it here, before anything is drawn,
             lets the bar show "Your sites" on pages that are otherwise the same for everyone. */}
+        {/* The browser blanks a nonce once it has read it, so React must not compare that attribute. */}
         <script
+          nonce={nonce}
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `if(/(?:^|; )${OWNER_BAR_COOKIE}=owner/.test(document.cookie))document.documentElement.dataset.bar="owner"`,
           }}

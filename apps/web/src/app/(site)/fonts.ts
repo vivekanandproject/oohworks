@@ -1,15 +1,15 @@
-import { Archivo, IBM_Plex_Mono } from "next/font/google";
+import { IBM_Plex_Mono, Poppins } from "next/font/google";
 
 /**
- * The primary face for everything that is not measured data: Archivo, a variable grotesque with
- * weight and width axes. Body sits at normal width; titles sit semi-expanded and heavy, the
- * lettering of a painted signboard. One file, preloaded, "optional": ready at first paint or never
- * swapped in, so nothing reflows.
+ * The one face for everything that is not measured data: Poppins, a geometric sans. Titles at 600
+ * and 700, text at 400 with 500 and 600 for emphasis. Poppins also draws Devanagari, so a Hindi
+ * edition can stay in the same family (add "devanagari" to the subsets when it ships).
+ * Preloaded and "optional": ready at first paint or never swapped in, so nothing reflows.
  */
-export const archivo = Archivo({
+export const poppins = Poppins({
   subsets: ["latin"],
-  axes: ["wdth"],
-  variable: "--font-archivo",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
   display: "optional",
   preload: true,
 });

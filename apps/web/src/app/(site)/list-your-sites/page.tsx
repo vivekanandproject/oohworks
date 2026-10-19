@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Button, Container, NEUTRALITY_LINE, NEUTRALITY_LINE_OWNER } from "@ohworks/ui";
+import { Button, Container, NEUTRALITY_LINE_OWNER } from "@ohworks/ui";
 import { PasswordField } from "@/components/PasswordField";
 import { PhoneField } from "@/components/PhoneField";
 import { PlaceField } from "@/components/PlaceField";
@@ -138,8 +138,8 @@ export default async function ListYourSitesPage({
         <div className={FORM_GRID}>
           <div className="min-w-0">
             <PageHead eyebrow="List your sites · step 1 of 4" title="List your sites. It is free.">
-              Tell us who is listing. Every enquiry then comes straight to you.{" "}
-              {NEUTRALITY_LINE_OWNER}
+              Tell us who is listing. Every enquiry then comes straight to you, at the price you
+              set.
             </PageHead>
 
             {one(q.out) === "1" ? (
@@ -395,7 +395,7 @@ export default async function ListYourSitesPage({
               </ul>
             </Card>
             <p className="t-small text-ink-muted">
-              Listing costs nothing and there is no commission. {NEUTRALITY_LINE}{" "}
+              Listing costs nothing and there is no commission. {NEUTRALITY_LINE_OWNER}{" "}
               <a href="/charter/" className="oh-link">
                 Read what we never do
               </a>

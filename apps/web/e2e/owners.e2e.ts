@@ -719,8 +719,8 @@ test.describe("list your sites: one design", () => {
       if (kind === "form") expect(got.form, `${path}: form width`).toBe(formPage.form);
       // Fields sit on the page. A long form is split by a rule and a heading, never by boxes.
       expect(got.boxedFieldsets, `${path}: boxes around fields`).toBe(0);
-      // Every panel and section title is one size.
-      expect(got.headings, `${path}: heading sizes`).toEqual(got.headings.length ? [23] : []);
+      // Every panel and section title is one size: display-sm, 22px on a wide screen (design system).
+      expect(got.headings, `${path}: heading sizes`).toEqual(got.headings.length ? [22] : []);
     };
 
     await check("/list-your-sites/", "form");
