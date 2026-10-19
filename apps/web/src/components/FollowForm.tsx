@@ -11,6 +11,8 @@ export interface FollowFormProps {
   search?: string | undefined;
   /** The words on the button. */
   label?: string | undefined;
+  /** Under a centred empty state the form sits in the middle too. */
+  center?: boolean | undefined;
 }
 
 /** A plain form: works without JavaScript, posts to /api/follow, comes back with a message. */
@@ -22,12 +24,13 @@ export function FollowForm({
   what,
   search,
   label,
+  center = false,
 }: FollowFormProps) {
   return (
     <form
       method="post"
       action="/api/follow/"
-      className="mt-4 flex w-full max-w-[520px] flex-col gap-2 sm:flex-row"
+      className={`mt-4 flex w-full max-w-[520px] flex-col gap-2 sm:flex-row ${center ? "mx-auto" : ""}`}
       data-section="follow"
     >
       <input type="hidden" name="city" value={city ?? ""} />

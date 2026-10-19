@@ -103,7 +103,7 @@ The mark is a map pin whose head is a billboard face: a rounded rectangle (`radi
 - Clear space: the height of the post on all sides.
 - Minimum size: 20px on screen, 12mm in print. On a hoarding, 600mm.
 - The mark is `navy` on paper and `on-navy` on a navy band or a photo; the dot is always `survey`.
-- The wordmark sets the name OOHWORKS in Poppins 700, in capitals, with the mark to its left. Lock-up only in the horizontal form. On a phone the name scales with the screen (at most 22px, 4.3% of the width) and gives way to the mark alone below 380px.
+- The wordmark is the name OOHWORKS alone, in Poppins 700, in capitals; the mark does not sit beside it (the founder's decision, 19 Oct 2026). On a phone the name scales with the screen (at most 22px, 4.6% of the width) and stays visible at every width. The mark is kept for the favicon and site plates; the share cards carry the name alone too.
 - Co-branding with an owner: owner logo left, a `hairline` divider, OOHWORKS wordmark right, both at the same cap height.
 - On physical hoardings and site plates, use the mark alone with the unit ID in `mono` beneath it: this is how a buyer finds the page from the street.
 

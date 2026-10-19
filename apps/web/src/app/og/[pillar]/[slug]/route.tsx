@@ -20,7 +20,6 @@ const INK = "#101c30";
 const MUTED = "#56606f";
 const PAPER = "#f6f5f2";
 const HAIRLINE = "#d9d8d2";
-const SURVEY = "#e8561f";
 
 /** The 1200 by 630 card a link to a piece shows when it is shared: the title, set in the display face, on paper. */
 export async function GET(
@@ -55,16 +54,8 @@ export async function GET(
         fontFamily: "Poppins",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <svg width="52" height="52" viewBox="0 0 64 64">
-          <rect x="8" y="8" width="48" height="30" rx="4" fill={INK} />
-          <rect x="29" y="38" width="6" height="14" fill={INK} />
-          <rect x="22" y="52" width="20" height="4" rx="2" fill={INK} />
-          <circle cx="32" cy="23" r="6" fill={SURVEY} />
-        </svg>
-        <div style={{ display: "flex", fontSize: 40, fontWeight: 700, letterSpacing: -1.2 }}>
-          OOHWORKS
-        </div>
+      <div style={{ display: "flex", fontSize: 40, fontWeight: 700, letterSpacing: -1.2 }}>
+        OOHWORKS
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         <div

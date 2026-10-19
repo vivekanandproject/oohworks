@@ -361,6 +361,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                 query={typed || state.q}
                 returnTo={here}
                 what={what}
+                center
               />
             ) : null}
           </div>

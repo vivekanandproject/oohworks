@@ -170,15 +170,17 @@ test.describe("motion", () => {
 
   test("every reveal block becomes visible after scrolling", async ({ page }) => {
     await page.goto("/");
-    const total = await page.locator("[data-reveal]").count();
+    // A block hidden at this width (the site sheet on phones) can never scroll into view.
+    const shown = page.locator("[data-reveal]:visible");
+    const total = await shown.count();
     expect(total).toBeGreaterThan(5);
     const height = await page.evaluate(() => document.body.scrollHeight);
     for (let y = 0; y <= height; y += 400) {
       await page.evaluate((top) => window.scrollTo(0, top), y);
       await page.waitForTimeout(60);
     }
-    await expect(page.locator('[data-reveal="visible"]')).toHaveCount(total);
-    await expect(page.locator('[data-reveal="pending"]')).toHaveCount(0);
+    await expect(page.locator('[data-reveal="visible"]:visible')).toHaveCount(total);
+    await expect(page.locator('[data-reveal="pending"]:visible')).toHaveCount(0);
   });
 
   test("reduced motion shows everything without scrolling", async ({ page }) => {
@@ -190,7 +192,11 @@ test.describe("motion", () => {
     expect(hidden).toBe(0);
   });
 
-  test("the site sheet draws in once it is in view", async ({ page }) => {
+  test("the site sheet draws in once it is in view", async ({ page, isMobile }) => {
+    test.skip(
+      Boolean(isMobile),
+      "the sheet illustrates the steps beside them on wide screens only",
+    );
     await page.goto("/");
     await page.locator("[data-section='site-sheet']").scrollIntoViewIfNeeded();
     await page.waitForTimeout(1800);

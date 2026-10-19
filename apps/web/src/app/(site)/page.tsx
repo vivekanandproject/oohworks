@@ -144,7 +144,10 @@ export default async function HomePage() {
                 </ol>
               </Reveal>
             </div>
-            <SiteSheet />
+            {/* The sheet illustrates the steps beside them; on a phone it would trail after them as a near-empty box. */}
+            <div className="hidden lg:block">
+              <SiteSheet />
+            </div>
           </div>
         </Container>
       </section>
