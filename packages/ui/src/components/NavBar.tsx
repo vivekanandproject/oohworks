@@ -1,13 +1,14 @@
 import { Wordmark } from "../brand/Wordmark";
 
 export interface NavBarProps {
-  active?: "find" | "news" | "owners" | undefined;
+  active?: "find" | "how" | "news" | "owners" | undefined;
   /** Where "List your sites" leads. The start page points it at its own email box. */
   listHref?: string | undefined;
 }
 
 const LINKS: { key: NonNullable<NavBarProps["active"]>; href: string; label: string }[] = [
   { key: "find", href: "/search/", label: "Find sites" },
+  { key: "how", href: "/#how-it-works", label: "How it works" },
   { key: "news", href: "/newsroom/", label: "Newsroom" },
   { key: "owners", href: "/for-owners/", label: "For owners" },
 ];

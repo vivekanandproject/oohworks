@@ -1,19 +1,25 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import {
+  Badge,
   Button,
   Container,
   Icon,
   ListingCard,
   NEUTRALITY_LINE,
   Reveal,
-  SearchField,
+  type BadgeKind,
   type ListingCardProps,
 } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { SiteSheet } from "@/components/SiteSheet";
+import { BriefField } from "@/components/home/BriefField";
+import { PersonaTabs } from "@/components/home/PersonaTabs";
+import { PERSONAS } from "@/components/home/personas";
 import { PieceCard } from "@/components/editorial/PieceBits";
 import { latestForHome } from "@/lib/editorial/queries";
+import { CHARTER } from "@/lib/site";
+import { cityBoard, type CityStatus } from "@/lib/sites/queries";
 import { JsonLd, SITE_NAME, alternates, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 
 /** Cached, then refreshed every minute and whenever something is published. */
@@ -29,32 +35,77 @@ export const metadata: Metadata = {
 /** Stagger index for a list item. */
 const at = (i: number) => ({ "--i": i }) as CSSProperties;
 
-/** Newest indexable faces. Empty until the first owner's site clears the content bar (M2 wires this to Postgres). */
+/** Newest indexable faces. Empty until the first owner's site clears the content bar. */
 const NEW_SITES: ListingCardProps[] = [];
 
-const STEPS = [
+/** Briefs the built-in rules read in full (src/lib/sites/brief.test.ts keeps them honest). */
+const EXAMPLES = [
+  { label: "hoardings in Bengaluru", q: "hoardings in Bengaluru" },
+  { label: "LED screens in Mumbai", q: "LED screens in Mumbai" },
+  { label: "20 × 10 near Silk Board under 1 lakh", q: "20x10 near Silk Board under 1 lakh" },
+];
+
+/** What every site page records, beside the sample sheet. */
+const ANATOMY = [
   {
-    icon: "pin" as const,
-    title: "Find the site",
-    body: "Search by place, road, format or size. Every page shows real photos, exact coordinates, dimensions and the verified owner.",
+    t: "The exact place",
+    d: "Coordinates to five decimals and the direction the face looks, so you know which traffic sees it.",
+  },
+  { t: "The real size", d: "Width and height in feet and metres, and the height above the road." },
+  { t: "Light", d: "Front-lit, back-lit or digital, and the hours it is lit." },
+  {
+    t: "Audience, with its source",
+    d: "Who measured it, how and when. Without a source, no figure.",
   },
   {
-    icon: "enquiry" as const,
-    title: "Ask the owner",
-    body: "One enquiry, straight to the owner. A whole plan across several owners becomes one request each. We never sit in between.",
+    t: "The owner's price",
+    d: "An exact rate, a “from” price or on request, as the owner chose, with the minimum period.",
+  },
+  { t: "Availability", d: "Booked until when, and the date the owner last confirmed it." },
+  { t: "Permit", d: "Number, authority and expiry, when the owner has one on file." },
+  { t: "The owner, named", d: "Who sells it, and how fast they usually reply." },
+];
+
+/** The badges a site or owner can earn, and what earns each. */
+const CHECKS: { kind: BadgeKind; label: string; how: string }[] = [
+  {
+    kind: "verified",
+    label: "Verified owner",
+    how: "Company documents and contact details checked by our team.",
   },
   {
-    icon: "responsive" as const,
-    title: "Hear back directly",
-    body: "Owners reply by web, email or WhatsApp into one thread. Contract, invoice and payment stay between you and them.",
+    kind: "verified",
+    label: "Verified location",
+    how: "The pin matches the site on the street, and the date it was checked is shown.",
+  },
+  {
+    kind: "permit",
+    label: "Permit on file",
+    how: "Permit number, issuing authority and expiry, shown on the page.",
+  },
+  {
+    kind: "fresh",
+    label: "Updated recently",
+    how: "Availability or photos confirmed in the last 30 days. Older pages say so.",
+  },
+  {
+    kind: "responsive",
+    label: "Replies in under a day",
+    how: "Earned from how fast the owner actually answers enquiries.",
   },
 ];
 
+const CITY_WORDS: Record<CityStatus["status"], string> = {
+  open: "Open",
+  live: "First sites listed",
+  joining: "Owners joining",
+};
+
 const OWNER_FACTS = [
   {
-    icon: "verified" as const,
-    t: "Verified, not just listed",
-    d: "Company, location and permit checks earn badges buyers trust.",
+    icon: "hoarding" as const,
+    t: "We do the typing",
+    d: "Send a media kit or a spreadsheet. Your sites come back as drafts for you to check.",
   },
   {
     icon: "enquiry" as const,
@@ -62,19 +113,19 @@ const OWNER_FACTS = [
     d: "No reselling, no rerouting. Your name is on every page about your site.",
   },
   {
+    icon: "verified" as const,
+    t: "Verified, not just listed",
+    d: "Company, location and permit checks earn badges buyers trust.",
+  },
+  {
     icon: "responsive" as const,
     t: "A free storefront",
     d: "A public page for your company with all your sites, even if you have no website.",
   },
-  {
-    icon: "hoarding" as const,
-    t: "We do the typing",
-    d: "Send a media kit or a spreadsheet. We turn it into listings and send you the links.",
-  },
 ];
 
 export default async function HomePage() {
-  const latest = await latestForHome(3);
+  const [latest, cities] = await Promise.all([latestForHome(3), cityBoard()]);
   return (
     <Shell>
       <JsonLd data={[organizationJsonLd(), webSiteJsonLd()]} />
@@ -85,69 +136,26 @@ export default async function HomePage() {
           <div className="mx-auto flex max-w-[800px] flex-col items-center text-center">
             <p className="t-label text-ink-muted">The open map of out-of-home</p>
             <h1 className="t-display-xl text-ink mt-4">Every billboard, findable.</h1>
-            <p className="t-body-xl text-ink-muted mt-6 max-w-[46ch]">
-              Search any billboard, hoarding or screen in the world, see who owns it, and ask in one
-              step. The owner always sells.
+            <p className="t-body-xl text-ink-muted mt-6 max-w-[48ch]">
+              Describe the sites you need in plain words. See who owns each one, and ask the owner
+              in one step. Free for advertisers; the owner is always the seller.
             </p>
             <div className="mt-8 w-full max-w-[680px]">
-              <SearchField />
+              <BriefField examples={EXAMPLES} />
             </div>
-            <p className="t-small text-ink-muted mt-4">
-              Try{" "}
-              <a href="/search/?q=hoardings+in+Bengaluru" className="oh-link">
-                hoardings in Bengaluru
-              </a>
-              ,{" "}
-              <a href="/search/?q=LED+screens+in+Mumbai" className="oh-link">
-                LED screens in Mumbai
-              </a>{" "}
-              or{" "}
-              <a href="/search/?q=20x10+near+Silk+Board" className="oh-link">
-                20 × 10 ft near Silk Board
-              </a>
-              .
-            </p>
           </div>
         </Container>
       </section>
 
-      {/* How it works, with the site sheet as the illustration */}
-      <section className="border-hairline border-b" data-section="how-it-works">
+      {/* How it works, one tab per kind of visitor */}
+      <section className="border-hairline border-b" data-section="how-it-works" id="how-it-works">
         <Container className="py-12 lg:py-16">
-          <div className="grid items-center gap-10 lg:grid-cols-[6fr_6fr] lg:gap-14">
-            <div>
-              <Reveal>
-                <p className="t-label text-ink-muted">How it works</p>
-                <h2 className="t-display-md mt-3">Three steps</h2>
-              </Reveal>
-              <Reveal stagger>
-                <ol className="mt-8 flex flex-col gap-7">
-                  {STEPS.map((s, i) => (
-                    <li key={s.title} className="flex gap-4" data-stagger-item style={at(i)}>
-                      <div className="bg-paper-sunken text-ink flex h-12 w-12 shrink-0 items-center justify-center rounded-sm">
-                        <Icon name={s.icon} size={24} />
-                      </div>
-                      <div>
-                        <h3 className="t-display-sm">
-                          <span
-                            className="text-ink-muted mr-2 font-mono"
-                            style={{ fontVariantNumeric: "tabular-nums" }}
-                          >
-                            0{i + 1}
-                          </span>
-                          {s.title}
-                        </h3>
-                        <p className="t-body text-ink-muted mt-2 max-w-[48ch]">{s.body}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </Reveal>
-            </div>
-            {/* The sheet illustrates the steps beside them; on a phone it would trail after them as a near-empty box. */}
-            <div className="hidden lg:block">
-              <SiteSheet />
-            </div>
+          <Reveal>
+            <p className="t-label text-ink-muted">How it works</p>
+            <h2 className="t-display-md mt-3">How it works, for you</h2>
+          </Reveal>
+          <div className="mt-8">
+            <PersonaTabs personas={PERSONAS} />
           </div>
         </Container>
       </section>
@@ -174,6 +182,124 @@ export default async function HomePage() {
         </section>
       ) : null}
 
+      {/* Inside a site page: the sample sheet beside what every page records */}
+      <section className="border-hairline border-b" data-section="anatomy">
+        <Container className="py-12 lg:py-16">
+          <div className="grid items-start gap-10 lg:grid-cols-[6fr_6fr] lg:gap-14">
+            <div>
+              <Reveal>
+                <p className="t-label text-ink-muted">Inside a site page</p>
+                <h2 className="t-display-md mt-3">Everything you would check, on one page</h2>
+                <p className="t-body text-ink-muted mt-3 max-w-[52ch]">
+                  Every site is recorded the same way, so two sites from two owners compare line by
+                  line. Real pages lead with dated photos from the street.
+                </p>
+              </Reveal>
+              <Reveal stagger>
+                <dl className="mt-8 grid gap-x-8 gap-y-5 sm:grid-cols-2">
+                  {ANATOMY.map((a, i) => (
+                    <div key={a.t} data-stagger-item style={at(i)}>
+                      <dt className="t-body-strong">{a.t}</dt>
+                      <dd className="t-body text-ink-muted mt-1">{a.d}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </Reveal>
+            </div>
+            {/* The sheet illustrates the list beside it; on a phone it would trail after it as a near-empty box. */}
+            <div className="hidden lg:sticky lg:top-24 lg:block">
+              <SiteSheet />
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* How we verify */}
+      <section className="border-hairline border-b" data-section="verify">
+        <Container className="py-12 lg:py-16">
+          <Reveal>
+            <p className="t-label text-ink-muted">How we verify</p>
+            <h2 className="t-display-md mt-3 max-w-[24ch]">Checked before you see it</h2>
+            <p className="t-body text-ink-muted mt-3 max-w-[60ch]">
+              Inflated traffic claims, one structure sold twice, a location swapped, a proof photo
+              borrowed from somewhere else. Each badge answers one of these, and says when it was
+              checked. Every photo is checked for stock images and for pictures already used on
+              another site before a buyer sees it.
+            </p>
+          </Reveal>
+          <Reveal stagger>
+            <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {CHECKS.map((c, i) => (
+                <li
+                  key={c.label}
+                  className="border-hairline bg-paper-raised rounded-md border p-5"
+                  data-stagger-item
+                  style={at(i)}
+                >
+                  <Badge kind={c.kind}>{c.label}</Badge>
+                  <p className="t-body text-ink-muted mt-3">{c.how}</p>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </Container>
+      </section>
+
+      {/* Cities opening: honest status in words until a city's hub opens */}
+      <section className="border-hairline border-b" data-section="cities">
+        <Container className="py-12 lg:py-16">
+          <Reveal>
+            <p className="t-label text-ink-muted">Where we are open</p>
+            <h2 className="t-display-md mt-3">Opening city by city</h2>
+            <p className="t-body text-ink-muted mt-3 max-w-[60ch]">
+              Bengaluru opens first. A city opens when enough verified sites are listed to be worth
+              searching, and every site in it has a real photo, an exact location and a named owner.
+            </p>
+          </Reveal>
+          <Reveal stagger>
+            <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+              {cities.map((c, i) => (
+                <li
+                  key={c.slug}
+                  className="border-hairline bg-paper-raised flex flex-col rounded-md border p-4 sm:p-5"
+                  data-stagger-item
+                  data-city={c.slug}
+                  style={at(i)}
+                >
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h3 className="t-display-sm">{c.label}</h3>
+                    {c.status === "open" ? (
+                      <span className="t-data text-ink-muted font-mono">
+                        {c.count.toLocaleString("en-IN")} sites
+                      </span>
+                    ) : null}
+                  </div>
+                  <p className="t-small text-ink-muted mt-1">{CITY_WORDS[c.status]}</p>
+                  <div className="mt-auto pt-4">
+                    {c.href ? (
+                      <a href={c.href} className="oh-link t-body">
+                        {c.status === "open" ? `Sites in ${c.label}` : "See what is listed"}
+                      </a>
+                    ) : (
+                      <a href={`/search/?city=${c.slug}`} className="oh-link t-body" rel="nofollow">
+                        Tell me when it opens
+                      </a>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+          <p className="t-body text-ink-muted mt-6">
+            Own sites in one of these cities?{" "}
+            <a href="/list-your-sites/" className="oh-link">
+              List them free
+            </a>
+            .
+          </p>
+        </Container>
+      </section>
+
       {/* For media owners */}
       <section className="bg-navy text-on-navy" data-section="owners">
         <Container className="py-14 lg:py-20">
@@ -182,8 +308,8 @@ export default async function HomePage() {
               <p className="t-label opacity-80">For media owners</p>
               <h2 className="t-display-lg mt-3">Your sites, found by every buyer, at no cost.</h2>
               <p className="t-body-lg mt-5 max-w-[48ch] opacity-90">
-                List every face free. Set your own price, or none. Enquiries come straight to you by
-                email and WhatsApp, and you keep the client.
+                List every face free. Set your own price, or none. Enquiries come straight to you,
+                you keep the client, and we take no commission.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button href="/list-your-sites/" variant="on-navy">
@@ -213,51 +339,6 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Agencies and brands */}
-      <section className="border-hairline border-b" data-section="buyers">
-        <Container className="py-12 lg:py-16">
-          <Reveal stagger>
-            <div className="grid gap-5 lg:grid-cols-2">
-              <article
-                className="oh-panel border-hairline bg-paper-raised rounded-md border p-5 sm:p-6"
-                data-stagger-item
-                style={at(0)}
-              >
-                <p className="t-label text-ink-muted">Agencies and OOH specialists</p>
-                <h2 className="t-display-sm mt-3">
-                  The fastest way to find and check any site, including the independents no exchange
-                  carries.
-                </h2>
-                <p className="t-body text-ink-muted mt-3 max-w-[56ch]">
-                  Standard site sheets, one availability request across many owners, exports for
-                  your plans. We will never compete with you, and we never contact your clients.
-                </p>
-                <a href="/charter/" className="oh-link t-body mt-4 inline-block">
-                  Read what we never do
-                </a>
-              </article>
-              <article
-                className="oh-panel border-hairline bg-paper-raised rounded-md border p-5 sm:p-6"
-                data-stagger-item
-                style={at(1)}
-              >
-                <p className="t-label text-ink-muted">Brands and small businesses</p>
-                <h2 className="t-display-sm mt-3">
-                  See real sites, real owners and real prices, then ask in one step.
-                </h2>
-                <p className="t-body text-ink-muted mt-3 max-w-[56ch]">
-                  Most hoardings in India rent by the month. A &ldquo;from&rdquo; price, photos and
-                  an exact location tell you in a minute whether a site fits.
-                </p>
-                <a href="/search/" className="oh-link t-body mt-4 inline-block">
-                  Start a search
-                </a>
-              </article>
-            </div>
-          </Reveal>
-        </Container>
-      </section>
-
       {/* Newsroom: only when pieces exist */}
       {latest.length > 0 ? (
         <section className="border-hairline border-b" data-section="newsroom">
@@ -282,15 +363,41 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      {/* Neutrality line */}
+      {/* The charter, and the close */}
       <section className="bg-paper-sunken" data-section="neutrality">
         <Container className="py-12 lg:py-16">
           <Reveal>
             <div className="text-center">
-              <p className="t-label text-ink-muted">Our charter, in one line</p>
-              <blockquote className="t-display-md mx-auto mt-4 max-w-[30ch]">
-                {NEUTRALITY_LINE}
-              </blockquote>
+              <p className="t-label text-ink-muted">Our charter</p>
+              <h2 className="t-display-md mx-auto mt-4 max-w-[30ch]">{NEUTRALITY_LINE}</h2>
+            </div>
+          </Reveal>
+          <Reveal stagger>
+            <ol className="mx-auto mt-10 grid max-w-[1000px] gap-5 sm:grid-cols-2 lg:grid-cols-5">
+              {CHARTER.map((rule, i) => (
+                <li key={rule.title} data-stagger-item style={at(i)}>
+                  <span
+                    className="t-data text-ink-muted font-mono"
+                    style={{ fontVariantNumeric: "tabular-nums" }}
+                  >
+                    0{i + 1}
+                  </span>
+                  <h3 className="t-body-strong mt-1">{rule.title}</h3>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
+          <Reveal>
+            <div className="mt-10 flex flex-wrap justify-center gap-3">
+              <Button href="/search/" variant="primary">
+                Search sites
+              </Button>
+              <Button href="/list-your-sites/" variant="secondary">
+                List your sites free
+              </Button>
+              <Button href="/charter/" variant="ghost">
+                Read the charter
+              </Button>
             </div>
           </Reveal>
         </Container>

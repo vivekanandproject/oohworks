@@ -18,6 +18,7 @@ const COLS: Col[] = [
     title: "Product",
     links: [
       { href: "/search/", label: "Find sites" },
+      { href: "/#how-it-works", label: "How it works" },
       { href: "/newsroom/", label: "Newsroom" },
       { href: "/guides/", label: "Guides" },
       { href: "/charter/", label: "The charter" },

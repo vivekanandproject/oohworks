@@ -338,7 +338,13 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           <div className="mx-auto w-full max-w-[760px]" data-section="results" data-layout="empty">
             <EmptyState
               icon="pin"
-              title={result.catalogueSize === 0 ? "No sites listed yet" : `No ${what} yet`}
+              title={
+                result.catalogueSize === 0
+                  ? chips.length
+                    ? `No verified ${what} yet`
+                    : "No sites listed yet"
+                  : `No ${what} yet`
+              }
               actions={
                 <>
                   <Button href="/list-your-sites/" variant="ghost" size="sm">
@@ -351,7 +357,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               }
             >
               {result.catalogueSize === 0
-                ? "The first verified sites go live city by city with the founding owners. Leave your email and we will tell you when your city opens."
+                ? `${chips.length ? "We read your brief, shown above. " : ""}OOHWORKS opens city by city, Bengaluru first, as owners verify their sites. Leave your email and we will write the day the first one is listed.`
                 : `Nothing matches every filter you chose. Widen the search below, or leave your email and we will tell you the day ${what} appear.`}
             </EmptyState>
             {!followed ? (

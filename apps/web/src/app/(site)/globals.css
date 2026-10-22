@@ -28,3 +28,20 @@
     }
   }
 }
+
+/*
+ * "How it works, for you" (components/home/PersonaTabs.tsx). One panel shows at a time. Without
+ * JavaScript the tabs are links and :target picks the panel, so /#for-agencies works anywhere; once the
+ * script runs (data-js) the component decides alone.
+ */
+@layer components {
+  .personas .persona-panel:not([data-on]) {
+    display: none;
+  }
+  .personas:not([data-js]) .persona-panel:target {
+    display: block;
+  }
+  .personas:not([data-js]):has(.persona-panel:target) .persona-panel[data-on]:not(:target) {
+    display: none;
+  }
+}

@@ -160,6 +160,88 @@ test.describe("landing page SEO contract", () => {
   }
 });
 
+test.describe("brief box", () => {
+  test("shows what the search will read, as the brief is typed", async ({ page }) => {
+    await page.goto("/");
+    const reading = page.locator("[data-section='brief-reading']");
+    await expect(reading).toContainText("Try");
+    const before = await reading.boundingBox();
+    await page.getByRole("searchbox").fill("hoardings in Bengaluru under 1 lakh");
+    await expect(reading).toContainText("Understood as");
+    await expect(reading.locator(".oh-chip")).toHaveText([
+      "Bengaluru",
+      "Hoardings",
+      /Under ₹\s1,00,000 a month/,
+    ]);
+    // The line under the box keeps its place: the form above it never moves.
+    expect((await reading.boundingBox())!.y).toBe(before!.y);
+    await page.getByRole("searchbox").fill("");
+    await expect(reading).toContainText("Try");
+  });
+
+  test("every example brief is read in full by the search", async ({ page }) => {
+    await page.goto("/");
+    const examples = page.locator("[data-section='brief-reading'] a");
+    await expect(examples).toHaveCount(3);
+    for (const href of await examples.evaluateAll((as) => as.map((a) => a.getAttribute("href")!))) {
+      await page.goto(href);
+      await expect(page.locator("[data-section='understood']")).toBeVisible();
+    }
+  });
+});
+
+test.describe("how it works, for you", () => {
+  test("one persona shows at a time, and a tab can be shared by address", async ({ page }) => {
+    await page.goto("/");
+    const shown = page.locator(".persona-panel:visible");
+    await expect(shown).toHaveCount(1);
+    await expect(shown).toHaveAttribute("id", "for-owners");
+    await page.getByRole("tab", { name: "Agencies" }).click();
+    await expect(shown).toHaveAttribute("id", "for-agencies");
+    await expect(page.getByRole("tab", { name: "Agencies" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(page.url()).toMatch(/#for-agencies$/);
+    await page.goto("/#for-digital");
+    await expect(shown).toHaveAttribute("id", "for-digital");
+  });
+
+  test("arrow keys move between tabs", async ({ page, isMobile }) => {
+    test.skip(Boolean(isMobile), "keyboards are for wider screens");
+    await page.goto("/");
+    await page.getByRole("tab", { name: "Media owners" }).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("tab", { name: "Owner networks" })).toBeFocused();
+    await expect(page.locator(".persona-panel:visible")).toHaveAttribute("id", "for-networks");
+    await page.keyboard.press("End");
+    await expect(page.locator(".persona-panel:visible")).toHaveAttribute("id", "for-digital");
+  });
+
+  test("the cities board says where each city stands, in words until it opens", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const cards = page.locator("[data-section='cities'] [data-city]");
+    await expect(cards).toHaveCount(6);
+    await expect(cards.first()).toContainText("Bengaluru");
+    // The test database holds sample sites only, which never count: every city is still joining.
+    await expect(cards.filter({ hasText: "Owners joining" })).toHaveCount(6);
+    await expect(page.locator("[data-section='cities']")).not.toContainText(/\d+ sites/);
+  });
+});
+
+test.describe("how it works, without JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("each tab is a link to its panel, and the panel shows", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator(".persona-panel:visible")).toHaveAttribute("id", "for-owners");
+    await page.getByRole("tab", { name: "Brands and businesses" }).click();
+    await expect(page.locator(".persona-panel:visible")).toHaveAttribute("id", "for-brands");
+  });
+});
+
 test.describe("motion", () => {
   test("hero headline is never hidden by a reveal", async ({ page }) => {
     await page.goto("/");
