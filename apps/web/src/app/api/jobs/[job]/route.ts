@@ -2,8 +2,9 @@ import { timingSafeEqual } from "node:crypto";
 import { JOBS, type JobName } from "@/lib/jobs";
 
 export const dynamic = "force-dynamic";
-// Claude can take several minutes over a long media kit; the service allows 15 (infra/terraform).
-export const maxDuration = 900;
+// Only Vercel reads this, and refuses to build above 300 on its free plan. Cloud Run ignores it and
+// gives a request 15 minutes (infra/terraform), which a long media kit with Claude can need.
+export const maxDuration = 300;
 
 const notFound = () => new Response("Not found", { status: 404 });
 
