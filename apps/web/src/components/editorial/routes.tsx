@@ -198,7 +198,13 @@ export function pillarArticle(key: PillarKey) {
       return {
         title,
         description,
-        alternates: alternates(piece.url),
+        alternates: {
+          ...alternates(piece.url),
+          // The same piece as Markdown, for AI agents (src/app/api/md); left out when it is not indexed.
+          ...(piece.noIndex
+            ? {}
+            : { types: { "text/markdown": absolute(piece.url.replace(/\/$/, ".md")) } }),
+        },
         robots: piece.noIndex
           ? { index: false, follow: true }
           : { index: true, follow: true, "max-image-preview": "large" },

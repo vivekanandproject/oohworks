@@ -384,6 +384,8 @@ async function main() {
         title: "Global out-of-home spend reached $54.2 bn in 2025, WOO reports",
         standfirst:
           "The World Out of Home Organization puts growth at 15% on the year. Digital screens took 47% of the total.",
+        shortAnswer:
+          "Global spending on out-of-home advertising reached $54.2 bn in 2025, up 15% on 2024, according to the World Out of Home Organization's 2026 report. Digital screens took 47% of the total, and the organization expects digital to reach 49% of a $56.4 bn market in 2026.",
         publishedAt: hoursAgo(1),
         body: doc(
           p(

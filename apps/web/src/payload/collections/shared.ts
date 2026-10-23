@@ -75,6 +75,48 @@ export const workflowField: Field = {
   },
 };
 
+/**
+ * The answer an answer engine lifts: 40 to 60 words that answer the question the headline raises,
+ * with the key figure and its date. Shown first on the page, used as the abstract in structured data,
+ * the summary in feeds and the opening of the Markdown copy for AI agents.
+ */
+export const shortAnswerField: Field = {
+  name: "shortAnswer",
+  type: "textarea",
+  maxLength: 500,
+  admin: {
+    description:
+      "40 to 60 words, plain text, no links. Answer the question the headline raises, with the key figure and its date. Shown first on the page and read by search and AI answer engines.",
+  },
+};
+
+/** Who marked the piece fact-checked, and when. Set by the editorial hook, never typed. */
+export const factCheckField: Field = {
+  name: "factCheck",
+  type: "group",
+  admin: {
+    position: "sidebar",
+    description: "Recorded when an editor marks the piece Fact-checked. Shown on the page.",
+  },
+  fields: [
+    { name: "by", type: "text", admin: { readOnly: true } },
+    { name: "at", type: "date", admin: { readOnly: true } },
+    { name: "user", type: "relationship", relationTo: "users", admin: { readOnly: true } },
+  ],
+};
+
+/** An entity's Wikidata item, such as Q1355 for Bengaluru, so search engines and AI tie it to the same thing. */
+export const wikidataField: Field = {
+  name: "wikidata",
+  type: "text",
+  admin: {
+    description:
+      "Optional. The Wikidata item, such as Q1355 for Bengaluru. Links this to the same entity everywhere.",
+  },
+  validate: (value: unknown) =>
+    !value || /^Q\d+$/.test(String(value)) || "A Wikidata item looks like Q1355.",
+};
+
 export const createdByField: Field = {
   name: "createdBy",
   type: "relationship",

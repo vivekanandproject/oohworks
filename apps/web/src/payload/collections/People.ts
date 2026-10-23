@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { fieldEditorOnly, isEditor, isSuperAdmin } from "../access";
 import { slugify } from "../hooks";
+import { wikidataField } from "./shared";
 
 export const People: CollectionConfig = {
   slug: "people",
@@ -21,6 +22,7 @@ export const People: CollectionConfig = {
   fields: [
     { name: "name", type: "text", required: true },
     { name: "slug", type: "text", unique: true, index: true, admin: { position: "sidebar" } },
+    wikidataField,
     {
       name: "role",
       type: "text",

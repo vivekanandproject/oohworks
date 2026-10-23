@@ -2,6 +2,7 @@ import { PILLARS } from "@/lib/editorial/pillars";
 import { allPieces } from "@/lib/editorial/queries";
 import { xml } from "@/lib/editorial/xml";
 import { absolute, siteUrl } from "@/lib/seo";
+import { WEBSUB_HUB } from "@/lib/editorial/websub";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export async function GET() {
       <link>${xml(absolute(p.url))}</link>
       <guid isPermaLink="true">${xml(absolute(p.url))}</guid>
       <pubDate>${new Date(p.publishedAt).toUTCString()}</pubDate>
-      <description>${xml(p.standfirst)}</description>
+      <description>${xml(p.shortAnswer ?? p.standfirst)}</description>
       <category>${xml(PILLARS[p.pillar].label)}</category>
 ${p.authors.map((a) => `      <dc:creator>${xml(a.name)}</dc:creator>`).join("\n")}
     </item>`,
@@ -27,6 +28,7 @@ ${p.authors.map((a) => `      <dc:creator>${xml(a.name)}</dc:creator>`).join("\n
     <title>OOHWORKS newsroom</title>
     <link>${xml(absolute("/newsroom/"))}</link>
     <atom:link href="${xml(absolute("/feed.xml"))}" rel="self" type="application/rss+xml" />
+    <atom:link href="${xml(WEBSUB_HUB)}" rel="hub" />
     <description>Independent news, analysis and data on out-of-home advertising.</description>
     <language>en</language>
     <lastBuildDate>${new Date(pieces[0]?.publishedAt ?? Date.now()).toUTCString()}</lastBuildDate>

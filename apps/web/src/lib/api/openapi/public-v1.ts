@@ -1,3 +1,4 @@
+import { PILLARS as PILLARS_FOR_SPEC } from "@/lib/editorial/pillars";
 import { MAX_PER_PAGE } from "@/lib/api/sites";
 import { PER_PAGE } from "@/lib/sites/queries";
 import { CITIES, ENVIRONMENTS, FORMATS, LIGHTING, SORTS, TRUST } from "@/lib/sites/taxonomy";
@@ -320,6 +321,7 @@ export const publicSpec = {
   tags: [
     { name: "Sites", description: "Advertising faces, one record per face." },
     { name: "Reference", description: "The lists the filters use." },
+    { name: "Newsroom", description: "Published news, analysis and guides, with their sources." },
     { name: "Service", description: "Whether the service is up." },
   ],
   paths: {
@@ -445,6 +447,33 @@ export const publicSpec = {
         },
       },
     },
+    "/api/v1/articles/": {
+      get: {
+        tags: ["Newsroom"],
+        operationId: "listArticles",
+        summary: "List newsroom articles",
+        description:
+          "Published pieces from the newsroom, newest first. Each links to its page and to a Markdown copy (`markdownUrl`) in which every figure is written with its source and the date it is true for. Quote figures with both.",
+        parameters: [
+          query(
+            "section",
+            { type: "string", enum: Object.keys(PILLARS_FOR_SPEC) },
+            "One section only.",
+          ),
+          query("page", { type: "integer", minimum: 1, default: 1 }),
+          query("per_page", { type: "integer", minimum: 1, maximum: 50, default: 20 }),
+        ],
+        responses: {
+          "200": {
+            description: "A page of articles.",
+            content: {
+              "application/json": { schema: { $ref: "#/components/schemas/ArticleList" } },
+            },
+          },
+          "400": problemResponse("`section` or `per_page` is not valid."),
+        },
+      },
+    },
     "/api/v1/cities/": {
       get: {
         tags: ["Reference"],
@@ -510,6 +539,69 @@ export const publicSpec = {
   },
   components: {
     schemas: {
+      ArticleList: {
+        type: "object",
+        required: ["articles", "page", "perPage", "total", "pages"],
+        properties: {
+          articles: { type: "array", items: { $ref: "#/components/schemas/Article" } },
+          page: { type: "integer" },
+          perPage: { type: "integer" },
+          total: { type: "integer" },
+          pages: { type: "integer" },
+        },
+      },
+      Article: {
+        type: "object",
+        required: [
+          "title",
+          "url",
+          "markdownUrl",
+          "section",
+          "sectionLabel",
+          "standfirst",
+          "publishedAt",
+          "updatedAt",
+          "authors",
+        ],
+        properties: {
+          title: { type: "string" },
+          url: { type: "string", format: "uri", description: "The page." },
+          markdownUrl: {
+            type: "string",
+            format: "uri",
+            description:
+              "The same piece as Markdown, with every figure's source and date written out.",
+          },
+          section: { type: "string", enum: Object.keys(PILLARS_FOR_SPEC) },
+          sectionLabel: { type: "string" },
+          standfirst: { type: "string" },
+          shortAnswer: nullable({
+            type: "string",
+            description: "40 to 60 words answering the question the headline raises.",
+          }),
+          publishedAt: { type: "string", format: "date-time" },
+          updatedAt: { type: "string", format: "date-time" },
+          authors: {
+            type: "array",
+            items: {
+              type: "object",
+              required: ["name", "url"],
+              properties: {
+                name: { type: "string" },
+                url: nullable({ type: "string", format: "uri" }),
+              },
+            },
+          },
+          factCheckedBy: nullable({
+            type: "string",
+            description: "The editor who checked every figure.",
+          }),
+          factCheckedAt: nullable({ type: "string", format: "date-time" }),
+          places: { type: "array", items: { type: "string" } },
+          topics: { type: "array", items: { type: "string" } },
+          sponsoredBy: nullable({ type: "string", description: "Set only on a sponsored piece." }),
+        },
+      },
       SiteSummary,
       SiteDetail,
       SiteList: {

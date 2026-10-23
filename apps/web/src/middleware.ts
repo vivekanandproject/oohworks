@@ -6,6 +6,9 @@ import { isGone } from "@/lib/sites/gone";
 /** A site's own page: /{country}/{city}/{locality}/{slug ending in its permanent id}/. */
 const SITE_PAGE = /^\/[a-z]{2}\/[^/]+\/[^/]+\/([^/]+)\/?$/;
 
+/** The Markdown copy of a piece: its own address with ".md" for the closing slash (/news/{slug}.md). */
+const MARKDOWN = /^\/(news|analysis|guides|academy|data|showcase)\/([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/;
+
 /**
  * 1. Origin check: in staging and prod Cloudflare injects X-Origin-Secret via a Transform
  *    Rule; a request that reaches Cloud Run without it is not from Cloudflare and gets 403.
@@ -35,6 +38,9 @@ export async function middleware(req: NextRequest) {
       return new NextResponse("Forbidden", { status: 403 });
     }
   }
+  const md = MARKDOWN.exec(pathname);
+  if (md) return NextResponse.rewrite(new URL(`/api/md/${md[1]}/${md[2]}/`, req.url));
+
   const slug = SITE_PAGE.exec(pathname)?.[1];
   const id = slug ? permanentIdFromSlug(slug) : null;
   // Web Crypto, which the dev bundler accepts for either runtime; node:crypto it does not.

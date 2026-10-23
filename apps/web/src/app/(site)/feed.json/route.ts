@@ -1,6 +1,7 @@
 import { PILLARS } from "@/lib/editorial/pillars";
 import { allPieces } from "@/lib/editorial/queries";
 import { absolute } from "@/lib/seo";
+import { WEBSUB_HUB } from "@/lib/editorial/websub";
 
 export const dynamic = "force-dynamic";
 
@@ -12,13 +13,14 @@ export async function GET() {
     title: "OOHWORKS newsroom",
     home_page_url: absolute("/newsroom/"),
     feed_url: absolute("/feed.json"),
+    hubs: [{ type: "WebSub", url: WEBSUB_HUB }],
     description: "Independent news, analysis and data on out-of-home advertising.",
     language: "en",
     items: pieces.map((p) => ({
       id: absolute(p.url),
       url: absolute(p.url),
       title: p.title,
-      summary: p.standfirst,
+      summary: p.shortAnswer ?? p.standfirst,
       date_published: p.publishedAt,
       date_modified: p.updatedAt,
       authors: p.authors.map((a) => ({

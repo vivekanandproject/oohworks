@@ -4,8 +4,10 @@ import { editorialBeforeChange, refreshAfterChange, refreshAfterDelete } from ".
 import {
   createdByField,
   editorialEditor,
+  factCheckField,
   readingTimeField,
   seoFields,
+  shortAnswerField,
   slugField,
   sponsorField,
   workflowField,
@@ -33,6 +35,14 @@ export const Guides: CollectionConfig = {
   },
   fields: [
     {
+      name: "readiness",
+      type: "ui",
+      admin: {
+        position: "sidebar",
+        components: { Field: "/payload/admin/Readiness#Readiness" },
+      },
+    },
+    {
       name: "kind",
       type: "select",
       required: true,
@@ -48,6 +58,7 @@ export const Guides: CollectionConfig = {
     { name: "title", type: "text", required: true, maxLength: 120 },
     slugField,
     { name: "standfirst", type: "textarea", required: true, maxLength: 300 },
+    shortAnswerField,
     { name: "hero", type: "upload", relationTo: "media" },
     { name: "body", type: "richText", required: true, editor: editorialEditor },
     {
@@ -96,6 +107,7 @@ export const Guides: CollectionConfig = {
       admin: { position: "sidebar", description: "Shown to readers as “figures refreshed”" },
     },
     workflowField,
+    factCheckField,
     { name: "publishedAt", type: "date", admin: { position: "sidebar" } },
     readingTimeField,
     createdByField,

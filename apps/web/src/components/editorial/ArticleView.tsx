@@ -129,10 +129,30 @@ function Head({ piece }: { piece: Piece }) {
       <p className="t-label text-ink-muted">{eyebrow(piece)}</p>
       <h1 className="t-display-lg text-ink">{piece.title}</h1>
       <p className="t-body-xl text-ink-muted">{piece.standfirst}</p>
+      {piece.shortAnswer ? (
+        <section
+          aria-label="Short answer"
+          className="border-hairline bg-paper-raised rounded-md border p-5"
+          data-section="short-answer"
+        >
+          <h2 className="t-label text-ink-muted">Short answer</h2>
+          <p className="t-body-lg text-ink mt-2">{piece.shortAnswer}</p>
+        </section>
+      ) : null}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <Byline piece={piece} />
         <Share piece={piece} />
       </div>
+      {piece.factCheckedBy && piece.factCheckedAt ? (
+        <p className="t-small text-ink-muted" data-section="fact-check">
+          <Badge kind="verified">Fact-checked</Badge>{" "}
+          <span className="ml-1">
+            by {piece.factCheckedBy} ·{" "}
+            <time dateTime={piece.factCheckedAt}>{formatDate(piece.factCheckedAt)}</time>. Every
+            figure is checked against the source named beside it.
+          </span>
+        </p>
+      ) : null}
     </header>
   );
 }

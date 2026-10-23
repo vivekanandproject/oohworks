@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { isOps, isSuperAdmin } from "../access";
 import { slugify } from "../hooks";
+import { wikidataField } from "./shared";
 
 export const Companies: CollectionConfig = {
   slug: "companies",
@@ -17,6 +18,7 @@ export const Companies: CollectionConfig = {
   fields: [
     { name: "name", type: "text", required: true },
     { name: "slug", type: "text", unique: true, index: true, admin: { position: "sidebar" } },
+    wikidataField,
     {
       name: "type",
       type: "select",

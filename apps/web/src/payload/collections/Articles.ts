@@ -4,8 +4,10 @@ import { editorialBeforeChange, refreshAfterChange, refreshAfterDelete } from ".
 import {
   createdByField,
   editorialEditor,
+  factCheckField,
   readingTimeField,
   seoFields,
+  shortAnswerField,
   slugField,
   sponsorField,
   workflowField,
@@ -31,6 +33,14 @@ export const Articles: CollectionConfig = {
     afterDelete: [refreshAfterDelete],
   },
   fields: [
+    {
+      name: "readiness",
+      type: "ui",
+      admin: {
+        position: "sidebar",
+        components: { Field: "/payload/admin/Readiness#Readiness" },
+      },
+    },
     {
       name: "pillar",
       type: "select",
@@ -77,6 +87,7 @@ export const Articles: CollectionConfig = {
           "One or two sentences under the title. The key fact, with its date, goes here or in the first paragraph.",
       },
     },
+    shortAnswerField,
     { name: "hero", type: "upload", relationTo: "media" },
     { name: "body", type: "richText", required: true, editor: editorialEditor },
     {
@@ -110,6 +121,7 @@ export const Articles: CollectionConfig = {
       admin: { description: "Sources beyond the Fact blocks; all appear in the Sources section" },
     },
     workflowField,
+    factCheckField,
     { name: "publishedAt", type: "date", admin: { position: "sidebar" } },
     readingTimeField,
     createdByField,

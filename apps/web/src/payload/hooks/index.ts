@@ -7,6 +7,7 @@ import {
 import { siteUrl } from "../../lib/hosting";
 import { pieceUrl, pillarOf } from "../../lib/editorial/pillars";
 import { canPublish } from "../access";
+import { pingWebSub } from "../../lib/editorial/websub";
 
 export function slugify(input: string): string {
   return input
@@ -66,6 +67,20 @@ export const editorialBeforeChange: CollectionBeforeChangeHook = async ({
   if (operation === "create" && req.user) data.createdBy = req.user.id;
   if (!data.slug && typeof data.title === "string") data.slug = slugify(data.title);
   if (data.body) data.readingTime = Math.max(1, Math.round(wordCount(data.body) / 200));
+
+  // Who checked it, and when: recorded as the piece reaches Fact-checked, cleared if it goes back
+  // to draft or review, and kept through scheduling and publishing.
+  const reachedCheck = data.workflow === "fact_checked" && originalDoc?.workflow !== "fact_checked";
+  if (reachedCheck && req.user) {
+    const user = req.user as { id: number; name?: string | null; email?: string | null };
+    data.factCheck = {
+      by: user.name || user.email || "An editor",
+      at: new Date().toISOString(),
+      user: user.id,
+    };
+  } else if (data.workflow === "draft" || data.workflow === "in_review") {
+    data.factCheck = { by: null, at: null, user: null };
+  }
 
   const publishing = data._status === "published";
   if (publishing) {
@@ -140,7 +155,10 @@ export const refreshAfterChange: CollectionAfterChangeHook = async ({
   const wasPublic = previousDoc?._status === "published";
   if (isPublic || wasPublic) {
     await refreshHome();
-    if (isPublic) void pingIndexNow(publicPath(collection.slug, doc));
+    if (isPublic) {
+      void pingIndexNow(publicPath(collection.slug, doc));
+      void pingWebSub();
+    }
   }
   return doc;
 };

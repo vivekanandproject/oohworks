@@ -481,6 +481,10 @@ export interface Tag {
   id: number;
   name: string;
   slug?: string | null;
+  /**
+   * Optional. The Wikidata item, such as Q1355 for Bengaluru. Links this to the same entity everywhere.
+   */
+  wikidata?: string | null;
   kind: 'place' | 'format' | 'company' | 'theme';
   /**
    * Opens the topic page. State a dated fact where one exists.
@@ -660,6 +664,10 @@ export interface Article {
    * One or two sentences under the title. The key fact, with its date, goes here or in the first paragraph.
    */
   standfirst: string;
+  /**
+   * 40 to 60 words, plain text, no links. Answer the question the headline raises, with the key figure and its date. Shown first on the page and read by search and AI answer engines.
+   */
+  shortAnswer?: string | null;
   hero?: (number | null) | Media;
   body: {
     root: {
@@ -687,6 +695,14 @@ export interface Article {
    * Publishing needs Fact-checked and every Fact ticked.
    */
   workflow: 'draft' | 'in_review' | 'fact_checked' | 'scheduled' | 'published';
+  /**
+   * Recorded when an editor marks the piece Fact-checked. Shown on the page.
+   */
+  factCheck?: {
+    by?: string | null;
+    at?: string | null;
+    user?: (number | null) | User;
+  };
   publishedAt?: string | null;
   /**
    * Minutes, computed from the body
@@ -736,6 +752,10 @@ export interface Person {
   id: number;
   name: string;
   slug?: string | null;
+  /**
+   * Optional. The Wikidata item, such as Q1355 for Bengaluru. Links this to the same entity everywhere.
+   */
+  wikidata?: string | null;
   /**
    * e.g. Editor, India; Contributor; Media owner, Bengaluru
    */
@@ -800,6 +820,10 @@ export interface Company {
   id: number;
   name: string;
   slug?: string | null;
+  /**
+   * Optional. The Wikidata item, such as Q1355 for Bengaluru. Links this to the same entity everywhere.
+   */
+  wikidata?: string | null;
   type: 'owner' | 'agency' | 'brand' | 'vendor' | 'authority' | 'association' | 'publisher';
   logo?: (number | null) | Media;
   links?:
@@ -827,6 +851,10 @@ export interface Guide {
    */
   slug?: string | null;
   standfirst: string;
+  /**
+   * 40 to 60 words, plain text, no links. Answer the question the headline raises, with the key figure and its date. Shown first on the page and read by search and AI answer engines.
+   */
+  shortAnswer?: string | null;
   hero?: (number | null) | Media;
   body: {
     root: {
@@ -867,6 +895,14 @@ export interface Guide {
    * Publishing needs Fact-checked and every Fact ticked.
    */
   workflow: 'draft' | 'in_review' | 'fact_checked' | 'scheduled' | 'published';
+  /**
+   * Recorded when an editor marks the piece Fact-checked. Shown on the page.
+   */
+  factCheck?: {
+    by?: string | null;
+    at?: string | null;
+    user?: (number | null) | User;
+  };
   publishedAt?: string | null;
   /**
    * Minutes, computed from the body
@@ -1620,6 +1656,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   standfirst?: T;
+  shortAnswer?: T;
   hero?: T;
   body?: T;
   authors?: T;
@@ -1627,6 +1664,13 @@ export interface ArticlesSelect<T extends boolean = true> {
   places?: T;
   sources?: T;
   workflow?: T;
+  factCheck?:
+    | T
+    | {
+        by?: T;
+        at?: T;
+        user?: T;
+      };
   publishedAt?: T;
   readingTime?: T;
   createdBy?: T;
@@ -1664,6 +1708,7 @@ export interface GuidesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   standfirst?: T;
+  shortAnswer?: T;
   hero?: T;
   body?: T;
   authors?: T;
@@ -1680,6 +1725,13 @@ export interface GuidesSelect<T extends boolean = true> {
   tocEnabled?: T;
   lastRefreshedAt?: T;
   workflow?: T;
+  factCheck?:
+    | T
+    | {
+        by?: T;
+        at?: T;
+        user?: T;
+      };
   publishedAt?: T;
   readingTime?: T;
   createdBy?: T;
@@ -1759,6 +1811,7 @@ export interface SourcesSelect<T extends boolean = true> {
 export interface PeopleSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
+  wikidata?: T;
   role?: T;
   bio?: T;
   credentials?:
@@ -1789,6 +1842,7 @@ export interface PeopleSelect<T extends boolean = true> {
 export interface CompaniesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
+  wikidata?: T;
   type?: T;
   logo?: T;
   links?:
@@ -1808,6 +1862,7 @@ export interface CompaniesSelect<T extends boolean = true> {
 export interface TagsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
+  wikidata?: T;
   kind?: T;
   description?: T;
   updatedAt?: T;

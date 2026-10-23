@@ -24,6 +24,11 @@ export interface Piece {
   url: string;
   title: string;
   standfirst: string;
+  /** 40 to 60 words answering the headline's question; empty when the writer left it out. */
+  shortAnswer: string | null;
+  /** The editor who marked the piece fact-checked, and when. */
+  factCheckedBy: string | null;
+  factCheckedAt: string | null;
   hero: Media | null;
   authors: Person[];
   tags: Tag[];
@@ -98,6 +103,9 @@ function make(
     url: pieceUrl(pillar, d.slug),
     title: d.title,
     standfirst: d.standfirst,
+    shortAnswer: null,
+    factCheckedBy: null,
+    factCheckedAt: null,
     hero: null,
     authors: objs<Person>(d.authors),
     tags: [],
@@ -120,8 +128,18 @@ function make(
   };
 }
 
+/** The short answer and the fact-check record, which articles and guides carry and reports do not. */
+function checks(d: Pick<Article, "shortAnswer" | "factCheck">): Partial<Piece> {
+  return {
+    shortAnswer: d.shortAnswer?.trim() || null,
+    factCheckedBy: d.factCheck?.by || null,
+    factCheckedAt: d.factCheck?.at || null,
+  };
+}
+
 function fromArticle(d: Article): Piece | null {
   return make(d, "articles", pillarOf("articles", d), {
+    ...checks(d),
     hero: obj<Media>(d.hero),
     tags: objs<Tag>(d.tags),
     places: objs<Tag>(d.places),
@@ -137,6 +155,7 @@ function fromGuide(d: Guide): Piece | null {
   const city = obj<Tag>(d.city);
   const format = obj<Tag>(d.format);
   return make(d, "guides", "guides", {
+    ...checks(d),
     hero: obj<Media>(d.hero),
     tags: [...objs<Tag>(d.tags), ...(format ? [format] : [])],
     places: city ? [city] : [],

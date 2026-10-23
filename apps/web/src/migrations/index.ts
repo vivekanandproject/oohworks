@@ -5,6 +5,7 @@ import * as migration_20261018_171931_site_changes from './20261018_171931_site_
 import * as migration_20261018_173440_follow_alerts from './20261018_173440_follow_alerts';
 import * as migration_20261018_175731_kit_reading from './20261018_175731_kit_reading';
 import * as migration_20261018_182001_photo_checks from './20261018_182001_photo_checks';
+import * as migration_20261023_185130_article_discoverability from './20261023_185130_article_discoverability';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20261018_182001_photo_checks.up,
     down: migration_20261018_182001_photo_checks.down,
-    name: '20261018_182001_photo_checks'
+    name: '20261018_182001_photo_checks',
+  },
+  {
+    up: migration_20261023_185130_article_discoverability.up,
+    down: migration_20261023_185130_article_discoverability.down,
+    name: '20261023_185130_article_discoverability'
   },
 ];

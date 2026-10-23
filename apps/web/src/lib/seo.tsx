@@ -28,16 +28,21 @@ export function alternates(
 export function organizationJsonLd() {
   return {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    // A news publisher as well as a marketplace: NewsMediaOrganization is an Organization, so both hold.
+    "@type": "NewsMediaOrganization",
     "@id": `${siteUrl()}/#organization`,
     name: SITE_NAME,
     url: `${siteUrl()}/`,
     logo: {
       "@type": "ImageObject",
-      url: absolute("/brand/ohworks-mark.svg"),
-      width: 64,
-      height: 64,
+      url: absolute("/brand/oohworks-logo-512.png"),
+      width: 512,
+      height: 512,
     },
+    // Only pages that exist. The masthead, standards and ownership pages join once the company's
+    // details are in (docs/oohworks-article-discoverability-plan.md, section 5).
+    publishingPrinciples: absolute("/charter/"),
+    correctionsPolicy: absolute("/newsroom/corrections/"),
     slogan: TAGLINE,
     description:
       "The open map of out-of-home advertising. Verified, public pages for billboards, hoardings and screens, where the media owner is always the seller.",

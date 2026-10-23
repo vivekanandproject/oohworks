@@ -60,7 +60,7 @@ test.describe("landing page SEO contract", () => {
     const raw = await page.locator('script[type="application/ld+json"]').first().textContent();
     const data = JSON.parse(raw ?? "[]") as Array<Record<string, unknown>>;
     const types = data.map((d) => d["@type"]);
-    expect(types).toContain("Organization");
+    expect(types).toContain("NewsMediaOrganization");
     expect(types).toContain("WebSite");
     const site = data.find((d) => d["@type"] === "WebSite") as {
       potentialAction: { target: { urlTemplate: string } };

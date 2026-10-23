@@ -118,3 +118,57 @@
   font-size: 15px;
   line-height: 1.5;
 }
+
+/* The readiness panel beside an article or guide (payload/admin/Readiness.tsx). Each line carries its
+   state as a word, never colour alone. */
+.oh-readiness {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #ffffff; /* paper-raised */
+  border: 1px solid #d9d8d2; /* hairline */
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 19px;
+  color: #101c30; /* ink */
+}
+.oh-readiness-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.oh-readiness-note {
+  margin: 4px 0 12px;
+  color: #56606f; /* ink-muted */
+}
+.oh-readiness ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.oh-readiness li {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 8px;
+}
+.oh-readiness-state {
+  align-self: start;
+  padding: 1px 6px;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  background: #fbeccb; /* lit-tint */
+  color: #8a5d00; /* lit */
+}
+.oh-readiness li[data-ok] .oh-readiness-state {
+  background: #dcf2e6; /* verified-tint */
+  color: #1c7a4c; /* verified */
+}
+.oh-readiness-fix {
+  display: block;
+  margin-top: 2px;
+  color: #56606f; /* ink-muted */
+}
