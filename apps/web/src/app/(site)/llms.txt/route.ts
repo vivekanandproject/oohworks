@@ -1,6 +1,7 @@
 import { PILLARS } from "@/lib/editorial/pillars";
 import { allPieces } from "@/lib/editorial/queries";
 import { absolute } from "@/lib/seo";
+import { publishedHubs } from "@/lib/sites/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,10 @@ const markdownUrl = (path: string): string => absolute(path.replace(/\/$/, ".md"
  * it keeps, and the newest pieces as Markdown copies with their sources written out.
  */
 export async function GET() {
-  const pieces = (await allPieces(40)).filter((p) => !p.noIndex);
+  const [pieces, hubs] = await Promise.all([
+    allPieces(40).then((list) => list.filter((p) => !p.noIndex)),
+    publishedHubs(),
+  ]);
   const lines = [
     "# OOHWORKS",
     "",
@@ -28,6 +32,22 @@ export async function GET() {
     `- [Find sites](${absolute("/search/")}): search listed sites by place, format, size and budget`,
     `- [For media owners](${absolute("/for-owners/")}): listing is free; enquiries go straight to the owner`,
     `- [Corrections](${absolute("/newsroom/corrections/")}): every correction, with what changed`,
+    "",
+    "## For media owners, and assistants helping them list",
+    "",
+    `- [How to list sites (Markdown guide, with every spreadsheet column)](${absolute("/for-owners.md")})`,
+    `- [List your sites](${absolute("/list-your-sites/")}): free; the owner confirms a code sent to their work email`,
+    `- [Spreadsheet template](${absolute("/api/owner/template/")}): one row per face, up to 500 rows`,
+    "",
+    "## Advertising sites",
+    "",
+    "Every site page that search engines may index has a Markdown copy at the same address with .md in place of the closing slash, listing size, lighting, coordinates, facing, price as the owner shows it, availability and the checks it has passed.",
+    "",
+    `- [Find sites](${absolute("/search/")}): by place, road, format, size and budget`,
+    ...hubs
+      .filter((h) => h.url.split("/").filter(Boolean).length === 2)
+      .map((h) => `- [Sites in ${h.url.split("/")[2]!.replace(/-/g, " ")}](${absolute(h.url)})`),
+    `- [Sites as JSON](${absolute("/api/v1/sites/")}): the public API, no key needed`,
     "",
     "## Newsroom",
     "",

@@ -181,6 +181,60 @@ export const ENDPOINTS: Endpoint[] = [
     answers: [{ status: 200, when: "Every format." }],
   },
   {
+    path: "/api/v1/articles/",
+    method: "get",
+    tag: PUBLIC,
+    summary: "List newsroom articles",
+    description: seePublic,
+    answers: [
+      { status: 200, when: "A page of published articles, newest first." },
+      { status: 400, when: "`section` is not a known section, or `per_page` is out of 1 to 50." },
+    ],
+  },
+  {
+    path: "/api/md/{pillar}/{slug}/",
+    method: "get",
+    tag: "AI agents",
+    summary: "A published piece as Markdown",
+    description:
+      'Served to the public at the piece\'s own address with `.md` for the closing slash (`/news/{slug}.md`): the middleware rewrites it here. Every figure is written with its source number and the date it is true for, followed by the numbered sources. `X-Robots-Tag: noindex, follow` and a `Link: <page>; rel="canonical"` header, so search engines index the page, not the copy. Built by `src/lib/editorial/markdown.ts`.',
+    pathParams: [
+      { name: "pillar", description: "news, analysis, guides, academy, data or showcase" },
+      { name: "slug", description: "The piece's slug" },
+    ],
+    answers: [
+      { status: 200, when: "A published piece that is not marked noindex.", file: "text/markdown" },
+      { status: 404, when: "Unknown section, unknown or unpublished slug, or a noindex piece." },
+    ],
+  },
+  {
+    path: "/api/md-site/{unit}/",
+    method: "get",
+    tag: "AI agents",
+    summary: "A site page as Markdown",
+    description:
+      "Served at the site page's own address with `.md` for the closing slash (`/in/{city}/{locality}/{slug}.md`): the middleware rewrites it here. Every fact with units, sources and dates, the checks the site has passed, photo addresses and the enquiry link; never the owner's contact details. Only sites that meet the content bar (`indexChecks` in `src/lib/sites/view.ts`) have one. noindex, with a canonical link to the page.",
+    pathParams: [
+      { name: "unit", description: "The page's last segment: slug ending in the unit ID" },
+    ],
+    answers: [
+      { status: 200, when: "A live site that meets the content bar.", file: "text/markdown" },
+      {
+        status: 404,
+        when: "Unknown unit, a sample, a removed site, or one below the content bar.",
+      },
+    ],
+  },
+  {
+    path: "/api/md-guide/owners/",
+    method: "get",
+    tag: "AI agents",
+    summary: "How to list sites, as Markdown",
+    description:
+      "Served at `/for-owners.md` and `/list-your-sites.md`. The short answer, the steps, where each happens, every spreadsheet column (from `SHEET_COLUMNS`, so it matches the template) and the questions owners ask. For owners and the AI assistants helping them. noindex, with a canonical link to /for-owners/. Built by `src/lib/owners/guide.ts`.",
+    answers: [{ status: 200, when: "Always.", file: "text/markdown" }],
+  },
+  {
     path: "/api/report/",
     method: "post",
     tag: "Reports",

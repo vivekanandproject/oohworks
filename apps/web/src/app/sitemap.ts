@@ -64,6 +64,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(s.updatedAt),
       changeFrequency: "weekly",
       priority: 0.8,
+      // Google and Bing read the photos from the sitemap too, so a site can be found in image search.
+      ...(s.images.length ? { images: s.images } : {}),
     });
   }
   if (pieces.length === 0) return pages;

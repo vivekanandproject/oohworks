@@ -225,8 +225,10 @@ test.describe("how it works, for you", () => {
     const cards = page.locator("[data-section='cities'] [data-city]");
     await expect(cards).toHaveCount(6);
     await expect(cards.first()).toContainText("Bengaluru");
-    // The test database holds sample sites only, which never count: every city is still joining.
-    await expect(cards.filter({ hasText: "Owners joining" })).toHaveCount(6);
+    // Sample sites never count, and no city has the 25 verified sites a hub needs, so every city is
+    // described in words and none shows a count. (Another test file may briefly add one real site.)
+    for (const card of await cards.all())
+      await expect(card).toContainText(/Owners joining|First sites listed/);
     await expect(page.locator("[data-section='cities']")).not.toContainText(/\d+ sites/);
   });
 });

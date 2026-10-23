@@ -13,6 +13,16 @@ export const metadata: Metadata = {
     "Search billboards, hoardings and digital screens, see the verified owner and ask in one step. Owners list free and always sell direct. No media margin, ever.",
   applicationName: SITE_NAME,
   robots: { index: true, follow: true },
+  // Ownership tags for Google Search Console and Bing Webmaster Tools, set per host so staging never
+  // claims production. Read at build time: changing one needs a redeploy.
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+      : {}),
+    ...(process.env.BING_SITE_VERIFICATION
+      ? { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } }
+      : {}),
+  },
 };
 
 export const viewport: Viewport = {

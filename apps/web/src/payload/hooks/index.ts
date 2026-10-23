@@ -4,10 +4,10 @@ import {
   type CollectionAfterDeleteHook,
   type CollectionBeforeChangeHook,
 } from "payload";
-import { siteUrl } from "../../lib/hosting";
 import { pieceUrl, pillarOf } from "../../lib/editorial/pillars";
 import { canPublish } from "../access";
 import { pingWebSub } from "../../lib/editorial/websub";
+import { pingIndexNow } from "../../lib/indexnow";
 
 export function slugify(input: string): string {
   return input
@@ -106,27 +106,6 @@ export const editorialBeforeChange: CollectionBeforeChangeHook = async ({
   return data;
 };
 
-/** Tells IndexNow engines (Bing, Yandex, Naver, Seznam) about a changed URL. Off unless a key is set and the site is public. */
-async function pingIndexNow(path: string | undefined): Promise<void> {
-  const key = process.env.INDEXNOW_KEY;
-  const site = siteUrl();
-  if (!key || !path || !site || site.includes("localhost") || site.includes("127.0.0.1")) return;
-  try {
-    await fetch("https://api.indexnow.org/indexnow", {
-      method: "POST",
-      headers: { "content-type": "application/json; charset=utf-8" },
-      body: JSON.stringify({
-        host: new URL(site).host,
-        key,
-        keyLocation: `${site}/indexnow-key.txt`,
-        urlList: [`${site}${path}`],
-      }),
-    });
-  } catch {
-    // A failed ping never blocks publishing.
-  }
-}
-
 /** The home page is cached; drop it when anything public changes. Outside a Next request (seed scripts) there is nothing to drop. */
 async function refreshHome(): Promise<void> {
   try {
@@ -156,7 +135,7 @@ export const refreshAfterChange: CollectionAfterChangeHook = async ({
   if (isPublic || wasPublic) {
     await refreshHome();
     if (isPublic) {
-      void pingIndexNow(publicPath(collection.slug, doc));
+      void pingIndexNow([publicPath(collection.slug, doc), "/newsroom/", "/"]);
       void pingWebSub();
     }
   }

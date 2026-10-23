@@ -21,11 +21,10 @@ import {
 } from "@/components/sites/SiteParts";
 import { StillMap } from "@/components/sites/StillMap";
 import type { Site } from "@/payload-types";
-import { picture } from "@/lib/editorial/media";
-import { absolute, alternates, JsonLd } from "@/lib/seo";
+import { absolute, alternates, JsonLd, SITE_NAME } from "@/lib/seo";
 import { monthView } from "@/lib/sites/calendar";
 import { readLists } from "@/lib/sites/lists-server";
-import { getSite, hubLinksFor, similarSites } from "@/lib/sites/queries";
+import { getSite, hubLinksFor, photoUrls, similarSites } from "@/lib/sites/queries";
 import { ReportListing } from "@/components/sites/ReportListing";
 import { cityDef, lightingDef } from "@/lib/sites/taxonomy";
 import {
@@ -73,13 +72,36 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       robots: { index: false, follow: true },
     };
   const price = priceOf(site);
+  const indexable = isIndexable(site, owner);
+  const title = `${site.title}, ${placeLine(site)}`;
+  const description = `${summaryOf(site, owner)} ${price.shown ? `${price.prefix}${price.amount} a month.` : "Price on request."}`;
+  const path = sitePath(site);
+  const photos = photoUrls(site);
   return {
-    title: `${site.title}, ${placeLine(site)}`,
-    description: `${summaryOf(site, owner)} ${price.shown ? `${price.prefix}${price.amount} a month.` : "Price on request."}`,
-    robots: isIndexable(site, owner)
-      ? { index: true, follow: true }
+    title,
+    description,
+    robots: indexable
+      ? { index: true, follow: true, "max-image-preview": "large" }
       : { index: false, follow: true },
-    alternates: alternates(sitePath(site)),
+    alternates: {
+      ...alternates(path),
+      // The same facts as Markdown, for AI agents (src/app/api/md-site); only for pages that are indexed.
+      ...(indexable ? { types: { "text/markdown": absolute(path.replace(/\/$/, ".md")) } } : {}),
+    },
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      url: absolute(path),
+      siteName: SITE_NAME,
+      ...(photos.length ? { images: [{ url: photos[0]!, alt: site.title ?? title }] } : {}),
+    },
+    twitter: {
+      card: photos.length ? "summary_large_image" : "summary",
+      title,
+      description,
+      ...(photos.length ? { images: [photos[0]!] } : {}),
+    },
   };
 }
 
@@ -134,19 +156,37 @@ export default async function SitePage({
   const isDigital = site.format === "led-screen" || site.lighting === "digital";
   const action = price.shown ? "Send enquiry" : "Ask for a quote";
 
-  const images = (site.photos ?? []).flatMap((ph) => {
-    const pic = picture(typeof ph.image === "object" ? ph.image : null, "hero");
-    return pic ? [absolute(pic.src)] : [];
-  });
-  const jsonLd = {
+  const images = photoUrls(site);
+  const cityLabel = cityDef(site.city)?.label ?? site.city;
+  const bookedNow = availability.state === "booked" && site.bookedUntil;
+  const freeFrom = bookedNow
+    ? new Date(new Date(site.bookedUntil!).getTime() + 86_400_000).toISOString().slice(0, 10)
+    : null;
+  // A face is both a thing you can lease (Product) and a place on the map (Place): geo, address and
+  // the city it sits in let search engines and assistants answer "hoardings near X" with it.
+  const siteLd = {
     "@context": "https://schema.org",
-    "@type": "Product",
+    "@type": ["Product", "Place"],
+    "@id": `${absolute(canonical)}#site`,
     name: site.title,
     sku: site.permanentId,
     url: absolute(canonical),
     category: "Out-of-home advertising space",
     description: summaryOf(site, owner),
     ...(images.length ? { image: images } : {}),
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: Number(site.lat.toFixed(5)),
+      longitude: Number(site.lng.toFixed(5)),
+    },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: site.road,
+      addressLocality: site.locality,
+      addressRegion: cityLabel,
+      addressCountry: (site.country ?? "in").toUpperCase(),
+    },
+    containedInPlace: { "@type": "City", name: cityLabel },
     additionalProperty: [
       { "@type": "PropertyValue", name: "format", value: site.format },
       { "@type": "PropertyValue", name: "width_mm", value: site.widthMm },
@@ -155,8 +195,22 @@ export default async function SitePage({
       ...(site.facingDeg != null
         ? [{ "@type": "PropertyValue", name: "facing_deg", value: site.facingDeg }]
         : []),
-      { "@type": "PropertyValue", name: "latitude", value: Number(site.lat.toFixed(5)) },
-      { "@type": "PropertyValue", name: "longitude", value: Number(site.lng.toFixed(5)) },
+      ...(site.landmark
+        ? [{ "@type": "PropertyValue", name: "landmark", value: site.landmark }]
+        : []),
+      ...(audience
+        ? [
+            {
+              "@type": "PropertyValue",
+              name: audience.metric ?? "audience",
+              value: audience.figure,
+              description: `Source: ${audience.source}, measured ${audience.measuredOn}`,
+            },
+          ]
+        : []),
+      ...(site.permit?.number
+        ? [{ "@type": "PropertyValue", name: "permit", value: site.permit.number }]
+        : []),
     ],
     // A price is marked up only when the page shows one.
     ...(price.shown && site.rate
@@ -173,11 +227,36 @@ export default async function SitePage({
               unitCode: "MON",
               ...(site.priceDisplay === "from" ? { minPrice: site.rate } : { price: site.rate }),
             },
-            ...(owner ? { seller: { "@type": "Organization", name: owner.name } } : {}),
+            availability: bookedNow ? "https://schema.org/PreOrder" : "https://schema.org/InStock",
+            ...(freeFrom ? { availabilityStarts: freeFrom } : {}),
+            ...(owner
+              ? {
+                  seller: {
+                    "@type": "Organization",
+                    name: owner.name,
+                    ...(owner.slug ? { url: absolute(`/owners/${owner.slug}/`) } : {}),
+                  },
+                }
+              : {}),
           },
         }
       : {}),
   };
+  const crumbsLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Find sites", item: absolute("/search/") },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: cityLabel,
+        item: absolute(hubs.city ?? `/search/?city=${site.city}`),
+      },
+      { "@type": "ListItem", position: 3, name: site.title, item: absolute(canonical) },
+    ],
+  };
+  const jsonLd = [siteLd, crumbsLd];
 
   return (
     <Shell active="find">

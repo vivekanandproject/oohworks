@@ -2,6 +2,7 @@ import { randomInt } from "node:crypto";
 import { APIError, type CollectionAfterChangeHook, type CollectionBeforeChangeHook } from "payload";
 import { deliverMail } from "../mailer";
 import { siteUrl } from "../../lib/hosting";
+import { pingIndexNow } from "../../lib/indexnow";
 import { formatDef } from "../../lib/sites/taxonomy";
 import { slugify } from "./index";
 
@@ -159,6 +160,15 @@ const base = (): string => siteUrl();
 export const siteAfterChange: CollectionAfterChangeHook = async ({ doc, previousDoc, req }) => {
   const wentLive = doc._status === "published" && previousDoc?._status !== "published";
   const returned = doc.review === "changes" && previousDoc?.review !== "changes";
+  // Any change to a live site, or a site leaving the site, is news to search engines: its own page,
+  // its city page and the home page's city board. Bing and the assistants built on it hear at once.
+  if (doc._status === "published" || previousDoc?._status === "published") {
+    void pingIndexNow([
+      `/in/${doc.city}/${doc.localitySlug ?? "area"}/${doc.slug ?? "site"}-${doc.permanentId}/`,
+      `/in/${doc.city}/`,
+      "/",
+    ]);
+  }
   if (!wentLive && !returned) return doc;
   try {
     const ownerId = typeof doc.owner === "object" && doc.owner !== null ? doc.owner.id : doc.owner;

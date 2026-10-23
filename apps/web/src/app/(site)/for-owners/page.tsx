@@ -1,40 +1,32 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
-import { Badge, Button, Container, Icon, Reveal } from "@ohworks/ui";
+import { Badge, Button, Container, Reveal } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
-import { alternates } from "@/lib/seo";
+import { OWNER_FAQ, OWNER_SHORT_ANSWER, OWNER_STEPS, ownerFaqJsonLd } from "@/lib/owners/guide";
+import { JsonLd, SITE_NAME, absolute, alternates } from "@/lib/seo";
+
+const DESCRIPTION =
+  "List every billboard, hoarding and screen free. Set your own price, get enquiries straight to you, keep your client. OOHWORKS never takes a media margin.";
 
 export const metadata: Metadata = {
-  title: "For media owners",
-  description:
-    "List every billboard, hoarding and screen free. Set your own price, get enquiries straight to you, keep your client. OOHWORKS never takes a media margin.",
-  alternates: alternates("/for-owners/"),
+  title: "For media owners: list your billboards, hoardings and screens free",
+  description: DESCRIPTION,
+  alternates: {
+    ...alternates("/for-owners/"),
+    // The same guide as Markdown, for AI assistants helping an owner list (src/app/api/md-guide).
+    types: { "text/markdown": absolute("/for-owners.md") },
+  },
+  openGraph: {
+    type: "website",
+    title: "List your billboards, hoardings and screens free on OOHWORKS",
+    description: DESCRIPTION,
+    url: absolute("/for-owners/"),
+    siteName: SITE_NAME,
+  },
+  twitter: { card: "summary", title: "List your sites free on OOHWORKS", description: DESCRIPTION },
 };
 
 const at = (i: number) => ({ "--i": i }) as CSSProperties;
-
-const STEPS = [
-  {
-    t: "Verify your company",
-    d: "A code to your work email, then your GSTIN and its certificate. Our team checks them, and that earns the Verified owner badge.",
-  },
-  {
-    t: "Send your inventory",
-    d: "Our spreadsheet template, or just your PDF media kit. We turn a kit into listings, and you approve each one.",
-  },
-  {
-    t: "Pin each face",
-    d: "Drop the pin, check it against Street View, add day, night and approach photos. Photos taken in our app carry GPS and time.",
-  },
-  {
-    t: "Set your terms",
-    d: "Exact rate, a “from” price or price on request. Minimum period, printing and mounting, categories you accept.",
-  },
-  {
-    t: "Go live",
-    d: "Pages that clear the content bar go to Google. Below the bar they stay visible to signed-in buyers until enriched.",
-  },
-];
 
 const BADGES = [
   {
@@ -45,7 +37,7 @@ const BADGES = [
   {
     kind: "verified" as const,
     label: "Verified location",
-    d: "Coordinates match Street View or a GPS-stamped site photo.",
+    d: "The pin matches the site on the street, checked by our team or from a photo's own GPS position.",
   },
   {
     kind: "permit" as const,
@@ -67,6 +59,7 @@ const BADGES = [
 export default function ForOwnersPage() {
   return (
     <Shell active="owners">
+      <JsonLd data={ownerFaqJsonLd()} />
       <section className="border-hairline border-b">
         <Container className="py-12 lg:py-16">
           <p className="t-label text-ink-muted">For media owners</p>
@@ -75,8 +68,16 @@ export default function ForOwnersPage() {
           </h1>
           <p className="t-body-lg text-ink-muted mt-5 max-w-[56ch]">
             List every face free. Set your own price, or none. Enquiries come straight to you by
-            email and WhatsApp, and you keep the client. We never sell media or take a media margin.
+            email, and you keep the client. We never sell media or take a media margin.
           </p>
+          <section
+            aria-label="Short answer"
+            className="border-hairline bg-paper-raised mt-8 max-w-[68ch] rounded-md border p-5"
+            data-section="short-answer"
+          >
+            <h2 className="t-label text-ink-muted">How to list your sites, in short</h2>
+            <p className="t-body-lg text-ink mt-2">{OWNER_SHORT_ANSWER}</p>
+          </section>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button href="/list-your-sites/" variant="primary">
               List your sites
@@ -86,8 +87,11 @@ export default function ForOwnersPage() {
             </Button>
           </div>
           <p className="t-body text-ink-muted mt-4 max-w-[60ch]">
-            It starts with your work email and takes a few minutes. Add sites one at a time, upload
-            a spreadsheet, or send your media kit and we enter them for you.
+            Using an AI assistant to help? Point it at the{" "}
+            <a href="/for-owners.md" className="oh-link">
+              plain-text guide
+            </a>
+            , which includes every column of the spreadsheet template.
           </p>
         </Container>
       </section>
@@ -95,11 +99,11 @@ export default function ForOwnersPage() {
       <section className="border-hairline border-b" id="assisted">
         <Container className="py-12 lg:py-16">
           <Reveal>
-            <h2 className="t-display-md">Assisted onboarding, in five steps</h2>
+            <h2 className="t-display-md">How listing works, in five steps</h2>
           </Reveal>
           <Reveal stagger>
             <ol className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
-              {STEPS.map((s, i) => (
+              {OWNER_STEPS.map((s, i) => (
                 <li key={s.t} data-stagger-item style={at(i)}>
                   <span className="t-data-lg text-ink-faint">0{i + 1}</span>
                   <h3 className="t-body-strong mt-2">{s.t}</h3>
@@ -134,26 +138,37 @@ export default function ForOwnersPage() {
         </Container>
       </section>
 
+      <section className="border-hairline border-b" id="questions">
+        <Container className="py-12 lg:py-16">
+          <Reveal>
+            <h2 className="t-display-md">Questions owners ask</h2>
+          </Reveal>
+          <div className="divide-hairline border-hairline mt-8 max-w-[760px] divide-y border-y">
+            {OWNER_FAQ.map((f) => (
+              <div key={f.q} className="py-5" data-section="faq-item">
+                <h3 className="t-body-strong">{f.q}</h3>
+                <p className="t-body text-ink-muted mt-2">{f.a}</p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
       <section className="bg-navy text-on-navy">
         <Container className="py-12 lg:py-16">
           <Reveal>
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-[56ch]">
-                <p className="t-label opacity-80">Founding owners</p>
-                <h2 className="t-display-md mt-3">
-                  The first 100 verified owners get Pro free for a year
-                </h2>
+                <p className="t-label opacity-80">Free, with no commission</p>
+                <h2 className="t-display-md mt-3">Start with one site, or all of them</h2>
                 <p className="t-body mt-3 opacity-90">
-                  And a permanent founding badge on your storefront. Pro adds full analytics, a
-                  WhatsApp leads inbox, availability sync and priority support.
+                  Start with your work email. Add one site, upload a spreadsheet, or send the media
+                  kit you already have.
                 </p>
               </div>
-              <div className="flex items-center gap-3">
-                <Icon name="pin" size={24} />
-                <Button href="mailto:owners@oohworks.co?subject=Founding%20owner" variant="on-navy">
-                  Claim a founding place
-                </Button>
-              </div>
+              <Button href="/list-your-sites/" variant="on-navy">
+                List your sites
+              </Button>
             </div>
           </Reveal>
         </Container>

@@ -16,16 +16,30 @@ import {
 } from "@/components/owners/Frame";
 import { ownerByEmail, ownerEmail } from "@/lib/owners/server";
 import { countryOf, isPhoneCountry } from "@/lib/phone";
-import { alternates } from "@/lib/seo";
+import { SITE_NAME, absolute, alternates } from "@/lib/seo";
 import { maskEmail } from "@/lib/sites/enquiry";
 
 export const dynamic = "force-dynamic";
 
+const DESCRIPTION =
+  "Put your outdoor advertising sites on OOHWORKS at no cost. You set the price and how it shows, and every enquiry comes straight to you. Add sites one at a time, from a spreadsheet, or send us your media kit.";
+
 export const metadata: Metadata = {
   title: "List your billboards, hoardings and screens free",
-  description:
-    "Put your outdoor advertising sites on OOHWORKS at no cost. You set the price and how it shows, and every enquiry comes straight to you. Add sites one at a time, from a spreadsheet, or send us your media kit.",
-  alternates: alternates("/list-your-sites/"),
+  description: DESCRIPTION,
+  alternates: {
+    ...alternates("/list-your-sites/"),
+    // How to list, as Markdown, for AI assistants helping an owner (src/app/api/md-guide).
+    types: { "text/markdown": absolute("/list-your-sites.md") },
+  },
+  openGraph: {
+    type: "website",
+    title: "List your billboards, hoardings and screens free on OOHWORKS",
+    description: DESCRIPTION,
+    url: absolute("/list-your-sites/"),
+    siteName: SITE_NAME,
+  },
+  twitter: { card: "summary", title: "List your sites free on OOHWORKS", description: DESCRIPTION },
 };
 
 /** Each mistake names the field it belongs to, so the page can mark that field and lead to it. */
@@ -418,6 +432,17 @@ export default async function ListYourSitesPage({
               </div>
             ))}
           </div>
+          <p className="t-small text-ink-muted mt-5">
+            Questions about cost, prices and enquiries are answered on{" "}
+            <a href="/for-owners/#questions" className="oh-link">
+              For owners
+            </a>
+            . Using an AI assistant? Give it the{" "}
+            <a href="/list-your-sites.md" className="oh-link">
+              plain-text guide
+            </a>
+            , with every spreadsheet column.
+          </p>
         </section>
       </Container>
     </Shell>

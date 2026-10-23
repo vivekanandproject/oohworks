@@ -162,25 +162,95 @@ export function badgesOf(
   return out;
 }
 
+export interface IndexCheck {
+  key: string;
+  label: string;
+  ok: boolean;
+  /** What to do when the check is not met. */
+  fix: string;
+}
+
 /**
- * The content bar from the SEO rules: a site page joins the index only when it is the real destination
- * for a real site. A sample never does.
+ * The content bar from the SEO rules, one check at a time: a site page joins the index (and the
+ * sitemap) only when it is the real destination for a real site. A sample or a removed site never does.
+ * The admin's readiness panel shows the same checks, so the team sees why a page is or is not indexed.
  */
-export function isIndexable(site: Site, owner: Pick<Owner, "verified"> | null): boolean {
-  if (site.sample || site.removed) return false;
-  const hasPhoto = (site.photos?.length ?? 0) > 0;
+export function indexChecks(
+  site: Pick<
+    Site,
+    | "sample"
+    | "removed"
+    | "photos"
+    | "lat"
+    | "lng"
+    | "facingDeg"
+    | "widthMm"
+    | "lighting"
+    | "audience"
+  >,
+  owner: Pick<Owner, "verified"> | null,
+): IndexCheck[] {
   const audienceOk =
     !site.audience?.figure || Boolean(site.audience.source && site.audience.measuredOn);
-  return Boolean(
-    hasPhoto &&
-    owner?.verified &&
-    site.lat &&
-    site.lng &&
-    site.facingDeg != null &&
-    site.widthMm &&
-    site.lighting &&
-    audienceOk,
-  );
+  return [
+    {
+      key: "real",
+      label: "A real, live site",
+      ok: !site.sample && !site.removed,
+      fix: site.removed
+        ? "The site was taken down; its page answers 410."
+        : "Sample listings never go to search engines.",
+    },
+    {
+      key: "photo",
+      label: "At least one real photo",
+      ok: (site.photos?.length ?? 0) > 0,
+      fix: "Add a dated photo of the face from the road. Stock images are refused.",
+    },
+    {
+      key: "owner",
+      label: "The owner is verified",
+      ok: Boolean(owner?.verified),
+      fix: "Verify the owner's company documents and contact details in Owners.",
+    },
+    {
+      key: "place",
+      label: "Exact coordinates",
+      ok: Boolean(site.lat && site.lng),
+      fix: "Pin the face on the map.",
+    },
+    {
+      key: "facing",
+      label: "The direction it faces",
+      ok: site.facingDeg != null,
+      fix: "Set the facing in degrees (0 is north, 90 east).",
+    },
+    {
+      key: "size",
+      label: "The size of the face",
+      ok: Boolean(site.widthMm),
+      fix: "Enter the width and height.",
+    },
+    {
+      key: "lighting",
+      label: "How it is lit",
+      ok: Boolean(site.lighting),
+      fix: "Choose front-lit, back-lit, not lit or digital.",
+    },
+    {
+      key: "audience",
+      label: "Any audience figure has its source and date",
+      ok: audienceOk,
+      fix: "Add who measured the audience and when, or remove the figure.",
+    },
+  ];
+}
+
+export function isIndexable(
+  site: Parameters<typeof indexChecks>[0],
+  owner: Pick<Owner, "verified"> | null,
+): boolean {
+  return indexChecks(site, owner).every((c) => c.ok);
 }
 
 export function placeLine(site: Pick<Site, "locality" | "city">): string {

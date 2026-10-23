@@ -8,6 +8,10 @@ const SITE_PAGE = /^\/[a-z]{2}\/[^/]+\/[^/]+\/([^/]+)\/?$/;
 
 /** The Markdown copy of a piece: its own address with ".md" for the closing slash (/news/{slug}.md). */
 const MARKDOWN = /^\/(news|analysis|guides|academy|data|showcase)\/([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/;
+/** The Markdown copy of a site page: /{country}/{city}/{locality}/{slug ending in its unit id}.md. */
+const SITE_MARKDOWN = /^\/[a-z]{2}\/[^/]+\/[^/]+\/([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/;
+/** Plain-text guides for owners and the agents acting for them: /for-owners.md, /list-your-sites.md. */
+const GUIDE_MARKDOWN = /^\/(for-owners|list-your-sites)\.md$/;
 
 /**
  * 1. Origin check: in staging and prod Cloudflare injects X-Origin-Secret via a Transform
@@ -40,6 +44,10 @@ export async function middleware(req: NextRequest) {
   }
   const md = MARKDOWN.exec(pathname);
   if (md) return NextResponse.rewrite(new URL(`/api/md/${md[1]}/${md[2]}/`, req.url));
+  const siteMd = SITE_MARKDOWN.exec(pathname);
+  if (siteMd) return NextResponse.rewrite(new URL(`/api/md-site/${siteMd[1]}/`, req.url));
+  if (GUIDE_MARKDOWN.test(pathname))
+    return NextResponse.rewrite(new URL(`/api/md-guide/owners/`, req.url));
 
   const slug = SITE_PAGE.exec(pathname)?.[1];
   const id = slug ? permanentIdFromSlug(slug) : null;

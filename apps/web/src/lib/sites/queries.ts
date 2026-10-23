@@ -28,6 +28,7 @@ import {
 import { DEFAULT_STATE, type SearchState } from "./state";
 import { CITIES, FORMATS } from "./taxonomy";
 import { freshDays, isIndexable, permitState, siteUrl } from "./view";
+import { picture } from "@/lib/editorial/media";
 
 export const PER_PAGE = 12;
 const DAY = 24 * 3600 * 1000;
@@ -295,6 +296,15 @@ export async function catalogueCounts(): Promise<{
     formats.set(l.format, (formats.get(l.format) ?? 0) + 1);
   }
   return { cities, formats };
+}
+
+/** Absolute addresses of a site's photographs, largest size, for the image sitemap and structured data. */
+export function photoUrls(site: Site, media?: Map<number, Media>): string[] {
+  return (site.photos ?? []).flatMap((ph) => {
+    const doc = typeof ph.image === "object" ? ph.image : (media?.get(ph.image) ?? null);
+    const pic = picture(doc, "hero");
+    return pic ? [pic.src.startsWith("http") ? pic.src : `${siteAddress()}${pic.src}`] : [];
+  });
 }
 
 export interface CityStatus {
@@ -608,14 +618,44 @@ export async function publishedHubs(): Promise<{ url: string; updatedAt: string 
 }
 
 /** Indexable site pages, for the sitemap. */
-export async function indexableSiteUrls(): Promise<{ url: string; updatedAt: string }[]> {
+export async function indexableSiteUrls(): Promise<
+  { url: string; updatedAt: string; images: string[] }[]
+> {
   const cat = await catalogue();
-  const out: { url: string; updatedAt: string }[] = [];
+  const sites: Site[] = [];
+  const urls = new Map<number, string>();
   for (const l of cat.listings) {
     const site = cat.sites.get(l.id);
     if (!site || l.sample) continue;
-    if ((site.photos?.length ?? 0) > 0 && l.ownerVerified)
-      out.push({ url: l.url, updatedAt: site.updatedAt });
+    // The same content bar as the page's own robots tag, so the sitemap never offers a noindex page.
+    if (isIndexable(site, { verified: l.ownerVerified })) {
+      sites.push(site);
+      urls.set(site.id, l.url);
+    }
   }
-  return out;
+  // The catalogue holds photos as ids; the image sitemap needs their files, fetched in one query.
+  const ids = [
+    ...new Set(
+      sites.flatMap((s) =>
+        (s.photos ?? []).map((ph) => (typeof ph.image === "object" ? ph.image.id : ph.image)),
+      ),
+    ),
+  ];
+  const media = new Map<number, Media>();
+  if (ids.length) {
+    const p = await client();
+    const found = await p.find({
+      collection: "media",
+      where: { id: { in: ids } },
+      limit: ids.length,
+      depth: 0,
+      overrideAccess: false,
+    });
+    for (const m of found.docs) media.set(m.id, m);
+  }
+  return sites.map((site) => ({
+    url: urls.get(site.id)!,
+    updatedAt: site.updatedAt,
+    images: photoUrls(site, media),
+  }));
 }

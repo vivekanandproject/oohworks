@@ -22,6 +22,14 @@ export const Sites: CollectionConfig = {
   hooks: { beforeChange: [siteBeforeChange], afterChange: [siteAfterChange] },
   fields: [
     {
+      name: "searchReadiness",
+      type: "ui",
+      admin: {
+        position: "sidebar",
+        components: { Field: "/payload/admin/SiteReadiness#SiteReadiness" },
+      },
+    },
+    {
       name: "title",
       type: "text",
       admin: { readOnly: true, description: "Built from the size, format and road" },
