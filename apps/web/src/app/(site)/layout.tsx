@@ -4,6 +4,9 @@ import { plexMono, poppins } from "./fonts";
 import { SITE_NAME, siteUrl } from "@/lib/seo";
 import { OWNER_BAR_COOKIE } from "@/lib/sites/enquiry";
 import { scriptNonce } from "@/lib/nonce";
+import { gaBootScript, gaMeasurementId } from "@/lib/analytics";
+import { ConsentBanner } from "@/components/ConsentBanner";
+import { GaPageViews } from "@/components/GaPageViews";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -35,6 +38,7 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const nonce = await scriptNonce();
+  const ga = gaMeasurementId();
   return (
     // The script below adds data-bar to this element before React wakes up, which is expected.
     <html lang="en" className={`${poppins.variable} ${plexMono.variable}`} suppressHydrationWarning>
@@ -52,11 +56,28 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             __html: `if(/(?:^|; )${OWNER_BAR_COOKIE}=owner/.test(document.cookie))document.documentElement.dataset.bar="owner"`,
           }}
         />
+        {/* Google Analytics, production only, consent denied until the visitor allows it
+            (src/lib/analytics.ts). The nonce lets this script add gtag.js under 'strict-dynamic'. */}
+        {ga ? (
+          <script
+            nonce={nonce}
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{ __html: gaBootScript(ga) }}
+          />
+        ) : null}
         <noscript>
           <style>{`[data-reveal],[data-stagger-item],[data-draw],[data-fade]{opacity:1!important;transform:none!important;stroke-dashoffset:0!important}`}</style>
         </noscript>
       </head>
-      <body className="bg-paper text-ink min-h-screen">{children}</body>
+      <body className="bg-paper text-ink min-h-screen">
+        {children}
+        {ga ? (
+          <>
+            <GaPageViews />
+            <ConsentBanner />
+          </>
+        ) : null}
+      </body>
     </html>
   );
 }

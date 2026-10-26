@@ -238,6 +238,13 @@ resource "google_cloud_run_v2_service" "web" {
         value = var.site_url
       }
       dynamic "env" {
+        for_each = var.ga_measurement_id == "" ? [] : [var.ga_measurement_id]
+        content {
+          name  = "GA_MEASUREMENT_ID"
+          value = env.value
+        }
+      }
+      dynamic "env" {
         for_each = local.checked_secrets
         content {
           name = env.value

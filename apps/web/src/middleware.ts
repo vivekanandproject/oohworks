@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { permanentIdFromSlug } from "@ohworks/core";
 import { hiddenFromSearch } from "@/lib/api/env";
+import { GA_CONNECT, GA_IMAGES, gaMeasurementId } from "@/lib/analytics";
 import { isGone } from "@/lib/sites/gone";
 
 /** A site's own page: /{country}/{city}/{locality}/{slug ending in its permanent id}/. */
@@ -96,7 +97,7 @@ const SENTRY_HOST = (() => {
 
 /**
  * What the page may load: its own files, the map's tiles, fonts and sprites, photographs from the
- * public bucket, and error reports to Sentry. Scripts need the nonce; the one inline style the
+ * public bucket, error reports to Sentry, and Google Analytics where it runs. Scripts need the nonce; the one inline style the
  * reveal fallback writes needs 'unsafe-inline' for styles, which the map library also needs. The
  * CMS (/admin) and the API reference (/api/docs) run vendored scripts of their own, so they get the
  * same policy without the nonce rule on scripts.
@@ -104,8 +105,14 @@ const SENTRY_HOST = (() => {
 function policy(nonce: string, pathname: string, secure: boolean): string {
   const own = pathname.startsWith("/admin") || pathname.startsWith("/api/docs");
   const scripts = own ? "'self' 'unsafe-inline'" : `'self' 'nonce-${nonce}' 'strict-dynamic'`;
-  const connect = ["'self'", MAP_HOST, SENTRY_HOST].filter(Boolean).join(" ");
-  const images = ["'self'", "data:", "blob:", MAP_HOST, IMAGE_HOST].filter(Boolean).join(" ");
+  // Google Analytics reports here once a visitor allows it; the CMS never loads it.
+  const ga = !own && gaMeasurementId();
+  const connect = ["'self'", MAP_HOST, SENTRY_HOST, ...(ga ? GA_CONNECT : [])]
+    .filter(Boolean)
+    .join(" ");
+  const images = ["'self'", "data:", "blob:", MAP_HOST, IMAGE_HOST, ...(ga ? GA_IMAGES : [])]
+    .filter(Boolean)
+    .join(" ");
   return [
     "default-src 'self'",
     `script-src ${scripts}`,

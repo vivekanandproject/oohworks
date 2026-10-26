@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
+import { TrackOnView } from "@/components/TrackOnView";
 import { OwnerBar } from "@/components/owners/Bits";
 import {
   Aside,
@@ -40,6 +41,10 @@ export default async function NewSitePage({ searchParams }: { searchParams: Prom
   }
   return (
     <Shell active="owners">
+      {/* A new owner has just confirmed their email: a key event in Google Analytics. */}
+      {first ? (
+        <TrackOnView event="sign_up" params={{ method: "email" }} once="owner-sign-up" />
+      ) : null}
       <Container className="py-8 lg:py-12">
         <OwnerBar name={owner.name} email={maskEmail(email)} here="site" />
         <div className={`mt-4 ${FORM_GRID}`}>

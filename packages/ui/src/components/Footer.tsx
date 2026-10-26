@@ -40,6 +40,7 @@ const COLS: Col[] = [
       { href: "/charter/", label: "What we never do" },
       { href: "/newsroom/corrections/", label: "Corrections" },
       { href: "/feed.xml", label: "RSS feed" },
+      { href: "/cookies/", label: "Cookies" },
       { href: "mailto:hello@oohworks.co", label: "Contact" },
     ],
   },

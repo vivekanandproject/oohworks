@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { Button, Container, NEUTRALITY_LINE, Note } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
+import { TrackOnView } from "@/components/TrackOnView";
 import { aboutText, dateRange, findGroup, threadPath } from "@/lib/sites/enquiries";
 import { BUYER_COOKIE, isAnyReference, maskEmail, readBuyer } from "@/lib/sites/enquiry";
 import { emailConfigured } from "@/lib/sites/mail";
@@ -39,6 +40,12 @@ export default async function SentPage({
 
   return (
     <Shell active="find">
+      {/* A key event in Google Analytics; the reference names it for this tab only, never for Google. */}
+      <TrackOnView
+        event="generate_lead"
+        params={{ owners: group.requests.length }}
+        once={`enquiry:${ref}`}
+      />
       <Container className="py-10 lg:py-16">
         <div className="mx-auto max-w-[680px]" data-section="enquiry-sent">
           <p className="t-label text-verified">Enquiry sent</p>

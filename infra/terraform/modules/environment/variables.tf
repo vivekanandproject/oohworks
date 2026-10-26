@@ -76,6 +76,12 @@ variable "public" {
   type        = bool
 }
 
+variable "ga_measurement_id" {
+  description = "Google Analytics 4 measurement id (G-...), read by the app at run time; only production sends hits. Not a secret: it is in every page."
+  type        = string
+  default     = ""
+}
+
 variable "origin_check" {
   description = "Mount ORIGIN_SECRET on a public service, so the app refuses requests that did not come through Cloudflare. Leave off until Cloudflare (or a load balancer) adds the header, or every page answers 403."
   type        = bool

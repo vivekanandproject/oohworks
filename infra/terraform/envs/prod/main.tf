@@ -64,6 +64,12 @@ variable "budget_currency" {
   default     = "INR"
 }
 
+variable "ga_measurement_id" {
+  description = "Google Analytics 4 measurement id for oohworks.co (G-...)."
+  type        = string
+  default     = ""
+}
+
 variable "origin_check" {
   description = "Turn on once Cloudflare in front adds X-Origin-Secret; until then the run.app address serves the site."
   type        = bool
@@ -95,6 +101,7 @@ module "ohworks" {
   public                    = true
   staff                     = var.staff
   origin_check              = var.origin_check
+  ga_measurement_id         = var.ga_measurement_id
   db_tier                   = var.db_tier
   db_point_in_time_recovery = var.db_point_in_time_recovery
   deletion_protection       = true
