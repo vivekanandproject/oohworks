@@ -70,6 +70,12 @@ variable "ga_measurement_id" {
   default     = ""
 }
 
+variable "indexnow_key" {
+  description = "IndexNow key for oohworks.co (32 hex characters, public by design)."
+  type        = string
+  default     = ""
+}
+
 variable "origin_check" {
   description = "Turn on once Cloudflare in front adds X-Origin-Secret; until then the run.app address serves the site."
   type        = bool
@@ -102,6 +108,7 @@ module "ohworks" {
   staff                     = var.staff
   origin_check              = var.origin_check
   ga_measurement_id         = var.ga_measurement_id
+  indexnow_key              = var.indexnow_key
   db_tier                   = var.db_tier
   db_point_in_time_recovery = var.db_point_in_time_recovery
   deletion_protection       = true

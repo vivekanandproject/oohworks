@@ -82,6 +82,12 @@ variable "ga_measurement_id" {
   default     = ""
 }
 
+variable "indexnow_key" {
+  description = "IndexNow key (32 hex characters). Public by design: the site serves it at /indexnow-key.txt so search engines can check pings came from us. Empty turns IndexNow off."
+  type        = string
+  default     = ""
+}
+
 variable "origin_check" {
   description = "Mount ORIGIN_SECRET on a public service, so the app refuses requests that did not come through Cloudflare. Leave off until Cloudflare (or a load balancer) adds the header, or every page answers 403."
   type        = bool
