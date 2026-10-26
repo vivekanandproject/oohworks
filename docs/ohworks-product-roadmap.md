@@ -61,6 +61,22 @@ Nothing new for users. Everything that is built starts working for real, somewhe
 
 Exit: the end-to-end test in `ohworks-preview-and-api-plan.md` section 1 and the walk-through in `ohworks-user-workflow.html` section 9 both pass on staging with real email.
 
+### Where phase 0 stands (26 Oct 2026)
+
+The site runs on Google Cloud and Vercel is gone. The founder chose a **lean production only** to start (no staging): shared and production share the project `oohworks`, Cloud SQL `db-g1-small`, Cloud Run scaling to zero, a MYR 150 monthly budget. Raising it is a settings change (`infra/terraform/envs/prod/main.tf`).
+
+| # | Status |
+| --- | --- |
+| 0.1 | Done |
+| 0.2 | Done: `oohworks.co` verified in Resend (DKIM, `send` and `rsend`), DMARC in monitoring mode, a real send checked |
+| 0.3 | Done on Cloud Run, except uploads: the R2 buckets and key are being set up (R2 has to be switched on in the Cloudflare account first) |
+| 0.4 | Done: Google Cloud organisation and billing, oohworks.co on Cloudflare (nameservers moved from Squarespace, DNSSEC on), Vercel deleted, GitHub's workflow permission. Meta Business verification not started |
+| 0.5 | Production instead of staging: applied with Terraform; the CI and deploy workflows are in `.github/workflows` (a tag `v*` deploys). Staging and previews per pull request are not built |
+| 0.6 | Super admin step 1 done; steps 2 and 3 not started |
+| 0.7 | The data is live (`/api/health/services/`); the admin page belongs with 0.6 |
+
+Phase 1.1 is mostly in place: `oohworks.co` answers through Cloudflare (a Worker adds the origin secret; the run.app address refuses everything but health and jobs), daily backups, and email alerts for downtime and server errors. Still to do from 1.1: Cloudflare Access on `/admin`, point-in-time recovery (off in the lean setup) and the restore drill. Also live: Google Analytics 4 behind a consent banner, the `/cookies/` page, Bing Webmaster Tools and Google Search Console with both sitemaps, and IndexNow.
+
 ## 4. Phase 1: go live (4 weeks)
 
 oohworks.co exists, is safe to leave running, and carries its first real inventory.

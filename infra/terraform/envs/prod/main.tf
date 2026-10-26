@@ -76,6 +76,12 @@ variable "indexnow_key" {
   default     = ""
 }
 
+variable "alert_email" {
+  description = "Where the site-down and server-error alerts go."
+  type        = string
+  default     = ""
+}
+
 variable "origin_check" {
   description = "Turn on once Cloudflare in front adds X-Origin-Secret; until then the run.app address serves the site."
   type        = bool
@@ -109,6 +115,7 @@ module "ohworks" {
   origin_check              = var.origin_check
   ga_measurement_id         = var.ga_measurement_id
   indexnow_key              = var.indexnow_key
+  alert_email               = var.alert_email
   db_tier                   = var.db_tier
   db_point_in_time_recovery = var.db_point_in_time_recovery
   deletion_protection       = true

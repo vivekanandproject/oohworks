@@ -1,10 +1,5 @@
-# The GitHub Actions workflow for this project: lint, type check, unit tests, the CMS checks, the
-# build, the browser tests on three engines, and the Lighthouse budgets.
-#
-# It is parked here, where GitHub does not run it. A token may only push a file under
-# .github/workflows/ when it has the workflow permission, and the token this was first pushed with
-# did not. To switch the tests on: move this file to .github/workflows/ci.yml and push with a token
-# that has it (classic: the workflow scope; fine-grained: Workflows, read and write).
+# The checks on every pull request and push: lint, type check, unit tests, the CMS checks, the
+# build, the browser tests on three engines, and the Lighthouse budgets. Deploys are deploy.yml.
 
 name: ci
 

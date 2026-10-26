@@ -88,6 +88,12 @@ variable "indexnow_key" {
   default     = ""
 }
 
+variable "alert_email" {
+  description = "Where the site-down and server-error alerts go. Empty switches the alerts off."
+  type        = string
+  default     = ""
+}
+
 variable "origin_check" {
   description = "Mount ORIGIN_SECRET on a public service, so the app refuses requests that did not come through Cloudflare. Leave off until Cloudflare (or a load balancer) adds the header, or every page answers 403."
   type        = bool

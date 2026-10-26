@@ -1,0 +1,80 @@
+# Deploys a release to production on Google Cloud Run when a tag `v*` is pushed (v0.1.0, v0.2.0 …).
+# There is no staging yet (lean launch, 26 Oct 2026), so main is not deployed on every push; ci.yml
+# checks it. From a machine, infra/deploy.sh does the same as this workflow.
+#
+# Needs these repository variables (Settings → Secrets and variables → Actions → Variables), from
+# `terraform output` in infra/terraform/envs/shared. None is secret: GitHub proves who it is with
+# Workload Identity, so no key exists anywhere.
+#   GCP_WORKLOAD_IDENTITY_PROVIDER, GCP_DEPLOY_SERVICE_ACCOUNT
+#   GCP_REGISTRY_PROJECT, GCP_PROD_PROJECT    (both `oohworks` while shared and prod share a project)
+#   SENTRY_DSN (optional): browser error reports; the server reads its own from Secret Manager
+# The `production` GitHub environment can require a person to approve each deploy.
+
+name: deploy
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  REGION: asia-south1
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      PROJECT: ${{ vars.GCP_PROD_PROJECT }}
+      REGISTRY: asia-south1-docker.pkg.dev/${{ vars.GCP_REGISTRY_PROJECT }}/oohworks
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Name the images after the tag and commit
+        run: echo "TAG=${GITHUB_REF_NAME}-${GITHUB_SHA::12}" >> "$GITHUB_ENV"
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - run: gcloud auth configure-docker "$REGION-docker.pkg.dev" --quiet
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and push the web and release images
+        run: |
+          docker buildx build --push \
+            --build-arg NEXT_PUBLIC_SENTRY_DSN="${{ vars.SENTRY_DSN }}" \
+            --cache-from type=gha --cache-to type=gha,mode=max \
+            -t "$REGISTRY/web:$TAG" .
+          docker buildx build --push --target release \
+            --cache-from type=gha \
+            -t "$REGISTRY/release:$TAG" .
+
+      - name: Prepare the database (migrations, first users)
+        run: |
+          gcloud run jobs update release --image "$REGISTRY/release:$TAG" --region "$REGION" --project "$PROJECT"
+          gcloud run jobs execute release --wait --region "$REGION" --project "$PROJECT"
+
+      - name: Deploy, 10% first
+        run: |
+          # The new revision takes no traffic, is checked, takes 10%, then all of it.
+          gcloud run deploy web --image "$REGISTRY/web:$TAG" --region "$REGION" --project "$PROJECT" \
+            --no-traffic --tag candidate --quiet
+          URL=$(gcloud run services describe web --region "$REGION" --project "$PROJECT" \
+            --format='value(status.traffic[].url)' | tr ';' '\n' | grep candidate | head -1)
+          for i in $(seq 1 20); do curl -sf "$URL/api/health/" && break; sleep 6; done
+          curl -sf "$URL/api/health/" > /dev/null
+          gcloud run services update-traffic web --to-tags candidate=10 \
+            --region "$REGION" --project "$PROJECT" --quiet
+          sleep 300
+          gcloud run services update-traffic web --to-latest \
+            --region "$REGION" --project "$PROJECT" --quiet
+          # Rolling back is one command: gcloud run services update-traffic web --to-revisions=<previous>=100
