@@ -88,6 +88,12 @@ variable "indexnow_key" {
   default     = ""
 }
 
+variable "sentry_dsn" {
+  description = "Sentry DSN for server error reports (SENTRY_DSN). Public by design: the same value is built into the browser bundle by infra/deploy.sh. Empty: no reports."
+  type        = string
+  default     = ""
+}
+
 variable "alert_email" {
   description = "Where the site-down and server-error alerts go. Empty switches the alerts off."
   type        = string

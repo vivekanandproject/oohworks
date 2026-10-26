@@ -15,12 +15,16 @@ TAG="$(git rev-parse --short=12 HEAD)$(git diff --quiet HEAD || echo -dirty)-pro
 
 cd "$(git rev-parse --show-toplevel)"
 
+# Browser error reports: the DSN Terraform gave the service (public by design), built into the page.
+SENTRY_DSN="${SENTRY_DSN:-$(gcloud run services describe web --region "$REGION" --project "$PROJECT" \
+  --format=json | python3 -c 'import json,sys; e=json.load(sys.stdin)["spec"]["template"]["spec"]["containers"][0].get("env",[]); print(next((x.get("value","") for x in e if x["name"]=="SENTRY_DSN"),""))')}"
+
 echo "Building $TAG on Cloud Build"
 # As the build account and source bucket from infra/terraform/envs/shared.
 gcloud builds submit --project "$REGISTRY_PROJECT" --region "$REGION" --config infra/cloudbuild.yaml \
   --service-account "projects/$REGISTRY_PROJECT/serviceAccounts/cloud-build@$REGISTRY_PROJECT.iam.gserviceaccount.com" \
   --gcs-source-staging-dir "gs://$REGISTRY_PROJECT-build-source/source" \
-  --substitutions "_REGISTRY=$REGISTRY,_TAG=$TAG" .
+  --substitutions "_REGISTRY=$REGISTRY,_TAG=$TAG,_SENTRY_DSN=$SENTRY_DSN" .
 
 echo "Preparing the database"
 gcloud run jobs update release --image "$REGISTRY/release:$TAG" --region "$REGION" --project "$PROJECT" --quiet

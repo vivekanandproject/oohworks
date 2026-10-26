@@ -7,7 +7,9 @@ import { PRIVATE } from "@/lib/sentry";
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
 if (dsn) {
+  // The same names as the server's SITE_ENV, read from the address: one image serves every host.
+  const environment = location.hostname === "oohworks.co" ? "production" : "other";
   void import("@sentry/nextjs").then((Sentry) =>
-    Sentry.init({ dsn, tracesSampleRate: 0, dataCollection: PRIVATE }),
+    Sentry.init({ dsn, environment, tracesSampleRate: 0, dataCollection: PRIVATE }),
   );
 }

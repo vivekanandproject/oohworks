@@ -76,6 +76,12 @@ variable "indexnow_key" {
   default     = ""
 }
 
+variable "sentry_dsn" {
+  description = "Sentry DSN of the oohworks project (public by design)."
+  type        = string
+  default     = ""
+}
+
 variable "alert_email" {
   description = "Where the site-down and server-error alerts go."
   type        = string
@@ -116,6 +122,7 @@ module "ohworks" {
   ga_measurement_id         = var.ga_measurement_id
   indexnow_key              = var.indexnow_key
   alert_email               = var.alert_email
+  sentry_dsn                = var.sentry_dsn
   db_tier                   = var.db_tier
   db_point_in_time_recovery = var.db_point_in_time_recovery
   deletion_protection       = true

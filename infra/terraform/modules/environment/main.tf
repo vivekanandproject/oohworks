@@ -252,6 +252,13 @@ resource "google_cloud_run_v2_service" "web" {
         }
       }
       dynamic "env" {
+        for_each = var.sentry_dsn == "" ? [] : [var.sentry_dsn]
+        content {
+          name  = "SENTRY_DSN"
+          value = env.value
+        }
+      }
+      dynamic "env" {
         for_each = local.checked_secrets
         content {
           name = env.value
