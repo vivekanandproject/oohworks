@@ -1,4 +1,4 @@
-import { CITIES, FORMATS, LIGHTING } from "@/lib/sites/taxonomy";
+import { FORMATS, LIGHTING } from "@/lib/sites/taxonomy";
 import { checkSite, type FieldKey, type Raw, type SiteInput } from "./site-input";
 
 export interface SheetColumn {
@@ -10,6 +10,8 @@ export interface SheetColumn {
   example: string;
   /** A fixed list to choose from, offered as a drop-down in the template. */
   options?: string[];
+  /** Headings older templates used for the same column, still read. */
+  aliases?: string[];
   width: number;
 }
 
@@ -82,10 +84,17 @@ export const SHEET_COLUMNS: SheetColumn[] = [
     key: "city",
     header: "City",
     required: true,
-    help: "One of the cities we are open in.",
+    help: "The city, in any country.",
     example: "Bengaluru",
-    options: CITIES.map((c) => c.label),
     width: 14,
+  },
+  {
+    key: "country",
+    header: "Country",
+    required: false,
+    help: "The two-letter country code, such as IN, AE or GB. Leave empty when it is your company's country.",
+    example: "IN",
+    width: 10,
   },
   {
     key: "locality",
@@ -162,11 +171,20 @@ export const SHEET_COLUMNS: SheetColumn[] = [
   },
   {
     key: "rate",
-    header: "Rate a month (INR)",
+    header: "Rate a month",
+    aliases: ["Rate a month (INR)"],
     required: false,
-    help: "Your monthly rate in rupees, as a number. Needed unless the price is on request.",
+    help: "Your monthly rate, as a number. Needed unless the price is on request.",
     example: "85000",
     width: 18,
+  },
+  {
+    key: "currency",
+    header: "Currency",
+    required: false,
+    help: "The three-letter code the rate is in, such as INR, AED or GBP. Leave empty for your country's currency.",
+    example: "INR",
+    width: 10,
   },
   {
     key: "minPeriod",
@@ -181,7 +199,7 @@ export const SHEET_COLUMNS: SheetColumn[] = [
     header: "Printing and mounting",
     required: false,
     help: "What it costs and who does it.",
-    example: "₹ 18,000 once, by the owner",
+    example: "18,000 once, by the owner",
     width: 28,
   },
   {
@@ -323,7 +341,13 @@ export const SHEET_COLUMNS: SheetColumn[] = [
 ];
 
 const squash = (v: string): string => v.toLowerCase().replace(/[^a-z0-9]+/g, "");
-const BY_HEADER = new Map(SHEET_COLUMNS.map((c) => [squash(c.header), c]));
+const BY_HEADER = new Map(
+  SHEET_COLUMNS.flatMap((c) =>
+    [c.header, ...(c.aliases ?? [])].map((h) => [squash(h), c] as const),
+  ),
+);
+/** The heading that said its rates were rupees, before the template had a Currency column. */
+const RUPEE_HEADER = squash("Rate a month (INR)");
 
 /** A spreadsheet cell as text: dates as YYYY-MM-DD, numbers without stray decimals, everything else trimmed. */
 export function cellText(value: unknown): string {
@@ -366,8 +390,17 @@ export interface SheetResult {
  * Reads a filled-in template. A row that is right becomes a site; a row that is not is reported by its
  * row number and column, in words that say what to change. One bad row never stops the good ones.
  */
-export function readSheet(header: unknown[], rows: unknown[][], today: string): SheetResult {
+export function readSheet(
+  header: unknown[],
+  rows: unknown[][],
+  today: string,
+  /** The owner's country, for a city given without one. */
+  ownerCountry?: string | null,
+): SheetResult {
   const columns = header.map((h) => BY_HEADER.get(squash(cellText(h))) ?? null);
+  const rupees =
+    header.some((h) => squash(cellText(h)) === RUPEE_HEADER) &&
+    !columns.some((c) => c?.key === "currency");
   const unknown = header.map(cellText).filter((h, i) => h !== "" && !columns[i]);
   const empty: SheetResult = { sites: [], problems: [], unknown, refused: null };
   const missing = SHEET_COLUMNS.filter(
@@ -418,13 +451,16 @@ export function readSheet(header: unknown[], rows: unknown[][], today: string): 
       }
       refs.set(ref, row);
     }
-    const checked = checkSite(raw, today);
+    const checked = checkSite(rupees ? { ...raw, currency: "INR" } : raw, today, ownerCountry);
     if (checked.ok) out.sites.push({ row, site: checked.site });
     else
       for (const [key, problem] of Object.entries(checked.errors))
         out.problems.push({
           row,
-          column: SHEET_COLUMNS.find((c) => c.key === key)?.header ?? key,
+          // The heading as the owner's own file has it, so an older template's names still match.
+          column:
+            cellText(header[columns.findIndex((c) => c?.key === key)]) ||
+            (SHEET_COLUMNS.find((c) => c.key === key)?.header ?? key),
           problem,
         });
   }

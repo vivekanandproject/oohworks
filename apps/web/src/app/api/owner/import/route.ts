@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     const last = Math.min(sheet.rowCount, 2500);
     const rows: unknown[][] = [];
     for (let n = 2; n <= last; n += 1) rows.push(cells(n));
-    const read = readSheet(cells(1), rows, indiaDate(Date.now()));
+    const read = readSheet(cells(1), rows, indiaDate(Date.now()), owner.location?.country);
     report.problems = read.problems;
     report.unknown = read.unknown;
     report.refused = read.refused;

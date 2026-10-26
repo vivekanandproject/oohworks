@@ -14,6 +14,8 @@ import {
 import { SiteForm } from "@/components/owners/SiteForm";
 import { ownerSites, requireOwner } from "@/lib/owners/server";
 import { FIELD_KEYS, checkSite, type FieldErrors, type Raw } from "@/lib/owners/site-input";
+import { cityDef } from "@/lib/sites/taxonomy";
+import { countryOrDefault } from "@/lib/world/countries";
 import { indiaDate } from "@/lib/sites/calendar";
 import { maskEmail } from "@/lib/sites/enquiry";
 
@@ -31,12 +33,19 @@ export default async function NewSitePage({ searchParams }: { searchParams: Prom
   const { email, owner } = await requireOwner();
   // The steps are shown to an owner adding their first site, and not again after that.
   const first = (await ownerSites(owner.id)).length === 0;
-  const raw: Raw = { city: owner.city ?? "" };
+  // A new site starts in the owner's own city and currency; they can change either.
+  const home = countryOrDefault(owner.location?.country);
+  const raw: Raw = {
+    city: owner.city ?? "",
+    cityLabel: owner.city ? (cityDef(owner.city)?.label ?? owner.location?.label ?? "") : "",
+    cityCountry: owner.location?.country ?? "",
+    currency: home.currency,
+  };
   for (const key of FIELD_KEYS) if (one(q[key])) raw[key] = one(q[key]).slice(0, 300);
   // The problems are worked out again here from what came back, so the words always match the values.
   let errors: FieldErrors = {};
   if (one(q.e)) {
-    const checked = checkSite(raw, indiaDate(Date.now()));
+    const checked = checkSite(raw, indiaDate(Date.now()), owner.location?.country);
     if (!checked.ok) errors = checked.errors;
   }
   return (

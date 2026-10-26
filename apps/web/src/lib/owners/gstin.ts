@@ -24,3 +24,8 @@ export function isGstin(value: string): boolean {
   }
   return CHARS.charAt((36 - (sum % 36)) % 36) === g.charAt(14);
 }
+
+/** What a company's registration number is called where it is: a GSTIN in India. */
+export function registrationName(country: string | null | undefined): string {
+  return (country ?? "").toUpperCase() === "IN" ? "GSTIN" : "company registration number";
+}

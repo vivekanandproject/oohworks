@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { registrationName } from "@/lib/owners/gstin";
 import { Badge, Button, Container, EmptyState } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { Notice, OwnerBar, Score, StateTag } from "@/components/owners/Bits";
@@ -94,12 +95,12 @@ export default async function OwnerHomePage({ searchParams }: { searchParams: Pr
             {owner.verified ? null : (
               <span className="block" data-section="not-verified">
                 {owner.gstin ? (
-                  "Not verified yet: we are checking your GSTIN and document."
+                  `Not verified yet: we are checking your ${registrationName(owner.location?.country)} and document.`
                 ) : (
                   <>
                     Not verified yet.{" "}
                     <a href="/owner/company/" className="oh-link">
-                      Add your GSTIN
+                      Add your {registrationName(owner.location?.country)}
                     </a>{" "}
                     to earn the Verified owner badge.
                   </>

@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   }
   // "Free now" clears any date left in the field from before.
   if (text(form, "availability", 10) !== "booked") raw.bookedUntil = "";
-  const checked = checkSite(raw, indiaDate(Date.now()));
+  const checked = checkSite(raw, indiaDate(Date.now()), owner.location?.country);
   if (!checked.ok) {
     const q = new URLSearchParams();
     for (const key of FIELD_KEYS) if (raw[key]) q.set(key, raw[key] as string);

@@ -1,7 +1,7 @@
 import { cleanEmail } from "@/lib/forms";
+import { slugify } from "@/lib/slug";
 import { checkPhone, isPhoneCountry } from "@/lib/phone";
 import { launchCity } from "@/lib/places";
-import { CITIES, type CitySlug } from "@/lib/sites/taxonomy";
 import { isGstin, tidyGstin } from "./gstin";
 import { isPasswordHash } from "./password";
 
@@ -22,8 +22,8 @@ export interface CompanyPlace {
 export interface StartDetails {
   name: string;
   place: CompanyPlace;
-  /** The OOHWORKS city the company is in, when it is in one. */
-  city: CitySlug | null;
+  /** The company's city as an address part ("bengaluru", "dubai"), when the place names one. */
+  city: string | null;
   contactName: string;
   /** In the international form, such as +91 98450 00000. */
   phone: string;
@@ -71,11 +71,13 @@ export function checkCompany(
     ? raw.placeCountry.trim().toUpperCase()
     : null;
   const placeId = /^[A-Za-z0-9_-]{10,300}$/.test(raw.placeId.trim()) ? raw.placeId.trim() : null;
-  const city = launchCity({
+  // A city OOHWORKS already has pages for keeps its address; any other is named from the place.
+  const launch = launchCity({
     label,
     lat: coordinate(raw.placeLat, 90),
     lng: coordinate(raw.placeLng, 180),
   });
+  const city = launch ?? (country ? slugify(label.split(",")[0] ?? "") || null : null);
 
   const contactName = raw.contactName.trim();
   if (contactName.length < 2 || contactName.length > 80) return { ok: false, error: "contact" };
@@ -89,7 +91,7 @@ export function checkCompany(
   const typed = raw.gstin.trim();
   if (typed) {
     const looksIndian = /^\d{2}[A-Za-z0-9]{13}$/.test(typed.replace(/\s+/g, ""));
-    const indian = country === "IN" || Boolean(city) || (country === null && looksIndian);
+    const indian = country === "IN" || Boolean(launch) || (country === null && looksIndian);
     if (indian) {
       if (!isGstin(typed)) return { ok: false, error: "gstin" };
       gstin = tidyGstin(typed);
@@ -152,7 +154,7 @@ export function readDetails(value: unknown): StartDetails | null {
       id: place ? text(place.id, 300) : null,
       country: country && /^[A-Z]{2}$/.test(country) ? country : null,
     },
-    city: CITIES.find((c) => c.slug === v.city)?.slug ?? null,
+    city: typeof v.city === "string" && /^[a-z0-9-]{1,80}$/.test(v.city) ? v.city : null,
     contactName,
     phone,
     phoneCountry,

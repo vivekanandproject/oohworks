@@ -319,16 +319,18 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
                   <dd className="text-ink-muted">Shown to a buyer only when they ask to see it.</dd>
                 </div>
                 <div>
-                  <dt className="font-semibold">Email, your name, GSTIN and document</dt>
+                  <dt className="font-semibold">
+                    Email, your name, registration number and document
+                  </dt>
                   <dd className="text-ink-muted">Never shown. They are for our team.</dd>
                 </div>
               </dl>
             </Card>
             <Card title="The “Verified owner” badge" section="badge-help">
               <p className="t-body text-ink-muted">
-                Buyers trust a site more when its owner is checked. Add your GSTIN and its
-                certificate, or a trade licence, and our team compares them, usually within a
-                working day.
+                Buyers trust a site more when its owner is checked. Add your company&rsquo;s
+                registration number (in India, your GSTIN) with its certificate or trade licence,
+                and our team compares them, usually within a working day.
               </p>
             </Card>
           </Aside>

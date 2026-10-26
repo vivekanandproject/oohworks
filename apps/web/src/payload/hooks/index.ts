@@ -9,15 +9,8 @@ import { canPublish } from "../access";
 import { pingWebSub } from "../../lib/editorial/websub";
 import { pingIndexNow } from "../../lib/indexnow";
 
-export function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80);
-}
+export { slugify } from "../../lib/slug";
+import { slugify } from "../../lib/slug";
 
 type LexicalNode = {
   type?: string;

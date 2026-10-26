@@ -13,7 +13,7 @@ export const OWNER_SHORT_ANSWER =
 export const OWNER_STEPS: { t: string; d: string }[] = [
   {
     t: "Confirm your company",
-    d: "Your company, city, name, phone and work email, then a six-digit code to that email. Add your GSTIN if you have one; our team checks your details and that earns the Verified owner badge.",
+    d: "Your company, city, name, phone and work email, then a six-digit code to that email. Add your company registration number (your GSTIN, in India) if you have one; our team checks your details and that earns the Verified owner badge.",
   },
   {
     t: "Add your inventory",

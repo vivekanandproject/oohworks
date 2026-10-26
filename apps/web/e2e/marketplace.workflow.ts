@@ -228,7 +228,7 @@ test.describe("the marketplace loop", () => {
           .locator("[data-section='add']")
           .getByRole("link", { name: "Add a site" })
           .click();
-        await expect(page.locator("#site-city")).toHaveValue("hyderabad");
+        await expect(page.locator("#site-city")).toHaveValue("Hyderabad");
         await page.locator("#site-format").selectOption("hoarding");
         await page.locator("#site-lighting").selectOption("front-lit");
         await page.locator("#site-width").fill("30");

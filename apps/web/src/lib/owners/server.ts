@@ -724,7 +724,7 @@ export async function submitAll(owner: Owner): Promise<number> {
           `- ${s.title}, ${s.locality} · ${s.permanentId}${s.duplicateNote ? " · possible duplicate" : ""}`,
       ),
       "",
-      `Owner verified: ${owner.verified ? "yes" : "no"}${owner.gstin ? ` · GSTIN ${owner.gstin}` : " · no GSTIN given"}`,
+      `Owner verified: ${owner.verified ? "yes" : "no"}${owner.gstin ? ` · registration ${owner.gstin}` : " · no registration number given"}`,
       ...(flagged ? [`${flagged} flagged as a possible duplicate.`] : []),
       "",
       `Review them: ${absolute("/admin/collections/sites?where[review][equals]=submitted")}`,

@@ -91,6 +91,82 @@ describe("a position an owner pastes", () => {
   });
 });
 
+describe("a site anywhere in the world", () => {
+  it("takes a picked city with its country, and the country's currency", () => {
+    const got = checkSite(
+      {
+        ...good,
+        city: "",
+        cityLabel: "Dubai, United Arab Emirates",
+        cityCountry: "AE",
+        cityLat: "25.2048",
+        cityLng: "55.2708",
+        lat: "25.19720",
+        lng: "55.27440",
+        rate: "AED 12,500",
+      },
+      TODAY,
+    );
+    expect(got.ok && got.site).toMatchObject({
+      city: "dubai",
+      cityLabel: "Dubai",
+      country: "ae",
+      currency: "AED",
+      rate: 12500,
+    });
+  });
+  it("places a typed city in the owner's own country", () => {
+    const got = checkSite(
+      { ...good, city: "Manchester", lat: "53.48080", lng: "-2.24260" },
+      TODAY,
+      "GB",
+    );
+    expect(got.ok && got.site).toMatchObject({
+      city: "manchester",
+      country: "gb",
+      currency: "GBP",
+    });
+  });
+  it("reads a city given only by its address part, as an empty label arrives from a form", () => {
+    const got = checkSite(
+      { ...good, city: "hyderabad", cityLabel: "", lat: "17.35512", lng: "78.47111" },
+      TODAY,
+    );
+    expect(got.ok && got.site).toMatchObject({ city: "hyderabad", country: "in" });
+  });
+  it("keeps a launch city's address and refuses a pin far from the city chosen", () => {
+    const blr = checkSite({ ...good, city: "Bangalore" }, TODAY, "GB");
+    expect(blr.ok && blr.site).toMatchObject({ city: "bengaluru", country: "in", currency: "INR" });
+    const far = checkSite(
+      {
+        ...good,
+        city: "",
+        cityLabel: "Dubai, United Arab Emirates",
+        cityCountry: "AE",
+        cityLat: "25.2048",
+        cityLng: "55.2708",
+      },
+      TODAY,
+    );
+    expect(!far.ok && far.errors.lat).toMatch(/km from Dubai/);
+  });
+  it("takes an owner's own currency, and refuses one that is not a code", () => {
+    const usd = checkSite({ ...good, currency: "usd" }, TODAY);
+    expect(usd.ok && usd.site.currency).toBe("USD");
+    const bad = checkSite({ ...good, currency: "rupees" }, TODAY);
+    expect(!bad.ok && bad.errors.currency).toContain("not a currency code");
+  });
+});
+
+describe("short dates", () => {
+  it("are read in the owner's order: day first, or month first in the US", () => {
+    expect(readDate("03/10/2026")).toBe("2026-10-03");
+    expect(readDate("03/10/2026", "GB")).toBe("2026-10-03");
+    expect(readDate("03/10/2026", "US")).toBe("2026-03-10");
+    expect(readDate("3 Oct 2026", "US")).toBe("2026-10-03");
+  });
+});
+
 describe("checking a site", () => {
   it("accepts a complete one and tidies it", () => {
     const got = checkSite(
@@ -208,7 +284,8 @@ describe("checking a site", () => {
     expect(got.errors.format).toContain("“blimp” is not a format we list");
     expect(got.errors.width).toContain("width as a number of feet");
     expect(got.errors.lighting).toBe("Choose the lighting.");
-    expect(got.errors.city).toContain("We are not open in “Atlantis” yet");
+    // A city typed without a country, by an owner whose country is unknown, cannot be placed.
+    expect(got.errors.city).toContain("Pick “Atlantis” from the list");
     expect(got.errors.locality).toBeTruthy();
     expect(got.errors.road).toBeTruthy();
     expect(got.errors.lat).toBe("“12,935” is not a latitude. Use a number such as 12.93512.");
@@ -218,7 +295,7 @@ describe("checking a site", () => {
   });
   it("refuses what would mislead a buyer", () => {
     const swapped = checkSite({ ...good, lat: "77.62214", lng: "12.93512" }, TODAY);
-    expect(!swapped.ok && swapped.errors.lat).toContain("outside India");
+    expect(!swapped.ok && swapped.errors.lat).toMatch(/That pin is [\d,]+ km from Bengaluru/);
     const unsourced = checkSite({ ...good, audienceFigure: "420000" }, TODAY);
     expect(!unsourced.ok && unsourced.errors.audienceSource).toContain("needs its source");
     expect(!unsourced.ok && unsourced.errors.audienceDate).toContain("needs the date");
@@ -276,6 +353,23 @@ describe("a spreadsheet of sites", () => {
     expect(onlyExample.refused).toContain("no sites in this file yet");
     expect(SHEET_COLUMNS[0]?.example).toBe(EXAMPLE_REF);
   });
+  it("reads an older template, whose rates were rupees, in rupees and by its own headings", () => {
+    const old = header
+      .map((h) => (h === "Rate a month" ? "Rate a month (INR)" : h))
+      .filter((h) => h !== "Currency");
+    const keys = SHEET_COLUMNS.filter((c) => c.key !== "currency").map((c) => c.key);
+    const row = (v: Raw) => keys.map((k) => v[k] ?? "");
+    const site = { ...good, city: "Bengaluru", ownerRef: "OLD-1", rate: "85000" } as Raw;
+    const read = readSheet(
+      old,
+      [row(site), row({ ...site, ownerRef: "OLD-2", rate: "" })],
+      TODAY,
+      "AE",
+    );
+    expect(read.sites[0]?.site).toMatchObject({ currency: "INR", rate: 85000 });
+    expect(read.problems[0]?.column).toBe("Rate a month (INR)");
+  });
+
   it("turns right rows into sites and reports wrong ones by row and column", () => {
     const rows = [
       rowOf({ ...good, ownerRef: "KRM-1" }),
@@ -297,7 +391,7 @@ describe("a spreadsheet of sites", () => {
       },
       {
         row: 5,
-        column: "Rate a month (INR)",
+        column: "Rate a month",
         problem:
           "Price is set to show, but there is no rate. Give a rate, or set the price to “on request”.",
       },
@@ -482,7 +576,8 @@ describe("who is listing", () => {
       id: "ChIJRcbZaklDXz4RYlEphFBu5r0",
       country: "AE",
     });
-    expect(r.details.city).toBeNull();
+    // Any city in the world: Dubai gets its own address part.
+    expect(r.details.city).toBe("dubai");
     expect(r.details.phone).toBe("+971 50 123 4567");
     expect(r.details.phoneCountry).toBe("AE");
     // Outside India the number is not a GSTIN, so it is kept as written and read by the team.
@@ -510,9 +605,10 @@ describe("who is listing", () => {
     expect(city({ placeLabel: "Bangalore", placeLat: "", placeLng: "", placeCountry: "" })).toBe(
       "bengaluru",
     );
+    // A city without its own pages yet is named from the place.
     expect(
       city({ placeLabel: "Kochi, Kerala, India", placeLat: "9.9312", placeLng: "76.2673" }),
-    ).toBeNull();
+    ).toBe("kochi");
   });
 
   it("a number that carries its own country code wins over the list", () => {
@@ -530,7 +626,8 @@ describe("who is listing", () => {
       ...r.details,
       passwordHash: null,
     });
-    expect(readDetails({ ...r.details, city: "atlantis" })?.city).toBeNull();
+    expect(readDetails({ ...r.details, city: "atlantis" })?.city).toBe("atlantis");
+    expect(readDetails({ ...r.details, city: "Not a slug!" })?.city).toBeNull();
     expect(readDetails(null)).toBeNull();
     expect(readDetails("a string")).toBeNull();
     expect(readDetails({ name: "D" })).toBeNull();

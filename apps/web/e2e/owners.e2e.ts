@@ -300,9 +300,9 @@ test.describe("list your sites: the start", () => {
       template: (await res.body()).toString("base64"),
     });
     expect(got.head.slice(0, 4)).toEqual(["Your reference", "Format", "Width", "Height"]);
-    expect(got.head).toHaveLength(37);
+    expect(got.head).toHaveLength(39);
     expect(got.example).toBe("EXAMPLE");
-    expect(got.guideRows).toBeGreaterThan(37);
+    expect(got.guideRows).toBeGreaterThan(39);
   });
 });
 
@@ -594,7 +594,7 @@ test.describe("list your sites: anywhere in the world", () => {
     );
     expect(await ownerOf()).toMatchObject({
       location: { label: "Dubai, United Arab Emirates", country: "AE" },
-      city: null,
+      city: "dubai",
       phone: "+971 50 123 4567",
       phoneCountry: "AE",
     });
@@ -620,7 +620,7 @@ test.describe("list your sites: anywhere in the world", () => {
     await expect(page.locator("[data-section='owner-counts']")).toContainText("Timbuktu, Mali");
     expect((await ownerOf())?.location).toMatchObject({ label: "Timbuktu, Mali", country: null });
 
-    // On the site form the same search puts the pin on the place and moves the city to match.
+    // On the site form the same search puts the pin on the place, and an empty City takes its city.
     await page.goto("/owner/sites/new/");
     const find = page.locator("#site-find");
     const found = page.locator("[data-section='site-found']");
@@ -637,13 +637,14 @@ test.describe("list your sites: anywhere in the world", () => {
     await expect(page).toHaveURL(/\/owner\/sites\/new\/$/);
     await expect(page.locator("#site-lat")).toHaveValue("18.52040");
     await expect(page.locator("#site-lng")).toHaveValue("73.85670");
-    await expect(page.locator("select[name='city']")).toHaveValue("pune");
-    // A place outside the cities OOHWORKS has pages for is said to be so.
+    await expect(page.locator("#site-city")).toHaveValue(/^Pune\b/);
+    // A place in another country is fine too: the pin goes there, and the city chosen stays.
     await find.fill("");
     await find.pressSequentially("Singap", { delay: 20 });
     await expect(page.locator("[data-section='pin-picker'] [role='option']").first()).toBeVisible();
     await find.press("Enter");
-    await expect(found).toContainText("That is outside");
+    await expect(found).toContainText("The pin is at Singapore");
+    await expect(page.locator("#site-city")).toHaveValue(/^Pune\b/);
     await expect(page.locator("#site-lat")).toHaveValue("1.35210");
   });
 });
@@ -980,7 +981,7 @@ test.describe("list your sites: the journey", () => {
 
       // A site. One mistake comes back beside its field, with everything else kept.
       await page.locator("[data-section='add']").getByRole("link", { name: "Add a site" }).click();
-      await expect(page.locator("#site-city")).toHaveValue("hyderabad");
+      await expect(page.locator("#site-city")).toHaveValue("Hyderabad");
       await page.locator("#site-format").selectOption("transit");
       await page.locator("#site-lighting").selectOption("unlit");
       await page.locator("#site-width").fill("10");
@@ -1207,7 +1208,7 @@ test.describe("list your sites: the journey", () => {
       await expect(page.locator("#site-format")).toHaveValue("gantry");
       await expect(page.locator("#site-lighting")).toHaveValue("back-lit");
       await expect(page.locator("#site-unit")).toHaveValue("m");
-      await expect(page.locator("#site-city")).toHaveValue("hyderabad");
+      await expect(page.locator("#site-city")).toHaveValue("Hyderabad");
       await expect(page.locator("#site-road")).toHaveValue("Early Road");
       await expect(page.locator("#site-lat")).toHaveValue("17.38001");
     } finally {
@@ -1329,7 +1330,7 @@ test.describe("list your sites: the journey", () => {
         City: "Hyderabad",
         Area: "Begumpet",
         "Price shown as": "exact",
-        "Rate a month (INR)": 22000,
+        "Rate a month": 22000,
       };
       const rows: Record<number, Cells> = {
         3: {
@@ -1346,7 +1347,7 @@ test.describe("list your sites: the journey", () => {
           Road: `Sheet Lane ${stamp}`,
           "Map link": "https://www.google.com/maps/@17.36501,78.46701,17z",
           "Price shown as": "on request",
-          "Rate a month (INR)": "",
+          "Rate a month": "",
         },
         5: {
           ...base,
@@ -1395,7 +1396,7 @@ test.describe("list your sites: the journey", () => {
         Road: `Sheet Road ${stamp}`,
         Latitude: 17.36001,
         Longitude: 78.46601,
-        "Rate a month (INR)": 25000,
+        "Rate a month": 25000,
       };
       rows[5] = {
         ...base,

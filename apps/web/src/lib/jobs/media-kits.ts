@@ -123,7 +123,7 @@ export async function readMediaKits(now = Date.now()): Promise<{
     return { ...none, waiting: Math.max(0, none.waiting - 1), failed: why };
   }
 
-  const plan = planKit(reading.sites, today);
+  const plan = planKit(reading.sites, today, owner.location?.country);
   const report: KitReport = {
     model: reading.model,
     tokens: reading.tokens,

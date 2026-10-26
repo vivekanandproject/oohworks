@@ -1,3 +1,4 @@
+import { slugify } from "@/lib/slug";
 import { FIELD_KEYS, type FieldKey, type Raw } from "./site-input";
 
 /**
@@ -5,8 +6,10 @@ import { FIELD_KEYS, type FieldKey, type Raw } from "./site-input";
  * apart from the code that saves changes, so it can be tested without the CMS.
  */
 
-const INSTANT = new Set<FieldKey>(["priceDisplay", "rate", "bookedUntil", "place"]);
-const CHANGEABLE = FIELD_KEYS.filter((k) => !INSTANT.has(k));
+const INSTANT = new Set<FieldKey>(["priceDisplay", "rate", "currency", "bookedUntil", "place"]);
+/** What the place search sends beside the city; it moves with the city and is not a change of its own. */
+const WITH_CITY = new Set<FieldKey>(["cityLabel", "cityId", "cityLat", "cityLng", "cityCountry"]);
+const CHANGEABLE = FIELD_KEYS.filter((k) => !INSTANT.has(k) && !WITH_CITY.has(k));
 
 /** A pin that moves further than this needs its location checked again. */
 export const MOVED_METRES = 25;
@@ -20,6 +23,12 @@ const LABEL: Record<FieldKey, string> = {
   lighting: "Lighting",
   litHours: "Lit hours",
   city: "City",
+  cityLabel: "City",
+  cityId: "City",
+  cityLat: "City",
+  cityLng: "City",
+  cityCountry: "Country",
+  country: "Country",
   locality: "Locality",
   road: "Road",
   landmark: "Landmark",
@@ -30,6 +39,7 @@ const LABEL: Record<FieldKey, string> = {
   traffic: "Traffic",
   priceDisplay: "Price shown as",
   rate: "Rate a month",
+  currency: "Currency",
   minPeriod: "Minimum period",
   productionCost: "Printing and mounting",
   notAccepted: "Not accepted",
@@ -58,15 +68,22 @@ export interface Difference {
   to: string;
 }
 
+/** The city as its address part, however it arrived: "Dubai, United Arab Emirates" and "dubai" agree. */
+const cityOf = (r: Raw): string => slugify((r.cityLabel || r.city || "").split(",")[0] ?? "");
+
 export function differences(live: Raw, proposed: Raw): Difference[] {
-  return CHANGEABLE.filter((k) => (live[k] ?? "").trim() !== (proposed[k] ?? "").trim()).map(
-    (k) => ({
-      key: k,
-      label: LABEL[k],
-      from: (live[k] ?? "").trim() || "nothing",
-      to: (proposed[k] ?? "").trim() || "nothing",
-    }),
-  );
+  const same = (k: FieldKey) =>
+    k === "city"
+      ? cityOf(live) === cityOf(proposed)
+      : (live[k] ?? "").trim() === (proposed[k] ?? "").trim();
+  const shown = (r: Raw, k: FieldKey) =>
+    ((k === "city" ? (r.cityLabel || r.city || "").split(",")[0] : r[k]) ?? "").trim() || "nothing";
+  return CHANGEABLE.filter((k) => !same(k)).map((k) => ({
+    key: k,
+    label: LABEL[k],
+    from: shown(live, k),
+    to: shown(proposed, k),
+  }));
 }
 
 export const summaryOf = (diffs: Difference[]): string =>

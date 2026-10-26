@@ -1,7 +1,9 @@
 import { Button, Note, Notice, Radio } from "@ohworks/ui";
 import type { ReactNode } from "react";
 import type { FieldErrors, FieldKey, Raw } from "@/lib/owners/site-input";
-import { CITIES, FORMATS, LIGHTING } from "@/lib/sites/taxonomy";
+import { FORMATS, LIGHTING } from "@/lib/sites/taxonomy";
+import { CURRENCIES } from "@/lib/world/countries";
+import { PlaceField } from "@/components/PlaceField";
 import { NativeSelect } from "@/components/NativeSelect";
 import { FormSection } from "./Frame";
 import { PinPicker } from "./PinPicker";
@@ -246,7 +248,40 @@ export function SiteForm({
 
       <Part n={2} title="Where it is">
         <div className="grid gap-4 sm:grid-cols-2">
-          <Choice name="city" label="City" raw={raw} errors={errors} options={CITIES} />
+          <div>
+            <label htmlFor="site-city" className="oh-label block">
+              City
+            </label>
+            <PlaceField
+              id="site-city"
+              name="city"
+              scope="city"
+              required
+              defaultLabel={raw.cityLabel || raw.city || ""}
+              defaults={{
+                id: raw.cityId ?? "",
+                lat: raw.cityLat ?? "",
+                lng: raw.cityLng ?? "",
+                country: raw.cityCountry ?? "",
+              }}
+              invalid={Boolean(errors.city)}
+              describedBy={errors.city ? "site-city-error" : "site-city-help"}
+              placeholder="Start typing the city"
+            />
+            {errors.city ? (
+              <p
+                id="site-city-error"
+                className="t-small text-critical mt-1"
+                data-field-error="city"
+              >
+                {errors.city}
+              </p>
+            ) : (
+              <p id="site-city-help" className="t-small text-ink-muted mt-1">
+                Any city in the world. Pick it from the list so we know the country.
+              </p>
+            )}
+          </div>
           <Field name="locality" label="Area" raw={raw} errors={errors} placeholder="Koramangala" />
         </div>
         <Field
@@ -309,17 +344,25 @@ export function SiteForm({
             ]}
           />
         </fieldset>
-        <Field
-          name="rate"
-          label="Rate a month"
-          raw={raw}
-          errors={errors}
-          mono
-          affix="₹"
-          inputMode="numeric"
-          placeholder="85,000"
-          help="In rupees, before taxes. Leave empty only if the price is on request."
-        />
+        <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_160px]">
+          <Field
+            name="rate"
+            label="Rate a month"
+            raw={raw}
+            errors={errors}
+            mono
+            inputMode="numeric"
+            placeholder="85,000"
+            help="Before taxes. Leave empty only if the price is on request."
+          />
+          <Choice
+            name="currency"
+            label="Currency"
+            raw={raw}
+            errors={errors}
+            options={CURRENCIES.map((c) => ({ slug: c, label: c }))}
+          />
+        </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
             name="minPeriod"
@@ -333,7 +376,7 @@ export function SiteForm({
             label="Printing and mounting, optional"
             raw={raw}
             errors={errors}
-            placeholder="₹ 18,000 once, by the owner"
+            placeholder="18,000 once, by the owner"
           />
         </div>
         <Field

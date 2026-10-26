@@ -1,4 +1,5 @@
 import type { Owner, Site } from "@/payload-types";
+import { registrationName } from "./gstin";
 
 /** Where a site stands, as its owner sees it. */
 export type SiteState = "draft" | "review" | "changes" | "live";
@@ -26,7 +27,10 @@ export interface Improvement {
  * What would make a listing more complete, with the points each adds to its score out of 100. These are
  * the same weights the score itself uses, so the advice and the number never disagree. Paying is not on the list.
  */
-export function improvements(site: Site, owner: Pick<Owner, "verified"> | null): Improvement[] {
+export function improvements(
+  site: Site,
+  owner: (Pick<Owner, "verified"> & { location?: Owner["location"] }) | null,
+): Improvement[] {
   const out: Improvement[] = [];
   const photos = site.photos?.length ?? 0;
   if (photos === 0) out.push({ text: "Add a real photograph of the site", points: 20 });
@@ -37,7 +41,10 @@ export function improvements(site: Site, owner: Pick<Owner, "verified"> | null):
     out.push({ text: "Show your rate, or a “from” price", points: 10 });
   if (!site.permit?.number) out.push({ text: "Add the permit number", points: 10 });
   if (!owner?.verified)
-    out.push({ text: "Add your GSTIN and a document, to become a verified owner", points: 10 });
+    out.push({
+      text: `Add your ${registrationName(owner?.location?.country)} and a document, to become a verified owner`,
+      points: 10,
+    });
   if (!site.artworkSpec) out.push({ text: "Say what artwork a buyer should supply", points: 5 });
   if (!site.landmark) out.push({ text: "Add a landmark buyers will know", points: 5 });
   return out.sort((a, b) => b.points - a.points);

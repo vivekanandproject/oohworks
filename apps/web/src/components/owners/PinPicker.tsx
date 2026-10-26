@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { PlaceField, type PickedPlace } from "@/components/PlaceField";
 import { readCoords } from "@/lib/owners/coords";
-import { CITIES, CITY_CENTRE, type CitySlug } from "@/lib/sites/taxonomy";
+import { CITY_CENTRE } from "@/lib/sites/taxonomy";
 
 const PinMap = dynamic(() => import("./PinMap"), {
   ssr: false,
@@ -42,7 +42,7 @@ export function PinPicker({
   } | null>(null);
   const [missed, setMissed] = useState(false);
   // What the search found: the pin is put there, and the map opens on it for the owner to adjust.
-  const [found, setFound] = useState<{ label: string; outside: boolean } | null>(null);
+  const [found, setFound] = useState<{ label: string } | null>(null);
 
   const set = (la: number, lo: number) => {
     if (latRef.current) latRef.current.value = la.toFixed(5);
@@ -56,10 +56,16 @@ export function PinPicker({
       lngRef.current?.value.trim() !== "" &&
       Number.isFinite(la) &&
       Number.isFinite(lo);
-    const city = document.querySelector<HTMLSelectElement>("select[name='city']")?.value as
-      CitySlug | undefined;
+    // The map opens on the city chosen above, wherever in the world it is.
+    const field = (n: string) =>
+      Number(document.querySelector<HTMLInputElement>(`input[name='${n}']`)?.value || Number.NaN);
+    const cityLat = field("cityLat");
+    const cityLng = field("cityLng");
     setOpen({
-      start: (city && CITY_CENTRE[city]) || CITY_CENTRE.bengaluru,
+      start:
+        Number.isFinite(cityLat) && Number.isFinite(cityLng)
+          ? [cityLng, cityLat]
+          : CITY_CENTRE.bengaluru,
       pin: has ? [lo, la] : null,
     });
   };
@@ -69,10 +75,20 @@ export function PinPicker({
     if (placeRef.current) placeRef.current.value = "";
     setMissed(false);
     setOpen({ start: [p.lng, p.lat], pin: [p.lng, p.lat] });
-    // The site's city follows the place, when the place is in a city OOHWORKS has pages for.
-    const city = document.querySelector<HTMLSelectElement>("select[name='city']");
-    if (city && p.city && [...city.options].some((o) => o.value === p.city)) city.value = p.city;
-    setFound({ label: p.label, outside: !p.city });
+    // An empty City above takes the place's city, so the owner need not type it twice.
+    const city = document.querySelector<HTMLInputElement>("input[name='cityLabel']");
+    if (city && !city.value.trim() && p.locality) {
+      city.value = [p.locality, p.country].filter(Boolean).join(", ");
+      const hidden = (n: string, v: string) => {
+        const el = document.querySelector<HTMLInputElement>(`input[name='${n}']`);
+        if (el) el.value = v;
+      };
+      hidden("cityId", "");
+      hidden("cityLat", String(p.lat));
+      hidden("cityLng", String(p.lng));
+      hidden("cityCountry", p.countryCode ?? "");
+    }
+    setFound({ label: p.label });
   };
   const onPaste = (value: string) => {
     const found = readCoords(value);
@@ -100,9 +116,7 @@ export function PinPicker({
           data-section="site-found"
         >
           {found
-            ? found.outside
-              ? `The pin is at ${found.label}. That is outside ${CITIES.map((c) => c.label).join(", ")}, the cities OOHWORKS has pages for today.`
-              : `The pin is at ${found.label}. Drag it to the exact spot the site stands on.`
+            ? `The pin is at ${found.label}. Drag it to the exact spot the site stands on.`
             : "Search anywhere in the world. The pin goes there, and you can then drag it to the exact spot."}
         </p>
       </div>

@@ -52,7 +52,7 @@ export default async function EditSitePage({
   if (back) {
     raw = {};
     for (const key of FIELD_KEYS) if (one(q[key])) raw[key] = one(q[key]).slice(0, 300);
-    const checked = checkSite(raw, today);
+    const checked = checkSite(raw, today, owner.location?.country);
     if (!checked.ok) errors = checked.errors;
   }
   const booked = back
