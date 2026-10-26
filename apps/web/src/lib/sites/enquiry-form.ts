@@ -25,7 +25,9 @@ export function readFields(form: FormData): EnquiryFields {
     String(form.get(name) ?? "")
       .trim()
       .slice(0, max);
-  const budgetRaw = text("budget", 20).replace(/[\s,₹]/g, "");
+  const budgetRaw = text("budget", 20)
+    .replace(/^[A-Za-z]{3}\b/, "")
+    .replace(/[\s,₹$£€¥]/g, "");
   const artworkRaw = text("artwork", 20);
   return {
     from: text("from", 10),

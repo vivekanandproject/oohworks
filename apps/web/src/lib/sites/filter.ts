@@ -1,5 +1,5 @@
 import { CITIES, FORMATS, LIGHTING, TRUST, type TrustKey } from "./taxonomy";
-import { toUrl, without, type SearchState } from "./state";
+import { priceCurrency, toUrl, without, type SearchState } from "./state";
 
 const DAY = 24 * 3600 * 1000;
 
@@ -13,6 +13,10 @@ export interface Listing {
   isDigital: boolean;
   lighting: string;
   city: string;
+  /** The city as a buyer reads it. */
+  cityLabel: string;
+  /** ISO code in lower case, as in the address. */
+  country: string;
   locality: string;
   localitySlug: string;
   road: string;
@@ -25,6 +29,8 @@ export interface Listing {
   /** The shown price is a "from" price: a floor, not the rate. */
   priceFrom: boolean;
   rate: number | null;
+  /** ISO 4217: the currency the owner set the rate in. */
+  currency: string;
   bookedUntil: number | null;
   confirmedOn: number | null;
   freshOn: number | null;
@@ -88,6 +94,7 @@ export function inBox(
 
 /** Whether a site passes every filter. `skip` leaves one out, which is how each option's count is worked out. */
 export function matches(l: Listing, s: SearchState, now: number, skip?: Facet): boolean {
+  if (s.country && l.country !== s.country) return false;
   if (skip !== "city" && s.city && l.city !== s.city) return false;
   if (skip !== "bbox" && s.bbox && !inBox(l, s.bbox)) return false;
   if (
@@ -103,8 +110,9 @@ export function matches(l: Listing, s: SearchState, now: number, skip?: Facet): 
     return false;
   if (skip !== "lighting" && s.lighting.length && !s.lighting.includes(l.lighting)) return false;
   if (skip !== "price" && (s.min || s.max)) {
-    // A price limit can only be judged against a price the owner shows.
+    // A price limit can only be judged against a price the owner shows, in the limit's own currency.
     if (!l.priceShown || l.rate === null) return false;
+    if (l.currency !== priceCurrency(s)) return false;
     if (s.min && l.rate < s.min) return false;
     if (s.max && l.rate > s.max) return false;
   }
@@ -154,9 +162,19 @@ export function sortListings(items: Listing[], s: SearchState, now: number): Lis
     bestScore(b, s, now) - bestScore(a, s, now) || b.createdAt - a.createdAt || a.id - b.id;
   const out = [...items];
   switch (s.sort) {
-    case "price":
-      // Sites that show no price cannot be placed by price, so they follow the priced ones.
-      return out.sort((a, b) => (a.rate ?? Infinity) - (b.rate ?? Infinity) || byBest(a, b));
+    case "price": {
+      // Prices are compared only within one currency: the search's first, then each other one. Sites
+      // that show no price cannot be placed by price, so they follow the priced ones.
+      const cur = priceCurrency(s);
+      const rank = (l: Listing) => (l.rate === null ? 2 : l.currency === cur ? 0 : 1);
+      return out.sort(
+        (a, b) =>
+          rank(a) - rank(b) ||
+          (rank(a) === 1 ? a.currency.localeCompare(b.currency) : 0) ||
+          (a.rate ?? Infinity) - (b.rate ?? Infinity) ||
+          byBest(a, b),
+      );
+    }
     case "newest":
       return out.sort((a, b) => b.createdAt - a.createdAt || byBest(a, b));
     case "confirmed":
@@ -172,6 +190,8 @@ export interface Option {
   slug: string;
   label: string;
   count: number;
+  /** For a city: its country, in lower case. */
+  country?: string;
 }
 
 export interface Facets {
@@ -182,6 +202,40 @@ export interface Facets {
   lighting: Option[];
   trust: Option[];
   priced: number;
+}
+
+/**
+ * The cities to choose from: the six OOHWORKS opened in first, in their order, where India is in
+ * scope, then every other city that has sites, the fullest first. Each carries its country.
+ */
+function cityOptions(all: Listing[], s: SearchState, now: number): Option[] {
+  const counts = new Map<string, Option>();
+  for (const l of all) {
+    if (!matches(l, s, now, "city")) continue;
+    const key = `${l.country}/${l.city}`;
+    const entry = counts.get(key) ?? {
+      slug: l.city,
+      label: l.cityLabel,
+      count: 0,
+      country: l.country,
+    };
+    entry.count += 1;
+    counts.set(key, entry);
+  }
+  const launch =
+    !s.country || s.country === "in"
+      ? CITIES.map((c) => ({
+          slug: c.slug,
+          label: c.label,
+          count: counts.get(`in/${c.slug}`)?.count ?? 0,
+          country: "in",
+        }))
+      : [];
+  const rest = [...counts.entries()]
+    .filter(([key]) => !launch.some((c) => key === `in/${c.slug}`))
+    .map(([, v]) => v)
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+  return [...launch, ...rest];
 }
 
 /** For every option, how many sites the search would hold if that option were chosen. */
@@ -202,11 +256,7 @@ export function facetCounts(all: Listing[], s: SearchState, now: number): Facets
     }
   }
   return {
-    cities: CITIES.map((c) => ({
-      slug: c.slug,
-      label: c.label,
-      count: count("city", (l) => l.city === c.slug),
-    })),
+    cities: cityOptions(all, s, now),
     localities: [...localities.values()].sort(
       (a, b) => b.count - a.count || a.label.localeCompare(b.label),
     ),
@@ -269,9 +319,13 @@ export function widen(all: Listing[], s: SearchState, now: number, current: numb
 }
 
 /** The middle rate of sites that show an exact price. Null unless there are enough real ones to be honest. */
-export function medianRate(items: Listing[]): { rate: number; n: number } | null {
+export function medianRate(
+  items: Listing[],
+  /** Only rates in this currency are counted; a median across currencies would mean nothing. */
+  currency = "INR",
+): { rate: number; n: number; currency: string } | null {
   const rates = items
-    .filter((l) => !l.sample && l.priceShown && l.rate !== null)
+    .filter((l) => !l.sample && l.priceShown && l.rate !== null && l.currency === currency)
     .map((l) => l.rate as number)
     .sort((a, b) => a - b);
   if (rates.length < 5) return null;
@@ -282,6 +336,7 @@ export function medianRate(items: Listing[]): { rate: number; n: number } | null
         ? (rates[mid] as number)
         : ((rates[mid - 1] as number) + (rates[mid] as number)) / 2,
     n: rates.length,
+    currency,
   };
 }
 

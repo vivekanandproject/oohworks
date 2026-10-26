@@ -9,12 +9,12 @@ import { QuickView } from "@/components/sites/QuickView";
 import { SiteCard } from "@/components/sites/SiteCard";
 import { StillMap } from "@/components/sites/StillMap";
 import { absolute, alternates, JsonLd } from "@/lib/seo";
-import { hubPath, type Hub } from "@/lib/sites/hubs";
+import { hubCity, hubPath, type Hub } from "@/lib/sites/hubs";
 import { readLists } from "@/lib/sites/lists-server";
 import { planText, summarise } from "@/lib/sites/plan";
 import { hubData, listingsFor } from "@/lib/sites/queries";
 import { DEFAULT_STATE, toUrl } from "@/lib/sites/state";
-import { cityDef, formatDef } from "@/lib/sites/taxonomy";
+import { formatDef } from "@/lib/sites/taxonomy";
 
 const MAP_STYLE = process.env.MAP_STYLE_URL || "https://tiles.openfreemap.org/styles/positron";
 
@@ -79,8 +79,13 @@ export async function HubPage({ hub, page }: { hub: Hub | null; page: number }) 
   const plan = planText(summarise(await listingsFor(lists.saved)));
   const now = Date.now();
   const here = hubPath(hub, page);
-  const city = cityDef(hub.city)?.label ?? hub.city;
-  const cityHub: Hub = { kind: "city", city: hub.city };
+  const city = hubCity(hub);
+  const cityHub: Hub = {
+    kind: "city",
+    country: hub.country,
+    city: hub.city,
+    cityLabel: hub.cityLabel,
+  };
   const formatLabel =
     hub.kind === "format"
       ? hub.format === "led-screen"

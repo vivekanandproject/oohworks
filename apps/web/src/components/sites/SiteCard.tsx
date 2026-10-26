@@ -1,4 +1,5 @@
 import { Badge, Button, type BadgeKind, type IconName } from "@ohworks/ui";
+import { Approx } from "./Approx";
 import { formatDate } from "@/lib/editorial/format";
 import { picture } from "@/lib/editorial/media";
 import type { Lists } from "@/lib/sites/lists-server";
@@ -115,17 +116,22 @@ export function SiteCard({
           </div>
         ) : null}
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-1">
-          <p className="t-price tabular-nums" data-price={price.shown ? "shown" : "request"}>
-            {price.shown ? (
-              <>
-                {price.prefix}
-                {price.amount}{" "}
-                <span className="t-small text-ink-muted font-sans font-normal">/ month</span>
-              </>
-            ) : (
-              <span className="text-[16px]">Price on request</span>
-            )}
-          </p>
+          <div>
+            <p className="t-price tabular-nums" data-price={price.shown ? "shown" : "request"}>
+              {price.shown ? (
+                <>
+                  {price.prefix}
+                  {price.amount}{" "}
+                  <span className="t-small text-ink-muted font-sans font-normal">/ month</span>
+                </>
+              ) : (
+                <span className="text-[16px]">Price on request</span>
+              )}
+            </p>
+            {price.shown && site.rate ? (
+              <Approx amount={site.rate} currency={site.currency || "INR"} className="block" />
+            ) : null}
+          </div>
           <AvailabilityChip availability={availability} />
         </div>
         <div className="border-hairline flex flex-col gap-2 border-t pt-3">

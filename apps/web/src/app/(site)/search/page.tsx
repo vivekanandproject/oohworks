@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { currencyOfCountry } from "@/lib/world/currency";
+import { visitorCountry } from "@/lib/world/visitor";
+import { money } from "@/lib/world/money";
 import { redirect } from "next/navigation";
 import { Button, Container, EmptyState, Note, Notice, SearchField, Chip, Pager } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
@@ -14,7 +17,7 @@ import { StillMap } from "@/components/sites/StillMap";
 import { formatDate } from "@/lib/editorial/format";
 import { readLists } from "@/lib/sites/lists-server";
 import { planText, summarise } from "@/lib/sites/plan";
-import { listingsFor, searchSites } from "@/lib/sites/queries";
+import { listedCountries, listingsFor, searchSites } from "@/lib/sites/queries";
 import {
   firstPage,
   toUrl,
@@ -22,12 +25,13 @@ import {
   without,
   type RawParams,
   type SearchState,
+  priceCurrency,
+  searchCountry,
 } from "@/lib/sites/state";
-import { TRUST, cityDef, formatDef, lightingDef } from "@/lib/sites/taxonomy";
+import { TRUST, formatDef, lightingDef, cityName } from "@/lib/sites/taxonomy";
 import { dateRange } from "@/lib/sites/enquiry";
 import { readStateSmart } from "@/lib/sites/understand";
 import { indiaDate } from "@/lib/sites/calendar";
-import { inr } from "@/lib/sites/view";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +52,7 @@ function describe(state: SearchState, localityLabel: string | undefined, single 
       : format.plural.toLowerCase()
     : "sites";
   const what = single ? (format ? format.inSentence : "site") : plural;
-  const city = cityDef(state.city)?.label;
+  const city = state.city ? cityName(state.city) : undefined;
   const where = state.bbox
     ? " in this map area"
     : city
@@ -56,6 +60,10 @@ function describe(state: SearchState, localityLabel: string | undefined, single 
       : "";
   return `${what}${where}`;
 }
+
+const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
+const countryName = (code: string): string =>
+  regionNames.of(code.toUpperCase()) ?? code.toUpperCase();
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<RawParams> }) {
   const raw = await searchParams;
@@ -74,6 +82,24 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     const extra = followed ? "followed=1" : followInvalid ? "follow=invalid" : "";
     const tidy = extra ? `${base}${base.includes("?") ? "&" : "?"}${extra}` : base;
     if (asked !== tidy) redirect(tidy);
+  }
+
+  // Where search starts: the visitor's own country when it has sites, unless they chose a place, an
+  // owner, a map area or every country. It is applied after the tidy address, so /search/ stays put.
+  const visitor = await visitorCountry();
+  const listed = await listedCountries();
+  const choseScope = Boolean(
+    state.country || state.everywhere || state.city || state.bbox || state.owner,
+  );
+  const startedIn =
+    !choseScope && visitor && listed.includes(visitor) ? visitor.toLowerCase() : null;
+  if (startedIn) state.country = startedIn;
+  // A visitor whose country has no sites yet is shown every country, and told so.
+  const noneAtHome = !choseScope && visitor && !listed.includes(visitor) ? visitor : null;
+  // Prices are filtered in the visitor's currency where the search names no country of its own.
+  if (!state.currency && !searchCountry(state) && visitor) {
+    const own = currencyOfCountry(visitor);
+    if (own) state.currency = own;
   }
 
   const result = await searchSites(state);
@@ -97,7 +123,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     if (state.city)
       chips.push({
         key: "city",
-        label: cityDef(state.city)?.label ?? state.city,
+        label: cityName(state.city),
         remove: toUrl(without(state, "city", "localities"), firstPage),
       });
     for (const f of state.formats)
@@ -115,7 +141,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     if (state.max)
       chips.push({
         key: "max",
-        label: `Under ${inr(state.max)} a month`,
+        label: `Under ${money(state.max, priceCurrency(state))} a month`,
         remove: toUrl(without(state, "max"), firstPage),
       });
     for (const l of state.lighting)
@@ -133,7 +159,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     if (state.min)
       chips.push({
         key: "min",
-        label: `From ${inr(state.min)} a month`,
+        label: `From ${money(state.min, priceCurrency(state))} a month`,
         remove: toUrl(without(state, "min"), firstPage),
       });
     if (state.from)
@@ -178,8 +204,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             </h1>
             {result.median ? (
               <p className="t-small text-ink-muted mt-1" data-section="median">
-                Median rate {inr(result.median.rate)} a month, from {result.median.n} sites that
-                show a price · OOHWORKS data,{" "}
+                Median rate {money(result.median.rate, result.median.currency)} a month, from{" "}
+                {result.median.n} sites that show a price · OOHWORKS data,{" "}
                 {formatDate(new Date(now).toISOString()).replace(/^\d+ /, "")}
               </p>
             ) : null}
@@ -189,6 +215,25 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           </a>
         </div>
 
+        {state.country || noneAtHome ? (
+          <p className="t-small text-ink-muted -mt-3 pb-4" data-section="scope">
+            {state.country
+              ? `Sites in ${countryName(state.country)}. `
+              : `No sites are listed in ${countryName(noneAtHome ?? "")} yet, so this shows every country. `}
+            {state.country ? (
+              <a
+                href={toUrl(
+                  { ...without(state, "city", "localities", "country"), everywhere: true },
+                  firstPage,
+                )}
+                className="oh-link"
+                rel="nofollow"
+              >
+                Search every country
+              </a>
+            ) : null}
+          </p>
+        ) : null}
         <SearchField
           defaultValue={typed || state.q}
           size="lg"

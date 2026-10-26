@@ -24,6 +24,11 @@ export const ICON_PATHS = {
     '<circle cx="8" cy="14" r="0.6"/>',
     '<circle cx="16" cy="14" r="0.6"/>',
   ],
+  // Globe: the country switcher. Drawn to the set's rules (24px grid, 1.75 stroke, outline only).
+  globe: [
+    '<circle cx="12" cy="12" r="8.75"/>',
+    '<path d="M3.25 12h17.5M12 3.25c2.4 2.5 3.6 5.4 3.6 8.75S14.4 18.25 12 20.75c-2.4-2.5-3.6-5.4-3.6-8.75S9.6 5.75 12 3.25z"/>',
+  ],
   // Verified: a circle with a centred tick. The scalloped seal in the asset group blurs at 16px.
   verified: ['<circle cx="12" cy="12" r="8.75"/>', '<path d="M8.25 12.25l2.5 2.5 5-5.25"/>'],
   permit: ['<path d="M6 3h9l4 4v14H6z"/>', '<path d="M15 3v4h4M9 12h6M9 16h6"/>'],

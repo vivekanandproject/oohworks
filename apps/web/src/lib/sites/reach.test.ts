@@ -28,6 +28,8 @@ function listing(over: Partial<Listing>): Listing {
     isDigital: false,
     lighting: "front-lit",
     city: "bengaluru",
+    cityLabel: "Bengaluru",
+    country: "in",
     locality: "Koramangala",
     localitySlug: "koramangala",
     road: "80 Feet Road",
@@ -39,6 +41,7 @@ function listing(over: Partial<Listing>): Listing {
     priceShown: true,
     priceFrom: false,
     rate: 85000,
+    currency: "INR",
     bookedUntil: null,
     confirmedOn: NOW - 2 * DAY,
     freshOn: NOW - 2 * DAY,
@@ -64,44 +67,51 @@ const many = (n: number, over: Partial<Listing> = {}): Listing[] =>
 
 describe("hubs", () => {
   it("reads a hub from its address, and refuses what it does not serve", () => {
-    expect(readHub("in", "bengaluru")).toEqual({ kind: "city", city: "bengaluru" });
+    expect(readHub("in", "bengaluru")).toEqual({ kind: "city", country: "in", city: "bengaluru" });
     expect(readHub("in", "bengaluru", "koramangala")).toEqual({
       kind: "locality",
+      country: "in",
       city: "bengaluru",
       locality: "koramangala",
     });
     expect(readHub("in", "bengaluru", "hoardings")).toEqual({
       kind: "format",
+      country: "in",
       city: "bengaluru",
       format: "hoarding",
     });
     expect(readHub("in", "bengaluru", "led-screens")).toEqual({
       kind: "format",
+      country: "in",
       city: "bengaluru",
       format: "led-screen",
     });
     expect(readHub("in", "bengaluru", "bus-shelters")).toEqual({
       kind: "format",
+      country: "in",
       city: "bengaluru",
       format: "bus-shelter",
     });
-    expect(readHub("us", "bengaluru")).toBeNull();
-    expect(readHub("in", "atlantis")).toBeNull();
+    // Any country and city can be named; whether the page opens is up to its listings (hubStatus).
+    expect(readHub("ae", "dubai")).toEqual({ kind: "city", country: "ae", city: "dubai" });
+    expect(hubStatus([], { kind: "city", country: "in", city: "atlantis" }).published).toBe(false);
+    expect(readHub("zz", "bengaluru")).toBeNull();
+    expect(readHub("india", "bengaluru")).toBeNull();
     expect(readHub("in", "bengaluru", "Not A Slug")).toBeNull();
   });
   it("gives each hub one address, with later pages under it", () => {
-    expect(hubPath({ kind: "city", city: "mumbai" })).toBe("/in/mumbai/");
-    expect(hubPath({ kind: "locality", city: "mumbai", locality: "bandra-west" }, 3)).toBe(
-      "/in/mumbai/bandra-west/page/3/",
-    );
-    expect(hubPath({ kind: "format", city: "pune", format: "led-screen" })).toBe(
+    expect(hubPath({ kind: "city", country: "in", city: "mumbai" })).toBe("/in/mumbai/");
+    expect(
+      hubPath({ kind: "locality", country: "in", city: "mumbai", locality: "bandra-west" }, 3),
+    ).toBe("/in/mumbai/bandra-west/page/3/");
+    expect(hubPath({ kind: "format", country: "in", city: "pune", format: "led-screen" })).toBe(
       "/in/pune/led-screens/",
     );
     const hub = readHub("in", "pune", "led-screens") as Hub;
     expect(readHub("in", "pune", hubPath(hub).split("/")[3])).toEqual(hub);
   });
   it("publishes a hub only at its threshold of indexable sites", () => {
-    const city: Hub = { kind: "city", city: "bengaluru" };
+    const city: Hub = { kind: "city", country: "in", city: "bengaluru" };
     expect(hubStatus(many(HUB_MIN.city - 1), city)).toEqual({
       indexable: 24,
       needed: 25,
@@ -114,40 +124,56 @@ describe("hubs", () => {
       needed: 25,
       published: false,
     });
-    const area: Hub = { kind: "locality", city: "bengaluru", locality: "koramangala" };
+    const area: Hub = {
+      kind: "locality",
+      country: "in",
+      city: "bengaluru",
+      locality: "koramangala",
+    };
     expect(hubStatus(many(10), area).published).toBe(true);
     expect(hubStatus(many(10, { localitySlug: "hebbal" }), area).published).toBe(false);
     expect(hubStatus(many(30, { city: "mumbai" }), city).published).toBe(false);
     expect(
       inHub(listing({ format: "unipole" }), {
         kind: "format",
+        country: "in",
         city: "bengaluru",
         format: "hoarding",
       }),
     ).toBe(false);
   });
   it("names the page and opens it with a dated fact from the listings", () => {
-    expect(hubTitle({ kind: "city", city: "bengaluru" })).toBe(
+    expect(hubTitle({ kind: "city", country: "in", city: "bengaluru" })).toBe(
       "Outdoor advertising sites in Bengaluru",
     );
-    expect(hubTitle({ kind: "format", city: "bengaluru", format: "led-screen" })).toBe(
-      "LED screens in Bengaluru",
-    );
     expect(
-      hubTitle({ kind: "locality", city: "bengaluru", locality: "hsr-layout" }, "HSR Layout"),
+      hubTitle({ kind: "format", country: "in", city: "bengaluru", format: "led-screen" }),
+    ).toBe("LED screens in Bengaluru");
+    expect(
+      hubTitle(
+        { kind: "locality", country: "in", city: "bengaluru", locality: "hsr-layout" },
+        "HSR Layout",
+      ),
     ).toBe("Outdoor advertising sites in HSR Layout, Bengaluru");
     const items = [...many(3), listing({ id: 9, format: "unipole", ownerId: 2 })];
-    expect(hubFact({ kind: "city", city: "bengaluru" }, items, null, "Oct 2026")).toBe(
+    expect(
+      hubFact({ kind: "city", country: "in", city: "bengaluru" }, items, null, "Oct 2026"),
+    ).toBe(
       "Bengaluru has 4 listed sites from 2 owners. Hoardings are the most common, with 3. (OOHWORKS, Oct 2026)",
     );
     expect(
-      hubFact({ kind: "format", city: "bengaluru", format: "hoarding" }, many(1), null, "Oct 2026"),
+      hubFact(
+        { kind: "format", country: "in", city: "bengaluru", format: "hoarding" },
+        many(1),
+        null,
+        "Oct 2026",
+      ),
     ).toBe("Bengaluru has 1 listed hoarding from 1 owner. (OOHWORKS, Oct 2026)");
     expect(
       hubFact(
-        { kind: "locality", city: "bengaluru", locality: "koramangala" },
+        { kind: "locality", country: "in", city: "bengaluru", locality: "koramangala" },
         many(6),
-        { rate: 70000, n: 6 },
+        { rate: 70000, n: 6, currency: "INR" },
         "Oct 2026",
         "Koramangala",
       ),

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { currencySign } from "@/lib/world/money";
 import { notFound } from "next/navigation";
 import { Button, Container, Notice, Radio } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
@@ -124,7 +125,7 @@ export default async function ReplyPage({
                     Your rate a month, optional
                   </label>
                   <div className="oh-affix mt-1">
-                    <span aria-hidden="true">₹</span>
+                    <span aria-hidden="true">{currencySign(site.currency || "INR")}</span>
                     <input
                       id={`q-${site.id}`}
                       name={`q-${site.id}`}

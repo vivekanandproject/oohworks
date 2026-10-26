@@ -1,10 +1,15 @@
 import { parseQuery } from "@/lib/search-parse";
+import { currencyOfCountry, isCountryCode, isCurrencyCode } from "@/lib/world/currency";
 import { CITIES, FORMATS, LIGHTING, SORTS, TRUST, type SortKey, type TrustKey } from "./taxonomy";
 
 /** Everything a search can be narrowed by. The address bar carries exactly this, in a fixed order. */
 export interface SearchState {
   /** Free text left over after the place, format, size and budget were understood. */
   q: string;
+  /** ISO code in lower case: the country searched in. Absent for everywhere. */
+  country?: string;
+  /** The visitor chose everywhere, so their own country is not put in for them. */
+  everywhere?: boolean;
   city?: string;
   localities: string[];
   formats: string[];
@@ -13,6 +18,8 @@ export interface SearchState {
   lighting: string[];
   min?: number;
   max?: number;
+  /** ISO 4217: the currency min and max are in, when the address says so. */
+  currency?: string;
   priced: boolean;
   from?: string;
   to?: string;
@@ -79,10 +86,11 @@ export function readState(raw: RawParams): ReadResult {
   const parsed = parseQuery(typed);
   const f = parsed.facets;
 
-  const cities = CITIES.map((c) => c.slug) as readonly string[];
-  const explicitCity = cities.includes(one(raw.city).toLowerCase())
-    ? one(raw.city).toLowerCase()
-    : undefined;
+  // Any city in the world; a launch city's name is also understood from the typed text.
+  const explicitCity = slugish(one(raw.city)) || undefined;
+  const countryParam = one(raw.country).toLowerCase();
+  const explicitCountry =
+    /^[a-z]{2}$/.test(countryParam) && isCountryCode(countryParam) ? countryParam : undefined;
   const explicitFormats = among(
     list(raw.format),
     FORMATS.map((x) => x.slug),
@@ -119,6 +127,12 @@ export function readState(raw: RawParams): ReadResult {
   };
   const city = explicitCity ?? f.city;
   if (city) state.city = city;
+  if (explicitCountry) state.country = explicitCountry;
+  else if (countryParam === "all") state.everywhere = true;
+  const cur = one(raw.cur).toUpperCase();
+  if (isCurrencyCode(cur)) state.currency = cur;
+  // A budget typed into the search box is read in rupees, the only words the box knows for money.
+  else if (!explicitMax && f.budget) state.currency = "INR";
   if (type === "static" || type === "digital") state.type = type;
   const size = explicitSize ?? f.size;
   if (size) state.size = size;
@@ -145,6 +159,8 @@ export function toUrl(state: SearchState, change: Partial<SearchState> = {}): st
   const s = { ...state, ...change };
   const p = new URLSearchParams();
   if (s.q) p.set("q", s.q);
+  if (s.country) p.set("country", s.country);
+  else if (s.everywhere) p.set("country", "all");
   if (s.city) p.set("city", s.city);
   if (s.city && s.localities.length) p.set("locality", [...s.localities].sort().join(","));
   if (s.bbox) p.set("bbox", s.bbox.map((n) => n.toFixed(4)).join(","));
@@ -154,6 +170,7 @@ export function toUrl(state: SearchState, change: Partial<SearchState> = {}): st
   if (s.lighting.length) p.set("lit", [...s.lighting].sort().join(","));
   if (s.min) p.set("min", String(s.min));
   if (s.max) p.set("max", String(s.max));
+  if ((s.min || s.max) && s.currency) p.set("cur", s.currency);
   if (s.priced) p.set("priced", "1");
   if (s.from) p.set("from", s.from);
   if (s.to) p.set("to", s.to);
@@ -224,4 +241,17 @@ export function without(state: SearchState, ...keys: (keyof SearchState)[]): Sea
     map: next.map ?? true,
     panel: next.panel ?? false,
   };
+}
+
+/** The country a search is in: the one chosen, or India for a city OOHWORKS opened in first. */
+export function searchCountry(s: Pick<SearchState, "country" | "city">): string | undefined {
+  if (s.country) return s.country;
+  return s.city && (CITIES.map((c) => c.slug) as readonly string[]).includes(s.city)
+    ? "in"
+    : undefined;
+}
+
+/** The currency a price filter and a median are in: the address's, or the searched country's. */
+export function priceCurrency(s: Pick<SearchState, "currency" | "country" | "city">): string {
+  return s.currency ?? currencyOfCountry(searchCountry(s)) ?? "INR";
 }

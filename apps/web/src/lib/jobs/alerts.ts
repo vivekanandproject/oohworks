@@ -6,7 +6,7 @@ import { siteUrl } from "@/lib/hosting";
 import { sendMail } from "@/lib/sites/mail";
 import { matchingListings } from "@/lib/sites/queries";
 import { readState, type SearchState } from "@/lib/sites/state";
-import { formatDef, cityDef } from "@/lib/sites/taxonomy";
+import { formatDef, cityName } from "@/lib/sites/taxonomy";
 import { priceOf } from "@/lib/sites/view";
 
 /** The most sites one alert names; the rest are a link away. */
@@ -40,7 +40,7 @@ export function followWords(follow: Pick<Follow, "search" | "city" | "format">):
     state.formats.length === 1
       ? (formatDef(state.formats[0])?.plural.toLowerCase() ?? "sites")
       : "sites";
-  const where = state.city ? ` in ${cityDef(state.city)?.label ?? state.city}` : "";
+  const where = state.city ? ` in ${cityName(state.city)}` : "";
   return `${what}${where}`;
 }
 

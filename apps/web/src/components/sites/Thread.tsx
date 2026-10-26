@@ -1,8 +1,9 @@
 import { NEUTRALITY_LINE } from "@ohworks/ui";
+import { money } from "@/lib/world/money";
 import { formatDate, timeAgo } from "@/lib/editorial/format";
 import { ANSWERS, ARTWORK, dateRange, type Answer } from "@/lib/sites/enquiry";
 import type { Group, Request } from "@/lib/sites/enquiries";
-import { inr, placeLine, siteUrl } from "@/lib/sites/view";
+import { placeLine, siteUrl } from "@/lib/sites/view";
 import type { Message } from "@/payload-types";
 
 /** What the buyer asked: the same facts both sides see. */
@@ -12,7 +13,9 @@ export function AskedFacts({ request, showBudget }: { request: Request; showBudg
     ["Dates", dateRange(e.dateFrom, e.dateTo)],
     ["Brand and category", e.brand],
     ...(showBudget
-      ? ([["Budget a month", e.budget ? inr(e.budget) : "Not given"]] as [string, string][])
+      ? ([
+          ["Budget a month", e.budget ? money(e.budget, e.budgetCurrency || "INR") : "Not given"],
+        ] as [string, string][])
       : []),
     ["Artwork", ARTWORK[e.artwork]],
   ];
@@ -106,7 +109,9 @@ export function Thread({
                     <span className="font-semibold">{site?.title ?? "Site"}:</span>{" "}
                     {[
                       a.availability ? ANSWERS[a.availability as Answer] : null,
-                      a.quote ? `${inr(a.quote)} / month` : null,
+                      a.quote
+                        ? `${money(a.quote, a.quoteCurrency || site?.currency || "INR")} / month`
+                        : null,
                     ]
                       .filter(Boolean)
                       .join(" · ")}

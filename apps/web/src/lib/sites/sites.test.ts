@@ -14,7 +14,7 @@ import {
   signBuyer,
 } from "./enquiry";
 import { facetCounts, matches, medianRate, sortListings, widen, type Listing } from "./filter";
-import { activeCount, readState, toUrl, toggle, without } from "./state";
+import { activeCount, readState, priceCurrency, toUrl, toggle, without } from "./state";
 import {
   availabilityOf,
   badgesOf,
@@ -40,6 +40,8 @@ function listing(over: Partial<Listing>): Listing {
     isDigital: false,
     lighting: "front-lit",
     city: "bengaluru",
+    cityLabel: "Bengaluru",
+    country: "in",
     locality: "Koramangala",
     localitySlug: "koramangala",
     road: "80 Feet Road",
@@ -51,6 +53,7 @@ function listing(over: Partial<Listing>): Listing {
     priceShown: true,
     priceFrom: false,
     rate: 85000,
+    currency: "INR",
     bookedUntil: null,
     confirmedOn: NOW - 2 * DAY,
     freshOn: NOW - 2 * DAY,
@@ -141,18 +144,36 @@ describe("search state", () => {
   });
   it("ignores values it does not know, and a locality without a city", () => {
     const s = state({
-      city: "atlantis",
       format: "blimp",
       sort: "random",
       page: "-3",
       locality: "koramangala",
+      country: "zz",
+      cur: "rupees",
     });
     expect(s.city).toBeUndefined();
+    expect(s.country).toBeUndefined();
+    expect(s.currency).toBeUndefined();
     expect(s.formats).toEqual([]);
     expect(s.localities).toEqual([]);
     expect(s.sort).toBe("best");
     expect(s.page).toBe(1);
     expect(toUrl(s)).toBe("/search/");
+  });
+  it("searches any city and country, and prices in the searched country's currency", () => {
+    const dubai = state({ country: "ae", city: "Dubai", max: "20000" });
+    expect(dubai).toMatchObject({ country: "ae", city: "dubai", max: 20000 });
+    expect(priceCurrency(dubai)).toBe("AED");
+    expect(toUrl(dubai)).toBe("/search/?country=ae&city=dubai&max=20000");
+    // A launch city keeps its old address and is priced in rupees.
+    const blr = state({ city: "bengaluru", max: "100000" });
+    expect(toUrl(blr)).toBe("/search/?city=bengaluru&max=100000");
+    expect(priceCurrency(blr)).toBe("INR");
+    // The currency the address names wins, and travels with the limits.
+    const usd = state({ max: "5000", cur: "usd" });
+    expect(priceCurrency(usd)).toBe("USD");
+    expect(toUrl(usd)).toBe("/search/?max=5000&cur=USD");
+    expect(state({ country: "all" }).everywhere).toBe(true);
   });
   it("toggles list filters, removes single ones and counts what is active", () => {
     const s = state({ city: "bengaluru", format: "hoarding", max: "100000", priced: "1" });
@@ -283,7 +304,9 @@ describe("filtering and ordering", () => {
     const six = [40000, 50000, 60000, 80000, 90000, 120000].map((rate, i) =>
       listing({ id: 10 + i, rate }),
     );
-    expect(medianRate(six)).toEqual({ rate: 70000, n: 6 });
+    expect(medianRate(six)).toEqual({ rate: 70000, n: 6, currency: "INR" });
+    // Rates in another currency are never in the same median.
+    expect(medianRate(six, "AED")).toBeNull();
     expect(medianRate(six.map((l) => ({ ...l, sample: true })))).toBeNull();
   });
 });

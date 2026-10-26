@@ -1,7 +1,7 @@
 import type { Owner, Site } from "@/payload-types";
 import { formatDate } from "@/lib/editorial/format";
 import { absolute } from "@/lib/seo";
-import { cityDef, formatDef, lightingDef } from "./taxonomy";
+import { formatDef, lightingDef, cityName } from "./taxonomy";
 import {
   availabilityOf,
   badgesOf,
@@ -27,7 +27,7 @@ export function siteMarkdown(
   now: number,
 ): string {
   const url = absolute(siteUrl(site));
-  const city = cityDef(site.city)?.label ?? site.city;
+  const city = cityName(site.city, site.cityLabel);
   const format = formatDef(site.format)?.label ?? site.format;
   const lit = lightingDef(site.lighting)?.label ?? null;
   const price = priceOf(site);

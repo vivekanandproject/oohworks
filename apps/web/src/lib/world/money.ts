@@ -1,23 +1,17 @@
-import { COUNTRIES, findCountry } from "./countries";
+const NBSP = "\u00a0";
 
-const NBSP = " ";
-
-/** The country whose grouping a currency is written in: rupees in lakh, dollars in thousands. */
-const HOME: Map<string, string> = new Map(
-  [...COUNTRIES].reverse().map((c) => [c.currency, c.code] as const),
-);
-HOME.set("USD", "US");
-HOME.set("EUR", "DE");
-HOME.set("GBP", "GB");
-HOME.set("INR", "IN");
-
+/**
+ * How a currency's figures are grouped: rupees in lakh (1,25,000), US dollars the American way, and
+ * everything else in thousands (125,000). Kept free of the country tables so it is light in a browser.
+ */
 function localeFor(currency: string): string {
-  return findCountry(HOME.get(currency.toUpperCase()))?.locale ?? "en-GB";
+  const c = currency.toUpperCase();
+  return c === "INR" ? "en-IN" : c === "USD" ? "en-US" : "en-GB";
 }
 
 const symbols = new Map<string, string>();
 /** "₹", "$", "£", "€", or the code where the symbol would be ambiguous or long ("AED"). */
-function symbolOf(currency: string): string {
+export function currencySign(currency: string): string {
   const key = currency.toUpperCase();
   const known = symbols.get(key);
   if (known) return known;
@@ -47,7 +41,7 @@ function symbolOf(currency: string): string {
  */
 export function money(amount: number, currency: string): string {
   const grouped = Math.round(amount).toLocaleString(localeFor(currency));
-  return `${symbolOf(currency)}${NBSP}${grouped}`;
+  return `${currencySign(currency)}${NBSP}${grouped}`;
 }
 
 function trim(n: number): string {
@@ -59,13 +53,13 @@ function trim(n: number): string {
  * elsewhere, and smaller figures grouped.
  */
 export function countWords(n: number, country?: string | null): string {
-  const c = findCountry(country);
-  if (!c || c.code === "IN") {
+  const code = (country ?? "IN").toUpperCase();
+  if (code === "IN") {
     if (n >= 1e7) return `${trim(n / 1e7)} crore`;
     if (n >= 1e5) return `${trim(n / 1e5)} lakh`;
     return Math.round(n).toLocaleString("en-IN");
   }
   if (n >= 1e9) return `${trim(n / 1e9)} billion`;
   if (n >= 1e6) return `${trim(n / 1e6)} million`;
-  return Math.round(n).toLocaleString(c.locale);
+  return Math.round(n).toLocaleString(code === "US" ? "en-US" : "en-GB");
 }

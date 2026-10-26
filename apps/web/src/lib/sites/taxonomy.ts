@@ -93,6 +93,12 @@ export function formatDef(slug: string | null | undefined) {
 export function cityDef(slug: string | null | undefined) {
   return CITIES.find((c) => c.slug === slug);
 }
+/** A city as a buyer reads it: its own label, a launch city's name, or its address part in title case. */
+export function cityName(slug: string | null | undefined, label?: string | null): string {
+  if (label) return label;
+  if (!slug) return "";
+  return cityDef(slug)?.label ?? slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
 export function lightingDef(slug: string | null | undefined) {
   return LIGHTING.find((l) => l.slug === slug);
 }

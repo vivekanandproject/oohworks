@@ -29,6 +29,11 @@ const OWN = [
   { name: "oh_compare", what: "Remembers the sites you are comparing.", kept: "180 days" },
   { name: "oh_consent", what: "Remembers whether you allowed Google Analytics.", kept: "180 days" },
   {
+    name: "oh_country",
+    what: "Remembers your country, from where you are or the one you chose, so search starts there and prices show an approximate figure in its currency.",
+    kept: "1 year",
+  },
+  {
     name: "payload-token",
     what: "Keeps the OOHWORKS team signed in to the editor.",
     kept: "8 hours",

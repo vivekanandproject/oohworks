@@ -1,14 +1,14 @@
 import type { BadgeKind } from "@ohworks/ui";
+import { countWords, money } from "@/lib/world/money";
 import type { Owner, Site } from "@/payload-types";
 import { formatDate } from "@/lib/editorial/format";
-import { cityDef, formatDef, lightingDef } from "./taxonomy";
+import { formatDef, lightingDef, cityName } from "./taxonomy";
 
 const DAY = 24 * 3600 * 1000;
-const NBSP = " ";
 
-/** Rupees with Indian grouping: ₹ 1,20,000. */
+/** Rupees with Indian grouping: ₹ 1,20,000. For any other currency, money() from lib/world. */
 export function inr(amount: number): string {
-  return `₹${NBSP}${Math.round(amount).toLocaleString("en-IN")}`;
+  return money(amount, "INR");
 }
 
 function trim(n: number): string {
@@ -52,12 +52,14 @@ export function siteUrl(
 }
 
 export type Price = { shown: true; prefix: string; amount: string } | { shown: false };
-export function priceOf(site: Pick<Site, "priceDisplay" | "rate">): Price {
+export function priceOf(
+  site: Pick<Site, "priceDisplay" | "rate"> & { currency?: string | null },
+): Price {
   if (site.priceDisplay === "on_request" || !site.rate) return { shown: false };
   return {
     shown: true,
     prefix: site.priceDisplay === "from" ? "From " : "",
-    amount: inr(site.rate),
+    amount: money(site.rate, site.currency || "INR"),
   };
 }
 
@@ -254,7 +256,7 @@ export function isIndexable(
 }
 
 export function placeLine(site: Pick<Site, "locality" | "city">): string {
-  return `${site.locality}, ${cityDef(site.city)?.label ?? site.city}`;
+  return `${site.locality}, ${cityName(site.city, (site as { cityLabel?: string | null }).cityLabel)}`;
 }
 
 export function metaLine(
@@ -271,10 +273,9 @@ export function formatLabel(slug: string): string {
 }
 
 /** "4.2 lakh", "1.3 crore": how a large count is said in India. Full figures stay in data. */
+/** A large count in India's words: "4.2 lakh". For a site elsewhere, countWords(n, its country). */
 export function lakh(n: number): string {
-  if (n >= 1e7) return `${trim(n / 1e7)} crore`;
-  if (n >= 1e5) return `${trim(n / 1e5)} lakh`;
-  return Math.round(n).toLocaleString("en-IN");
+  return countWords(n, "IN");
 }
 
 /** "Oct 2026". */

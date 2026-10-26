@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 import { Footer, NavBar } from "@ohworks/ui";
+import { CountrySwitch } from "@/components/CountrySwitch";
+import { listedCountries } from "@/lib/sites/queries";
 
-export function Shell({
+export async function Shell({
   children,
   active,
   listHref,
@@ -11,6 +13,7 @@ export function Shell({
   /** Where the bar's "List your sites" leads, when a page wants it to point at its own form. */
   listHref?: string | undefined;
 }) {
+  const listed = await listedCountries();
   return (
     <>
       <a
@@ -19,7 +22,12 @@ export function Shell({
       >
         Skip to content
       </a>
-      <NavBar active={active} listHref={listHref} />
+      <NavBar
+        active={active}
+        listHref={listHref}
+        country={<CountrySwitch listed={listed} />}
+        countryMenu={<CountrySwitch listed={listed} menu />}
+      />
       <main id="main">{children}</main>
       <Footer />
     </>

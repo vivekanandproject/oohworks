@@ -4,7 +4,8 @@ import { deliverMail } from "../mailer";
 import { siteUrl } from "../../lib/hosting";
 import { pingIndexNow } from "../../lib/indexnow";
 import { cityDef, formatDef } from "../../lib/sites/taxonomy";
-import { countryOrDefault, timeZoneAt } from "../../lib/world/countries";
+import { countryOrDefault } from "../../lib/world/countries";
+import { timeZoneAt } from "../../lib/world/zone";
 import { slugify } from "./index";
 
 /** Crockford base 32 without i, l, o and u: the alphabet of a permanent unit id. */
@@ -175,8 +176,8 @@ export const siteAfterChange: CollectionAfterChangeHook = async ({ doc, previous
   // its city page and the home page's city board. Bing and the assistants built on it hear at once.
   if (doc._status === "published" || previousDoc?._status === "published") {
     void pingIndexNow([
-      `/in/${doc.city}/${doc.localitySlug ?? "area"}/${doc.slug ?? "site"}-${doc.permanentId}/`,
-      `/in/${doc.city}/`,
+      `/${doc.country ?? "in"}/${doc.city}/${doc.localitySlug ?? "area"}/${doc.slug ?? "site"}-${doc.permanentId}/`,
+      `/${doc.country ?? "in"}/${doc.city}/`,
       "/",
     ]);
   }
@@ -191,7 +192,7 @@ export const siteAfterChange: CollectionAfterChangeHook = async ({ doc, previous
       req,
     });
     if (!owner?.loginEmail) return doc;
-    const page = `${base()}/in/${doc.city}/${doc.localitySlug ?? "area"}/${doc.slug ?? "site"}-${doc.permanentId}/`;
+    const page = `${base()}/${doc.country ?? "in"}/${doc.city}/${doc.localitySlug ?? "area"}/${doc.slug ?? "site"}-${doc.permanentId}/`;
     const manage = `${base()}/owner/sites/${doc.permanentId}/`;
     await deliverMail(
       req.payload,

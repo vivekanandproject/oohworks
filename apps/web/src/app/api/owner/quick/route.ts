@@ -24,7 +24,9 @@ export async function POST(req: Request) {
   const mode = text(form, "priceDisplay", 12);
   const priceDisplay =
     mode === "exact" || mode === "from" || mode === "on_request" ? mode : site.priceDisplay;
-  const rateRaw = text(form, "rate", 20).replace(/[₹,\s]/g, "");
+  const rateRaw = text(form, "rate", 20)
+    .replace(/^[A-Za-z]{3}\b/, "")
+    .replace(/[\s,₹$£€¥]/g, "");
   const rate = rateRaw === "" ? null : /^\d+$/.test(rateRaw) ? Number(rateRaw) : Number.NaN;
   if (rate !== null && (Number.isNaN(rate) || rate <= 0 || rate > 1e9)) return back("qerror=rate");
   if (priceDisplay !== "on_request" && rate === null) return back("qerror=norate");

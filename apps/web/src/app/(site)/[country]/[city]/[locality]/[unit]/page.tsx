@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { countWords } from "@/lib/world/money";
 import { notFound, permanentRedirect } from "next/navigation";
 import { permanentIdFromSlug } from "@ohworks/core";
 import { Badge, Button, Container, Note, Breadcrumbs } from "@ohworks/ui";
@@ -26,14 +27,13 @@ import { monthView } from "@/lib/sites/calendar";
 import { readLists } from "@/lib/sites/lists-server";
 import { getSite, hubLinksFor, photoUrls, similarSites } from "@/lib/sites/queries";
 import { ReportListing } from "@/components/sites/ReportListing";
-import { cityDef, lightingDef } from "@/lib/sites/taxonomy";
+import { lightingDef, cityName } from "@/lib/sites/taxonomy";
 import {
   availabilityOf,
   badgesOf,
   coords,
   facingText,
   isIndexable,
-  lakh,
   monthYear,
   placeLine,
   priceOf,
@@ -132,7 +132,7 @@ export default async function SitePage({
   if (site.removed) return <Gone site={site} now={now} />;
   const asked = await searchParams;
   const m = asked.m;
-  const month = monthView(Array.isArray(m) ? m[0] : m, site.bookedUntil, now);
+  const month = monthView(Array.isArray(m) ? m[0] : m, site.bookedUntil, now, site.timeZone);
   const availability = availabilityOf(site, now);
   const badges = badgesOf(site, owner, now);
   const price = priceOf(site);
@@ -140,7 +140,7 @@ export default async function SitePage({
   const lists = await readLists();
   const hubs = await hubLinksFor(site);
   const unitId = site.permanentId ?? "";
-  const city = cityDef(site.city)?.label ?? site.city;
+  const city = cityName(site.city, site.cityLabel);
   const point = {
     id: site.permanentId ?? "site",
     lat: site.lat,
@@ -157,7 +157,7 @@ export default async function SitePage({
   const action = price.shown ? "Send enquiry" : "Ask for a quote";
 
   const images = photoUrls(site);
-  const cityLabel = cityDef(site.city)?.label ?? site.city;
+  const cityLabel = cityName(site.city, site.cityLabel);
   const bookedNow = availability.state === "booked" && site.bookedUntil;
   const freeFrom = bookedNow
     ? new Date(new Date(site.bookedUntil!).getTime() + 86_400_000).toISOString().slice(0, 10)
@@ -220,10 +220,10 @@ export default async function SitePage({
             businessFunction: "http://purl.org/goodrelations/v1#LeaseOut",
             url: absolute(canonical),
             price: site.rate,
-            priceCurrency: "INR",
+            priceCurrency: site.currency || "INR",
             priceSpecification: {
               "@type": "UnitPriceSpecification",
-              priceCurrency: "INR",
+              priceCurrency: site.currency || "INR",
               unitCode: "MON",
               ...(site.priceDisplay === "from" ? { minPrice: site.rate } : { price: site.rate }),
             },
@@ -242,6 +242,7 @@ export default async function SitePage({
         }
       : {}),
   };
+  const citySearch = citySearchOf(site);
   const crumbsLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -251,7 +252,7 @@ export default async function SitePage({
         "@type": "ListItem",
         position: 2,
         name: cityLabel,
-        item: absolute(hubs.city ?? `/search/?city=${site.city}`),
+        item: absolute(hubs.city ?? citySearch),
       },
       { "@type": "ListItem", position: 3, name: site.title, item: absolute(canonical) },
     ],
@@ -269,13 +270,13 @@ export default async function SitePage({
             { label: "Find sites", href: "/search/" },
             {
               label: city,
-              href: hubs.city ?? `/search/?city=${site.city}`,
+              href: hubs.city ?? citySearch,
               rel: hubs.city ? undefined : "nofollow",
               name: "city",
             },
             {
               label: site.locality,
-              href: hubs.locality ?? `/search/?city=${site.city}&locality=${site.localitySlug}`,
+              href: hubs.locality ?? `${citySearch}&locality=${site.localitySlug}`,
               rel: hubs.locality ? undefined : "nofollow",
               name: "locality",
             },
@@ -401,7 +402,7 @@ export default async function SitePage({
               {audience?.figure ? (
                 <div className="oh-box mt-3">
                   <p className="oh-amount">
-                    {lakh(audience.figure)} <small>people a week</small>
+                    {countWords(audience.figure, site.country)} <small>people a week</small>
                   </p>
                   <p className="t-small text-ink-muted mt-2">
                     {[
@@ -503,11 +504,22 @@ export default async function SitePage({
   );
 }
 
+/**
+ * A search of the site's city. India keeps its old address; elsewhere the country is named too, since a
+ * city's name alone may be in more than one country.
+ */
+function citySearchOf(site: Pick<Site, "country" | "city">): string {
+  return site.country === "in"
+    ? `/search/?city=${site.city}`
+    : `/search/?country=${site.country}&city=${site.city}`;
+}
+
 /** A site that was taken down: what happened, where to look instead, and the sites nearby. */
 async function Gone({ site, now }: { site: Site; now: number }) {
   const similar = await similarSites(site, 6);
   const lists = await readLists();
-  const city = cityDef(site.city)?.label ?? site.city;
+  const city = cityName(site.city, site.cityLabel);
+  const citySearch = citySearchOf(site);
   return (
     <Shell active="find">
       <BasketEnhance />
@@ -519,7 +531,7 @@ async function Gone({ site, now }: { site: Site; now: number }) {
             sell it, or it was not as described. The sites below are nearby.
           </PageHead>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Button href={`/search/?city=${site.city}`} variant="primary">
+            <Button href={citySearch} variant="primary">
               Find sites in {city}
             </Button>
             <Button href="/" variant="ghost">

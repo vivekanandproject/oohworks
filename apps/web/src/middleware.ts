@@ -3,6 +3,7 @@ import { permanentIdFromSlug } from "@ohworks/core";
 import { hiddenFromSearch } from "@/lib/api/env";
 import { GA_CONNECT, GA_IMAGES, gaMeasurementId } from "@/lib/analytics";
 import { isGone } from "@/lib/sites/gone";
+import { COUNTRY_COOKIE, geoCountry } from "@/lib/world/geo";
 
 /** A site's own page: /{country}/{city}/{locality}/{slug ending in its permanent id}/. */
 const SITE_PAGE = /^\/[a-z]{2}\/[^/]+\/[^/]+\/([^/]+)\/?$/;
@@ -67,6 +68,22 @@ export async function middleware(req: NextRequest) {
   for (const [name, value] of securityHeaders(nonce, pathname, secure))
     res.headers.set(name, value);
   if (hiddenFromSearch()) res.headers.set("X-Robots-Tag", "noindex, nofollow");
+  // The visitor's country, remembered from where they are on the first visit. Choosing one in the
+  // header replaces it. It sets the currency of approximate prices and where search starts.
+  if (
+    !req.cookies.get(COUNTRY_COOKIE) &&
+    !pathname.startsWith("/api/") &&
+    !pathname.startsWith("/admin")
+  ) {
+    const geo = geoCountry((name) => req.headers.get(name));
+    if (geo)
+      res.cookies.set(COUNTRY_COOKIE, geo, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 365,
+        sameSite: "lax",
+        secure,
+      });
+  }
   return res;
 }
 

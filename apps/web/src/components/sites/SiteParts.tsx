@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { Approx } from "./Approx";
+import { countWords } from "@/lib/world/money";
 import {
   Button,
   Badge,
@@ -18,7 +20,6 @@ import {
   coords,
   facingText,
   formatLabel,
-  lakh,
   monthYear,
   permitState,
   priceOf,
@@ -210,7 +211,7 @@ export function SpecSheet({ site, now }: { site: Site; now: number }) {
       />
       <Spec
         label="Audience"
-        value={audience?.figure ? `${lakh(audience.figure)} a week` : null}
+        value={audience?.figure ? `${countWords(audience.figure, site.country)} a week` : null}
         source={audience ? `${audience.source}, ${monthYear(audience.measuredOn)}` : null}
       />
       <Spec
@@ -272,10 +273,15 @@ export function PriceBlock({
       data-price={price.shown ? site.priceDisplay : "request"}
     >
       {price.shown ? (
-        <p className="oh-amount">
-          {price.prefix}
-          {price.amount} <small>/ month</small>
-        </p>
+        <>
+          <p className="oh-amount">
+            {price.prefix}
+            {price.amount} <small>/ month</small>
+          </p>
+          {site.rate ? (
+            <Approx amount={site.rate} currency={site.currency || "INR"} className="block" />
+          ) : null}
+        </>
       ) : (
         <p className="oh-amount">Price on request</p>
       )}

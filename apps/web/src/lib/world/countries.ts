@@ -1,7 +1,6 @@
 import { getCountries } from "libphonenumber-js";
 import { getCountry } from "countries-and-timezones";
 import countryToCurrency from "country-to-currency";
-import tzLookup from "@photostructure/tz-lookup";
 
 /**
  * Every country OOHWORKS knows, held in the code so nothing depends on a service to know that the UAE
@@ -97,12 +96,3 @@ export function countryOrDefault(code: string | null | undefined): Country {
 export const CURRENCIES: readonly string[] = [...new Set(COUNTRIES.map((c) => c.currency))].sort();
 
 export const isCurrency = (value: string): boolean => CURRENCIES.includes(value.toUpperCase());
-
-/** The zone at a point, read offline from the coordinates; the country's main zone if that fails. */
-export function timeZoneAt(lat: number, lng: number, country?: string | null): string {
-  try {
-    return tzLookup(lat, lng);
-  } catch {
-    return countryOrDefault(country).timeZone;
-  }
-}

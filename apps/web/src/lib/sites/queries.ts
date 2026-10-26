@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { priceCurrency } from "./state";
+import { money } from "@/lib/world/money";
 import { getPayload } from "payload";
 import config from "@payload-config";
 import type { Media, Owner, Site } from "@/payload-types";
@@ -26,7 +28,7 @@ import {
   type HubStatus,
 } from "./hubs";
 import { DEFAULT_STATE, type SearchState } from "./state";
-import { CITIES, FORMATS } from "./taxonomy";
+import { CITIES, FORMATS, cityDef } from "./taxonomy";
 import { freshDays, isIndexable, permitState, siteUrl } from "./view";
 import { picture } from "@/lib/editorial/media";
 
@@ -50,6 +52,8 @@ function toListing(site: Site, owner: Owner | undefined, now: number): Listing |
     isDigital: site.format === "led-screen" || site.lighting === "digital",
     lighting: site.lighting,
     city: site.city,
+    cityLabel: site.cityLabel || cityDef(site.city)?.label || site.city,
+    country: site.country,
     locality: site.locality,
     localitySlug: site.localitySlug ?? "",
     road: site.road,
@@ -61,6 +65,7 @@ function toListing(site: Site, owner: Owner | undefined, now: number): Listing |
     priceShown: site.priceDisplay !== "on_request" && Boolean(site.rate),
     priceFrom: site.priceDisplay === "from" && Boolean(site.rate),
     rate: site.priceDisplay !== "on_request" && site.rate ? site.rate : null,
+    currency: site.currency || "INR",
     bookedUntil: time(site.bookedUntil),
     confirmedOn: time(site.availabilityConfirmedOn),
     freshOn: fresh === null ? null : now - fresh * DAY,
@@ -177,7 +182,7 @@ export interface SearchResult {
     price: string | null;
   }[];
   wider: Wider[];
-  median: { rate: number; n: number } | null;
+  median: { rate: number; n: number; currency: string } | null;
   anySample: boolean;
   catalogueSize: number;
 }
@@ -206,10 +211,10 @@ export async function searchSites(
       lng: l.lng,
       title: l.title,
       url: l.url,
-      price: l.rate !== null ? `₹ ${l.rate.toLocaleString("en-IN")}` : null,
+      price: l.rate !== null ? money(l.rate, l.currency) : null,
     })),
     wider: matched.length <= 3 ? widen(cat.listings, state, now, matched.length) : [],
-    median: medianRate(matched),
+    median: medianRate(matched, priceCurrency(state)),
     anySample: slice.some((l) => l.sample),
     catalogueSize: cat.listings.length,
   };
@@ -284,6 +289,18 @@ export async function matchingListings(state: SearchState): Promise<Listing[]> {
 }
 
 /** How many published sites each city and each format has. */
+/** The countries that have sites listed, as upper-case codes, for the country switcher to offer first. */
+export async function listedCountries(): Promise<string[]> {
+  try {
+    const cat = await catalogue();
+    return [...new Set(cat.listings.map((l) => l.country.toUpperCase()))].sort();
+  } catch (error) {
+    // A build with no database has no list yet; the page fills in on its first refresh.
+    if (process.env.NEXT_PHASE !== "phase-production-build") throw error;
+    return [];
+  }
+}
+
 export async function catalogueCounts(): Promise<{
   cities: Map<string, number>;
   formats: Map<string, number>;
@@ -425,13 +442,18 @@ const searchHref = (params: Record<string, string>): string =>
   `/search/?${new URLSearchParams(params).toString()}`;
 
 /** Everything a hub page shows, or null when the hub does not exist or is not open yet. */
-export async function hubData(hub: Hub, page: number): Promise<HubResult | null> {
+export async function hubData(asked: Hub, page: number): Promise<HubResult | null> {
   const cat = await catalogue();
+  // The city as its own listings name it ("Dubai"), for the title and the fact.
+  const named = cat.listings.find((l) => l.country === asked.country && l.city === asked.city);
+  const hub: Hub = { ...asked, cityLabel: named?.cityLabel ?? asked.cityLabel };
   const preview = hubPreview();
   const status = hubStatus(cat.listings, hub);
   if (!status.published && !preview) return null;
   // The live page lists real sites only. A preview may also show samples, which are labelled.
-  const pool = cat.listings.filter((l) => (preview || !l.sample) && l.city === hub.city);
+  const pool = cat.listings.filter(
+    (l) => (preview || !l.sample) && l.country === hub.country && l.city === hub.city,
+  );
   const now = Date.now();
   const items = sortListings(
     pool.filter((l) => inHub(l, hub)),
@@ -447,7 +469,7 @@ export async function hubData(hub: Hub, page: number): Promise<HubResult | null>
   const formats: HubLink[] = FORMATS.flatMap((f) => {
     const n = items.filter((l) => l.format === f.slug).length;
     if (n === 0 || hub.kind === "format") return [];
-    const target: Hub = { kind: "format", city: hub.city, format: f.slug };
+    const target: Hub = { ...place(hub), kind: "format", format: f.slug };
     const asHub = hub.kind === "city" && open(target);
     return [
       {
@@ -476,7 +498,7 @@ export async function hubData(hub: Hub, page: number): Promise<HubResult | null>
       : [...byArea.entries()]
           .sort((a, b) => b[1].count - a[1].count || a[1].label.localeCompare(b[1].label))
           .map(([slug, v]) => {
-            const target: Hub = { kind: "locality", city: hub.city, locality: slug };
+            const target: Hub = { ...place(hub), kind: "locality", locality: slug };
             const asHub = hub.kind === "city" && open(target);
             return {
               label: v.label,
@@ -501,7 +523,7 @@ export async function hubData(hub: Hub, page: number): Promise<HubResult | null>
     fact: hubFact(
       hub,
       items,
-      medianRate(items),
+      medianRate(items, items[0]?.currency ?? "INR"),
       formatDate(new Date(now).toISOString()).replace(/^\d+ /, ""),
       localityLabel,
     ),
@@ -515,7 +537,7 @@ export async function hubData(hub: Hub, page: number): Promise<HubResult | null>
       lng: l.lng,
       title: l.title,
       url: l.url,
-      price: l.rate !== null ? `₹ ${l.rate.toLocaleString("en-IN")}` : null,
+      price: l.rate !== null ? money(l.rate, l.currency) : null,
     })),
     formats,
     areas,
@@ -523,14 +545,17 @@ export async function hubData(hub: Hub, page: number): Promise<HubResult | null>
   };
 }
 
+/** The country and city of a hub, to build another hub in the same place. */
+const place = (hub: Hub) => ({ country: hub.country, city: hub.city, cityLabel: hub.cityLabel });
+
 /** The hubs a site belongs to that a visitor can open, for its breadcrumb. */
 export async function hubLinksFor(
-  site: Pick<Site, "city" | "localitySlug">,
+  site: Pick<Site, "country" | "city" | "localitySlug">,
 ): Promise<{ city: string | null; locality: string | null }> {
   const cat = await catalogue();
   const preview = hubPreview();
-  const city = readHub("in", site.city);
-  const locality = site.localitySlug ? readHub("in", site.city, site.localitySlug) : null;
+  const city = readHub(site.country, site.city);
+  const locality = site.localitySlug ? readHub(site.country, site.city, site.localitySlug) : null;
   const open = (h: Hub | null): h is Hub =>
     h !== null && (preview || hubStatus(cat.listings, h).published);
   return {
@@ -543,15 +568,20 @@ export async function hubLinksFor(
 export async function publishedHubs(): Promise<{ url: string; updatedAt: string }[]> {
   const cat = await catalogue();
   const out: { url: string; updatedAt: string }[] = [];
-  for (const c of CITIES) {
-    const inCity = cat.listings.filter((l) => l.city === c.slug && !l.sample);
-    if (inCity.length === 0) continue;
+  // Every city that has a site listed, in every country.
+  const places = new Map<string, { country: string; city: string }>();
+  for (const l of cat.listings)
+    if (!l.sample) places.set(`${l.country}/${l.city}`, { country: l.country, city: l.city });
+  for (const c of places.values()) {
+    const inCity = cat.listings.filter(
+      (l) => l.country === c.country && l.city === c.city && !l.sample,
+    );
     const hubs: Hub[] = [
-      { kind: "city", city: c.slug },
-      ...FORMATS.map((f): Hub => ({ kind: "format", city: c.slug, format: f.slug })),
+      { kind: "city", ...c },
+      ...FORMATS.map((f): Hub => ({ kind: "format", ...c, format: f.slug })),
       ...[...new Set(inCity.map((l) => l.localitySlug))].map((slug): Hub => ({
         kind: "locality",
-        city: c.slug,
+        ...c,
         locality: slug,
       })),
     ];

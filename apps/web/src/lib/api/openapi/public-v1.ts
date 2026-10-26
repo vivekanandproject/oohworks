@@ -94,7 +94,7 @@ const SiteSummary = {
     },
     price: {
       type: "object",
-      required: ["display", "monthlyInr", "label"],
+      required: ["display", "monthly", "currency", "monthlyInr", "label"],
       properties: {
         display: {
           type: "string",
@@ -102,9 +102,21 @@ const SiteSummary = {
           description:
             "How the owner chose to show the price. `from` is a floor, not the rate. The owner may keep it private.",
         },
+        monthly: nullable({
+          type: "integer",
+          description:
+            "The monthly price in `currency`, as the owner set it, or null when the owner shows no price.",
+        }),
+        currency: {
+          type: "string",
+          description: "ISO 4217 code of the owner's price: INR, AED, GBP.",
+          examples: ["INR", "AED"],
+        },
         monthlyInr: nullable({
           type: "integer",
-          description: "Rupees a month, or null when the owner shows no price.",
+          deprecated: true,
+          description:
+            "Deprecated: use `monthly` with `currency`. Rupees a month for a site priced in rupees; null for any other currency, or when the owner shows no price.",
         }),
         label: { type: "string", examples: ["₹ 85,000 a month", "Price on request"] },
       },

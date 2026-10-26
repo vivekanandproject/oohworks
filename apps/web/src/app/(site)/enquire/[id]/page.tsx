@@ -1,4 +1,5 @@
 import { FORM_GRID } from "@/components/owners/Frame";
+import { currencySign } from "@/lib/world/money";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
@@ -7,7 +8,7 @@ import { Button, Container, Notice, Radio } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { EnquirySummary } from "@/components/sites/EnquirySummary";
 import { DateOrder } from "@/components/sites/Enhance";
-import { indiaDate } from "@/lib/sites/calendar";
+import { dateIn } from "@/lib/sites/calendar";
 import { ARTWORK, type Artwork } from "@/lib/sites/enquiries";
 import { BUYER_COOKIE, maskEmail, readBuyer } from "@/lib/sites/enquiry";
 import { getSite } from "@/lib/sites/queries";
@@ -57,7 +58,8 @@ export default async function EnquirePage({
 
   const q = await searchParams;
   const now = Date.now();
-  const today = indiaDate(now);
+  // The site's own today: its availability turns over at midnight where it stands.
+  const today = dateIn(now, site.timeZone);
   const error = ERRORS[one(q.error)];
   const from = isDate(one(q.from)) ? one(q.from) : "";
   const to = isDate(one(q.to)) ? one(q.to) : "";
@@ -168,7 +170,7 @@ export default async function EnquirePage({
                   Budget a month, optional
                 </label>
                 <div className="oh-affix mt-1">
-                  <span aria-hidden="true">₹</span>
+                  <span aria-hidden="true">{currencySign(found.site.currency || "INR")}</span>
                   <input
                     id="enq-budget"
                     name="budget"
@@ -182,7 +184,8 @@ export default async function EnquirePage({
                   />
                 </div>
                 <p id="enq-budget-help" className="t-small text-ink-muted mt-1">
-                  In rupees. It helps the owner answer at once.
+                  In {found.site.currency || "INR"}, the owner&rsquo;s currency. It helps them
+                  answer at once.
                 </p>
               </div>
 

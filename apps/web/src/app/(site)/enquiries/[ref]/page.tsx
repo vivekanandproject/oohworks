@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { money } from "@/lib/world/money";
 import { notFound } from "next/navigation";
 import { Button, Badge, Container, NEUTRALITY_LINE, Notice } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
@@ -6,7 +7,7 @@ import { AskedFacts, SiteList, Thread } from "@/components/sites/Thread";
 import { timeAgo } from "@/lib/editorial/format";
 import { findGroup, messagesOf } from "@/lib/sites/enquiries";
 import { ANSWERS, checkThreadKey, isAnyReference, type Answer } from "@/lib/sites/enquiry";
-import { inr, siteUrl } from "@/lib/sites/view";
+import { siteUrl } from "@/lib/sites/view";
 
 export const dynamic = "force-dynamic";
 // The address holds the key. "same-origin" keeps it out of any referrer sent to another site, while this
@@ -53,7 +54,10 @@ export default async function EnquiryThreadPage({
 
   // The latest answer each owner has given for each site, so replies can be read side by side.
   const rows = group.requests.flatMap((r) => {
-    const latest = new Map<number, { availability: Answer | null; quote: number | null }>();
+    const latest = new Map<
+      number,
+      { availability: Answer | null; quote: number | null; quoteCurrency: string | null }
+    >();
     for (const m of messages.get(r.enquiry.id) ?? []) {
       if (m.from !== "owner") continue;
       for (const a of m.answers ?? []) {
@@ -63,6 +67,7 @@ export default async function EnquiryThreadPage({
           availability:
             (a.availability as Answer | null | undefined) ?? before?.availability ?? null,
           quote: a.quote ?? before?.quote ?? null,
+          quoteCurrency: a.quote ? (a.quoteCurrency ?? null) : (before?.quoteCurrency ?? null),
         });
       }
     }
@@ -151,7 +156,7 @@ export default async function EnquiryThreadPage({
                         </td>
                         <td className="data">
                           {row.answer?.quote ? (
-                            `${inr(row.answer.quote)} / month`
+                            `${money(row.answer.quote, row.answer.quoteCurrency || row.site.currency || "INR")} / month`
                           ) : (
                             <span className="text-ink-muted font-sans">No answer yet</span>
                           )}

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { currencySign, money } from "@/lib/world/money";
 import { Button, Container } from "@ohworks/ui";
 import type { Facets, Option } from "@/lib/sites/filter";
 import {
@@ -8,9 +9,9 @@ import {
   toggle,
   without,
   type SearchState,
+  priceCurrency,
 } from "@/lib/sites/state";
-import { SORTS, cityDef, type TrustKey } from "@/lib/sites/taxonomy";
-import { inr } from "@/lib/sites/view";
+import { SORTS, type TrustKey, cityName } from "@/lib/sites/taxonomy";
 
 /** The other filters, carried through a small form so applying one never drops the rest. */
 function Carry({ state, omit }: { state: SearchState; omit: string[] }) {
@@ -100,7 +101,19 @@ function CityOptions({ state, facets }: { state: SearchState; facets: Facets }) 
           href={
             state.city === c.slug
               ? toUrl(without(state, "city", "localities"), firstPage)
-              : toUrl(without({ ...state, city: c.slug, localities: [] }, "bbox"), firstPage)
+              : toUrl(
+                  without(
+                    {
+                      ...state,
+                      city: c.slug,
+                      localities: [],
+                      // A city outside India names its country, as its name may be in more than one.
+                      ...(c.country && c.country !== "in" ? { country: c.country } : {}),
+                    },
+                    "bbox",
+                  ),
+                  firstPage,
+                )
           }
         />
       ))}
@@ -200,14 +213,16 @@ function PriceForm({ state, facets, id }: { state: SearchState; facets: Facets; 
   return (
     <div className="flex flex-col gap-3">
       <form action="/search/" method="get" className="flex flex-col gap-3">
-        <Carry state={without(state, "min", "max")} omit={["min", "max"]} />
+        <Carry state={without(state, "min", "max", "currency")} omit={["min", "max", "cur"]} />
+        {/* A currency someone chose travels with the limits; the searched place's own one need not. */}
+        {state.currency ? <input type="hidden" name="cur" value={state.currency} /> : null}
         <div className="grid grid-cols-2 gap-3">
           <div className="flex min-w-0 flex-col gap-1.5">
             <label className="oh-label" htmlFor={`${id}-min`}>
               From
             </label>
             <div className="oh-affix">
-              <span>₹</span>
+              <span>{currencySign(priceCurrency(state))}</span>
               <input
                 id={`${id}-min`}
                 name="min"
@@ -223,7 +238,7 @@ function PriceForm({ state, facets, id }: { state: SearchState; facets: Facets; 
               Up to
             </label>
             <div className="oh-affix">
-              <span>₹</span>
+              <span>{currencySign(priceCurrency(state))}</span>
               <input
                 id={`${id}-max`}
                 name="max"
@@ -319,9 +334,10 @@ function DatesForm({ state, id }: { state: SearchState; id: string }) {
 }
 
 function priceLabel(state: SearchState): string {
-  if (state.min && state.max) return `${inr(state.min)} to ${inr(state.max)}`;
-  if (state.max) return `Under ${inr(state.max)}`;
-  if (state.min) return `From ${inr(state.min)}`;
+  const cur = priceCurrency(state);
+  if (state.min && state.max) return `${money(state.min, cur)} to ${money(state.max, cur)}`;
+  if (state.max) return `Under ${money(state.max, cur)}`;
+  if (state.min) return `From ${money(state.min, cur)}`;
   return state.priced ? "Price shown" : "Price";
 }
 
@@ -364,7 +380,7 @@ export function FilterBar({ state, facets }: { state: SearchState; facets: Facet
             set={Boolean(state.city)}
             label={
               state.city
-                ? `${cityDef(state.city)?.label}${state.localities.length ? ` · ${state.localities.length} ${state.localities.length === 1 ? "area" : "areas"}` : ""}`
+                ? `${cityName(state.city)}${state.localities.length ? ` · ${state.localities.length} ${state.localities.length === 1 ? "area" : "areas"}` : ""}`
                 : "Place"
             }
           >
@@ -589,9 +605,7 @@ export function FilterPanel({
             <CityOptions state={state} facets={facets} />
             {state.city && facets.localities.length ? (
               <>
-                <p className="t-small text-ink-muted px-2 pt-2">
-                  Areas in {cityDef(state.city)?.label}
-                </p>
+                <p className="t-small text-ink-muted px-2 pt-2">Areas in {cityName(state.city)}</p>
                 <LocalityOptions state={state} facets={facets} />
               </>
             ) : null}

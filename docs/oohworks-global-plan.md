@@ -1,6 +1,6 @@
 # OOHWORKS goes global: plan
 
-Date: 27 Oct 2026. Status: decided, phase 1 starting. Builds on the inventory of India-only code (27 Oct 2026, summarised in section 7) and the founder's decisions below.
+Date: 27 Oct 2026. Status: phases 1 to 3 built (section 8); phases 4 and 5 next. Builds on the inventory of India-only code (27 Oct 2026, summarised in section 7) and the founder's decisions below.
 
 ## 1. What the founder decided
 
@@ -90,3 +90,21 @@ Each phase lands as its own commit with the suite green, and production is deplo
 - **Validation that blocks other countries today:** a pin outside India's bounding box is refused; a city outside the six is refused; the spreadsheet dropdown lists the six.
 - **Time:** `indiaDate()` (Asia/Kolkata) is "today" in 21 files; `formatDate` uses India time; imports read dates day-first.
 - **Phone:** defaults to IN when the visitor's country is unknown; `countryOf()` already reads `cf-ipcountry`.
+
+## 8. What is built (27 Oct 2026)
+
+**Phase 1, the data (150b538).** City is open text on sites, site versions and owners (migration `global_places_currency`), with `cityLabel`, `region`, `placeId` and `timeZone`; currency on sites, enquiry budgets and owner quotes. `lib/world` holds every country with its currency, main zone, number style and size unit; `money()` and `countWords()`; an offline zone lookup (`lib/world/zone.ts`, server only).
+
+**Phase 2, owners anywhere (4389a82).** The site form's City is the worldwide place search, with a Currency choice; the checks place any city, keep a launch city's address, and test the pin against the chosen city (150 km). The spreadsheet has Country and Currency columns and still reads the older template in rupees. The media-kit reader takes country, currency and millions. Short dates follow the owner's country. GSTIN is the word only in India.
+
+**Phase 3, the visitor's country (this commit).**
+
+- Every price is in its site's own currency; totals are kept per currency and never added across them; a budget is compared only in its own currency; enquiry budgets and owner quotes carry the site's currency; audience figures use the site country's words; JSON-LD names the site's currency.
+- Search knows a country (`country=ae`, or `country=all` for every country) and a currency (`cur=`, sent only when someone chose it). The price filter, the price sort and the median work within one currency. The Place filter offers the launch cities first and then every city that has sites, each with its country. A launch city's search keeps its old address.
+- The visitor's country: the middleware remembers Cloudflare's `cf-ipcountry` in the `oh_country` cookie (listed on the cookies page); the header's globe switcher (beside Sign in, inside Menu on phones) changes it, with every country offered and those with sites first. Search starts in the visitor's country when it has sites, says so with a link to every country, and tells a visitor whose country has none that it shows every country. Where a search names no country, prices are filtered in the visitor's currency.
+- The approximate price: `/api/rates/` takes ExchangeRate-API's daily rates (cached a day); a small browser part shows "≈ AED 3,750" under a price in another currency, with the rate's date and source, and nothing when the currencies match or no rate is known. It is never stored, sent to an owner or used in an enquiry.
+- City pages for any country: `/ae/dubai/` once a city has 25 verified sites; the title and fact name the city as its listings do; the sitemap lists every published city; IndexNow and the "your site is live" email use the site's country.
+- A site's own today: its availability calendar, the enquiry form's earliest date and the owner's page for it turn over at midnight where the site stands (`dateIn`).
+- The public API gives `price.monthly` with `price.currency`; `monthlyInr` stays for rupee sites and is marked deprecated.
+
+**Left for later:** the enquiry form's server check of the start date still uses India's day; owner-side "today" outside a site page (imports, forms) is still India's; the switcher needs JavaScript (a page without it keeps the detected country).

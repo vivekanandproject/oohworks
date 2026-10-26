@@ -17,6 +17,8 @@ function listing(over: Partial<Listing>): Listing {
     isDigital: false,
     lighting: "front-lit",
     city: "bengaluru",
+    cityLabel: "Bengaluru",
+    country: "in",
     locality: "Koramangala",
     localitySlug: "koramangala",
     road: "80 Feet Road",
@@ -28,6 +30,7 @@ function listing(over: Partial<Listing>): Listing {
     priceShown: true,
     priceFrom: false,
     rate: 85000,
+    currency: "INR",
     bookedUntil: null,
     confirmedOn: NOW - 2 * DAY,
     freshOn: NOW - 2 * DAY,
@@ -93,7 +96,16 @@ describe("what a shortlist adds up to", () => {
   ];
   it("counts only prices owners show, and says when the sum is a floor", () => {
     const s = summarise(items);
-    expect(s).toEqual({ sites: 4, owners: 2, shown: 285000, priced: 3, onRequest: 1, floor: true });
+    expect(s).toEqual({
+      sites: 4,
+      owners: 2,
+      shown: 285000,
+      currency: "INR",
+      byCurrency: [{ currency: "INR", amount: 285000 }],
+      priced: 3,
+      onRequest: 1,
+      floor: true,
+    });
     expect(planText(s)).toBe(
       "4 sites saved · 2 owners · from ₹ 2,85,000 a month shown · 1 on request",
     );
@@ -101,6 +113,17 @@ describe("what a shortlist adds up to", () => {
       "1 site saved · 1 owner · ₹ 85,000 a month shown",
     );
     expect(planText(summarise([]))).toBe("Nothing saved yet");
+  });
+  it("never adds prices in different currencies together", () => {
+    const mixed = summarise([
+      listing({}),
+      listing({ id: 9, ownerId: 3, rate: 12500, currency: "AED" }),
+    ]);
+    expect(mixed.currency).toBeNull();
+    expect(planText(mixed)).toBe(
+      "2 sites saved · 2 owners · ₹\u00a085,000 + AED\u00a012,500 a month shown",
+    );
+    expect(budgetLine(mixed, 100000)?.text).toContain("not compared with a budget in INR");
   });
   it("sets the shown prices against a budget without guessing the rest", () => {
     const s = summarise(items);

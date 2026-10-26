@@ -2,7 +2,7 @@ import { formatDate } from "@/lib/editorial/format";
 import type { Owner, Site } from "@/payload-types";
 import type { Listing } from "./filter";
 import { freeFor } from "./plan";
-import { formatDef, lightingDef, cityDef } from "./taxonomy";
+import { formatDef, lightingDef, cityName } from "./taxonomy";
 import { availabilityOf, permitState, sizeFeet } from "./view";
 
 export type Cell = string | number | null;
@@ -90,7 +90,7 @@ export function exportTable(
       site.road,
       site.landmark ?? null,
       site.locality,
-      cityDef(site.city)?.label ?? site.city,
+      cityName(site.city, site.cityLabel),
       Number(site.lat.toFixed(5)),
       Number(site.lng.toFixed(5)),
       site.facingDeg ?? null,

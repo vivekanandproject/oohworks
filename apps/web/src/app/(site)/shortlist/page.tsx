@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { currencySign } from "@/lib/world/money";
 import { Badge, Button, Container, EmptyState, NEUTRALITY_LINE, Note } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance } from "@/components/sites/Basket";
@@ -11,10 +12,10 @@ import { absolute } from "@/lib/seo";
 import { dateRange } from "@/lib/sites/enquiry";
 import { LISTS, parseIds } from "@/lib/sites/lists";
 import { readLists } from "@/lib/sites/lists-server";
-import { budgetLine, freeFor, summarise } from "@/lib/sites/plan";
+import { budgetLine, freeFor, shownText, summarise } from "@/lib/sites/plan";
 import { cardsFor, type Card } from "@/lib/sites/queries";
 import { lightingDef } from "@/lib/sites/taxonomy";
-import { availabilityOf, inr, placeLine, priceOf } from "@/lib/sites/view";
+import { availabilityOf, placeLine, priceOf } from "@/lib/sites/view";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -149,14 +150,20 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
 
   const from = isDate(one(q.from)) ? one(q.from) : undefined;
   const to = isDate(one(q.to)) && (!from || one(q.to) >= from) ? one(q.to) : undefined;
-  const budgetRaw = Number(one(q.budget).replace(/[\s,₹]/g, ""));
+  const budgetRaw = Number(
+    one(q.budget)
+      .replace(/^[A-Za-z]{3}\b/, "")
+      .replace(/[\s,₹$£€¥]/g, ""),
+  );
   const budget =
     Number.isFinite(budgetRaw) && budgetRaw > 0 && budgetRaw < 1e10
       ? Math.round(budgetRaw)
       : undefined;
 
   const summary = summarise(cards.map((c) => c.listing));
-  const line = budgetLine(summary, budget);
+  // A budget is in the currency the shortlist's prices are in; rupees when there are none yet.
+  const budgetCurrency = summary.currency ?? summary.byCurrency[0]?.currency ?? "INR";
+  const line = budgetLine(summary, budget, budgetCurrency);
   const dates = new URLSearchParams();
   if (from) dates.set("from", from);
   if (to) dates.set("to", to);
@@ -334,7 +341,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                     Budget a month, optional
                   </label>
                   <div className="oh-affix mt-1">
-                    <span aria-hidden="true">₹</span>
+                    <span aria-hidden="true">{currencySign(budgetCurrency)}</span>
                     <input
                       id="plan-budget"
                       name="budget"
@@ -364,7 +371,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                   [
                     "Shown prices, a month",
                     summary.priced
-                      ? `${summary.floor ? "From " : ""}${inr(summary.shown)}`
+                      ? `${summary.floor ? "From " : ""}${shownText(summary)}`
                       : "None shown",
                   ],
                   [

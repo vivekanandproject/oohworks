@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { COUNTRIES, countryOrDefault, findCountry, isCurrency, timeZoneAt } from "./countries";
+import { COUNTRIES, countryOrDefault, findCountry, isCurrency } from "./countries";
+import { timeZoneAt } from "./zone";
+import { dateIn } from "@/lib/sites/calendar";
 import { countWords, money } from "./money";
 
 const NBSP = " ";
@@ -73,5 +75,16 @@ describe("counts in words", () => {
     expect(countWords(420000, "AE")).toBe("420,000");
     expect(countWords(1200000, "GB")).toBe("1.2 million");
     expect(countWords(950, "US")).toBe("950");
+  });
+});
+
+describe("a site's own today", () => {
+  it("turns over at midnight where the site stands", () => {
+    // 20:30 UTC on 26 Oct is already 27 Oct in Kolkata and Dubai, still 26 Oct in New York.
+    const t = Date.UTC(2026, 9, 26, 20, 30);
+    expect(dateIn(t, "Asia/Kolkata")).toBe("2026-10-27");
+    expect(dateIn(t, "Asia/Dubai")).toBe("2026-10-27");
+    expect(dateIn(t, "America/New_York")).toBe("2026-10-26");
+    expect(dateIn(t, "Not/AZone")).toBe("2026-10-27");
   });
 });

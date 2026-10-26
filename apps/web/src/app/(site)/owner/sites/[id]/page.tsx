@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { currencySign } from "@/lib/world/money";
 import { notFound } from "next/navigation";
 import { isPermanentId } from "@ohworks/core";
 import { Button, Container, Radio } from "@ohworks/ui";
@@ -11,7 +12,7 @@ import { picture } from "@/lib/editorial/media";
 import { improvements, stateOf } from "@/lib/owners/progress";
 import { MAX_PHOTOS, ownerSite, photoOf, requireOwner } from "@/lib/owners/server";
 import { openChange } from "@/lib/owners/site-changes";
-import { indiaDate } from "@/lib/sites/calendar";
+import { dateIn } from "@/lib/sites/calendar";
 import { maskEmail } from "@/lib/sites/enquiry";
 import { lightingDef } from "@/lib/sites/taxonomy";
 import {
@@ -80,7 +81,8 @@ export default async function OwnerSitePage({
   // Changes to a live site waiting for the team, or returned by it.
   const pending = state === "live" ? await openChange(site.id) : null;
   const now = Date.now();
-  const today = indiaDate(now);
+  // The site's own today: its availability turns over at midnight where it stands.
+  const today = dateIn(now, site.timeZone);
   const price = priceOf(site);
   const availability = availabilityOf(site, now);
   const tips = improvements(site, owner);
@@ -271,7 +273,7 @@ export default async function OwnerSitePage({
                       Rate a month
                     </label>
                     <div className="oh-affix mt-1">
-                      <span aria-hidden="true">₹</span>
+                      <span aria-hidden="true">{currencySign(site.currency || "INR")}</span>
                       <input
                         id="quick-rate"
                         name="rate"

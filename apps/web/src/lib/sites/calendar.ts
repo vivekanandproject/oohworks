@@ -24,6 +24,30 @@ export function indiaDate(ms: number): string {
   return INDIA.format(new Date(ms));
 }
 
+const ZONES = new Map<string, Intl.DateTimeFormat>([["Asia/Kolkata", INDIA]]);
+/**
+ * The calendar date in a time zone for a moment in time, as YYYY-MM-DD: a site's own today, which is
+ * what its availability turns on. An unknown zone falls back to India's.
+ */
+export function dateIn(ms: number, timeZone: string | null | undefined): string {
+  const zone = timeZone || "Asia/Kolkata";
+  let f = ZONES.get(zone);
+  if (!f) {
+    try {
+      f = new Intl.DateTimeFormat("en-CA", {
+        timeZone: zone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    } catch {
+      f = INDIA;
+    }
+    ZONES.set(zone, f);
+  }
+  return f.format(new Date(ms));
+}
+
 export interface CalendarDay {
   n: number;
   iso: string;
@@ -58,8 +82,10 @@ export function monthView(
   param: string | undefined,
   bookedUntil: string | null | undefined,
   now: number,
+  /** The site's own zone, so its today is the day where it stands. */
+  timeZone?: string | null,
 ): MonthView {
-  const today = indiaDate(now);
+  const today = dateIn(now, timeZone);
   const first = today.slice(0, 7);
   const last = shift(first, MONTHS_AHEAD);
   const key =
@@ -67,7 +93,7 @@ export function monthView(
       ? param
       : first;
   const [y = 0, m = 1] = key.split("-").map(Number);
-  const booked = bookedUntil ? indiaDate(new Date(bookedUntil).getTime()) : null;
+  const booked = bookedUntil ? dateIn(new Date(bookedUntil).getTime(), timeZone) : null;
   const count = new Date(Date.UTC(y, m, 0)).getUTCDate();
   const days: CalendarDay[] = Array.from({ length: count }, (_, i) => {
     const iso = `${key}-${pad(i + 1)}`;

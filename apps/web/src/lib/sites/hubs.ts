@@ -1,6 +1,7 @@
 import type { Listing } from "./filter";
-import { CITIES, FORMATS, cityDef, formatDef, type CitySlug, type FormatSlug } from "./taxonomy";
-import { inr } from "./view";
+import { money } from "@/lib/world/money";
+import { isCountryCode } from "@/lib/world/currency";
+import { FORMATS, cityDef, formatDef, type FormatSlug } from "./taxonomy";
 
 /**
  * Hubs are the pages meant to rank for a place: a city, an area of it, or one format in a city.
@@ -9,10 +10,16 @@ import { inr } from "./view";
  */
 export const HUB_MIN = { city: 25, format: 25, locality: 10 } as const;
 
+/** A hub is in one country and one city of it; `cityLabel` is the city as its listings name it. */
+interface Place {
+  country: string;
+  city: string;
+  cityLabel?: string | undefined;
+}
 export type Hub =
-  | { kind: "city"; city: CitySlug }
-  | { kind: "locality"; city: CitySlug; locality: string }
-  | { kind: "format"; city: CitySlug; format: FormatSlug };
+  | ({ kind: "city" } & Place)
+  | ({ kind: "locality"; locality: string } & Place)
+  | ({ kind: "format"; format: FormatSlug } & Place);
 
 const slug = (text: string): string =>
   text
@@ -25,31 +32,43 @@ export const FORMAT_SEGMENTS = FORMATS.map((f) => ({ format: f.slug, segment: sl
 export const formatSegment = (format: string): string =>
   FORMAT_SEGMENTS.find((x) => x.format === format)?.segment ?? format;
 
-/** The hub an address names, or null when it names none. Only India is open. */
+const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
+/** The hub an address names, in any country, or null when it names none. Whether it is open is hubStatus's. */
 export function readHub(country: string, city: string, segment?: string): Hub | null {
-  if (country !== "in") return null;
-  const known = CITIES.find((c) => c.slug === city);
-  if (!known) return null;
-  if (segment === undefined) return { kind: "city", city: known.slug };
-  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(segment)) return null;
+  if (!/^[a-z]{2}$/.test(country) || !isCountryCode(country) || !SLUG.test(city)) return null;
+  if (segment === undefined) return { kind: "city", country, city };
+  if (!SLUG.test(segment)) return null;
   const format = FORMAT_SEGMENTS.find((x) => x.segment === segment);
   return format
-    ? { kind: "format", city: known.slug, format: format.format }
-    : { kind: "locality", city: known.slug, locality: segment };
+    ? { kind: "format", country, city, format: format.format }
+    : { kind: "locality", country, city, locality: segment };
+}
+
+/** The city as a buyer reads it: its listings' own name, a launch city's label, or its address part. */
+export function hubCity(hub: Pick<Hub, "city" | "cityLabel">): string {
+  return (
+    hub.cityLabel ??
+    cityDef(hub.city)?.label ??
+    hub.city.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+  );
 }
 
 export function hubPath(hub: Hub, page = 1): string {
   const base =
     hub.kind === "city"
-      ? `/in/${hub.city}/`
+      ? `/${hub.country}/${hub.city}/`
       : hub.kind === "locality"
-        ? `/in/${hub.city}/${hub.locality}/`
-        : `/in/${hub.city}/${formatSegment(hub.format)}/`;
+        ? `/${hub.country}/${hub.city}/${hub.locality}/`
+        : `/${hub.country}/${hub.city}/${formatSegment(hub.format)}/`;
   return page > 1 ? `${base}page/${page}/` : base;
 }
 
-export function inHub(l: Pick<Listing, "city" | "localitySlug" | "format">, hub: Hub): boolean {
-  if (l.city !== hub.city) return false;
+export function inHub(
+  l: Pick<Listing, "country" | "city" | "localitySlug" | "format">,
+  hub: Hub,
+): boolean {
+  if (l.country !== hub.country || l.city !== hub.city) return false;
   if (hub.kind === "locality") return l.localitySlug === hub.locality;
   if (hub.kind === "format") return l.format === hub.format;
   return true;
@@ -70,7 +89,7 @@ export function hubStatus(all: Listing[], hub: Hub): HubStatus {
 
 /** "Hoardings in Bengaluru", "Outdoor advertising sites in Koramangala, Bengaluru". */
 export function hubTitle(hub: Hub, localityLabel?: string): string {
-  const city = cityDef(hub.city)?.label ?? hub.city;
+  const city = hubCity(hub);
   if (hub.kind === "format")
     return `${formatDef(hub.format)?.slug === "led-screen" ? "LED screens" : (formatDef(hub.format)?.plural ?? "Sites")} in ${city}`;
   if (hub.kind === "locality")
@@ -87,11 +106,11 @@ const count = (n: number, one: string, many: string): string => `${n} ${n === 1 
 export function hubFact(
   hub: Hub,
   items: Listing[],
-  median: { rate: number; n: number } | null,
+  median: { rate: number; n: number; currency: string } | null,
   monthYear: string,
   localityLabel?: string,
 ): string {
-  const city = cityDef(hub.city)?.label ?? hub.city;
+  const city = hubCity(hub);
   const place = hub.kind === "locality" ? `${localityLabel ?? hub.locality}, ${city},` : city;
   const owners = new Set(items.map((l) => l.ownerId)).size;
   const what =
@@ -115,7 +134,7 @@ export function hubFact(
   }
   if (median)
     parts.push(
-      `The median rate of the ${median.n} that show a price is ${inr(median.rate)} a month.`,
+      `The median rate of the ${median.n} that show a price is ${money(median.rate, median.currency)} a month.`,
     );
   return `${parts.join(" ")} (OOHWORKS, ${monthYear})`;
 }

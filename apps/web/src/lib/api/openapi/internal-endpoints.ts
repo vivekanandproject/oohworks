@@ -66,6 +66,34 @@ export const ENDPOINTS: Endpoint[] = [
     ],
   },
   {
+    path: "/api/rates/",
+    method: "get",
+    tag: "Service",
+    summary: "Exchange rates for approximate prices",
+    description:
+      "Rates against the US dollar from ExchangeRate-API's open endpoint, refreshed once a day, with the date they were published. The page uses them only for the approximate figure shown under an owner's price in another currency; a converted figure is never stored, sent to an owner or used in an enquiry. When the source cannot be reached, `rates` is null and pages show the owner's price alone.",
+    answers: [
+      {
+        status: 200,
+        when: "Always: with rates, or with `rates` null when the source could not be reached.",
+        json: {
+          type: "object",
+          properties: {
+            base: { type: "string", examples: ["USD"] },
+            date: { type: ["string", "null"], examples: ["2026-10-27"] },
+            source: { type: "string", examples: ["ExchangeRate-API"] },
+            sourceUrl: { type: "string" },
+            rates: {
+              type: ["object", "null"],
+              additionalProperties: { type: "number" },
+              description: "Units of each currency to one US dollar.",
+            },
+          },
+        },
+      },
+    ],
+  },
+  {
     path: "/api/health/services/",
     method: "get",
     tag: "Service",

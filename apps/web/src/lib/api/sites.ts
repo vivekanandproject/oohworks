@@ -3,7 +3,7 @@ import { absolute } from "@/lib/seo";
 import { indiaDate } from "@/lib/sites/calendar";
 import type { Listing } from "@/lib/sites/filter";
 import type { SearchState } from "@/lib/sites/state";
-import { cityDef, formatDef, lightingDef } from "@/lib/sites/taxonomy";
+import { formatDef, lightingDef, cityName } from "@/lib/sites/taxonomy";
 import {
   availabilityOf,
   badgesOf,
@@ -51,7 +51,7 @@ export function siteSummary(listing: Listing, site: Site, owner: Owner | null, n
       road: site.road,
       landmark: site.landmark || null,
       locality: site.locality,
-      city: { slug: site.city, label: cityDef(site.city)?.label ?? site.city },
+      city: { slug: site.city, label: cityName(site.city, site.cityLabel) },
       country: site.country,
       lat: five(site.lat),
       lng: five(site.lng),
@@ -60,7 +60,9 @@ export function siteSummary(listing: Listing, site: Site, owner: Owner | null, n
     },
     price: {
       display: site.priceDisplay,
-      monthlyInr: listing.priceShown ? listing.rate : null,
+      monthly: listing.priceShown ? listing.rate : null,
+      currency: listing.currency,
+      monthlyInr: listing.priceShown && listing.currency === "INR" ? listing.rate : null,
       label: price.shown ? `${price.prefix}${price.amount} a month` : "Price on request",
     },
     availability: {

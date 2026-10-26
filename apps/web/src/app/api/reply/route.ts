@@ -28,7 +28,9 @@ export async function POST(req: Request) {
   const answers: OwnerAnswer[] = [];
   for (const site of request.sites) {
     const a = String(form.get(`a-${site.id}`) ?? "");
-    const quoteRaw = String(form.get(`q-${site.id}`) ?? "").replace(/[\s,₹]/g, "");
+    const quoteRaw = String(form.get(`q-${site.id}`) ?? "")
+      .replace(/^[A-Za-z]{3}\b/, "")
+      .replace(/[\s,₹$£€¥]/g, "");
     if (
       quoteRaw !== "" &&
       (!/^\d+$/.test(quoteRaw) || Number(quoteRaw) <= 0 || Number(quoteRaw) > 1e9)

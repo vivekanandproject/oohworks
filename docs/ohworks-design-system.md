@@ -211,6 +211,8 @@ Editorial. Title in `display-lg`, standfirst in `body-lg`, author card with cred
 - Map on phones: a 200px strip that expands full-screen on tap, with a "List" toggle. Inside the page a touch screen moves the live map with two fingers, so one finger keeps scrolling the page; full screen takes one finger. The still drawing is wide below 1024px and tall beside the list above it, so no pin is cropped.
 - Sticky elements never cover more than 25% of a phone screen, and nothing sticky is taller than a 1366 × 768 laptop screen.
 - Tap targets 44 × 44px minimum. On a touch screen `sm` buttons, chips, option rows, map pins and clusters grow to 44px; a mouse keeps the 36px look.
+- The country switcher sits in the header beside Sign in from 1024px and as the last row of Menu below it: a globe icon, the country and its currency. It opens a dialog with a search box, the countries with sites first, then every country.
+- An approximate price in the visitor's currency sits under the owner's price in `small` `ink-muted`, starts with "≈", and names its rate's date and source in its title; it is never the price.
 - Photographs offer every stored width of their frame (`srcset`, with `sizes` for the column they fill): 960 and 1600 for 16:9, so a phone does not download the desktop size.
 
 ## How a page opens
@@ -353,7 +355,7 @@ The mark is a map pin whose head is a billboard face with a survey dot. Use the 
 
 # Icons
 
-Single-ink outlines on a 24px grid, 1.75px stroke, round caps and joins. The ink in the files is `#101c30` (`navy`); when a picture must read on a dark ground, use the `on-dark` logo rule and set the icon's colour through the surrounding text where you inline it. Formats: hoarding, unipole, gantry, bus-shelter, led-screen, transit. States: verified, permit, fresh, responsive, pin, enquiry. Use at 20px inline and 24px in cards; never below 16px; never filled.
+Single-ink outlines (plus `globe`, added 27 Oct 2026 for the country switcher, drawn to the same rules) on a 24px grid, 1.75px stroke, round caps and joins. The ink in the files is `#101c30` (`navy`); when a picture must read on a dark ground, use the `on-dark` logo rule and set the icon's colour through the surrounding text where you inline it. Formats: hoarding, unipole, gantry, bus-shelter, led-screen, transit. States: verified, permit, fresh, responsive, pin, enquiry. Use at 20px inline and 24px in cards; never below 16px; never filled.
 
 
 ---

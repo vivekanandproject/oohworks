@@ -1,9 +1,14 @@
+import type { ReactNode } from "react";
 import { Wordmark } from "../brand/Wordmark";
 
 export interface NavBarProps {
   active?: "find" | "how" | "news" | "owners" | undefined;
   /** Where "List your sites" leads. The start page points it at its own email box. */
   listHref?: string | undefined;
+  /** The country switcher, beside Sign in on a wide screen. */
+  country?: ReactNode;
+  /** The same, as a row in the phone menu. */
+  countryMenu?: ReactNode;
 }
 
 const LINKS: { key: NonNullable<NavBarProps["active"]>; href: string; label: string }[] = [
@@ -21,7 +26,12 @@ const LINKS: { key: NonNullable<NavBarProps["active"]>; href: string; label: str
  * `data-bar` on the html element, set before first paint from a marker cookie, so a page can be the
  * same for everyone, and cached, and still show an owner the way to their sites.
  */
-export function NavBar({ active, listHref = "/list-your-sites/" }: NavBarProps) {
+export function NavBar({
+  active,
+  listHref = "/list-your-sites/",
+  country,
+  countryMenu,
+}: NavBarProps) {
   // On a short screen (a phone on its side) the bar scrolls away, so it and a page's own bottom bar
   // together never take more than a quarter of the screen.
   return (
@@ -47,6 +57,7 @@ export function NavBar({ active, listHref = "/list-your-sites/" }: NavBarProps) 
           ))}
         </nav>
         <span className="flex-1" />
+        {country}
         <a href="/sign-in/" className="oh-btn ghost sm hidden sm:inline-flex" data-bar-when="out">
           Sign in
         </a>
@@ -80,6 +91,9 @@ export function NavBar({ active, listHref = "/list-your-sites/" }: NavBarProps) 
             >
               Sign in
             </a>
+            {countryMenu ? (
+              <div className="border-hairline mt-1 border-t pt-1">{countryMenu}</div>
+            ) : null}
           </nav>
         </details>
       </div>

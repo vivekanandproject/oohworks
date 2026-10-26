@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { countWords } from "@/lib/world/money";
 import { Button, Container, EmptyState, Notice } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance } from "@/components/sites/Basket";
@@ -13,7 +14,6 @@ import { lightingDef } from "@/lib/sites/taxonomy";
 import {
   availabilityOf,
   facingText,
-  lakh,
   monthYear,
   permitState,
   placeLine,
@@ -258,7 +258,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                       const a = c.site.audience;
                       return a?.figure && a.source && a.measuredOn ? (
                         <>
-                          {lakh(a.figure)} a week
+                          {countWords(a.figure, c.site.country)} a week
                           <span className="src">
                             {a.source}, {monthYear(a.measuredOn)}
                           </span>

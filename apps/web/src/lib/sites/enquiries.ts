@@ -18,13 +18,16 @@ import {
   type Artwork,
 } from "./enquiry";
 import { sendMail } from "./mail";
-import { inr, placeLine, siteUrl } from "./view";
+import { money } from "@/lib/world/money";
+import { placeLine, siteUrl } from "./view";
 
 export { ARTWORK, dateRange, type Artwork };
 
 const NEUTRAL =
   "OOHWORKS never sells media or takes a media margin. Owners set prices and keep their clients.";
-const rupees = (n: number): string => inr(n).replace(/ /g, " ");
+/** An amount in its currency, with plain spaces for an email. */
+const amountIn = (n: number, currency: string | null | undefined): string =>
+  money(n, currency || "INR").replace(/\u00a0/g, " ");
 
 /** One request: what one buyer asked one owner, about one or more of that owner's sites. */
 export interface Request {
@@ -116,7 +119,10 @@ export async function createRequests(input: NewRequests): Promise<Group> {
         attempts: 0,
         lead: i === 0,
         ...(plan ? { plan } : {}),
-        ...(input.budget && !plan ? { budget: input.budget } : {}),
+        // A budget is for one site, in that site's own currency.
+        ...(input.budget && !plan
+          ? { budget: input.budget, budgetCurrency: first.currency || "INR" }
+          : {}),
         ...(input.message ? { message: input.message } : {}),
       },
     });
@@ -243,7 +249,9 @@ export async function deliverGroup(group: Group): Promise<void> {
         `Brand and category: ${enquiry.brand}`,
         ...(group.plan
           ? []
-          : [`Budget: ${enquiry.budget ? `${rupees(enquiry.budget)} a month` : "Not given"}`]),
+          : [
+              `Budget: ${enquiry.budget ? `${amountIn(enquiry.budget, enquiry.budgetCurrency)} a month` : "Not given"}`,
+            ]),
         `Artwork: ${ARTWORK[enquiry.artwork]}`,
         `Message: ${enquiry.message || "None"}`,
         "",
@@ -364,7 +372,7 @@ const answerLines = (request: Request, answers: OwnerAnswer[]): string[] =>
     const site = request.sites.find((s) => s.id === a.siteId);
     if (!site || (!a.availability && !a.quote)) return [];
     return [
-      `- ${site.title}: ${[a.availability ? ANSWERS[a.availability] : null, a.quote ? `${rupees(a.quote)} a month` : null].filter(Boolean).join(" · ")}`,
+      `- ${site.title}: ${[a.availability ? ANSWERS[a.availability] : null, a.quote ? `${amountIn(a.quote, site.currency)} a month` : null].filter(Boolean).join(" · ")}`,
     ];
   });
 
@@ -391,7 +399,12 @@ export async function ownerReplies(
       answers: kept.map((a) => ({
         site: a.siteId,
         ...(a.availability ? { availability: a.availability } : {}),
-        ...(a.quote ? { quote: a.quote } : {}),
+        ...(a.quote
+          ? {
+              quote: a.quote,
+              quoteCurrency: request.sites.find((s) => s.id === a.siteId)?.currency || "INR",
+            }
+          : {}),
       })),
     },
   });

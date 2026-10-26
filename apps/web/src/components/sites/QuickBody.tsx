@@ -1,4 +1,5 @@
 import { Button, Badge, NEUTRALITY_LINE, Avatar } from "@ohworks/ui";
+import { countWords } from "@/lib/world/money";
 import { formatDate } from "@/lib/editorial/format";
 import type { Lists } from "@/lib/sites/lists-server";
 import type { SitePage } from "@/lib/sites/queries";
@@ -7,7 +8,6 @@ import {
   availabilityOf,
   badgesOf,
   facingText,
-  lakh,
   monthYear,
   placeLine,
   priceOf,
@@ -106,7 +106,7 @@ export function QuickBody({ found, now, lists }: { found: SitePage; now: number;
         />
         <Fact
           label="Audience"
-          value={audience?.figure ? `${lakh(audience.figure)} a week` : null}
+          value={audience?.figure ? `${countWords(audience.figure, site.country)} a week` : null}
           source={audience ? `${audience.source}, ${monthYear(audience.measuredOn)}` : null}
         />
       </dl>
