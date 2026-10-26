@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx -y vercel@latest env add *)",
+      "Bash(bash /private/tmp/claude-501/-Users-vivekanandchoudhari-Documents-TheOOHWorks/91c34baf-c552-4a78-9dae-bfe6a665d73c/scratchpad/set-vercel-env.sh)"
+    ]
+  }
+}
