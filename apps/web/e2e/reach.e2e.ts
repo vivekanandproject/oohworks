@@ -335,7 +335,7 @@ test.describe("city, area and format pages", () => {
       /\/in\/bengaluru\/$/,
     );
     await expect(page.locator("[data-section='results'] [data-site]")).toHaveCount(12);
-    await expect(page.locator("[data-section='map'] svg[role='img']")).toBeVisible();
+    await expect(page.locator("[data-section='map'] svg[role='img']:visible")).toBeVisible();
 
     // Samples do not count towards publishing, so this is a preview: marked, and never offered to a search engine.
     await expect(page.locator("[data-section='hub-preview']")).toContainText(

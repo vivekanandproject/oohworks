@@ -60,6 +60,8 @@
   --ease-oh: cubic-bezier(0.2, 0.8, 0.2, 1);
   --container-content: 1200px;
   --container-article: 680px;
+  /* A single column of rows, forms or an empty state. */
+  --container-column: 760px;
 }
 
 @theme inline {

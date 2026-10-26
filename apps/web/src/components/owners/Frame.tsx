@@ -1,3 +1,4 @@
+import { Button, Badge } from "@ohworks/ui";
 import type { ReactNode } from "react";
 
 /**
@@ -78,10 +79,7 @@ export function Card({
   section?: string;
 }) {
   return (
-    <section
-      className="border-hairline bg-paper-raised rounded-md border p-5"
-      data-section={section}
-    >
+    <section className="oh-box" data-section={section}>
       <h2 className="t-display-sm">{title}</h2>
       <div className="mt-3">{children}</div>
     </section>
@@ -140,7 +138,7 @@ export function StepsCard({ at }: { at: 1 | 2 | 3 | 4 }) {
           return (
             <li key={step.t} className="flex gap-3" aria-current={now ? "step" : undefined}>
               <span
-                className={`grid h-6 w-6 shrink-0 place-items-center rounded-full font-mono text-[12px] leading-none ${now ? "bg-navy text-on-navy" : done ? "bg-navy-200 text-ink" : "border-hairline-strong text-ink-muted border"}`}
+                className={`rounded-pill grid h-6 w-6 shrink-0 place-items-center font-mono text-[12px] leading-none ${now ? "bg-navy text-on-navy" : done ? "bg-navy-200 text-ink" : "border-hairline-strong text-ink-muted border"}`}
                 aria-hidden="true"
               >
                 {n}
@@ -149,7 +147,9 @@ export function StepsCard({ at }: { at: 1 | 2 | 3 | 4 }) {
                 <p className="t-body-strong">
                   {step.t}
                   {now ? (
-                    <span className="oh-badge neutral ml-2 align-middle">You are here</span>
+                    <Badge kind="neutral" className="ml-2 align-middle">
+                      You are here
+                    </Badge>
                   ) : null}
                   {done ? (
                     <span className="t-small text-ink-muted ml-2 font-normal">Done</span>
@@ -192,12 +192,12 @@ export function ManySites() {
         you.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
-        <a href="/owner/import/" className="oh-btn secondary">
+        <Button variant="secondary" href="/owner/import/">
           Upload a spreadsheet
-        </a>
-        <a href="/owner/kit/" className="oh-btn ghost">
+        </Button>
+        <Button variant="ghost" href="/owner/kit/">
           Send a media kit
-        </a>
+        </Button>
       </div>
     </Card>
   );

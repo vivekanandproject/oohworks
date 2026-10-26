@@ -19,6 +19,8 @@ export const Media: CollectionConfig = {
     imageSizes: [
       { name: "thumb", width: 400, height: 400, position: "centre" },
       { name: "card", width: 800, height: 533, position: "centre" },
+      // The same 16:9 frame at half the width, for phones (picture() offers both).
+      { name: "heroMd", width: 960, height: 540, position: "centre" },
       { name: "hero", width: 1600, height: 900, position: "centre" },
     ],
     adminThumbnail: "thumb",

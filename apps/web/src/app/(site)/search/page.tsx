@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Button, Container, EmptyState, Note, Notice, SearchField } from "@ohworks/ui";
+import { Button, Container, EmptyState, Note, Notice, SearchField, Chip, Pager } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { FollowForm } from "@/components/FollowForm";
 import { BasketEnhance, ListSync } from "@/components/sites/Basket";
@@ -55,61 +55,6 @@ function describe(state: SearchState, localityLabel: string | undefined, single 
       ? ` in ${localityLabel ? `${localityLabel}, ` : ""}${city}`
       : "";
   return `${what}${where}`;
-}
-
-function Pages({ state, pages }: { state: SearchState; pages: number }) {
-  if (pages <= 1) return null;
-  const from = Math.max(1, Math.min(state.page - 2, pages - 4));
-  const numbers = Array.from({ length: Math.min(5, pages) }, (_, i) => from + i).filter(
-    (n) => n <= pages,
-  );
-  return (
-    <nav
-      aria-label="Pages"
-      className="border-hairline mt-8 flex flex-wrap items-center justify-between gap-4 border-t pt-5"
-      data-section="pager"
-    >
-      <span className="t-data text-ink-muted">
-        Page {state.page} of {pages}
-      </span>
-      <div className="flex flex-wrap gap-2">
-        {state.page > 1 ? (
-          <a
-            href={toUrl(state, { page: state.page - 1 })}
-            rel="prev nofollow"
-            className="oh-btn secondary sm"
-          >
-            Previous
-          </a>
-        ) : null}
-        {numbers.map((n) =>
-          n === state.page ? (
-            <span key={n} aria-current="page" className="oh-btn primary sm">
-              {n}
-            </span>
-          ) : (
-            <a
-              key={n}
-              href={toUrl(state, { page: n })}
-              rel="nofollow"
-              className="oh-btn secondary sm"
-            >
-              {n}
-            </a>
-          ),
-        )}
-        {state.page < pages ? (
-          <a
-            href={toUrl(state, { page: state.page + 1 })}
-            rel="next nofollow"
-            className="oh-btn secondary sm"
-          >
-            Next
-          </a>
-        ) : null}
-      </div>
-    </nav>
-  );
 }
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<RawParams> }) {
@@ -224,9 +169,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <h1 className="t-display-md mt-2" data-section="heading">
               {result.total > 0 ? (
                 <>
-                  <span className="font-mono" style={{ fontVariantNumeric: "tabular-nums" }}>
-                    {result.total}
-                  </span>{" "}
+                  <span className="font-mono tabular-nums">{result.total}</span>{" "}
                   {describe(state, onlyLocality, result.total === 1)}
                 </>
               ) : (
@@ -256,19 +199,17 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           <div className="mt-4 flex flex-wrap items-center gap-2" data-section="understood">
             <span className="t-small text-ink-muted">Understood as</span>
             {chips.map((c) => (
-              <a
+              <Chip
                 key={c.key}
                 href={c.remove}
-                className="oh-chip max-w-full"
-                aria-current="page"
+                className="max-w-full"
+                current
+                removable
                 aria-label={`Remove ${c.label}`}
                 rel="nofollow"
               >
                 <span className="truncate">{c.label}</span>
-                <span className="x" aria-hidden="true">
-                  ×
-                </span>
-              </a>
+              </Chip>
             ))}
           </div>
         ) : null}
@@ -311,13 +252,19 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                   <SiteCard key={card.site.id} card={card} now={now} lists={lists} back={here} />
                 ))}
               </div>
-              <Pages state={state} pages={result.pages} />
+              <Pager
+                page={state.page}
+                pages={result.pages}
+                href={(n) => toUrl(state, { page: n })}
+                nofollow
+                className="mt-8"
+              />
             </div>
             {showMap ? (
               <aside
                 id="map"
                 aria-label="Map of results"
-                className="border-hairline bg-paper-sunken order-first h-[200px] scroll-mt-24 overflow-hidden rounded-md border sm:h-[300px] lg:sticky lg:top-[142px] lg:order-none lg:h-[640px]"
+                className="border-hairline bg-paper-sunken order-first h-[200px] scroll-mt-24 overflow-hidden rounded-md border sm:h-[300px] lg:sticky lg:top-[142px] lg:order-none lg:h-[min(640px,calc(100svh-158px))]"
                 data-section="map"
               >
                 <MapPanel
@@ -336,7 +283,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             ) : null}
           </div>
         ) : (
-          <div className="mx-auto w-full max-w-[760px]" data-section="results" data-layout="empty">
+          <div className="max-w-column mx-auto w-full" data-section="results" data-layout="empty">
             <EmptyState
               icon="pin"
               title={
@@ -376,7 +323,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
         {result.total > 0 && !followed ? (
           <details
-            className="border-hairline bg-paper-raised mx-auto mt-8 max-w-[760px] rounded-md border p-5"
+            className="oh-box max-w-column mx-auto mt-8"
             data-section="save-search"
             open={followInvalid}
           >
@@ -400,19 +347,16 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         ) : null}
 
         {result.wider.length ? (
-          <section
-            className="border-hairline bg-paper-raised mx-auto mt-8 max-w-[760px] rounded-md border p-5"
-            data-section="wider"
-          >
+          <section className="oh-box max-w-column mx-auto mt-8" data-section="wider">
             <h2 className="t-display-sm">Widen your search</h2>
             <p className="t-body text-ink-muted mt-1">
               Each change shows how many sites it would add.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {result.wider.map((w) => (
-                <a key={w.label} href={w.url} className="oh-chip" rel="nofollow">
-                  {w.label} <span className="count">+{w.add}</span>
-                </a>
+                <Chip key={w.label} href={w.url} rel="nofollow" count={`+${w.add}`}>
+                  {w.label}
+                </Chip>
               ))}
             </div>
           </section>

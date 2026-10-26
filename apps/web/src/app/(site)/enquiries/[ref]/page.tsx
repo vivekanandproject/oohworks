@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Badge, Container, NEUTRALITY_LINE, Notice } from "@ohworks/ui";
+import { Button, Badge, Container, NEUTRALITY_LINE, Notice } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { AskedFacts, SiteList, Thread } from "@/components/sites/Thread";
 import { timeAgo } from "@/lib/editorial/format";
@@ -74,7 +74,7 @@ export default async function EnquiryThreadPage({
   return (
     <Shell active="find">
       <Container className="py-8 lg:py-12">
-        <div className="mx-auto max-w-[760px]">
+        <div className="max-w-column mx-auto">
           <p className="t-label text-ink-muted">
             Enquiry <span className="font-mono">{group.ref}</span>
           </p>
@@ -111,7 +111,7 @@ export default async function EnquiryThreadPage({
             </Notice>
           ) : null}
 
-          <div className="mt-6 max-w-[760px]">
+          <div className="max-w-column mt-6">
             <AskedFacts request={first} showBudget={!many && !first.enquiry.plan} />
           </div>
 
@@ -168,7 +168,7 @@ export default async function EnquiryThreadPage({
             </section>
           ) : null}
 
-          <div className="mt-8 max-w-[760px] space-y-8">
+          <div className="max-w-column mt-8 space-y-8">
             {group.requests.map((r) => (
               <section
                 key={r.enquiry.id}
@@ -223,15 +223,15 @@ export default async function EnquiryThreadPage({
                     />
                   </div>
                   <div>
-                    <button type="submit" className="oh-btn secondary sm">
+                    <Button variant="secondary" size="sm" type="submit">
                       Send to {r.owner.name}
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </section>
             ))}
           </div>
-          <p className="t-small text-ink-muted border-hairline mt-10 max-w-[760px] border-t pt-5">
+          <p className="t-small text-ink-muted border-hairline max-w-column mt-10 border-t pt-5">
             Keep this page&rsquo;s link to yourself: it opens your enquiry without a password.{" "}
             {NEUTRALITY_LINE}
           </p>

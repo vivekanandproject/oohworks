@@ -9,7 +9,7 @@ export interface Edition {
 export function EditionStrip({ editions }: { editions: Edition[] }) {
   return (
     <div className="border-hairline bg-paper-sunken h-9 border-b">
-      <div className="text-ink-muted t-small mx-auto flex h-full w-full max-w-[1200px] items-center gap-3 overflow-x-auto px-4 lg:px-10">
+      <div className="text-ink-muted t-small max-w-content mx-auto flex h-full w-full items-center gap-3 overflow-x-auto px-4 lg:px-10">
         <span className="t-label shrink-0">Editions</span>
         {editions.map((e, i) => (
           <span key={e.code} className="flex shrink-0 items-center gap-3">

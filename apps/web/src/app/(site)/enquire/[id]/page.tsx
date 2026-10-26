@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { isPermanentId } from "@ohworks/core";
-import { Container, Notice } from "@ohworks/ui";
+import { Button, Container, Notice, Radio } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { EnquirySummary } from "@/components/sites/EnquirySummary";
 import { DateOrder } from "@/components/sites/Enhance";
@@ -190,19 +190,13 @@ export default async function EnquirePage({
                 <legend className="oh-label">Artwork</legend>
                 <div className="mt-1 flex flex-wrap gap-x-6">
                   {(Object.keys(ARTWORK) as Artwork[]).map((key) => (
-                    <label
+                    <Radio
                       key={key}
-                      className="t-body flex min-h-11 cursor-pointer items-center gap-2"
-                    >
-                      <input
-                        type="radio"
-                        name="artwork"
-                        value={key}
-                        defaultChecked={artwork === key}
-                        className="accent-navy h-[18px] w-[18px]"
-                      />
-                      {ARTWORK[key]}
-                    </label>
+                      name="artwork"
+                      value={key}
+                      defaultChecked={artwork === key}
+                      label={ARTWORK[key]}
+                    />
                   ))}
                 </div>
               </fieldset>
@@ -247,13 +241,16 @@ export default async function EnquirePage({
               </div>
 
               <div>
-                <button
+                <Button
+                  variant="accent"
+                  size="lg"
+                  className="w-full sm:w-auto"
                   type="submit"
-                  className="oh-btn accent lg w-full sm:w-auto"
+
                   data-action="send"
                 >
                   {action}
-                </button>
+                </Button>
               </div>
             </form>
           </div>

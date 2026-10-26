@@ -47,7 +47,7 @@ export default async function SentPage({
         once={`enquiry:${ref}`}
       />
       <Container className="py-12 lg:py-16">
-        <div className="mx-auto max-w-[680px]" data-section="enquiry-sent">
+        <div className="max-w-article mx-auto" data-section="enquiry-sent">
           <p className="t-label text-verified">Enquiry sent</p>
           <h1 className="t-display-md mt-2">
             Sent to {only ? only.owner.name : `${group.requests.length} owners`}.

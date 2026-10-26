@@ -92,7 +92,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
         ) : null}
 
         {cards.length === 0 ? (
-          <div className="mx-auto mt-6 w-full max-w-[760px]" data-section="compare-empty">
+          <div className="max-w-column mx-auto mt-6 w-full" data-section="compare-empty">
             <EmptyState
               icon="pin"
               title="Nothing to compare yet"
@@ -122,38 +122,42 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                   <input type="hidden" name="action" value="add" />
                   <input type="hidden" name="ids" value={live.join(",")} />
                   <input type="hidden" name="return" value={here} />
-                  <button type="submit" className="oh-btn primary sm">
+                  <Button variant="primary" size="sm" type="submit">
                     Save {unsaved === cards.length ? "all" : `the other ${unsaved}`} to your
                     shortlist
-                  </button>
+                  </Button>
                 </form>
               ) : (
-                <a href="/shortlist/" className="oh-btn primary sm" rel="nofollow">
+                <Button variant="primary" size="sm" href="/shortlist/" rel="nofollow">
                   View shortlist
-                </a>
+                </Button>
               )}
               {cards.length >= 2 ? (
-                <a
+                <Button
+                  variant="accent"
+                  size="sm"
                   href={`/enquire/plan/?sites=${live.join(",")}`}
                   rel="nofollow"
-                  className="oh-btn accent sm"
+
                   data-action="enquire-all"
                 >
                   {owners === 1
                     ? "Send one enquiry for these sites"
                     : `Send enquiry to ${owners} owners`}
-                </a>
+                </Button>
               ) : null}
-              <button
+              <Button
+                variant="secondary"
+                size="sm"
                 type="button"
-                className="oh-btn secondary sm"
+
                 data-copy={`/compare/?sites=${live.join(",")}`}
               >
                 Copy link
-              </button>
-              <a href="/search/" className="oh-btn ghost sm">
+              </Button>
+              <Button variant="ghost" size="sm" href="/search/">
                 Back to results
-              </a>
+              </Button>
             </div>
 
             <div
@@ -345,13 +349,14 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                     cards={cards}
                     data={false}
                     cell={(c) => (
-                      <a
+                      <Button
+                        variant="secondary"
+                        size="sm"
                         href={`/enquire/${c.site.permanentId}/`}
                         rel="nofollow"
-                        className="oh-btn secondary sm"
                       >
                         Enquire<span className="sr-only">: {c.site.title}</span>
-                      </a>
+                      </Button>
                     )}
                   />
                 </tbody>
@@ -362,9 +367,9 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
                 <input type="hidden" name="list" value="compare" />
                 <input type="hidden" name="action" value="clear" />
                 <input type="hidden" name="return" value="/compare/" />
-                <button type="submit" className="oh-btn ghost sm">
+                <Button variant="ghost" size="sm" type="submit">
                   Clear the comparison
-                </button>
+                </Button>
               </form>
             ) : null}
           </>

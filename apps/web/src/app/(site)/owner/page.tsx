@@ -198,11 +198,11 @@ export default async function OwnerHomePage({ searchParams }: { searchParams: Pr
                   send. We check each one before it goes live. A site with photographs is checked
                   faster and ranks higher.
                 </p>
-                <button type="submit" className="oh-btn primary" data-action="submit">
+                <Button variant="primary" type="submit" data-action="submit">
                   {waiting.length === 1
                     ? "Send 1 site for review"
                     : `Send ${waiting.length} sites for review`}
-                </button>
+                </Button>
               </form>
             ) : null}
 

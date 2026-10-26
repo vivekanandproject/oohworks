@@ -142,7 +142,7 @@ test.describe("find sites: results", () => {
       }),
     );
     await page.goto("/search/?city=bengaluru");
-    await expect(page.locator("[data-section='map'] svg[role='img']")).toBeVisible();
+    await expect(page.locator("[data-section='map'] svg[role='img']:visible")).toBeVisible();
     await expect(page.locator(".maplibregl-canvas")).toHaveCount(0);
     await page.getByRole("button", { name: "Show the live map" }).click();
     await expect(page.locator(".maplibregl-canvas")).toBeVisible({ timeout: 15_000 });

@@ -40,7 +40,7 @@ export default function CookiesPage() {
   return (
     <Shell>
       <Container className="py-12 lg:py-16">
-        <div className="mx-auto max-w-[680px]">
+        <div className="max-w-article mx-auto">
           <p className="t-label text-ink-muted">Company</p>
           <h1 className="t-display-lg mt-3">Cookies</h1>
           <p className="t-body-lg text-ink-muted mt-5">

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Container } from "@ohworks/ui";
+import { Button, Container } from "@ohworks/ui";
 import { PasswordField } from "@/components/PasswordField";
 import { Shell } from "@/components/Shell";
 import { Notice } from "@/components/owners/Bits";
@@ -72,7 +72,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
           <form
             method="post"
             action="/api/owner/signin/"
-            className="border-hairline bg-paper-raised mt-6 flex flex-col gap-5 rounded-md border p-5 sm:p-6"
+            className="oh-box mt-6 flex flex-col gap-5"
             data-section="signin-form"
           >
             <div>
@@ -113,9 +113,15 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
               </div>
               <PasswordField id="signin-password" required focus={Boolean(typed)} />
             </div>
-            <button type="submit" className="oh-btn primary lg w-full" data-action="signin">
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-full"
+              type="submit"
+              data-action="signin"
+            >
               Sign in
-            </button>
+            </Button>
           </form>
 
           <p className="t-body text-ink-muted mt-5 text-center" data-section="signin-new">

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, Note } from "@ohworks/ui";
+import { Button, Container, Note } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { Notice, OwnerBar } from "@/components/owners/Bits";
 import { Aside, Card, FORM_GRID, FormSection, PageHead } from "@/components/owners/Frame";
@@ -149,13 +149,14 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
                   navy headings are needed; the rest are optional.
                 </p>
                 <div>
-                  <a
+                  <Button
+                    variant="secondary"
                     href="/api/owner/template/"
-                    className="oh-btn secondary"
+
                     data-action="template"
                   >
                     Download the template
-                  </a>
+                  </Button>
                 </div>
               </FormSection>
               <FormSection title="Upload it" n={2} part="upload">
@@ -184,13 +185,16 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
                     </p>
                   </div>
                   <div>
-                    <button
+                    <Button
+                      variant="primary"
+                      size="lg"
+                      className="w-full sm:w-auto"
                       type="submit"
-                      className="oh-btn primary lg w-full sm:w-auto"
+
                       data-action="import"
                     >
                       Upload and check
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </FormSection>

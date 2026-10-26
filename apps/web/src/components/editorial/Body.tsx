@@ -104,6 +104,8 @@ function Figure({ fields, ctx }: { fields: Record<string, unknown>; ctx: BodyCon
     <figure className={fields.nightShot ? "night" : undefined}>
       <img
         src={pic.src}
+        srcSet={pic.srcSet}
+        sizes="(min-width: 720px) 680px, 100vw"
         alt={pic.alt}
         width={pic.width}
         height={pic.height}

@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@ohworks/ui";
+
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 import { PlaceField, type PickedPlace } from "@/components/PlaceField";
@@ -125,14 +127,15 @@ export function PinPicker({
           </p>
         </>
       ) : (
-        <button
+        <Button
+          variant="secondary"
           type="button"
-          className="oh-btn secondary"
+
           onClick={openMap}
           data-action="open-pin-map"
         >
           Place the pin on a map
-        </button>
+        </Button>
       )}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>

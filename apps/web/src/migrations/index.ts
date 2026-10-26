@@ -6,6 +6,7 @@ import * as migration_20261018_173440_follow_alerts from './20261018_173440_foll
 import * as migration_20261018_175731_kit_reading from './20261018_175731_kit_reading';
 import * as migration_20261018_182001_photo_checks from './20261018_182001_photo_checks';
 import * as migration_20261023_185130_article_discoverability from './20261023_185130_article_discoverability';
+import * as migration_20261026_155336_media_hero_md from './20261026_155336_media_hero_md';
 
 export const migrations = [
   {
@@ -46,6 +47,11 @@ export const migrations = [
   {
     up: migration_20261023_185130_article_discoverability.up,
     down: migration_20261023_185130_article_discoverability.down,
-    name: '20261023_185130_article_discoverability'
+    name: '20261023_185130_article_discoverability',
+  },
+  {
+    up: migration_20261026_155336_media_hero_md.up,
+    down: migration_20261026_155336_media_hero_md.down,
+    name: '20261026_155336_media_hero_md'
   },
 ];

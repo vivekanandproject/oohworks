@@ -16,7 +16,7 @@ export function EnquirySummary({
   const price = priceOf(site);
   return (
     <aside
-      className="border-hairline bg-paper-raised rounded-md border p-5"
+      className="oh-box"
       aria-label="The site you are asking about"
       data-section="enquiry-summary"
     >
@@ -27,7 +27,7 @@ export function EnquirySummary({
         </a>
       </p>
       <p className="t-small text-ink-muted mt-1">{metaLine(site)}</p>
-      <p className="t-price mt-3" style={{ fontVariantNumeric: "tabular-nums" }}>
+      <p className="t-price mt-3 tabular-nums">
         {price.shown ? (
           <>
             {price.prefix}

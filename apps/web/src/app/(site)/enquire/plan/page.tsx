@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Badge, Container, NEUTRALITY_LINE, Notice } from "@ohworks/ui";
+import { Button, Badge, Container, NEUTRALITY_LINE, Notice, Radio } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { DateOrder } from "@/components/sites/Enhance";
 import { indiaDate } from "@/lib/sites/calendar";
@@ -204,19 +204,13 @@ export default async function PlanEnquiryPage({ searchParams }: { searchParams: 
               <legend className="oh-label">Artwork</legend>
               <div className="mt-1 flex flex-wrap gap-x-6">
                 {(Object.keys(ARTWORK) as Artwork[]).map((key) => (
-                  <label
+                  <Radio
                     key={key}
-                    className="t-body flex min-h-11 cursor-pointer items-center gap-2"
-                  >
-                    <input
-                      type="radio"
-                      name="artwork"
-                      value={key}
-                      defaultChecked={artwork === key}
-                      className="accent-navy h-[18px] w-[18px]"
-                    />
-                    {ARTWORK[key]}
-                  </label>
+                    name="artwork"
+                    value={key}
+                    defaultChecked={artwork === key}
+                    label={ARTWORK[key]}
+                  />
                 ))}
               </div>
             </fieldset>
@@ -262,13 +256,16 @@ export default async function PlanEnquiryPage({ searchParams }: { searchParams: 
               </p>
             </div>
             <div>
-              <button
+              <Button
+                variant="accent"
+                size="lg"
+                className="w-full sm:w-auto"
                 type="submit"
-                className="oh-btn accent lg w-full sm:w-auto"
+
                 data-action="send"
               >
                 {owners === 1 ? "Send enquiry" : `Send enquiry to ${owners} owners`}
-              </button>
+              </Button>
             </div>
             <p className="t-small text-ink-muted">{NEUTRALITY_LINE}</p>
           </div>

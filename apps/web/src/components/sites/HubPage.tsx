@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import { Container, Note } from "@ohworks/ui";
+import { Container, Note, Breadcrumbs, Chip, Pager } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance, ListSync } from "@/components/sites/Basket";
 import { MapPanel } from "@/components/sites/MapPanel";
@@ -53,15 +53,15 @@ function Chips({
     >
       <span className="t-small text-ink-muted w-full sm:w-auto">{title}</span>
       {links.map((l) => (
-        <a
+        <Chip
           key={l.href}
           href={l.href}
-          className="oh-chip"
-          {...(l.hub ? {} : { rel: "nofollow" })}
+          rel={l.hub ? undefined : "nofollow"}
           data-hub-link={l.hub ? "hub" : "search"}
+          count={l.count}
         >
-          {l.label} <span className="count">{l.count}</span>
-        </a>
+          {l.label}
+        </Chip>
       ))}
     </div>
   );
@@ -134,33 +134,13 @@ export async function HubPage({ hub, page }: { hub: Hub | null; page: number }) 
       <ListSync />
       <QuickView />
       <Container className="pt-6 pb-14">
-        <nav aria-label="Breadcrumb" className="t-small text-ink-muted" data-section="breadcrumb">
-          <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <li>
-              <a href="/search/" className="oh-link">
-                Find sites
-              </a>
-            </li>
-            <li aria-hidden="true">›</li>
-            <li>
-              {leaf ? (
-                <a href={hubPath(cityHub)} className="oh-link">
-                  {city}
-                </a>
-              ) : (
-                <span aria-current="page">{city}</span>
-              )}
-            </li>
-            {leaf ? (
-              <>
-                <li aria-hidden="true">›</li>
-                <li>
-                  <span aria-current="page">{leaf}</span>
-                </li>
-              </>
-            ) : null}
-          </ol>
-        </nav>
+        <Breadcrumbs
+          items={[
+            { label: "Find sites", href: "/search/" },
+            { label: city, href: leaf ? hubPath(cityHub) : undefined },
+            ...(leaf ? [{ label: leaf }] : []),
+          ]}
+        />
 
         {data.preview ? (
           <Note section="hub-preview" className="mt-4">
@@ -224,45 +204,12 @@ export async function HubPage({ hub, page }: { hub: Hub | null; page: number }) 
                 />
               ))}
             </div>
-            {data.pages > 1 ? (
-              <nav
-                aria-label="Pages"
-                className="border-hairline mt-8 flex flex-wrap items-center justify-between gap-4 border-t pt-5"
-                data-section="pager"
-              >
-                <span className="t-data text-ink-muted">
-                  Page {page} of {data.pages}
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {page > 1 ? (
-                    <a href={hubPath(hub, page - 1)} rel="prev" className="oh-btn secondary sm">
-                      Previous
-                    </a>
-                  ) : null}
-                  {Array.from({ length: data.pages }, (_, i) => i + 1).map((n) =>
-                    n === page ? (
-                      <span key={n} aria-current="page" className="oh-btn primary sm">
-                        {n}
-                      </span>
-                    ) : (
-                      <a key={n} href={hubPath(hub, n)} className="oh-btn secondary sm">
-                        {n}
-                      </a>
-                    ),
-                  )}
-                  {page < data.pages ? (
-                    <a href={hubPath(hub, page + 1)} rel="next" className="oh-btn secondary sm">
-                      Next
-                    </a>
-                  ) : null}
-                </div>
-              </nav>
-            ) : null}
+            <Pager page={page} pages={data.pages} href={(n) => hubPath(hub, n)} className="mt-8" />
           </div>
           <aside
             id="map"
             aria-label="Map of these sites"
-            className="border-hairline bg-paper-sunken order-first h-[200px] scroll-mt-24 overflow-hidden rounded-md border sm:h-[300px] lg:sticky lg:top-24 lg:order-none lg:h-[640px]"
+            className="border-hairline bg-paper-sunken order-first h-[200px] scroll-mt-24 overflow-hidden rounded-md border sm:h-[300px] lg:sticky lg:top-24 lg:order-none lg:h-[min(640px,calc(100svh-112px))]"
             data-section="map"
           >
             <MapPanel points={data.points} styleUrl={MAP_STYLE} areaBase={areaBase} remember>

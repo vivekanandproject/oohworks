@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import { Button, Container, EmptyState } from "@ohworks/ui";
+import { Button, Container, EmptyState, Breadcrumbs, Pager } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { SITE_NAME, absolute, alternates } from "@/lib/seo";
 import { PILLARS, type PillarKey } from "@/lib/editorial/pillars";
@@ -13,7 +13,7 @@ import {
   type Piece,
 } from "@/lib/editorial/queries";
 import { ArticleView } from "./ArticleView";
-import { BriefingBand, Pager, PieceRow, PillarChips } from "./PieceBits";
+import { BriefingBand, PieceRow, PillarChips } from "./PieceBits";
 
 export const PER_PAGE = 12;
 
@@ -40,13 +40,9 @@ function IndexView({ title, blurb, base, current, list, page, counts }: IndexPro
   return (
     <Shell active="news">
       <Container className="py-12 lg:py-16">
-        <div className="mx-auto max-w-[760px]">
+        <div className="max-w-column mx-auto">
           <header className="flex flex-col gap-4">
-            <nav aria-label="Breadcrumb" className="t-small text-ink-muted">
-              <a className="oh-link" href="/newsroom/">
-                Newsroom
-              </a>
-            </nav>
+            <Breadcrumbs items={[{ label: "Newsroom", href: "/newsroom/" }]} />
             <div>
               <h1 className="t-display-lg">{title}</h1>
               <p className="t-body text-ink-muted mt-3 max-w-[62ch]">{blurb}</p>
@@ -55,7 +51,7 @@ function IndexView({ title, blurb, base, current, list, page, counts }: IndexPro
           </header>
 
           {items.length === 0 ? (
-            <div className="mx-auto mt-10 w-full max-w-[760px]">
+            <div className="max-w-column mx-auto mt-10 w-full">
               <EmptyState
                 icon="enquiry"
                 title={`Nothing in ${title.toLowerCase()} yet`}
@@ -69,7 +65,7 @@ function IndexView({ title, blurb, base, current, list, page, counts }: IndexPro
               </EmptyState>
             </div>
           ) : (
-            <div className="mt-8 max-w-[760px]" data-section="stream">
+            <div className="max-w-column mt-8" data-section="stream">
               {items.slice(0, 3).map((p) => (
                 <PieceRow key={`${p.collection}-${p.id}`} piece={p} level={2} />
               ))}
@@ -83,7 +79,11 @@ function IndexView({ title, blurb, base, current, list, page, counts }: IndexPro
           )}
 
           <div className="mt-8">
-            <Pager base={base} page={page} pages={list.pages} />
+            <Pager
+              page={page}
+              pages={list.pages}
+              href={(n) => (n === 1 ? `${base}/` : `${base}/page/${n}/`)}
+            />
           </div>
         </div>
       </Container>

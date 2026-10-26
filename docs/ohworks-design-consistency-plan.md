@@ -1,6 +1,6 @@
 # OOHWORKS design consistency: plan
 
-Date: 18 Oct 2026. Status: Phase A done (section 7); content centring done (section 8); Phase B in progress (section 9); Phases C and D not started. The brand is OOHWORKS since 19 Oct 2026; fonts wait on the founder (Archivo, or Poppins). Measures the public site against `ohworks-design-system.md` and the live system (brand book and `tokens.json`), by code audit of `apps/web/src` and `packages/ui/src` and by screenshots of eleven pages at 390px and 1280px.
+Date: 18 Oct 2026. Status (26 Oct 2026): all four phases done (sections 7 to 11); the owner storefront's navy band is the one open difference. The brand is OOHWORKS since 19 Oct 2026; fonts wait on the founder (Archivo, or Poppins). Measures the public site against `ohworks-design-system.md` and the live system (brand book and `tokens.json`), by code audit of `apps/web/src` and `packages/ui/src` and by screenshots of eleven pages at 390px and 1280px.
 
 ## 1. What the audit found, in one paragraph
 
@@ -137,3 +137,24 @@ What was out of line and is fixed:
 - **Top padding:** the newsroom pages, authors and topics used 40/56px, the email result page 32/48 and the enquiry-sent page 40/64; each now uses its kind's padding above.
 
 Not measured: article, site, city and owner pages, which need content the development database does not hold. On the test database, design-rules.e2e.ts checks a city, a site and an article page for the tap-target, accent and overflow rules; owner storefronts are not in it.
+
+## 11. Phases C and D (26 Oct 2026)
+
+**Owner area and content pages measured.** Signed in as a new owner on the test database, with a live site and a draft, every owner page was measured at 1280 and 390, with the city, area, site, storefront, search, shortlist, compare and article pages. All follow the rule in section 10. One difference is a choice, not drift: the design system draws the owner storefront with a navy header band, and the site uses the plain page head; the band is recorded in the system as not built.
+
+**Phase D.**
+
+- 16, photographs: a 960 × 540 size sits beside the 1600 × 900 one (migration `20261026_155336_media_hero_md`); `picture()` returns a `srcSet` of the sizes in the same frame, and the gallery, article heroes, inline figures and the newsroom lead carry `sizes` for the column they fill. Images uploaded before this have only the large size until they are uploaded again.
+- 17, maps: on a touch screen the live map inside the page moves with two fingers, so one finger scrolls the page; full screen takes one. Pins are a 44px target around the same drawing, anchored at the tip; clusters are 44px on touch. The still drawing is wide below 1024px and tall beside the list above it (site pages always wide), so no pin is cropped.
+- 18, laptops: the search and hub maps are `min(640px, 100svh − header)`; the site page's side panel stays in view only on a screen at least 820px tall, so on 1366 × 768 the owner card is reachable.
+- 20, the design-system document: one voice for every country, number words by country, currency per site, the page-opening rule, touch sizes, map behaviour, photo sizes, the secondary "Enquire" on cards, the new favicon, and which code component each system name is.
+
+**Phase C.**
+
+| Item | Done |
+| --- | --- |
+| 8, layout | `max-w-content` (1200), `max-w-article` (680) and a new `max-w-column` (760) token replace 21 files' worth of pasted widths, the UI package's four included; `.oh-empty` uses the column token |
+| 10, panels | `.oh-box` (paper-raised, hairline, radius-md, p-4 then p-5 from 1024px) replaces 35 hand-built boxes with six paddings. List frames without padding, the sheets page and the immersive article head keep their own |
+| 11, badges and chips | Badge takes `icon={false}` for states that borrow a colour (free dates, a live site); the eight raw badges and the availability badge go through it. Chip takes links with `current`, counts and any attribute; the link chips (understood-as, widen, sections, photos, topics, hub facets) use it. A summary, the persona tabs and the share buttons keep the class, since they are not chips |
+| 12, one component each | `Breadcrumbs` (8 pages), `Pager` (4: search, hubs, sections, storefront; "Previous" and "Next" everywhere, at most five numbers), `Avatar` (4), `Radio` (7 rows), `Numeral` (5: a large faint column number in rule lists, a small "01" above step titles), `NoPhoto` (card and sheet) |
+| 19, buttons and dead parts | 73 raw `oh-btn` links and buttons are `<Button>`; every converted `<button>` already named its type, so none changed behaviour. What remains is not a button (page-number marker, a summary, spacers) or ListToggle's own class setting. `ListingCard` and `ArticleCard` are deleted: `SiteCard` and `PieceCard` are the cards, and the system document says so. The home page's never-shown "New sites this week" placeholder went with them; build it from `SiteCard` when real sites exist. 11 inline tabular-nums styles are the `tabular-nums` class; `rounded-full` is `rounded-pill` |

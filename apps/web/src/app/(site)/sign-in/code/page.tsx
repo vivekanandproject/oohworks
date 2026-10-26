@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Container } from "@ohworks/ui";
+import { Button, Container } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { Notice } from "@/components/owners/Bits";
 import { CENTER, PageHead } from "@/components/owners/Frame";
@@ -47,7 +47,7 @@ export default async function SignInCodePage({ searchParams }: { searchParams: P
           <form
             method="post"
             action="/api/owner/start/"
-            className="border-hairline bg-paper-raised mt-6 flex flex-col gap-5 rounded-md border p-5 sm:p-6"
+            className="oh-box mt-6 flex flex-col gap-5"
             data-section="signin-code-form"
           >
             <input type="hidden" name="via" value="signin" />
@@ -75,9 +75,15 @@ export default async function SignInCodePage({ searchParams }: { searchParams: P
                 className="oh-input mt-1"
               />
             </div>
-            <button type="submit" className="oh-btn primary lg w-full" data-action="signin-code">
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-full"
+              type="submit"
+              data-action="signin-code"
+            >
               Send a code
-            </button>
+            </Button>
           </form>
           <p className="t-body text-ink-muted mt-5 text-center">
             Remembered it?{" "}

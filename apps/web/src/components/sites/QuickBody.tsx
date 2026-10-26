@@ -1,4 +1,4 @@
-import { Badge, NEUTRALITY_LINE } from "@ohworks/ui";
+import { Button, Badge, NEUTRALITY_LINE, Avatar } from "@ohworks/ui";
 import { formatDate } from "@/lib/editorial/format";
 import type { Lists } from "@/lib/sites/lists-server";
 import type { SitePage } from "@/lib/sites/queries";
@@ -128,12 +128,7 @@ export function QuickBody({ found, now, lists }: { found: SitePage; now: number;
       </div>
       {owner ? (
         <div className="border-hairline flex items-center gap-3 border-t pt-4">
-          <span
-            className="bg-navy text-on-navy grid h-10 w-10 shrink-0 place-items-center rounded-full text-[16px] font-semibold"
-            aria-hidden="true"
-          >
-            {owner.name.charAt(0).toUpperCase()}
-          </span>
+          <Avatar name={owner.name} />
           <div className="min-w-0">
             <p className="t-body-strong">{owner.name}</p>
             <p className="t-small text-ink-muted">{ownerFacts.join(" · ")}</p>
@@ -149,18 +144,21 @@ export function QuickBody({ found, now, lists }: { found: SitePage; now: number;
           on={lists.compare.includes(id)}
           back={url}
         />
-        <a href={url} className="oh-btn secondary sm">
+        <Button variant="secondary" size="sm" href={url}>
           Open full page
-        </a>
+        </Button>
       </div>
-      <a
+      <Button
+        variant="accent"
+        size="lg"
+        className="w-full"
         href={`/enquire/${id}/`}
         rel="nofollow"
-        className="oh-btn accent lg w-full"
+
         data-action="enquire"
       >
         {price.shown ? "Send enquiry" : "Ask for a quote"}
-      </a>
+      </Button>
       <p className="t-small text-ink-muted">
         {owner ? `Goes straight to ${owner.name}. ` : ""}
         {NEUTRALITY_LINE}

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Container, Note } from "@ohworks/ui";
+import { Button, Container, Note } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { Notice } from "@/components/owners/Bits";
 import { Aside, CENTER, Card, FORM_GRID, PageHead, StepsCard } from "@/components/owners/Frame";
@@ -100,13 +100,15 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
         />
       </div>
       <div>
-        <button
+        <Button
           type="submit"
-          className={`oh-btn primary lg w-full ${signIn ? "" : "sm:w-auto"}`}
+          variant="primary"
+          size="lg"
+          className={`w-full ${signIn ? "" : "sm:w-auto"}`}
           data-action="confirm"
         >
           {signIn ? "Confirm and sign in" : "Confirm and continue"}
-        </button>
+        </Button>
       </div>
     </>
   );
@@ -118,9 +120,9 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
     >
       <input type="hidden" name="t" value={token} />
       {signIn ? <input type="hidden" name="via" value="signin" /> : null}
-      <button type="submit" className="oh-btn ghost sm">
+      <Button variant="ghost" size="sm" type="submit">
         Send the code again
-      </button>
+      </Button>
     </form>
   );
 
@@ -134,7 +136,7 @@ export default async function OwnerConfirmPage({ searchParams }: { searchParams:
             <form
               method="post"
               action="/api/owner/confirm/"
-              className="border-hairline bg-paper-raised mt-6 flex flex-col gap-5 rounded-md border p-5 sm:p-6"
+              className="oh-box mt-6 flex flex-col gap-5"
               data-section="confirm-form"
             >
               {fields}

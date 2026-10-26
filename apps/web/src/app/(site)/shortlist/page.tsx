@@ -35,9 +35,9 @@ function Remove({ id, title, back }: { id: string; title: string; back: string }
       <input type="hidden" name="action" value="remove" />
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="return" value={back} />
-      <button type="submit" className="oh-btn ghost sm px-2">
+      <Button variant="ghost" size="sm" className="px-2" type="submit">
         Remove<span className="sr-only">: {title}</span>
-      </button>
+      </Button>
     </form>
   );
 }
@@ -88,14 +88,16 @@ function Row({
         </p>
         <p className="mt-2" data-row-availability="">
           {forDates === "free" && availability.state === "free" ? (
-            <span className="oh-badge verified">Free for your dates</span>
+            <Badge kind="verified" icon={false}>
+              Free for your dates
+            </Badge>
           ) : (
             <AvailabilityChip availability={availability} />
           )}
         </p>
       </div>
       <div className="flex min-w-[150px] flex-col items-end gap-2 sm:ml-auto">
-        <p className="t-price" style={{ fontVariantNumeric: "tabular-nums" }}>
+        <p className="t-price tabular-nums">
           {price.shown ? (
             <>
               {price.prefix}
@@ -127,9 +129,9 @@ function Row({
             back={back}
             className="oh-btn ghost sm px-2"
           />
-          <a href={`/enquire/${id}/${enquiry}`} rel="nofollow" className="oh-btn secondary sm">
+          <Button variant="secondary" size="sm" href={`/enquire/${id}/${enquiry}`} rel="nofollow">
             Enquire
-          </a>
+          </Button>
         </div>
       </div>
     </li>
@@ -196,7 +198,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
         ) : null}
 
         {cards.length === 0 ? (
-          <div className="mx-auto mt-6 w-full max-w-[760px]" data-section="shortlist-empty">
+          <div className="max-w-column mx-auto mt-6 w-full" data-section="shortlist-empty">
             <EmptyState
               icon="pin"
               title="No sites saved yet"
@@ -232,10 +234,10 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                   <p className="t-body text-ink">
                     Keep these in your own shortlist to come back to them.
                   </p>
-                  <button type="submit" className="oh-btn primary sm">
+                  <Button variant="primary" size="sm" type="submit">
                     Save {unsaved === cards.length ? "all" : `the other ${unsaved}`} to your
                     shortlist
-                  </button>
+                  </Button>
                 </form>
               ) : null}
               {[...groups.entries()].map(([ownerId, items]) => {
@@ -283,15 +285,15 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                   <input type="hidden" name="list" value="saved" />
                   <input type="hidden" name="action" value="clear" />
                   <input type="hidden" name="return" value="/shortlist/" />
-                  <button type="submit" className="oh-btn ghost sm">
+                  <Button variant="ghost" size="sm" type="submit">
                     Clear the shortlist
-                  </button>
+                  </Button>
                 </form>
               ) : null}
             </div>
 
             <aside
-              className="border-hairline bg-paper-raised space-y-5 rounded-md border p-5 lg:sticky lg:top-24"
+              className="oh-box space-y-5 lg:sticky lg:top-24"
               aria-label="Summary"
               data-section="plan-summary"
             >
@@ -346,9 +348,9 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                   </div>
                 </div>
                 <div className="col-span-2">
-                  <button type="submit" className="oh-btn secondary sm">
+                  <Button variant="secondary" size="sm" type="submit">
                     Update the summary
-                  </button>
+                  </Button>
                 </div>
               </form>
 
@@ -381,12 +383,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                 ].map(([label, value]) => (
                   <div key={label} className="flex items-baseline justify-between gap-4 py-2">
                     <dt className="t-body text-ink-muted">{label}</dt>
-                    <dd
-                      className="t-data text-right"
-                      style={{ fontVariantNumeric: "tabular-nums" }}
-                    >
-                      {value}
-                    </dd>
+                    <dd className="t-data text-right tabular-nums">{value}</dd>
                   </div>
                 ))}
               </dl>
@@ -405,10 +402,13 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
               </p>
 
               <div className="space-y-3" data-section="plan-actions">
-                <a
+                <Button
+                  variant="accent"
+                  size="lg"
+                  className="w-full text-center whitespace-normal"
                   href={`/enquire/plan/?sites=${live}${dates.size ? `&${dates.toString()}` : ""}`}
                   rel="nofollow"
-                  className="oh-btn accent lg w-full text-center whitespace-normal"
+
                   data-action="enquire-all"
                 >
                   {cards.length === 1
@@ -416,7 +416,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                     : summary.owners === 1
                       ? "Send one enquiry for these sites"
                       : `Send enquiry to ${summary.owners} owners`}
-                </a>
+                </Button>
                 <p className="t-small text-ink-muted">
                   {summary.owners === 1
                     ? "It goes straight to the owner."
@@ -424,22 +424,26 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                   Your budget is not sent.
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <a
+                  <Button
+                    variant="secondary"
+                    size="sm"
                     href={`/api/export/shortlist/?sites=${live}${from ? `&from=${from}` : ""}`}
                     rel="nofollow"
-                    className="oh-btn secondary sm"
+
                     data-action="export-excel"
                   >
                     Download Excel
-                  </a>
-                  <a
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
                     href={`/shortlist/sheets/?sites=${live}${dates.size ? `&${dates.toString()}` : ""}`}
                     rel="nofollow"
-                    className="oh-btn secondary sm"
+
                     data-action="export-sheets"
                   >
                     Site sheets to print
-                  </a>
+                  </Button>
                 </div>
               </div>
 
@@ -455,20 +459,24 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                   className="oh-input data mt-1"
                 />
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <button type="button" className="oh-btn secondary sm" data-copy={sharePath}>
+                  <Button variant="secondary" size="sm" type="button" data-copy={sharePath}>
                     Copy link
-                  </button>
-                  <a
-                    className="oh-btn secondary sm"
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+
                     href={`https://wa.me/?text=${encodeURIComponent(`A shortlist of ${summary.sites} out-of-home ${summary.sites === 1 ? "site" : "sites"} on OOHWORKS: ${shareUrl}`)}`}
                     target="_blank"
                     rel="noopener noreferrer nofollow"
                   >
                     WhatsApp
-                  </a>
+                  </Button>
                   {cards.length >= 2 ? (
-                    <a
-                      className="oh-btn secondary sm"
+                    <Button
+                      variant="secondary"
+                      size="sm"
+
                       href={`/compare/?sites=${cards
                         .slice(0, LISTS.compare.max)
                         .map((c) => c.site.permanentId)
@@ -480,7 +488,7 @@ export default async function ShortlistPage({ searchParams }: { searchParams: Pr
                       {cards.length > LISTS.compare.max
                         ? `the first ${LISTS.compare.max}`
                         : "these"}
-                    </a>
+                    </Button>
                   ) : null}
                 </div>
                 <p className="t-small text-ink-muted mt-2">

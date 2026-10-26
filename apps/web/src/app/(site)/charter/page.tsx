@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, NEUTRALITY_LINE } from "@ohworks/ui";
+import { Container, NEUTRALITY_LINE, Numeral } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { CHARTER } from "@/lib/site";
 import { alternates } from "@/lib/seo";
@@ -15,7 +15,7 @@ export default function CharterPage() {
   return (
     <Shell>
       <Container className="py-12 lg:py-16">
-        <div className="mx-auto max-w-[680px]">
+        <div className="max-w-article mx-auto">
           <p className="t-label text-ink-muted">The charter</p>
           <h1 className="t-display-lg mt-3">Five things we will never do</h1>
           <p className="text-ink-muted t-body-lg mt-5">
@@ -26,7 +26,7 @@ export default function CharterPage() {
           <ol className="divide-hairline border-hairline mt-10 divide-y border-y">
             {CHARTER.map((rule, i) => (
               <li key={rule.title} className="flex gap-5 py-6">
-                <span className="t-data-lg text-ink-faint w-8 shrink-0">{i + 1}</span>
+                <Numeral n={i + 1} column />
                 <div>
                   <h2 className="t-display-sm">{rule.title}</h2>
                   <p className="text-ink-muted t-body-lg mt-2">{rule.body}</p>

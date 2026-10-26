@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, NEUTRALITY_LINE } from "@ohworks/ui";
+import { Container, NEUTRALITY_LINE, Numeral } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { alternates } from "@/lib/seo";
 
@@ -38,7 +38,7 @@ export default function OrderPage() {
   return (
     <Shell active="find">
       <Container className="py-12 lg:py-16">
-        <div className="mx-auto max-w-[680px]">
+        <div className="max-w-article mx-auto">
           <p className="t-label text-ink-muted">Find sites</p>
           <h1 className="t-display-lg mt-3">How results are ordered</h1>
           <p className="t-body-lg text-ink-muted mt-5">
@@ -49,9 +49,7 @@ export default function OrderPage() {
           <ol className="divide-hairline border-hairline mt-8 divide-y border-y">
             {FACTORS.map((f, i) => (
               <li key={f.t} className="flex gap-5 py-5">
-                <span className="t-data-lg text-ink-faint w-8 shrink-0" aria-hidden="true">
-                  {i + 1}
-                </span>
+                <Numeral n={i + 1} column />
                 <div>
                   <h2 className="t-display-sm">{f.t}</h2>
                   <p className="t-body text-ink-muted mt-1">{f.d}</p>

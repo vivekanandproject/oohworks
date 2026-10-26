@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@ohworks/ui";
+
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { LngLatBounds, Map as LiveMapGl, Marker, NavigationControl, Popup } from "maplibre-gl";
 import Supercluster from "supercluster";
@@ -33,6 +35,11 @@ const emit = (name: string, id: string | null) =>
  * Nearby sites gather into a counted cluster that splits as you zoom in. Pointing at a card lights
  * its pin, and the reverse; one pin is selected at a time.
  */
+/** Cooperative gestures for a map that sits in the page on a touch screen. */
+function inPage(full: boolean): boolean {
+  return !full && window.matchMedia("(pointer: coarse)").matches;
+}
+
 export default function LiveMap({
   points,
   styleUrl,
@@ -40,6 +47,7 @@ export default function LiveMap({
   bbox,
   areaBase,
   fallback,
+  full = false,
 }: {
   points: MapPoint[];
   styleUrl: string;
@@ -51,12 +59,24 @@ export default function LiveMap({
   areaBase?: string | undefined;
   /** Shown in place of the map if this browser cannot draw one. */
   fallback?: ReactNode;
+  /** The map fills the screen, so one finger may pan it. */
+  full?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LiveMapGl | null>(null);
   const [moved, setMoved] = useState(false);
   const [failed, setFailed] = useState(false);
   const boxKey = bbox?.join(",") ?? "";
+  const fullRef = useRef(full);
+
+  // On a touch screen a map inside the page takes two fingers, so one finger keeps scrolling the page.
+  useEffect(() => {
+    fullRef.current = full;
+    const map = mapRef.current;
+    if (!map) return;
+    if (inPage(full)) map.cooperativeGestures.enable();
+    else map.cooperativeGestures.disable();
+  }, [full]);
 
   useEffect(() => {
     const first = points[0];
@@ -77,6 +97,7 @@ export default function LiveMap({
         center,
         zoom: first || box ? 13 : 4,
         attributionControl: { compact: true },
+        cooperativeGestures: inPage(fullRef.current),
       });
     } catch {
       // No WebGL, most often. The page carries on with the still drawing and the list.
@@ -270,14 +291,17 @@ export default function LiveMap({
     <>
       <div ref={ref} className="h-full w-full" data-section="live-map" />
       {areaBase && moved ? (
-        <button
+        <Button
+          variant="primary"
+          size="sm"
+          className="shadow-float absolute top-3 left-1/2 -translate-x-1/2"
           type="button"
-          className="oh-btn primary sm shadow-float absolute top-3 left-1/2 -translate-x-1/2"
+
           onClick={searchHere}
           data-action="search-area"
         >
           Search this area
-        </button>
+        </Button>
       ) : null}
     </>
   );

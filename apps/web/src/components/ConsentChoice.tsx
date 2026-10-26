@@ -23,7 +23,7 @@ export function ConsentChoice() {
         ? "You declined Google Analytics on this browser."
         : "You have not chosen yet. The question is at the foot of the screen.";
   return (
-    <div className="border-hairline bg-paper-raised mt-6 flex flex-col gap-3 rounded-md border p-4 sm:flex-row sm:items-center sm:justify-between lg:p-5">
+    <div className="oh-box mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="t-body text-ink" role="status">
         {said}
       </p>

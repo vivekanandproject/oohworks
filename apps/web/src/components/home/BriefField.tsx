@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Icon } from "@ohworks/ui";
+import { Button, Icon } from "@ohworks/ui";
 import { briefChips } from "@/lib/sites/brief";
 
 export interface BriefExample {
@@ -45,9 +45,9 @@ export function BriefField({ examples }: { examples: BriefExample[] }) {
             aria-describedby="brief-reading"
           />
         </div>
-        <button type="submit" className="oh-btn accent lg">
+        <Button variant="accent" size="lg" type="submit">
           Find sites
-        </button>
+        </Button>
       </form>
       <div
         id="brief-reading"

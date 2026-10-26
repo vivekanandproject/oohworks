@@ -5,7 +5,7 @@ export interface WordmarkProps {
   className?: string;
 }
 
-/** The name alone, as live text in Poppins 700. The mark (Mark.tsx) stays for favicons and site plates. */
+/** The name alone, as live text in Poppins 700. The mark (Mark.tsx) stays for site plates; the favicon is the letters OH. */
 export function Wordmark({ onDark = false, size = 32, className }: WordmarkProps) {
   return (
     <span

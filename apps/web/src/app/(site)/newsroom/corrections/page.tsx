@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Button, Container, EmptyState } from "@ohworks/ui";
+import { Button, Container, EmptyState, Breadcrumbs } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { formatDate } from "@/lib/editorial/format";
 import { allCorrections } from "@/lib/editorial/queries";
@@ -19,12 +19,8 @@ export default async function CorrectionsPage() {
   return (
     <Shell active="news">
       <Container className="py-12 lg:py-16">
-        <div className="mx-auto max-w-[680px]">
-          <nav aria-label="Breadcrumb" className="t-small text-ink-muted">
-            <a className="oh-link" href="/newsroom/">
-              Newsroom
-            </a>
-          </nav>
+        <div className="max-w-article mx-auto">
+          <Breadcrumbs items={[{ label: "Newsroom", href: "/newsroom/" }]} />
           <h1 className="t-display-lg mt-4">Corrections</h1>
           <p className="t-body-lg text-ink-muted mt-4">
             When a published piece is wrong, we fix it and say so here and on the piece: the date,

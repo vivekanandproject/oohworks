@@ -114,13 +114,16 @@ export default async function KitPage({ searchParams }: { searchParams: Promise<
                 />
               </div>
               <div>
-                <button
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="w-full sm:w-auto"
                   type="submit"
-                  className="oh-btn primary lg w-full sm:w-auto"
+
                   data-action="send-kit"
                 >
                   Send it to the OOHWORKS team
-                </button>
+                </Button>
               </div>
             </form>
 

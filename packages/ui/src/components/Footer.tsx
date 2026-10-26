@@ -50,7 +50,7 @@ export function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="border-hairline bg-paper border-t">
-      <div className="mx-auto w-full max-w-[1200px] px-4 py-12 lg:px-10">
+      <div className="max-w-content mx-auto w-full px-4 py-12 lg:px-10">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
             <a

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Badge, Icon, type IconName, NEUTRALITY_LINE, Note, Wordmark } from "@ohworks/ui";
+import { Badge, Button, type IconName, NEUTRALITY_LINE, Note, Wordmark } from "@ohworks/ui";
 import { BasketEnhance } from "@/components/sites/Basket";
-import { SpecSheet } from "@/components/sites/SiteParts";
+import { NoPhoto, SpecSheet } from "@/components/sites/SiteParts";
 import { formatDate } from "@/lib/editorial/format";
 import { picture } from "@/lib/editorial/media";
 import { absolute } from "@/lib/seo";
@@ -49,12 +49,12 @@ export default async function SheetsPage({ searchParams }: { searchParams: Promi
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <a href={back} className="oh-btn ghost sm" rel="nofollow">
+            <Button variant="ghost" size="sm" href={back} rel="nofollow">
               Back to your shortlist
-            </a>
-            <button type="button" className="oh-btn primary sm" data-print="">
+            </Button>
+            <Button variant="primary" size="sm" type="button" data-print="">
               Print or save as PDF
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -105,10 +105,7 @@ export default async function SheetsPage({ searchParams }: { searchParams: Promi
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <span className="flex flex-col items-center gap-2">
-                      <Icon name={icon} size={24} />
-                      <span className="t-small">No photo yet</span>
-                    </span>
+                    <NoPhoto icon={icon} />
                   )}
                 </div>
                 <div>

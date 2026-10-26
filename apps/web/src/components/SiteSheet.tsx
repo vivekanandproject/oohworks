@@ -11,10 +11,7 @@ const d = (ms: number) => ({ "--d": ms }) as CSSProperties;
 export function SiteSheet() {
   return (
     <Reveal mode="draw">
-      <figure
-        className="border-hairline bg-paper-raised rounded-md border p-4 sm:p-5"
-        data-section="site-sheet"
-      >
+      <figure className="oh-box" data-section="site-sheet">
         <svg
           viewBox="0 0 560 372"
           className="block h-auto w-full"
@@ -39,8 +36,8 @@ export function SiteSheet() {
           <text
             x="26"
             y="33"
-            className="fill-ink sheet-md font-mono"
-            style={{ fontVariantNumeric: "tabular-nums", ...d(60) }}
+            className="fill-ink sheet-md font-mono tabular-nums"
+            style={d(60)}
             data-fade
           >
             OW-8K3X2
@@ -330,8 +327,8 @@ export function SiteSheet() {
             x="544"
             y="342"
             textAnchor="end"
-            className="fill-ink sheet-md font-mono"
-            style={{ fontVariantNumeric: "tabular-nums", ...d(820) }}
+            className="fill-ink sheet-md font-mono tabular-nums"
+            style={d(820)}
             data-fade
           >
             12.93512, 77.62214

@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@ohworks/ui";
+
 import dynamic from "next/dynamic";
 import { useEffect, useState, type ReactNode } from "react";
 import type { MapBox, MapPoint } from "./LiveMap";
@@ -84,26 +86,33 @@ export function MapPanel({
             bbox={bbox}
             areaBase={areaBase}
             fallback={children}
+            full={full}
           />
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
+            className="absolute bottom-3 left-3 lg:hidden"
             type="button"
-            className="oh-btn secondary sm absolute bottom-3 left-3 lg:hidden"
+
             onClick={() => setFull((f) => !f)}
             data-action="map-full"
           >
             {full ? "Back to the list" : "Full screen"}
-          </button>
+          </Button>
         </>
       ) : (
         <>
           {children}
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
+            className="absolute top-3 left-1/2 -translate-x-1/2"
             type="button"
-            className="oh-btn secondary sm absolute top-3 left-1/2 -translate-x-1/2"
+
             onClick={goLive}
           >
             Show the live map
-          </button>
+          </Button>
         </>
       )}
     </div>

@@ -1,7 +1,7 @@
 import { FORM_GRID } from "@/components/owners/Frame";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { Container, Note, Notice } from "@ohworks/ui";
+import { Button, Container, Note, Notice } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { EnquirySummary } from "@/components/sites/EnquirySummary";
 import { GroupSummary } from "@/components/sites/Thread";
@@ -109,13 +109,16 @@ export default async function ConfirmPage({ searchParams }: { searchParams: Prom
                 />
               </div>
               <div>
-                <button
+                <Button
+                  variant="accent"
+                  size="lg"
+                  className="w-full sm:w-auto"
                   type="submit"
-                  className="oh-btn accent lg w-full sm:w-auto"
+
                   data-action="confirm"
                 >
                   Confirm and send
-                </button>
+                </Button>
               </div>
             </form>
 
@@ -126,9 +129,9 @@ export default async function ConfirmPage({ searchParams }: { searchParams: Prom
               data-section="resend-form"
             >
               <input type="hidden" name="ref" value={ref} />
-              <button type="submit" className="oh-btn ghost sm">
+              <Button variant="ghost" size="sm" type="submit">
                 Send the code again
-              </button>
+              </Button>
             </form>
             <p className="t-small text-ink-muted mt-4">
               Asked once. After that this browser is remembered for 30 days.

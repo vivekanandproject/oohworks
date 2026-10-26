@@ -1,7 +1,8 @@
+import { Badge, type BadgeKind } from "@ohworks/ui";
 import { STATE_LABEL, type SiteState } from "@/lib/owners/progress";
 
 /** Each state in the badge kind that means it: waiting is pending, held back is critical, live is verified. */
-const TONE: Record<SiteState, string> = {
+const TONE: Record<SiteState, BadgeKind> = {
   draft: "neutral",
   review: "pending",
   changes: "critical",
@@ -11,9 +12,9 @@ const TONE: Record<SiteState, string> = {
 /** Where a site stands, in a word. */
 export function StateTag({ state }: { state: SiteState }) {
   return (
-    <span className={`oh-badge ${TONE[state]}`} data-state={state}>
+    <Badge kind={TONE[state]} icon={false} data-state={state}>
       {STATE_LABEL[state]}
-    </span>
+    </Badge>
   );
 }
 
@@ -24,7 +25,7 @@ export { Notice } from "@ohworks/ui";
 export function Score({ value }: { value: number }) {
   return (
     <div className="min-w-[120px]">
-      <div className="bg-paper-sunken h-1.5 overflow-hidden rounded-full" aria-hidden="true">
+      <div className="bg-paper-sunken rounded-pill h-1.5 overflow-hidden" aria-hidden="true">
         <div
           className="bg-navy-700 h-full"
           style={{ width: `${Math.max(0, Math.min(100, value))}%` }}

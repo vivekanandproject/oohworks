@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isPermanentId } from "@ohworks/core";
-import { Container } from "@ohworks/ui";
+import { Button, Container, Radio } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { NativeSelect } from "@/components/NativeSelect";
 import { Notice, OwnerBar, Score, StateTag } from "@/components/owners/Bits";
@@ -242,7 +242,7 @@ export default async function OwnerSitePage({
                 <form
                   method="post"
                   action="/api/owner/quick/"
-                  className="border-hairline bg-paper-raised mt-4 flex flex-col gap-4 rounded-md border p-5"
+                  className="oh-box mt-4 flex flex-col gap-4"
                   data-section="quick-form"
                 >
                   <input type="hidden" name="id" value={id} />
@@ -256,19 +256,13 @@ export default async function OwnerSitePage({
                           ["on_request", "Price on request"],
                         ] as const
                       ).map(([v, label]) => (
-                        <label
+                        <Radio
                           key={v}
-                          className="t-body flex min-h-11 cursor-pointer items-center gap-2"
-                        >
-                          <input
-                            type="radio"
-                            name="priceDisplay"
-                            value={v}
-                            defaultChecked={site.priceDisplay === v}
-                            className="accent-navy h-[18px] w-[18px]"
-                          />
-                          {label}
-                        </label>
+                          name="priceDisplay"
+                          value={v}
+                          defaultChecked={site.priceDisplay === v}
+                          label={label}
+                        />
                       ))}
                     </div>
                   </fieldset>
@@ -292,26 +286,18 @@ export default async function OwnerSitePage({
                   <fieldset>
                     <legend className="oh-label">Availability</legend>
                     <div className="flex flex-wrap gap-x-6">
-                      <label className="t-body flex min-h-11 cursor-pointer items-center gap-2">
-                        <input
-                          type="radio"
-                          name="availability"
-                          value="free"
-                          defaultChecked={!booked}
-                          className="accent-navy h-[18px] w-[18px]"
-                        />
-                        It is free now
-                      </label>
-                      <label className="t-body flex min-h-11 cursor-pointer items-center gap-2">
-                        <input
-                          type="radio"
-                          name="availability"
-                          value="booked"
-                          defaultChecked={booked}
-                          className="accent-navy h-[18px] w-[18px]"
-                        />
-                        It is booked until
-                      </label>
+                      <Radio
+                        name="availability"
+                        value="free"
+                        defaultChecked={!booked}
+                        label="It is free now"
+                      />
+                      <Radio
+                        name="availability"
+                        value="booked"
+                        defaultChecked={booked}
+                        label="It is booked until"
+                      />
                     </div>
                     <label htmlFor="quick-booked" className="sr-only">
                       Booked until
@@ -326,9 +312,9 @@ export default async function OwnerSitePage({
                     />
                   </fieldset>
                   <div>
-                    <button type="submit" className="oh-btn primary" data-action="quick-save">
+                    <Button variant="primary" type="submit" data-action="quick-save">
                       Save and confirm as of today
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </section>
@@ -422,7 +408,7 @@ export default async function OwnerSitePage({
                   method="post"
                   action="/api/owner/photo/"
                   encType="multipart/form-data"
-                  className="border-hairline bg-paper-raised mt-4 grid gap-4 rounded-md border p-5 sm:grid-cols-2"
+                  className="oh-box mt-4 grid gap-4 sm:grid-cols-2"
                   data-section="photo-form"
                 >
                   <input type="hidden" name="id" value={id} />
@@ -478,9 +464,9 @@ export default async function OwnerSitePage({
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <button type="submit" className="oh-btn secondary" data-action="add-photo">
+                    <Button variant="secondary" type="submit" data-action="add-photo">
                       Add this photograph
-                    </button>
+                    </Button>
                   </div>
                 </form>
               ) : null}
@@ -559,10 +545,7 @@ export default async function OwnerSitePage({
             aria-label="About this listing"
             data-section="site-aside"
           >
-            <section
-              className="border-hairline bg-paper-raised rounded-md border p-5"
-              data-section="score"
-            >
+            <section className="oh-box" data-section="score">
               <h2 className="t-display-sm">How complete it is</h2>
               <div className="mt-3">
                 <Score value={site.qualityScore ?? 0} />
@@ -589,7 +572,7 @@ export default async function OwnerSitePage({
               <form
                 method="post"
                 action="/api/owner/site/withdraw/"
-                className="border-hairline bg-paper-raised rounded-md border p-5"
+                className="oh-box"
                 data-section="withdraw"
               >
                 <input type="hidden" name="id" value={id} />
@@ -598,15 +581,15 @@ export default async function OwnerSitePage({
                   It comes off OOHWORKS at once and becomes a draft. You can send it for review
                   again later.
                 </p>
-                <button type="submit" className="oh-btn danger mt-4" data-action="withdraw">
+                <Button variant="danger" className="mt-4" type="submit" data-action="withdraw">
                   Withdraw from OOHWORKS
-                </button>
+                </Button>
               </form>
             ) : state === "review" ? null : (
               <form
                 method="post"
                 action="/api/owner/site/remove/"
-                className="border-hairline bg-paper-raised rounded-md border p-5"
+                className="oh-box"
                 data-section="remove"
               >
                 <input type="hidden" name="id" value={id} />
@@ -614,9 +597,9 @@ export default async function OwnerSitePage({
                 <p className="t-body text-ink-muted mt-3">
                   It has never been live, so it is removed for good.
                 </p>
-                <button type="submit" className="oh-btn danger mt-4" data-action="remove">
+                <Button variant="danger" className="mt-4" type="submit" data-action="remove">
                   Remove this draft
-                </button>
+                </Button>
               </form>
             )}
           </aside>

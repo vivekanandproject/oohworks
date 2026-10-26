@@ -1,3 +1,4 @@
+import { Button, Chip } from "@ohworks/ui";
 import { formatDate, readTime, timeAgo } from "@/lib/editorial/format";
 import { picture } from "@/lib/editorial/media";
 import { PILLARS, PILLAR_KEYS, type PillarKey } from "@/lib/editorial/pillars";
@@ -130,67 +131,14 @@ export function PillarChips({
       className="chips-scroll border-hairline flex flex-wrap gap-2 border-t pt-4"
       data-section="pillars"
     >
-      <a
-        href="/newsroom/"
-        className="oh-chip"
-        aria-current={current === "all" ? "page" : undefined}
-      >
+      <Chip href="/newsroom/" current={current === "all"}>
         All
-      </a>
+      </Chip>
       {PILLAR_KEYS.filter((k) => counts[k] > 0 || k === current).map((k) => (
-        <a
-          key={k}
-          href={`${PILLARS[k].path}/`}
-          className="oh-chip"
-          aria-current={current === k ? "page" : undefined}
-        >
+        <Chip key={k} href={`${PILLARS[k].path}/`} current={current === k}>
           {PILLARS[k].label}
-        </a>
+        </Chip>
       ))}
-    </nav>
-  );
-}
-
-/** Numbered pages as real links. `base` has no trailing slash: page 1 is `${base}/`. */
-export function Pager({ base, page, pages }: { base: string; page: number; pages: number }) {
-  if (pages <= 1) return null;
-  const href = (n: number) => (n === 1 ? `${base}/` : `${base}/page/${n}/`);
-  const from = Math.max(1, Math.min(page - 2, pages - 4));
-  const numbers = Array.from({ length: Math.min(5, pages) }, (_, i) => from + i).filter(
-    (n) => n <= pages,
-  );
-  return (
-    <nav
-      aria-label="Pages"
-      className="border-hairline flex flex-wrap items-center justify-between gap-4 border-t pt-5"
-      data-section="pager"
-    >
-      <span className="t-data text-ink-muted">
-        Page {page} of {pages}
-      </span>
-      <div className="flex flex-wrap gap-2">
-        {page > 1 ? (
-          <a href={href(page - 1)} rel="prev" className="oh-btn secondary sm">
-            Newer
-          </a>
-        ) : null}
-        {numbers.map((n) =>
-          n === page ? (
-            <span key={n} aria-current="page" className="oh-btn primary sm">
-              {n}
-            </span>
-          ) : (
-            <a key={n} href={href(n)} className="oh-btn secondary sm">
-              {n}
-            </a>
-          ),
-        )}
-        {page < pages ? (
-          <a href={href(page + 1)} rel="next" className="oh-btn secondary sm">
-            Older
-          </a>
-        ) : null}
-      </div>
     </nav>
   );
 }
@@ -198,10 +146,7 @@ export function Pager({ base, page, pages }: { base: string; page: number; pages
 /** The newsletter sign-up, in the page and never a pop-up. A plain form: it works without JavaScript. */
 export function BriefingBand({ from, id }: { from: string; id: string }) {
   return (
-    <section
-      className="border-hairline bg-paper-raised flex flex-wrap items-start gap-6 rounded-md border p-4 lg:p-5"
-      data-section="briefing"
-    >
+    <section className="oh-box flex flex-wrap items-start gap-6" data-section="briefing">
       <div className="min-w-0 flex-[999_1_300px]">
         <h2 className="t-display-sm">The daily briefing</h2>
         <p className="t-body text-ink-muted mt-1">
@@ -236,9 +181,9 @@ export function BriefingBand({ from, id }: { from: string; id: string }) {
             autoComplete="email"
             className="oh-input min-w-0 flex-[1_1_180px]"
           />
-          <button type="submit" className="oh-btn primary">
+          <Button variant="primary" type="submit">
             Get the briefing
-          </button>
+          </Button>
         </div>
       </form>
     </section>

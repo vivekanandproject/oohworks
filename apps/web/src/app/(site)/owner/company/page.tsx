@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Container } from "@ohworks/ui";
+import { Button, Container, Badge } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { PhoneField } from "@/components/PhoneField";
 import { PlaceField } from "@/components/PlaceField";
@@ -232,7 +232,7 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
               >
                 {owner?.verified ? (
                   <p>
-                    <span className="oh-badge verified">Verified owner</span>
+                    <Badge kind="verified">Verified owner</Badge>
                   </p>
                 ) : null}
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -278,13 +278,16 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
               </FormSection>
 
               <div>
-                <button
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="w-full sm:w-auto"
                   type="submit"
-                  className="oh-btn primary lg w-full sm:w-auto"
+
                   data-action="save-company"
                 >
                   {owner ? "Save changes" : "Save and add sites"}
-                </button>
+                </Button>
               </div>
             </form>
           </div>
@@ -299,9 +302,9 @@ export default async function CompanyPage({ searchParams }: { searchParams: Prom
                     : "You have no password yet, so you sign in with a code sent to it."}
                 </p>
                 <p className="mt-3">
-                  <a href="/owner/password/" className="oh-btn secondary" data-action="password">
+                  <Button variant="secondary" href="/owner/password/" data-action="password">
                     {owner.passwordSetAt ? "Change your password" : "Create a password"}
-                  </a>
+                  </Button>
                 </p>
               </Card>
             ) : null}

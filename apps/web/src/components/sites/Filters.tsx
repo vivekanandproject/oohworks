@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Container } from "@ohworks/ui";
+import { Button, Container } from "@ohworks/ui";
 import type { Facets, Option } from "@/lib/sites/filter";
 import {
   activeCount,
@@ -188,9 +188,9 @@ function SizeForm({ state, id }: { state: SearchState; id: string }) {
         ) : (
           <span />
         )}
-        <button type="submit" className="oh-btn primary sm">
+        <Button variant="primary" size="sm" type="submit">
           Show sites
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -250,9 +250,9 @@ function PriceForm({ state, facets, id }: { state: SearchState; facets: Facets; 
           ) : (
             <span />
           )}
-          <button type="submit" className="oh-btn primary sm">
+          <Button variant="primary" size="sm" type="submit">
             Show sites
-          </button>
+          </Button>
         </div>
       </form>
       <div className="border-hairline border-t pt-2">
@@ -310,9 +310,9 @@ function DatesForm({ state, id }: { state: SearchState; id: string }) {
         ) : (
           <span />
         )}
-        <button type="submit" className="oh-btn primary sm">
+        <Button variant="primary" size="sm" type="submit">
           Show sites
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -460,19 +460,25 @@ export function PhoneBar({
       <p role="status" className="t-small text-ink pb-2 empty:hidden" data-list-status="" />
       {/* Sorting is in the filters drawer on a phone, which leaves room for both lists here. */}
       <div className="flex items-center gap-2">
-        <a
+        <Button
+          variant="secondary"
+          size="sm"
+          className="flex-1"
           href={toUrl(state, { panel: true })}
-          className="oh-btn secondary sm flex-1"
+
           rel="nofollow"
         >
           Filters {n ? <span className="font-mono">{n}</span> : null}
-        </a>
-        <a href="#map" className="oh-btn secondary sm flex-1">
+        </Button>
+        <Button variant="secondary" size="sm" className="flex-1" href="#map">
           Map
-        </a>
-        <a
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          className="flex-1"
           href="/compare/"
-          className="oh-btn secondary sm flex-1"
+
           hidden={compare === 0}
           data-plan-compare-phone=""
           rel="nofollow"
@@ -481,10 +487,13 @@ export function PhoneBar({
           <span className="font-mono" data-plan-compare-phone-n="">
             {compare}
           </span>
-        </a>
-        <a
+        </Button>
+        <Button
+          variant="primary"
+          size="sm"
+          className="flex-1"
           href="/shortlist/"
-          className="oh-btn primary sm flex-1"
+
           hidden={saved === 0}
           data-plan-saved=""
           rel="nofollow"
@@ -493,7 +502,7 @@ export function PhoneBar({
           <span className="font-mono" data-plan-saved-n="">
             {saved}
           </span>
-        </a>
+        </Button>
       </div>
     </div>
   );
@@ -643,9 +652,9 @@ export function FilterPanel({
           >
             Clear all
           </a>
-          <a href={closeUrl} className="oh-btn primary" rel="nofollow" data-show-results="">
+          <Button variant="primary" href={closeUrl} rel="nofollow" data-show-results="">
             Show {total} {total === 1 ? "site" : "sites"}
-          </a>
+          </Button>
         </div>
       </aside>
     </>

@@ -1,4 +1,4 @@
-import { Container } from "@ohworks/ui";
+import { Button, Container } from "@ohworks/ui";
 
 /**
  * What the buyer has saved so far, kept in view while they browse. It is always in the page so that
@@ -25,9 +25,11 @@ export function PlanBar({
           {text}
         </p>
         <div className="flex shrink-0 items-center gap-2">
-          <a
+          <Button
+            variant="secondary"
+            size="sm"
             href="/compare/"
-            className="oh-btn secondary sm"
+
             hidden={compare === 0}
             data-plan-compare=""
             rel="nofollow"
@@ -36,10 +38,10 @@ export function PlanBar({
             <span className="font-mono" data-plan-compare-n="">
               {compare}
             </span>
-          </a>
-          <a href="/shortlist/" className="oh-btn primary sm" rel="nofollow">
+          </Button>
+          <Button variant="primary" size="sm" href="/shortlist/" rel="nofollow">
             View shortlist
-          </a>
+          </Button>
         </div>
         <p role="status" className="t-small text-ink w-full empty:hidden" data-list-status="" />
       </Container>

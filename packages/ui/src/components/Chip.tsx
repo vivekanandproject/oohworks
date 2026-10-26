@@ -1,31 +1,42 @@
-import type { ReactNode } from "react";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
 
-export interface ChipProps {
+interface Common {
   children: ReactNode;
-  /** A link chip toggles a URL state; a button chip is for client-side filters. */
-  href?: string;
-  pressed?: boolean;
-  count?: number | string;
+  /** A figure beside the label, in mono. */
+  count?: number | string | undefined;
   /** Shows a small × so the chip reads as removable. */
   removable?: boolean;
-  onClick?: () => void;
-  ariaLabel?: string;
+  className?: string | undefined;
 }
 
-/** Filter chip. Pressed fills navy; counts sit in mono. Links keep the fixed facet order the SEO rules set. */
-export function Chip({
-  children,
-  href,
-  pressed = false,
-  count,
-  removable = false,
-  onClick,
-  ariaLabel,
-}: ChipProps) {
+/** A link chip moves to an address: a filter, a section, a part of the page. */
+export type ChipLinkProps = Common &
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children"> & {
+    href: string;
+    /** The chip for the page or filter in force. */
+    current?: boolean;
+  };
+/** A button chip toggles a filter on the page itself. */
+export type ChipButtonProps = Common &
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> & {
+    href?: undefined;
+    pressed?: boolean;
+  };
+
+/** Filter chip. The one in force fills navy; counts sit in mono. */
+export function Chip(props: ChipLinkProps | ChipButtonProps) {
+  const { children, count, removable = false, className, ...rest } = props;
+  const cls = ["oh-chip", className ?? ""].filter(Boolean).join(" ");
   const inner = (
     <>
       {children}
-      {count !== undefined ? <span className="count">{count}</span> : null}
+      {/* The space keeps "Hoardings 9" apart for a screen reader; the flex gap spaces it on screen. */}
+      {count !== undefined ? (
+        <>
+          {" "}
+          <span className="count">{count}</span>
+        </>
+      ) : null}
       {removable ? (
         <span className="x" aria-hidden="true">
           ×
@@ -33,27 +44,17 @@ export function Chip({
       ) : null}
     </>
   );
-  if (href) {
+  if (typeof rest.href === "string") {
+    const { current = false, ...link } = rest as ChipLinkProps;
     return (
-      <a
-        href={href}
-        className="oh-chip"
-        aria-pressed={pressed}
-        aria-label={ariaLabel}
-        rel="nofollow"
-      >
+      <a className={cls} aria-current={current ? "page" : undefined} {...link}>
         {inner}
       </a>
     );
   }
+  const { pressed, ...button } = rest as ChipButtonProps;
   return (
-    <button
-      type="button"
-      className="oh-chip"
-      aria-pressed={pressed}
-      aria-label={ariaLabel}
-      onClick={onClick}
-    >
+    <button type="button" className={cls} aria-pressed={pressed} {...button}>
       {inner}
     </button>
   );

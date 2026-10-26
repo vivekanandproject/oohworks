@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Button, Container, EmptyState } from "@ohworks/ui";
+import { Button, Container, EmptyState, Breadcrumbs } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { PieceRow } from "@/components/editorial/PieceBits";
 import { breadcrumbJsonLd } from "@/lib/editorial/jsonld";
@@ -48,12 +48,8 @@ export default async function TopicPage({ params }: Params) {
         ])}
       />
       <Container className="py-12 lg:py-16">
-        <div className="mx-auto max-w-[760px]">
-          <nav aria-label="Breadcrumb" className="t-small text-ink-muted">
-            <a className="oh-link" href="/newsroom/">
-              Newsroom
-            </a>
-          </nav>
+        <div className="max-w-column mx-auto">
+          <Breadcrumbs items={[{ label: "Newsroom", href: "/newsroom/" }]} />
           <p className="t-label text-ink-muted mt-4">{KIND[tag.kind] ?? "Topic"}</p>
           <h1 className="t-display-lg mt-2">{tag.name}</h1>
           {tag.description ? (

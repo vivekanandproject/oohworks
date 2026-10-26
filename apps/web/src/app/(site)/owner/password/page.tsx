@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container } from "@ohworks/ui";
+import { Button, Container } from "@ohworks/ui";
 import { PasswordField } from "@/components/PasswordField";
 import { Shell } from "@/components/Shell";
 import { Notice, OwnerBar } from "@/components/owners/Bits";
@@ -61,7 +61,7 @@ export default async function PasswordPage({ searchParams }: { searchParams: Pro
           <form
             method="post"
             action="/api/owner/password/"
-            className="border-hairline bg-paper-raised mt-6 flex flex-col gap-5 rounded-md border p-5 sm:p-6"
+            className="oh-box mt-6 flex flex-col gap-5"
             data-section="password-form"
           >
             {afterCode ? <input type="hidden" name="after" value="code" /> : null}
@@ -92,9 +92,15 @@ export default async function PasswordPage({ searchParams }: { searchParams: Pro
                 At least 8 characters. A few words together is strong and easy to remember.
               </p>
             </div>
-            <button type="submit" className="oh-btn primary lg w-full" data-action="save-password">
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-full"
+              type="submit"
+              data-action="save-password"
+            >
               Save password
-            </button>
+            </Button>
           </form>
           <p className="t-body text-ink-muted mt-5 text-center">
             <a href="/owner/" className="oh-link" data-action="skip-password">

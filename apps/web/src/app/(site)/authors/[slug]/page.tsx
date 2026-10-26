@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Badge, Button, Container, EmptyState } from "@ohworks/ui";
+import { Badge, Button, Container, EmptyState, Breadcrumbs, Avatar } from "@ohworks/ui";
 import type { Media } from "@/payload-types";
 import { Shell } from "@/components/Shell";
 import { PieceRow } from "@/components/editorial/PieceBits";
@@ -46,29 +46,10 @@ export default async function AuthorPage({ params }: Params) {
         ]}
       />
       <Container className="py-12 lg:py-16">
-        <div className="mx-auto max-w-[760px]">
-          <nav aria-label="Breadcrumb" className="t-small text-ink-muted">
-            <a className="oh-link" href="/newsroom/">
-              Newsroom
-            </a>
-          </nav>
+        <div className="max-w-column mx-auto">
+          <Breadcrumbs items={[{ label: "Newsroom", href: "/newsroom/" }]} />
           <header className="mt-4 flex items-start gap-5">
-            {photo ? (
-              <img
-                src={photo.src}
-                alt=""
-                width={96}
-                height={96}
-                className="rounded-pill bg-paper-sunken h-24 w-24 shrink-0 object-cover"
-              />
-            ) : (
-              <span
-                aria-hidden="true"
-                className="rounded-pill bg-navy font-display text-on-navy grid h-24 w-24 shrink-0 place-items-center text-[36px] font-bold"
-              >
-                {person.name.charAt(0).toUpperCase()}
-              </span>
-            )}
+            <Avatar name={person.name} src={photo?.src} size={96} />
             <div className="min-w-0">
               <h1 className="t-display-lg">{person.name}</h1>
               <p className="t-body text-ink-muted mt-2">{person.role}</p>

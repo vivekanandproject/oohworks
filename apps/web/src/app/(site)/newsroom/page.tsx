@@ -77,6 +77,8 @@ export default async function NewsroomPage() {
                     <a href={lead.url} tabIndex={-1} aria-hidden="true">
                       <img
                         src={leadPhoto.src}
+                        srcSet={leadPhoto.srcSet}
+                        sizes="(min-width: 1024px) 760px, 100vw"
                         alt=""
                         width={leadPhoto.width}
                         height={leadPhoto.height}
@@ -145,10 +147,7 @@ export default async function NewsroomPage() {
                     </section>
                   ) : null}
                   {report ? (
-                    <section
-                      className="border-hairline bg-paper-raised flex flex-col gap-3 rounded-md border p-5"
-                      data-section="data"
-                    >
+                    <section className="oh-box flex flex-col gap-3" data-section="data">
                       <p className="t-label text-ink-muted">{eyebrow(report)}</p>
                       <h2 className="t-display-sm">
                         <a href={report.url} className="oh-rowlink">
@@ -165,7 +164,7 @@ export default async function NewsroomPage() {
               ) : null}
             </div>
           ) : (
-            <div className="mx-auto w-full max-w-[760px]">
+            <div className="max-w-column mx-auto w-full">
               <EmptyState
                 icon="enquiry"
                 title="The newsroom opens at launch"
@@ -190,9 +189,9 @@ export default async function NewsroomPage() {
               data-section="more"
             >
               <span className="t-data text-ink-muted">{total} pieces in the newsroom</span>
-              <a href="/newsroom/all/" className="oh-btn secondary sm">
+              <Button variant="secondary" size="sm" href="/newsroom/all/">
                 All stories
-              </a>
+              </Button>
             </nav>
           ) : null}
         </div>

@@ -1,4 +1,4 @@
-import { Badge, Container } from "@ohworks/ui";
+import { Badge, Container, Breadcrumbs, Chip, Avatar } from "@ohworks/ui";
 import type { Correction, Media, Person } from "@/payload-types";
 import { JsonLd, absolute } from "@/lib/seo";
 import { formatDate, readTime } from "@/lib/editorial/format";
@@ -21,39 +21,19 @@ import { BriefingBand, PieceCard, TextRow, authorNames, eyebrow } from "./PieceB
 /** Rails appear on pieces long enough to need a map: at least two sections and this many words. */
 const RAILS_MIN_WORDS = 300;
 
-function Avatar({ person, size = 48 }: { person: Person | undefined; size?: number }) {
+function PersonAvatar({ person, size = 48 }: { person: Person | undefined; size?: 48 | 96 }) {
   const photo =
     person && typeof person.photo === "object" && person.photo !== null
       ? picture(person.photo as Media, "thumb")
       : null;
-  if (photo) {
-    return (
-      <img
-        src={photo.src}
-        alt=""
-        width={size}
-        height={size}
-        className="rounded-pill bg-paper-sunken shrink-0 object-cover"
-        style={{ width: size, height: size }}
-      />
-    );
-  }
-  return (
-    <span
-      aria-hidden="true"
-      className="rounded-pill bg-navy font-display text-on-navy grid shrink-0 place-items-center text-[18px] font-bold"
-      style={{ width: size, height: size }}
-    >
-      {(person?.name ?? "o").charAt(0).toUpperCase()}
-    </span>
-  );
+  return <Avatar name={person?.name ?? "OOHWORKS"} src={photo?.src} size={size} />;
 }
 
 function Byline({ piece }: { piece: Piece }) {
   const first = piece.authors[0];
   return (
     <div className="flex items-center gap-3" data-section="byline">
-      <Avatar person={first} />
+      <PersonAvatar person={first} />
       <div className="min-w-0">
         <p className="t-body-strong">
           {piece.authors.length
@@ -117,24 +97,17 @@ function Head({ piece }: { piece: Piece }) {
   const pillar = PILLARS[piece.pillar];
   return (
     <header className="flex flex-col gap-4">
-      <nav aria-label="Breadcrumb" className="t-small text-ink-muted">
-        <a className="oh-link" href="/newsroom/">
-          Newsroom
-        </a>{" "}
-        <span aria-hidden="true">›</span>{" "}
-        <a className="oh-link" href={`${pillar.path}/`}>
-          {pillar.label}
-        </a>
-      </nav>
+      <Breadcrumbs
+        items={[
+          { label: "Newsroom", href: "/newsroom/" },
+          { label: pillar.label, href: `${pillar.path}/` },
+        ]}
+      />
       <p className="t-label text-ink-muted">{eyebrow(piece)}</p>
       <h1 className="t-display-lg text-ink">{piece.title}</h1>
       <p className="t-body-xl text-ink-muted">{piece.standfirst}</p>
       {piece.shortAnswer ? (
-        <section
-          aria-label="Short answer"
-          className="border-hairline bg-paper-raised rounded-md border p-5"
-          data-section="short-answer"
-        >
+        <section aria-label="Short answer" className="oh-box" data-section="short-answer">
           <h2 className="t-label text-ink-muted">Short answer</h2>
           <p className="t-body-lg text-ink mt-2">{piece.shortAnswer}</p>
         </section>
@@ -212,11 +185,8 @@ function AuthorCards({ piece }: { piece: Piece }) {
   return (
     <div className="flex flex-col gap-4" data-section="authors">
       {piece.authors.map((a) => (
-        <section
-          key={a.id}
-          className="border-hairline bg-paper-raised flex items-start gap-4 rounded-md border p-5"
-        >
-          <Avatar person={a} />
+        <section key={a.id} className="oh-box flex items-start gap-4">
+          <PersonAvatar person={a} />
           <div className="min-w-0">
             <h2 className="t-body-strong">
               {a.slug ? (
@@ -250,9 +220,9 @@ function Topics({ piece }: { piece: Piece }) {
     <nav aria-label="Topics" className="flex flex-wrap items-center gap-2" data-section="topics">
       <span className="t-label text-ink-muted mr-1">Topics</span>
       {tags.map((t) => (
-        <a key={t.id} href={`/topics/${t.slug}/`} className="oh-chip">
+        <Chip key={t.id} href={`/topics/${t.slug}/`}>
           {t.name}
-        </a>
+        </Chip>
       ))}
     </nav>
   );
@@ -338,6 +308,8 @@ export async function ArticleView({ piece }: { piece: Piece }) {
       {immersive && hero ? (
         <img
           src={hero.src}
+          srcSet={hero.srcSet}
+          sizes="100vw"
           alt={hero.alt}
           width={hero.width}
           height={hero.height}
@@ -356,7 +328,7 @@ export async function ArticleView({ piece }: { piece: Piece }) {
             <p className="t-small text-ink-muted mx-auto mt-3 max-w-[880px]">
               Photo: {hero.credit}
             </p>
-            <div className="mx-auto mt-8 max-w-[680px]">{bodyBlock}</div>
+            <div className="max-w-article mx-auto mt-8">{bodyBlock}</div>
           </>
         ) : rails ? (
           <>
@@ -367,6 +339,8 @@ export async function ArticleView({ piece }: { piece: Piece }) {
               <figure className="mt-6">
                 <img
                   src={hero.src}
+                  srcSet={hero.srcSet}
+                  sizes="(min-width: 1280px) 1200px, 100vw"
                   alt={hero.alt}
                   width={hero.width}
                   height={hero.height}
@@ -400,7 +374,7 @@ export async function ArticleView({ piece }: { piece: Piece }) {
                   className="lg:sticky lg:top-[92px] lg:col-start-3 lg:row-start-1"
                   data-section="key-facts"
                 >
-                  <div className="border-hairline bg-paper-raised rounded-md border p-5">
+                  <div className="oh-box">
                     <h2 className="t-label text-ink-muted">Key facts</h2>
                     <ul className="mt-1">
                       {keyFacts.map((f, i) => {
@@ -408,10 +382,7 @@ export async function ArticleView({ piece }: { piece: Piece }) {
                         const src = id !== undefined ? sources.byId.get(id) : undefined;
                         return (
                           <li key={i} className="border-hairline border-t py-3 first:border-t-0">
-                            <p
-                              className="t-data-lg text-ink break-words"
-                              style={{ fontVariantNumeric: "tabular-nums" }}
-                            >
+                            <p className="t-data-lg text-ink break-words tabular-nums">
                               {f.value}
                               {f.unit ? <span className="t-small"> {f.unit}</span> : null}
                             </p>
@@ -433,12 +404,14 @@ export async function ArticleView({ piece }: { piece: Piece }) {
             />
           </>
         ) : (
-          <div className="mx-auto max-w-[680px]">
+          <div className="max-w-article mx-auto">
             <Head piece={piece} />
             {hero ? (
               <figure className="mt-6">
                 <img
                   src={hero.src}
+                  srcSet={hero.srcSet}
+                  sizes="(min-width: 720px) 680px, 100vw"
                   alt={hero.alt}
                   width={hero.width}
                   height={hero.height}
@@ -464,7 +437,7 @@ export async function ArticleView({ piece }: { piece: Piece }) {
             </div>
           </div>
         ) : (
-          <div className="mx-auto mt-12 flex max-w-[680px] flex-col gap-8">
+          <div className="max-w-article mx-auto mt-12 flex flex-col gap-8">
             <Sources sources={sources} corrections={corrections} />
             <AuthorCards piece={piece} />
             <BriefingBand from={piece.url} id="brief-article" />
@@ -473,7 +446,7 @@ export async function ArticleView({ piece }: { piece: Piece }) {
 
         {related.length ? (
           <section
-            className={`mt-12 ${rails || immersive ? "" : "mx-auto max-w-[680px]"}`}
+            className={`mt-12 ${rails || immersive ? "" : "max-w-article mx-auto"}`}
             data-section="related"
           >
             <h2 className="t-display-md">Related</h2>

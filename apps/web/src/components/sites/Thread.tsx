@@ -126,11 +126,7 @@ export function Thread({
 export function GroupSummary({ group }: { group: Group }) {
   const sites = group.requests.reduce((n, r) => n + r.sites.length, 0);
   return (
-    <aside
-      className="border-hairline bg-paper-raised rounded-md border p-5"
-      aria-label="What you are sending"
-      data-section="group-summary"
-    >
+    <aside className="oh-box" aria-label="What you are sending" data-section="group-summary">
       <p className="t-label text-ink-muted">You are asking</p>
       <p className="t-title mt-2">
         {group.requests.length === 1

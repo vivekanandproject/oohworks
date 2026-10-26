@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Badge, Container, NEUTRALITY_LINE } from "@ohworks/ui";
+import { Badge, Container, NEUTRALITY_LINE, Breadcrumbs, Pager } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance, ListSync } from "@/components/sites/Basket";
 import { PlanBar } from "@/components/sites/PlanBar";
@@ -82,19 +82,7 @@ export default async function OwnerPublicPage({
       <ListSync />
       <QuickView />
       <Container className="pt-6 pb-14">
-        <nav aria-label="Breadcrumb" className="t-small text-ink-muted" data-section="breadcrumb">
-          <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <li>
-              <a href="/search/" className="oh-link">
-                Find sites
-              </a>
-            </li>
-            <li aria-hidden="true">›</li>
-            <li>
-              <span aria-current="page">{owner.name}</span>
-            </li>
-          </ol>
-        </nav>
+        <Breadcrumbs items={[{ label: "Find sites", href: "/search/" }, { label: owner.name }]} />
 
         <h1 className="t-display-lg mt-4" data-section="owner-title">
           {owner.name}
@@ -163,34 +151,12 @@ export default async function OwnerPublicPage({
           ))}
         </div>
 
-        {data.pages > 1 ? (
-          <nav
-            aria-label="Pages"
-            className="border-hairline mt-8 flex flex-wrap items-center justify-between gap-4 border-t pt-5"
-            data-section="pager"
-          >
-            {page > 1 ? (
-              <a
-                href={page === 2 ? `/owners/${slug}/` : `/owners/${slug}/?page=${page - 1}`}
-                className="oh-link t-body"
-              >
-                Previous
-              </a>
-            ) : (
-              <span />
-            )}
-            <span className="t-small text-ink-muted">
-              Page {page} of {data.pages}
-            </span>
-            {page < data.pages ? (
-              <a href={`/owners/${slug}/?page=${page + 1}`} className="oh-link t-body">
-                Next
-              </a>
-            ) : (
-              <span />
-            )}
-          </nav>
-        ) : null}
+        <Pager
+          page={page}
+          pages={data.pages}
+          href={(n) => (n === 1 ? `/owners/${slug}/` : `/owners/${slug}/?page=${n}`)}
+          className="mt-8"
+        />
       </Container>
       <PlanBar text={plan} saved={lists.saved.length} compare={lists.compare.length} />
     </Shell>

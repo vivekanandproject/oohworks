@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { permanentIdFromSlug } from "@ohworks/core";
-import { Badge, Button, Container, Note } from "@ohworks/ui";
+import { Badge, Button, Container, Note, Breadcrumbs } from "@ohworks/ui";
 import { PageHead } from "@/components/owners/Frame";
 import { Shell } from "@/components/Shell";
 import { BasketEnhance } from "@/components/sites/Basket";
@@ -264,37 +264,23 @@ export default async function SitePage({
       <BasketEnhance />
       <QuickView />
       <Container className="pt-6 pb-12 lg:pb-16">
-        <nav aria-label="Breadcrumb" className="t-small text-ink-muted" data-section="breadcrumb">
-          <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <li>
-              <a href="/search/" className="oh-link">
-                Find sites
-              </a>
-            </li>
-            <li aria-hidden="true">›</li>
-            <li>
-              <a
-                href={hubs.city ?? `/search/?city=${site.city}`}
-                {...(hubs.city ? {} : { rel: "nofollow" })}
-                className="oh-link"
-                data-crumb="city"
-              >
-                {city}
-              </a>
-            </li>
-            <li aria-hidden="true">›</li>
-            <li>
-              <a
-                href={hubs.locality ?? `/search/?city=${site.city}&locality=${site.localitySlug}`}
-                {...(hubs.locality ? {} : { rel: "nofollow" })}
-                className="oh-link"
-                data-crumb="locality"
-              >
-                {site.locality}
-              </a>
-            </li>
-          </ol>
-        </nav>
+        <Breadcrumbs
+          items={[
+            { label: "Find sites", href: "/search/" },
+            {
+              label: city,
+              href: hubs.city ?? `/search/?city=${site.city}`,
+              rel: hubs.city ? undefined : "nofollow",
+              name: "city",
+            },
+            {
+              label: site.locality,
+              href: hubs.locality ?? `/search/?city=${site.city}&locality=${site.localitySlug}`,
+              rel: hubs.locality ? undefined : "nofollow",
+              name: "locality",
+            },
+          ]}
+        />
 
         {site.sample ? (
           <Note section="sample-notice" className="mt-4">
@@ -329,8 +315,9 @@ export default async function SitePage({
             </p>
           </div>
 
+          {/* It stays in view only on a screen tall enough to show all of it, owner card included. */}
           <aside
-            className="space-y-5 self-start lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1"
+            className="space-y-5 self-start lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:[@media(min-height:820px)]:sticky lg:[@media(min-height:820px)]:top-24"
             data-section="aside"
           >
             <PriceBlock site={site} owner={owner} availability={availability} />
@@ -349,9 +336,9 @@ export default async function SitePage({
                 on={lists.compare.includes(unitId)}
                 back={canonical}
               />
-              <button type="button" className="oh-btn secondary sm" data-copy={canonical}>
+              <Button variant="secondary" size="sm" type="button" data-copy={canonical}>
                 Copy link
-              </button>
+              </Button>
               <a
                 href="/shortlist/"
                 rel="nofollow"
@@ -386,6 +373,7 @@ export default async function SitePage({
               <div className="border-hairline bg-paper-sunken mt-4 h-[280px] overflow-hidden rounded-md border sm:h-[380px]">
                 <MapPanel points={[point]} styleUrl={MAP_STYLE} here>
                   <StillMap
+                    wide
                     points={[point]}
                     facing={site.facingDeg ?? null}
                     label={`The position of this site${site.facingDeg != null ? ` and the direction it faces, ${facingText(site.facingDeg)}` : ""}. Open the live map for streets.`}
@@ -411,7 +399,7 @@ export default async function SitePage({
             <section data-section="audience">
               <h2 className="t-display-sm">Who sees it</h2>
               {audience?.figure ? (
-                <div className="border-hairline bg-paper-raised mt-3 rounded-md border p-5">
+                <div className="oh-box mt-3">
                   <p className="oh-amount">
                     {lakh(audience.figure)} <small>people a week</small>
                   </p>
@@ -427,7 +415,7 @@ export default async function SitePage({
                   </p>
                 </div>
               ) : (
-                <p className="t-body border-hairline bg-paper-raised text-ink mt-3 max-w-[60ch] rounded-md border p-5">
+                <p className="oh-box t-body text-ink mt-3 max-w-[60ch]">
                   Not provided yet. We show an audience figure only with a named source and a date.
                   Ask the owner.
                 </p>
@@ -500,14 +488,16 @@ export default async function SitePage({
           </p>
           <p className="t-small text-ink-muted truncate">{availability.label}</p>
         </div>
-        <a
+        <Button
+          variant="accent"
+          className="shrink-0"
           href={`/enquire/${site.permanentId}/`}
           rel="nofollow"
-          className="oh-btn accent shrink-0"
+
           data-action="enquire"
         >
           {action}
-        </a>
+        </Button>
       </div>
     </Shell>
   );

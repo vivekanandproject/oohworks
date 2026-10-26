@@ -1,5 +1,14 @@
 import type { ReactNode } from "react";
-import { Badge, Icon, NEUTRALITY_LINE, type IconName } from "@ohworks/ui";
+import {
+  Button,
+  Badge,
+  Icon,
+  NEUTRALITY_LINE,
+  type IconName,
+  Chip,
+  Avatar,
+  Numeral,
+} from "@ohworks/ui";
 import { formatDate } from "@/lib/editorial/format";
 import { picture } from "@/lib/editorial/media";
 import type { MonthView } from "@/lib/sites/calendar";
@@ -63,6 +72,8 @@ export function Gallery({ site }: { site: Site }) {
           >
             <img
               src={s.pic.src}
+              srcSet={s.pic.srcSet}
+              sizes="(min-width: 1024px) 760px, 100vw"
               alt={s.pic.alt || `${KIND[s.kind]} of this site`}
               width={s.pic.width}
               height={s.pic.height}
@@ -86,9 +97,9 @@ export function Gallery({ site }: { site: Site }) {
       {shots.length > 1 ? (
         <div className="mt-3 flex flex-wrap gap-2">
           {shots.map((s, i) => (
-            <a key={s.pic.src} href={`#photo-${i + 1}`} className="oh-chip">
+            <Chip key={s.pic.src} href={`#photo-${i + 1}`}>
               {KIND[s.kind]}
-            </a>
+            </Chip>
           ))}
         </div>
       ) : null}
@@ -100,12 +111,7 @@ function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="bg-paper-raised px-4 py-3">
       <dt className="t-label text-ink-muted">{label}</dt>
-      <dd
-        className="t-data text-ink mt-1 font-medium"
-        style={{ fontVariantNumeric: "tabular-nums" }}
-      >
-        {children}
-      </dd>
+      <dd className="t-data text-ink mt-1 font-medium tabular-nums">{children}</dd>
     </div>
   );
 }
@@ -260,7 +266,7 @@ export function PriceBlock({
   ].filter(Boolean);
   return (
     <section
-      className="border-hairline bg-paper-raised rounded-md border p-5"
+      className="oh-box"
       aria-label="Price"
       data-section="price"
       data-price={price.shown ? site.priceDisplay : "request"}
@@ -293,14 +299,17 @@ export function PriceBlock({
           <p className="t-small text-ink-muted mt-2">{availability.note}</p>
         ) : null}
       </div>
-      <a
+      <Button
+        variant="accent"
+        size="lg"
+        className="mt-4 hidden w-full lg:inline-flex"
         href={`/enquire/${site.permanentId}/`}
         rel="nofollow"
-        className="oh-btn accent lg mt-4 hidden w-full lg:inline-flex"
+
         data-action="enquire"
       >
         {price.shown ? "Send enquiry" : "Ask for a quote"}
-      </a>
+      </Button>
       <p className="t-small text-ink-muted mt-4">
         {owner ? `Goes straight to ${owner.name}. ` : ""}
         {NEUTRALITY_LINE}
@@ -342,17 +351,18 @@ export function Calendar({
         ) : null}
       </div>
       {known ? (
-        <div className="border-hairline bg-paper-raised mt-4 grid gap-6 rounded-md border p-5 sm:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+        <div className="oh-box mt-4 grid gap-6 sm:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
           <div>
             <div className="mb-3 flex items-center justify-between gap-2">
               {month.prev ? (
-                <a
+                <Button
+                  variant="ghost"
+                  size="sm"
                   href={`${base}?m=${month.prev}#availability`}
                   rel="nofollow"
-                  className="oh-btn ghost sm"
                 >
                   Earlier
-                </a>
+                </Button>
               ) : (
                 <span className="oh-btn ghost sm invisible" aria-hidden="true">
                   Earlier
@@ -360,13 +370,14 @@ export function Calendar({
               )}
               <p className="t-body-strong">{month.label}</p>
               {month.next ? (
-                <a
+                <Button
+                  variant="ghost"
+                  size="sm"
                   href={`${base}?m=${month.next}#availability`}
                   rel="nofollow"
-                  className="oh-btn ghost sm"
                 >
                   Later
-                </a>
+                </Button>
               ) : (
                 <span className="oh-btn ghost sm invisible" aria-hidden="true">
                   Later
@@ -413,7 +424,7 @@ export function Calendar({
           </div>
         </div>
       ) : (
-        <p className="t-body border-hairline bg-paper-raised text-ink mt-3 max-w-[60ch] rounded-md border p-5">
+        <p className="oh-box t-body text-ink mt-3 max-w-[60ch]">
           The owner has not confirmed availability yet, so no calendar is shown. Ask them about your
           dates.
         </p>
@@ -426,19 +437,10 @@ export function Calendar({
 export function OwnerCard({ owner, siteCount }: { owner: Owner; siteCount: number }) {
   const city = cityDef(owner.city ?? undefined)?.label;
   return (
-    <section
-      className="border-hairline bg-paper-raised rounded-md border p-5"
-      aria-label="The owner"
-      data-section="owner"
-    >
+    <section className="oh-box" aria-label="The owner" data-section="owner">
       <p className="t-label text-ink-muted">Owner and seller</p>
       <div className="mt-3 flex items-center gap-3">
-        <span
-          className="bg-navy text-on-navy grid h-11 w-11 shrink-0 place-items-center rounded-full text-[18px] font-semibold"
-          aria-hidden="true"
-        >
-          {owner.name.charAt(0).toUpperCase()}
-        </span>
+        <Avatar name={owner.name} />
         <div className="min-w-0">
           <h2 className="t-title">{owner.name}</h2>
           <p className="t-small text-ink-muted">
@@ -502,15 +504,23 @@ export function EnquirySteps({ ownerName }: { ownerName: string }) {
   return (
     <ol className="grid gap-4 sm:grid-cols-3" data-section="steps">
       {steps.map((s, i) => (
-        <li key={s.t} className="border-hairline bg-paper-raised rounded-md border p-4">
-          <span className="t-data text-ink-muted" aria-hidden="true">
-            0{i + 1}
-          </span>
+        <li key={s.t} className="oh-box">
+          <Numeral n={i + 1} />
           <h3 className="t-title mt-1">{s.t}</h3>
           <p className="t-small text-ink-muted mt-1">{s.d}</p>
         </li>
       ))}
     </ol>
+  );
+}
+
+/** What a card or sheet shows in place of a photograph the owner has not added. */
+export function NoPhoto({ icon }: { icon: IconName }) {
+  return (
+    <span className="flex flex-col items-center gap-2">
+      <Icon name={icon} size={24} />
+      <span className="t-small">No photo yet</span>
+    </span>
   );
 }
 

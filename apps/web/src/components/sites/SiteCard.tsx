@@ -1,4 +1,4 @@
-import { Badge, Icon, type IconName } from "@ohworks/ui";
+import { Badge, Button, type BadgeKind, type IconName } from "@ohworks/ui";
 import { formatDate } from "@/lib/editorial/format";
 import { picture } from "@/lib/editorial/media";
 import type { Lists } from "@/lib/sites/lists-server";
@@ -6,18 +6,23 @@ import type { Card } from "@/lib/sites/queries";
 import { formatDef } from "@/lib/sites/taxonomy";
 import { availabilityOf, badgesOf, metaLine, priceOf, type Availability } from "@/lib/sites/view";
 import { ListToggle } from "./ListToggle";
+import { NoPhoto } from "./SiteParts";
 
-const AVAIL_CLASS: Record<Availability["state"], string> = {
-  free: "oh-badge verified",
-  booked: "oh-badge booked",
-  stale: "oh-badge fresh",
+const AVAIL_KIND: Record<Availability["state"], BadgeKind> = {
+  free: "verified",
+  booked: "booked",
+  stale: "fresh",
 };
 
 export function AvailabilityChip({ availability }: { availability: Availability }) {
   return (
-    <span className={AVAIL_CLASS[availability.state]} data-availability={availability.state}>
+    <Badge
+      kind={AVAIL_KIND[availability.state]}
+      icon={false}
+      data-availability={availability.state}
+    >
       {availability.label}
-    </span>
+    </Badge>
   );
 }
 
@@ -77,10 +82,7 @@ export function SiteCard({
               className="h-full w-full object-cover"
             />
           ) : (
-            <span className="flex flex-col items-center gap-2">
-              <Icon name={icon} size={24} />
-              <span className="t-small">No photo yet</span>
-            </span>
+            <NoPhoto icon={icon} />
           )}
           {pic && first ? (
             <span className="t-data-sm bg-paper-raised text-ink absolute bottom-2 left-2 rounded-xs px-1.5 py-0.5">
@@ -113,11 +115,7 @@ export function SiteCard({
           </div>
         ) : null}
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-1">
-          <p
-            className="t-price"
-            style={{ fontVariantNumeric: "tabular-nums" }}
-            data-price={price.shown ? "shown" : "request"}
-          >
+          <p className="t-price tabular-nums" data-price={price.shown ? "shown" : "request"}>
             {price.shown ? (
               <>
                 {price.prefix}
@@ -141,16 +139,19 @@ export function SiteCard({
               back={back}
               className="oh-btn ghost sm px-2"
             />
-            <a className="oh-btn ghost sm px-2" href={listing.url} data-quick={id}>
+            <Button variant="ghost" size="sm" className="px-2" href={listing.url} data-quick={id}>
               Quick view<span className="sr-only">: {title}</span>
-            </a>
-            <a
-              className="oh-btn secondary sm ml-auto"
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="ml-auto"
+
               href={`/enquire/${site.permanentId}/`}
               rel="nofollow"
             >
               Enquire
-            </a>
+            </Button>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Container, Notice } from "@ohworks/ui";
+import { Button, Container, Notice, Radio } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { AskedFacts, SiteList, Thread } from "@/components/sites/Thread";
 import { findGroup, messagesOf } from "@/lib/sites/enquiries";
@@ -52,7 +52,7 @@ export default async function ReplyPage({
   return (
     <Shell active="owners">
       <Container className="py-8 lg:py-12">
-        <div className="mx-auto max-w-[760px]">
+        <div className="max-w-column mx-auto">
           <p className="t-label text-ink-muted">
             Enquiry <span className="font-mono">{request.enquiry.reference}</span>
           </p>
@@ -112,26 +112,11 @@ export default async function ReplyPage({
               {messages.some((m) => m.from === "owner") ? "Add to your reply" : "Your reply"}
             </h2>
             {request.sites.map((site) => (
-              <fieldset
-                key={site.id}
-                className="border-hairline bg-paper-raised rounded-md border p-4"
-                data-site={site.permanentId}
-              >
+              <fieldset key={site.id} className="oh-box" data-site={site.permanentId}>
                 <legend className="t-body-strong px-1">{site.title}</legend>
                 <div className="flex flex-wrap gap-x-6">
                   {(Object.keys(ANSWERS) as Answer[]).map((a) => (
-                    <label
-                      key={a}
-                      className="t-body flex min-h-11 cursor-pointer items-center gap-2"
-                    >
-                      <input
-                        type="radio"
-                        name={`a-${site.id}`}
-                        value={a}
-                        className="accent-navy h-[18px] w-[18px]"
-                      />
-                      {ANSWERS[a]}
-                    </label>
+                    <Radio key={a} name={`a-${site.id}`} value={a} label={ANSWERS[a]} />
                   ))}
                 </div>
                 <div className="mt-2 max-w-[280px]">
@@ -166,13 +151,16 @@ export default async function ReplyPage({
               />
             </div>
             <div>
-              <button
+              <Button
+                variant="primary"
+                size="lg"
+                className="w-full sm:w-auto"
                 type="submit"
-                className="oh-btn primary lg w-full sm:w-auto"
+
                 data-action="send-reply"
               >
                 Send reply to the buyer
-              </button>
+              </Button>
             </div>
             <p className="t-small text-ink-muted">
               Keep this page&rsquo;s link to yourself: it opens this enquiry without a password.

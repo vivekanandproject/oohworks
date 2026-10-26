@@ -109,8 +109,7 @@ export function PersonaTabs({ personas }: { personas: Persona[] }) {
             {p.steps.map((s, n) => (
               <li key={s.title} className="flex gap-4">
                 <span
-                  className="text-ink-muted t-data shrink-0 pt-0.5 font-mono"
-                  style={{ fontVariantNumeric: "tabular-nums" }}
+                  className="text-ink-muted t-data shrink-0 pt-0.5 font-mono tabular-nums"
                   aria-hidden="true"
                 >
                   0{n + 1}

@@ -5,11 +5,10 @@ import {
   Button,
   Container,
   Icon,
-  ListingCard,
   NEUTRALITY_LINE,
   Reveal,
   type BadgeKind,
-  type ListingCardProps,
+  Numeral,
 } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { SiteSheet } from "@/components/SiteSheet";
@@ -33,9 +32,6 @@ export const metadata: Metadata = {
 
 /** Stagger index for a list item. */
 const at = (i: number) => ({ "--i": i }) as CSSProperties;
-
-/** Newest indexable faces. Empty until the first owner's site clears the content bar. */
-const NEW_SITES: ListingCardProps[] = [];
 
 /** Briefs the built-in rules read in full (src/lib/sites/brief.test.ts keeps them honest). */
 const EXAMPLES = [
@@ -187,28 +183,6 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* New sites: only when real indexable faces exist */}
-      {NEW_SITES.length > 0 ? (
-        <section className="border-hairline border-b" data-section="new-sites">
-          <Container className="py-12 lg:py-16">
-            <div className="flex items-end justify-between gap-4">
-              <h2 className="t-display-md">New sites this week</h2>
-              <a href="/search/" className="oh-link t-body">
-                See all sites
-              </a>
-            </div>
-            <div
-              className="mt-8 grid gap-5"
-              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
-            >
-              {NEW_SITES.map((s) => (
-                <ListingCard key={s.href} {...s} />
-              ))}
-            </div>
-          </Container>
-        </section>
-      ) : null}
-
       {/* Inside a site page: the sample sheet beside what every page records */}
       <section className="border-hairline border-b" data-section="anatomy">
         <Container className="py-12 lg:py-16">
@@ -257,12 +231,7 @@ export default async function HomePage() {
           <Reveal stagger>
             <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {CHECKS.map((c, i) => (
-                <li
-                  key={c.label}
-                  className="border-hairline bg-paper-raised rounded-md border p-5"
-                  data-stagger-item
-                  style={at(i)}
-                >
+                <li key={c.label} className="oh-box" data-stagger-item style={at(i)}>
                   <Badge kind={c.kind}>{c.label}</Badge>
                   <p className="t-body text-ink-muted mt-3">{c.how}</p>
                 </li>
@@ -391,12 +360,7 @@ export default async function HomePage() {
             <ol className="mx-auto mt-10 grid max-w-[1000px] gap-5 sm:grid-cols-2 lg:grid-cols-5">
               {CHARTER.map((rule, i) => (
                 <li key={rule.title} data-stagger-item style={at(i)}>
-                  <span
-                    className="t-data text-ink-muted font-mono"
-                    style={{ fontVariantNumeric: "tabular-nums" }}
-                  >
-                    0{i + 1}
-                  </span>
+                  <Numeral n={i + 1} />
                   <h3 className="t-body-strong mt-1">{rule.title}</h3>
                 </li>
               ))}

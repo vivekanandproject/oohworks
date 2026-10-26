@@ -6,9 +6,12 @@ interface Point {
   lng: number;
 }
 
-const W = 500;
-const H = 640;
 const PAD = 56;
+/** The map box is tall beside the list on a wide screen and wide above it below 1024px. */
+const SHAPES = [
+  { w: 500, h: 640, className: "hidden h-full w-full lg:block" },
+  { w: 640, h: 360, className: "block h-full w-full lg:hidden" },
+] as const;
 
 /**
  * A still drawing of where the sites sit relative to each other: positions only, no streets.
@@ -18,9 +21,55 @@ export function StillMap({
   points,
   facing,
   label,
+  wide = false,
 }: {
   points: Point[];
   facing?: number | null;
+  label: string;
+  /** The box is wide at every width, as on a site page. */
+  wide?: boolean;
+}) {
+  if (wide)
+    return (
+      <Drawing
+        W={640}
+        H={360}
+        className="block h-full w-full"
+        points={points}
+        facing={facing}
+        label={label}
+      />
+    );
+  return (
+    <>
+      {SHAPES.map((shape) => (
+        <Drawing
+          key={shape.w}
+          W={shape.w}
+          H={shape.h}
+          className={shape.className}
+          points={points}
+          facing={facing}
+          label={label}
+        />
+      ))}
+    </>
+  );
+}
+
+function Drawing({
+  W,
+  H,
+  className,
+  points,
+  facing,
+  label,
+}: {
+  W: number;
+  H: number;
+  className: string;
+  points: Point[];
+  facing?: number | null | undefined;
   label: string;
 }) {
   const lats = points.map((p) => p.lat);
@@ -46,16 +95,16 @@ export function StillMap({
     <svg
       viewBox={`0 0 ${W} ${H}`}
       preserveAspectRatio="xMidYMid slice"
-      className="block h-full w-full"
+      className={className}
       role="img"
       aria-label={label}
     >
       <rect width={W} height={H} className="fill-paper-sunken" />
       <g className="stroke-hairline" strokeWidth="1">
-        {Array.from({ length: 9 }, (_, i) => (
+        {Array.from({ length: Math.floor(W / 50) }, (_, i) => (
           <line key={`v${i}`} x1={(i + 1) * 50} y1="0" x2={(i + 1) * 50} y2={H} />
         ))}
-        {Array.from({ length: 12 }, (_, i) => (
+        {Array.from({ length: Math.floor(H / 50) }, (_, i) => (
           <line key={`h${i}`} x1="0" y1={(i + 1) * 50} x2={W} y2={(i + 1) * 50} />
         ))}
       </g>

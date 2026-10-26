@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Button, Container, NEUTRALITY_LINE_OWNER } from "@ohworks/ui";
+import { Button, Container, NEUTRALITY_LINE_OWNER, Badge } from "@ohworks/ui";
 import { PasswordField } from "@/components/PasswordField";
 import { PhoneField } from "@/components/PhoneField";
 import { PlaceField } from "@/components/PlaceField";
@@ -379,13 +379,16 @@ export default async function ListYourSitesPage({
                 </FormSection>
 
                 <div>
-                  <button
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="w-full sm:w-auto"
                     type="submit"
-                    className="oh-btn primary lg w-full sm:w-auto"
+
                     data-action="start"
                   >
                     Save and send the code
-                  </button>
+                  </Button>
                   <p className="t-small text-ink-muted mt-3">
                     We send a code to confirm your email. Already listed?{" "}
                     <a href="/sign-in/" className="oh-link">
@@ -425,8 +428,8 @@ export default async function ListYourSitesPage({
           </p>
           <div className="mt-5 grid gap-5 sm:grid-cols-3" data-section="ways">
             {WAYS.map((w) => (
-              <div key={w.title} className="border-hairline bg-paper-raised rounded-md border p-5">
-                <span className="oh-badge neutral">{w.tag}</span>
+              <div key={w.title} className="oh-box">
+                <Badge kind="neutral">{w.tag}</Badge>
                 <h3 className="t-title mt-3">{w.title}</h3>
                 <p className="t-body text-ink-muted mt-2">{w.text}</p>
               </div>

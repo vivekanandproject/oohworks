@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
-import { Badge, Button, Container, Reveal } from "@ohworks/ui";
+import { Badge, Button, Container, Reveal, Numeral } from "@ohworks/ui";
 import { Shell } from "@/components/Shell";
 import { OWNER_FAQ, OWNER_SHORT_ANSWER, OWNER_STEPS, ownerFaqJsonLd } from "@/lib/owners/guide";
 import { JsonLd, SITE_NAME, absolute, alternates } from "@/lib/seo";
@@ -72,7 +72,7 @@ export default function ForOwnersPage() {
           </p>
           <section
             aria-label="Short answer"
-            className="border-hairline bg-paper-raised mt-8 max-w-[68ch] rounded-md border p-5"
+            className="oh-box mt-8 max-w-[68ch]"
             data-section="short-answer"
           >
             <h2 className="t-label text-ink-muted">How to list your sites, in short</h2>
@@ -105,7 +105,7 @@ export default function ForOwnersPage() {
             <ol className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
               {OWNER_STEPS.map((s, i) => (
                 <li key={s.t} data-stagger-item style={at(i)}>
-                  <span className="t-data-lg text-ink-faint">0{i + 1}</span>
+                  <Numeral n={i + 1} />
                   <h3 className="t-body-strong mt-2">{s.t}</h3>
                   <p className="t-body text-ink-muted mt-1">{s.d}</p>
                 </li>
@@ -123,12 +123,7 @@ export default function ForOwnersPage() {
           <Reveal stagger>
             <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {BADGES.map((b, i) => (
-                <li
-                  key={b.label}
-                  className="oh-panel border-hairline bg-paper-raised rounded-md border p-4"
-                  data-stagger-item
-                  style={at(i)}
-                >
+                <li key={b.label} className="oh-box oh-panel" data-stagger-item style={at(i)}>
                   <Badge kind={b.kind}>{b.label}</Badge>
                   <p className="t-body text-ink-muted mt-3">{b.d}</p>
                 </li>
@@ -143,7 +138,7 @@ export default function ForOwnersPage() {
           <Reveal>
             <h2 className="t-display-md">Questions owners ask</h2>
           </Reveal>
-          <div className="divide-hairline border-hairline mt-8 max-w-[760px] divide-y border-y">
+          <div className="divide-hairline border-hairline max-w-column mt-8 divide-y border-y">
             {OWNER_FAQ.map((f) => (
               <div key={f.q} className="py-5" data-section="faq-item">
                 <h3 className="t-body-strong">{f.q}</h3>

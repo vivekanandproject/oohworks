@@ -1,4 +1,4 @@
-import { Note, Notice } from "@ohworks/ui";
+import { Button, Note, Notice, Radio } from "@ohworks/ui";
 import type { ReactNode } from "react";
 import type { FieldErrors, FieldKey, Raw } from "@/lib/owners/site-input";
 import { CITIES, FORMATS, LIGHTING } from "@/lib/sites/taxonomy";
@@ -138,16 +138,7 @@ const Radios = ({
 }) => (
   <div className="flex flex-wrap gap-x-6">
     {options.map(([v, label]) => (
-      <label key={v} className="t-body flex min-h-11 cursor-pointer items-center gap-2">
-        <input
-          type="radio"
-          name={name}
-          value={v}
-          defaultChecked={value === v}
-          className="accent-navy h-[18px] w-[18px]"
-        />
-        {label}
-      </label>
+      <Radio key={v} name={name} value={v} defaultChecked={value === v} label={label} />
     ))}
   </div>
 );
@@ -500,9 +491,9 @@ export function SiteForm({
       </Part>
 
       <div className="flex flex-wrap items-center gap-4">
-        <button type="submit" className="oh-btn primary lg" data-action="save-site">
+        <Button variant="primary" size="lg" type="submit" data-action="save-site">
           {id ? "Save changes" : "Save site"}
-        </button>
+        </Button>
         <p className="t-small text-ink-muted">
           Saved as a draft. Only you can see it until you send it for review. Photographs come next.
         </p>

@@ -20,7 +20,7 @@ OOHWORKS is the open map of out-of-home advertising: a verified, public page for
 
 ## Content fundamentals
 
-- Write in plain Indian English first; other editions follow the same rules in their language. Short sentences, active voice, specific nouns. "Front-lit 20 × 10 ft hoarding facing north-bound traffic", never "premium high-visibility outdoor asset".
+- Write in plain English for a reader in any country (British spelling); other editions follow the same rules in their language. Local trade words stay where owners use them ("hoarding" in India). Short sentences, active voice, specific nouns. "Front-lit 20 × 10 ft hoarding facing north-bound traffic", never "premium high-visibility outdoor asset".
 - Use "you" for the person and "we" for OOHWORKS. Owners are "media owners" or "owners"; never "vendors" in the interface. Buyers are "advertisers" or "agencies". Never "users".
 - Sentence case everywhere, including buttons and headings. Uppercase only in the `label` style.
 - Every number carries its unit, its source and its date: "₹ 85,000 / month · owner rate · updated 3 Oct 2026". A figure with no source is not shown.
@@ -75,7 +75,7 @@ Icons are the Icons asset group: single-ink SVGs on a 24px grid with a 1.75px st
 
 ## Components
 
-Use the components exactly as their previews and guidelines describe. The marketplace set is ListingCard, SpecSheet, PriceBlock, Badge, MapPin, EnquiryForm, AvailabilityCalendar and OwnerCard; the interface set is Button, Input, Chip, Tabs, Table, Toast and EmptyState; the editorial set is ArticleCard and NavBar. Screen templates (ListingPage, HubPage, OwnerStorefront, OwnerDashboard, ArticlePage) show how they compose. Each component states what the consumer provides.
+Use the components exactly as their previews and guidelines describe. In the code, ListingCard is `SiteCard` (`apps/web/src/components/sites/SiteCard.tsx`) and ArticleCard is `PieceCard` (`apps/web/src/components/editorial/PieceBits.tsx`); the shared kit in `packages/ui` holds Button, Badge, Chip, Breadcrumbs, Pager, Avatar, Radio, Numeral, Notice, EmptyState, the `oh-box` panel and the rest. The marketplace set is ListingCard, SpecSheet, PriceBlock, Badge, MapPin, EnquiryForm, AvailabilityCalendar and OwnerCard; the interface set is Button, Input, Chip, Tabs, Table, Toast and EmptyState; the editorial set is ArticleCard and NavBar. Screen templates (ListingPage, HubPage, OwnerStorefront, OwnerDashboard, ArticlePage) show how they compose. Each component states what the consumer provides.
 
 
 ---
@@ -103,7 +103,7 @@ The mark is a map pin whose head is a billboard face: a rounded rectangle (`radi
 - Clear space: the height of the post on all sides.
 - Minimum size: 20px on screen, 12mm in print. On a hoarding, 600mm.
 - The mark is `navy` on paper and `on-navy` on a navy band or a photo; the dot is always `survey`.
-- The wordmark is the name OOHWORKS alone, in Poppins 700, in capitals; the mark does not sit beside it (the founder's decision, 19 Oct 2026). On a phone the name scales with the screen (at most 22px, 4.6% of the width) and stays visible at every width. The mark is kept for physical site plates only. The favicon is the letters "Oh" in Poppins 700, paper on navy (`apps/web/src/app/icon.svg`, with the font embedded so it draws the same everywhere); the share cards carry the name alone (the founder, 21 Oct 2026).
+- The wordmark is the name OOHWORKS alone, in Poppins 700, in capitals; the mark does not sit beside it (the founder's decision, 19 Oct 2026). On a phone the name scales with the screen (at most 22px, 4.6% of the width) and stays visible at every width. The mark is kept for physical site plates only. The favicon is the letters "OH" in Poppins 700 with no tile behind them, drawn as outlines: navy on light browser tabs, paper on dark ones (`apps/web/src/app/icon.svg`, the founder, 26 Oct 2026); the share cards carry the name alone (the founder, 21 Oct 2026).
 - Co-branding with an owner: owner logo left, a `hairline` divider, OOHWORKS wordmark right, both at the same cap height.
 - On physical hoardings and site plates, use the mark alone with the unit ID in `mono` beneath it: this is how a buyer finds the page from the street.
 
@@ -161,7 +161,8 @@ OOHWORKS talks like a knowledgeable surveyor who likes people: precise, plain, n
 - Dimensions: "20 × 10 ft (6.1 × 3.0 m)" in India and the US; metres first in the UK, Gulf and Europe.
 - Coordinates: five decimals, comma, space: "12.93421, 77.62156".
 - Dates: "3 Oct 2026" in text; ISO "2026-10-03" in data cells.
-- Large Indian numbers: lakh and crore in text ("₹ 1.2 lakh"), full figures in data ("₹ 1,20,000").
+- Large numbers follow the site's country: lakh and crore in India ("₹ 1.2 lakh"), thousands and millions elsewhere ("AED 1.2 million"); full figures in data ("₹ 1,20,000", "AED 1,200,000").
+- A price is shown in the currency its owner set for that site, never converted. A price filter works within one currency at a time.
 - Times: "replies in under a day", never "24h SLA".
 
 ## Localisation
@@ -181,20 +182,20 @@ Five templates compose the components. Each is a live preview in the Components 
 
 The page for one physical face. Its job: let a buyer decide in a minute and ask in one tap.
 
-1. Breadcrumb in `small`: India › Bengaluru › Koramangala.
+1. Breadcrumb in `small`: Find sites › Bengaluru › Koramangala.
 2. Title in `display-md`: format, size, road. Under it the badge row.
 3. Hero gallery, 16:9, approach photo first; day and night thumbnails; photo dates in `data-sm`.
-4. Two columns on desktop: left the SpecSheet, audience with source, static map, "campaigns that ran here"; right a sticky panel with PriceBlock, availability summary, OwnerCard and the EnquiryForm trigger. On phones the panel becomes a bottom bar: price left, "Send enquiry" right.
+4. Two columns on desktop: left the SpecSheet, audience with source, static map, "campaigns that ran here"; right a panel with PriceBlock, availability summary, OwnerCard and the EnquiryForm trigger. The panel stays in view only on a screen at least 820px tall, so on a 1366 × 768 laptop the owner card can still be reached. On phones the panel becomes a bottom bar: price left, "Send enquiry" right.
 5. "Similar sites nearby" as ListingCards, then "Report a listing" in `small`.
 6. The only `survey` fill on the page is the enquiry button and the map pin.
 
 ## Hub page (`HubPage`)
 
-City, locality or format browse page. Opens with a dated fact in `body-lg` ("Koramangala has 42 listed hoardings. Median 20 × 10 ft rate ₹ 78,000 a month, OOHWORKS data, Oct 2026."), then filters as Chips, then a two-column grid of ListingCards beside a sticky map with clustered MapPins. Pagination is real links. The cost guide for the place links from the fact.
+City, locality or format browse page. Opens with a dated fact in `body-lg` ("Koramangala has 42 listed hoardings. Median 20 × 10 ft rate ₹ 78,000 a month, OOHWORKS data, Oct 2026."), then filters as Chips, then a two-column grid of ListingCards beside a sticky map with clustered MapPins. The map is never taller than the screen below the header: `min(640px, 100svh − header)`. Pagination is real links. The cost guide for the place links from the fact.
 
 ## Owner storefront (`OwnerStorefront`)
 
-A free mini-site for an owner. A `navy` header band with the owner's name in `display-lg` in `on-navy`, their badges, cities covered and reply time; below, their sites as ListingCards and an "About" column. The owner's WhatsApp and phone show as selectable text with copy buttons.
+A free mini-site for an owner. The owner's name in `display-lg` under a breadcrumb, with their badges, cities covered and reply time (the site uses the plain page head here; the `navy` header band below is the target and is not built yet); below, their sites as ListingCards and an "About" column. The owner's WhatsApp and phone show as selectable text with copy buttons.
 
 ## Owner dashboard (`OwnerDashboard`)
 
@@ -207,9 +208,23 @@ Editorial. Title in `display-lg`, standfirst in `body-lg`, author card with cred
 ## Responsive rules
 
 - Breakpoints: 640px (phone to tablet), 1024px (tablet to desktop).
-- Map on phones: a 200px strip that expands full-screen on tap, with a "List" toggle.
-- Sticky elements never cover more than 25% of a phone screen.
-- Tap targets 44 × 44px minimum.
+- Map on phones: a 200px strip that expands full-screen on tap, with a "List" toggle. Inside the page a touch screen moves the live map with two fingers, so one finger keeps scrolling the page; full screen takes one finger. The still drawing is wide below 1024px and tall beside the list above it, so no pin is cropped.
+- Sticky elements never cover more than 25% of a phone screen, and nothing sticky is taller than a 1366 × 768 laptop screen.
+- Tap targets 44 × 44px minimum. On a touch screen `sm` buttons, chips, option rows, map pins and clusters grow to 44px; a mouse keeps the 36px look.
+- Photographs offer every stored width of their frame (`srcset`, with `sizes` for the column they fill): 960 and 1600 for 16:9, so a phone does not download the desktop size.
+
+## How a page opens
+
+Every page opens the same way for its kind (measured on every page, 26 Oct 2026):
+
+| Kind | Opening | Top padding |
+| --- | --- | --- |
+| Task or flow: search, shortlist, compare, enquiry, list your sites, sign in, owner area | `label` in `ink-muted`, then the title in `display-md`, 8px apart | 32px on phones, 48px on desktop |
+| Reading: charter, cookies, newsroom and its sections, authors, topics | `label` (a section page: the breadcrumb), then the title in `display-lg` | 48px, 64px |
+| Status: not found, confirmations, email results | The same, centred | 48px, 64px |
+| Places and owners: hub, site page, owner storefront | Breadcrumb, then the title | as reading pages |
+
+A label is always `ink-muted`, never the accent. The page's first action sits inside its empty state when there is nothing to show.
 
 ## Exports
 
@@ -390,7 +405,7 @@ A button names the outcome it causes. Use the `accent` (survey) button for exact
 - `primary` (navy) for the main step in forms and dashboards: "Save changes", "Mark as booked".
 - `accent` (survey) for the buyer's one move toward an owner. Never two on one screen.
 - `secondary` for exports, filters and alternatives; `ghost` for cancel and inline actions; `danger` for destructive ones, always followed by an in-page confirmation step.
-- Minimum height 44px (`sm` 36px, for cards and table rows only). Labels in sentence case, `body-strong`.
+- Minimum height 44px (`sm` 36px with a mouse, for cards and table rows only; 44px on a touch screen). Labels in sentence case, `body-strong`.
 - The consumer provides the label and the handler. Icons are optional and sit left of the label at 20px.
 - Never: "Submit", "OK", "Click here", all caps, or a button that opens a browser dialog.
 
@@ -440,7 +455,7 @@ One card per physical face. The photo comes first because a site is something yo
 - Photo: approach view, 3:2, with its date in `small`. Missing photo: `paper-sunken`, the format icon and "No photo yet", never a blank box.
 - Title in 16px/600: format, size, road. Meta in `small`: locality, city, lighting, facing.
 - Badge row shows only badges the site has earned. A featured listing carries the ribbon on the photo and the words "paid placement".
-- Price in `mono` with the period in `small`; "Price on request" in the same slot when hidden. The `accent` small button reads "Enquire".
+- Price in `mono` with the period in `small`; "Price on request" in the same slot when hidden. The small `secondary` button reads "Enquire": the accent is kept for the page's one primary action, so a grid of cards carries none.
 - The consumer provides: title, meta, photo URL and date, badges, price or null, the enquiry handler, and the page URL for the whole card.
 - Cards sit in a grid of `minmax(280px, 1fr)` with `space-5` gaps.
 
@@ -454,6 +469,7 @@ The pin's head is a billboard face, like the mark. The selected or hovered pin i
 
 - One survey pin at a time. Selecting a pin pans the map over 320ms and opens its label: price and size, or the title when the price is hidden.
 - Clusters split on zoom; never show more than 60 individual pins.
+- Each pin is a 44 × 44px target around its 28 × 31px drawing, anchored at the tip; clusters are 44px on a touch screen.
 - The map is a static image on first load; the interactive map loads on tap or scroll.
 - The consumer provides pins with coordinates, state and label, and the selection handler.
 

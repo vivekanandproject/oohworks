@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@ohworks/ui";
+
 import { useState, type FormEvent } from "react";
 import { MAX_BATCH, PLACE_BY_HAND, REASON, type BatchResult } from "@/lib/owners/photo-batch";
 
@@ -120,14 +122,17 @@ export function PhotoBatchForm({ sites, today }: { sites: SiteChoice[]; today: s
           </p>
         </div>
         <div>
-          <button
+          <Button
+            variant="primary"
+            size="lg"
+            className="w-full sm:w-auto"
             type="submit"
-            className="oh-btn primary lg w-full sm:w-auto"
+
             data-action="send-photos"
             disabled={busy}
           >
             {busy ? "Adding your photographs…" : "Add these photographs"}
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -213,9 +218,9 @@ export function PhotoBatchForm({ sites, today }: { sites: SiteChoice[]; today: s
                       className="oh-input mt-1"
                     />
                   </div>
-                  <button type="submit" className="oh-btn secondary" data-action="place-photo">
+                  <Button variant="secondary" type="submit" data-action="place-photo">
                     Add to this site
-                  </button>
+                  </Button>
                 </form>
               ) : null}
             </li>

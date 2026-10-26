@@ -28,7 +28,7 @@ export function ConsentBanner() {
       aria-label="Cookie choice"
       className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-4 pb-4 lg:px-10"
     >
-      <div className="bg-paper-raised border-hairline shadow-float pointer-events-auto mx-auto flex max-w-[1200px] flex-col gap-3 rounded-md border p-4 sm:flex-row sm:items-center sm:justify-between lg:p-5">
+      <div className="oh-box shadow-float max-w-content pointer-events-auto mx-auto flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="t-small text-ink max-w-[70ch]">
           May we count visits with Google Analytics? It helps us see which pages are useful. It
           stores cookies only if you allow it. The cookies that keep you signed in and remember your
