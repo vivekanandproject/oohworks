@@ -39,7 +39,7 @@ function IndexView({ title, blurb, base, current, list, page, counts }: IndexPro
   const items = list.items;
   return (
     <Shell active="news">
-      <Container className="py-10 lg:py-14">
+      <Container className="py-12 lg:py-16">
         <div className="mx-auto max-w-[760px]">
           <header className="flex flex-col gap-4">
             <nav aria-label="Breadcrumb" className="t-small text-ink-muted">

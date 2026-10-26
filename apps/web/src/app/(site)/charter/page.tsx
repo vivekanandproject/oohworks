@@ -16,12 +16,12 @@ export default function CharterPage() {
     <Shell>
       <Container className="py-12 lg:py-16">
         <div className="mx-auto max-w-[680px]">
-          <p className="t-label text-survey-text">The charter</p>
+          <p className="t-label text-ink-muted">The charter</p>
           <h1 className="t-display-lg mt-3">Five things we will never do</h1>
           <p className="text-ink-muted t-body-lg mt-5">
-            India&rsquo;s best-known listings marketplaces drifted into agency work and started
-            selling against the owners who listed with them. These rules keep OOHWORKS neutral. They
-            are published, and they do not change.
+            The best-known listings marketplaces drifted into agency work and started selling
+            against the owners who listed with them. These rules keep OOHWORKS neutral. They are
+            published, and they do not change.
           </p>
           <ol className="divide-hairline border-hairline mt-10 divide-y border-y">
             {CHARTER.map((rule, i) => (

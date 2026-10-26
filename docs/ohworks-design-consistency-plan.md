@@ -118,3 +118,22 @@ The other session, from its audit: one spacing rhythm on the owner pages (24px b
 Still in Phase B: PageHead for every page (item 6). Then Phase C (one component per pattern) and Phase D; the typeface waits on the founder.
 
 **Typeface (19 Oct 2026).** The founder chose Poppins for everything. Poppins is now the one family for titles and text (400, 500, 600, 700, served by next/font), with IBM Plex Mono kept for prices, IDs and coordinates. The title scale returned to the design system's 64/44/30/22 with open line heights, the width axis Archivo used is gone, labels take 0.06em tracking, and the wordmark is Poppins 700. On phones the header gaps narrowed to 8px and the name scales at 4.3% of the screen width, so the header fits from 320 to 1024px; it had been 13px over at 380. `docs/ohworks-design-system.md` records the families and the scale. The social share cards in `src/app/og` draw in Poppins 500 and 700 too, from files copied out of `@fontsource/poppins`; Archivo is gone from the project.
+
+## 10. Every page measured again (26 Oct 2026)
+
+The founder found the search page unlike the rest. Every public page was measured at 1280 and 390 on the development server (label above the title, title size, distance from the header, column, empty states). Three page openings hold everywhere and are now the rule:
+
+| Kind of page | Opening | Top padding |
+| --- | --- | --- |
+| Task or flow (search, shortlist, compare, enquiry steps, list your sites, sign in, owner area) | Muted label, t-display-md title 8px below | `py-8 lg:py-12` |
+| Info and editorial (charter, cookies, how results are ordered, newsroom and its sections, authors, topics) | Muted label (sections: the "Newsroom" breadcrumb), t-display-lg title | `py-12 lg:py-16` |
+| Status (404, email results, newsletter and enquiry confirmations) | PageHead center | `py-12 lg:py-16` |
+
+What was out of line and is fixed:
+
+- **Search:** the title sat under the search box and filter bar, with no label. It now opens like the other task pages: "Find sites" label, the title ("Search billboards and screens" before any site exists, the result count after), "How results are ordered", then the box. With no site listed at all, the filter bar and the phone strip are hidden (there is nothing to filter or map), and the email form sits inside the empty state with the other actions. The hint is short enough not to be cut off on a phone.
+- **Newsroom front:** no label; now "Out-of-home news and data". The section chips are hidden while nothing is published, so "All" no longer stands alone. The daily briefing panel is on paper-raised like every other panel (paper-sunken is for maps, table heads and photo placeholders).
+- **Charter:** its label was the accent colour; it is muted like every other label.
+- **Top padding:** the newsroom pages, authors and topics used 40/56px, the email result page 32/48 and the enquiry-sent page 40/64; each now uses its kind's padding above.
+
+Not measured: article, site, city and owner pages, which need content the development database does not hold. On the test database, design-rules.e2e.ts checks a city, a site and an article page for the tap-target, accent and overflow rules; owner storefronts are not in it.

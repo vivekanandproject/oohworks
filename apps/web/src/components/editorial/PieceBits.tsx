@@ -122,6 +122,8 @@ export function PillarChips({
   current: PillarKey | "all" | null;
   counts: Record<PillarKey, number>;
 }) {
+  // With nothing published, "All" would be the only chip.
+  if (PILLAR_KEYS.every((k) => counts[k] === 0)) return null;
   return (
     <nav
       aria-label="Sections"
@@ -197,7 +199,7 @@ export function Pager({ base, page, pages }: { base: string; page: number; pages
 export function BriefingBand({ from, id }: { from: string; id: string }) {
   return (
     <section
-      className="border-hairline bg-paper-sunken flex flex-wrap items-start gap-6 rounded-md border p-5 sm:p-6"
+      className="border-hairline bg-paper-raised flex flex-wrap items-start gap-6 rounded-md border p-4 lg:p-5"
       data-section="briefing"
     >
       <div className="min-w-0 flex-[999_1_300px]">

@@ -45,7 +45,7 @@ export default async function AuthorPage({ params }: Params) {
           ]),
         ]}
       />
-      <Container className="py-10 lg:py-14">
+      <Container className="py-12 lg:py-16">
         <div className="mx-auto max-w-[760px]">
           <nav aria-label="Breadcrumb" className="t-small text-ink-muted">
             <a className="oh-link" href="/newsroom/">

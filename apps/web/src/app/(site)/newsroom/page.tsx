@@ -53,12 +53,13 @@ export default async function NewsroomPage() {
   return (
     <Shell active="news">
       <JsonLd data={breadcrumbJsonLd([{ name: TITLE, path: "/newsroom/" }])} />
-      <Container className="py-10 lg:py-14">
+      <Container className="py-12 lg:py-16">
         <div className="flex flex-col gap-10">
           <header className="flex flex-col gap-4">
             <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3">
               <div>
-                <h1 className="t-display-lg">{TITLE}</h1>
+                <p className="t-label text-ink-muted">Out-of-home news and data</p>
+                <h1 className="t-display-lg mt-3">{TITLE}</h1>
                 <p className="t-body text-ink-muted mt-3 max-w-[62ch]">{BLURB}</p>
               </div>
               <a href="/feed.xml" className="oh-link t-body-strong">
@@ -167,7 +168,7 @@ export default async function NewsroomPage() {
             <div className="mx-auto w-full max-w-[760px]">
               <EmptyState
                 icon="enquiry"
-                title="The newsroom opens with the India launch"
+                title="The newsroom opens at launch"
                 actions={
                   <Button href="/charter/" variant="ghost" size="sm">
                     Read the charter

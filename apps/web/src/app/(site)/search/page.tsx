@@ -217,12 +217,40 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
       <BasketEnhance />
       <ListSync />
       <QuickView />
-      <Container className="pt-8 pb-4">
+      <Container className="pt-8 pb-4 lg:pt-12">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pb-6">
+          <div>
+            <p className="t-label text-ink-muted">Find sites</p>
+            <h1 className="t-display-md mt-2" data-section="heading">
+              {result.total > 0 ? (
+                <>
+                  <span className="font-mono" style={{ fontVariantNumeric: "tabular-nums" }}>
+                    {result.total}
+                  </span>{" "}
+                  {describe(state, onlyLocality, result.total === 1)}
+                </>
+              ) : (
+                "Search billboards and screens"
+              )}
+            </h1>
+            {result.median ? (
+              <p className="t-small text-ink-muted mt-1" data-section="median">
+                Median rate {inr(result.median.rate)} a month, from {result.median.n} sites that
+                show a price · OOHWORKS data,{" "}
+                {formatDate(new Date(now).toISOString()).replace(/^\d+ /, "")}
+              </p>
+            ) : null}
+          </div>
+          <a href="/how-results-are-ordered/" className="oh-link t-body">
+            How results are ordered
+          </a>
+        </div>
+
         <SearchField
           defaultValue={typed || state.q}
           size="lg"
           tone="primary"
-          placeholder="Try: hoardings in Bengaluru, or 20 × 10 ft near Silk Board"
+          placeholder="Try: hoardings in Bengaluru"
         />
         {chips.length ? (
           <div className="mt-4 flex flex-wrap items-center gap-2" data-section="understood">
@@ -246,7 +274,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         ) : null}
       </Container>
 
-      <FilterBar state={state} facets={result.facets} />
+      {result.catalogueSize > 0 ? <FilterBar state={state} facets={result.facets} /> : null}
 
       <Container className="pt-5 pb-14">
         {result.anySample ? (
@@ -255,33 +283,6 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             shown to search engines.
           </Note>
         ) : null}
-
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 pb-4">
-          <div>
-            <h1 className="t-display-md" data-section="heading">
-              {result.total > 0 ? (
-                <>
-                  <span className="font-mono" style={{ fontVariantNumeric: "tabular-nums" }}>
-                    {result.total}
-                  </span>{" "}
-                  {describe(state, onlyLocality, result.total === 1)}
-                </>
-              ) : (
-                "Find sites"
-              )}
-            </h1>
-            {result.median ? (
-              <p className="t-small text-ink-muted mt-1" data-section="median">
-                Median rate {inr(result.median.rate)} a month, from {result.median.n} sites that
-                show a price · OOHWORKS data,{" "}
-                {formatDate(new Date(now).toISOString()).replace(/^\d+ /, "")}
-              </p>
-            ) : null}
-          </div>
-          <a href="/how-results-are-ordered/" className="oh-link t-body">
-            How results are ordered
-          </a>
-        </div>
 
         {followed ? (
           <Notice tone="success" title="Check your email." className="mb-6">
@@ -347,6 +348,16 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               }
               actions={
                 <>
+                  {!followed ? (
+                    <FollowForm
+                      city={state.city}
+                      format={state.formats[0]}
+                      query={typed || state.q}
+                      returnTo={here}
+                      what={what}
+                      center
+                    />
+                  ) : null}
                   <Button href="/list-your-sites/" variant="ghost" size="sm">
                     Own sites here? List them free
                   </Button>
@@ -357,19 +368,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               }
             >
               {result.catalogueSize === 0
-                ? `${chips.length ? "We read your brief, shown above. " : ""}OOHWORKS opens city by city, Bengaluru first, as owners verify their sites. Leave your email and we will write the day the first one is listed.`
+                ? `${chips.length ? "We read your brief, shown above. " : ""}Search opens in India first, then country by country as owners verify their sites. Leave your email and we will write the day the first one is listed.`
                 : `Nothing matches every filter you chose. Widen the search below, or leave your email and we will tell you the day ${what} appear.`}
             </EmptyState>
-            {!followed ? (
-              <FollowForm
-                city={state.city}
-                format={state.formats[0]}
-                query={typed || state.q}
-                returnTo={here}
-                what={what}
-                center
-              />
-            ) : null}
           </div>
         )}
 
@@ -425,7 +426,9 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <div className="hidden sm:block">
           <PlanBar text={plan} saved={lists.saved.length} compare={lists.compare.length} />
         </div>
-        <PhoneBar state={state} saved={lists.saved.length} compare={lists.compare.length} />
+        {result.catalogueSize > 0 ? (
+          <PhoneBar state={state} saved={lists.saved.length} compare={lists.compare.length} />
+        ) : null}
       </div>
       {state.panel ? (
         <FilterPanel state={state} facets={result.facets} total={result.total} />

@@ -61,7 +61,7 @@ export default async function EmailResultPage({ params }: { params: Promise<{ re
   const r = RESULTS[result as Result];
   return (
     <Shell>
-      <Container className="py-8 lg:py-12">
+      <Container className="py-12 lg:py-16">
         <div className={CENTER} data-section="email-result">
           <PageHead center eyebrow={r.eyebrow} title={r.title}>
             {r.text}
