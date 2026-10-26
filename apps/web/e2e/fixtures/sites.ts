@@ -1004,6 +1004,7 @@ async function main() {
           }
         : {},
       country: "in",
+      currency: "INR",
       city: row.city,
       locality: row.loc,
       road: row.road,

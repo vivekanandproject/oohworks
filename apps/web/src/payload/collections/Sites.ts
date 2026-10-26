@@ -1,12 +1,8 @@
 import type { CollectionConfig } from "payload";
 import { isOps, isSuperAdmin, publishedOrStaff } from "../access";
 import { siteAfterChange, siteBeforeChange } from "../hooks/sites";
-import {
-  CITY_SELECT,
-  ENVIRONMENT_SELECT,
-  FORMAT_SELECT,
-  LIGHTING_SELECT,
-} from "../../lib/sites/taxonomy";
+import { isCurrency } from "../../lib/world/countries";
+import { ENVIRONMENT_SELECT, FORMAT_SELECT, LIGHTING_SELECT } from "../../lib/sites/taxonomy";
 
 /** One record per physical face. Its public page carries everything a buyer needs before asking. */
 export const Sites: CollectionConfig = {
@@ -232,9 +228,40 @@ export const Sites: CollectionConfig = {
               type: "text",
               required: true,
               defaultValue: "in",
-              admin: { hidden: true },
+              index: true,
+              admin: {
+                description: "ISO country code in lower case, as in the address: in, ae, gb",
+              },
             },
-            { name: "city", type: "select", required: true, options: CITY_SELECT },
+            {
+              name: "city",
+              type: "text",
+              required: true,
+              index: true,
+              admin: {
+                description:
+                  "The city in the address, in lower case with hyphens (bengaluru, dubai). It never changes once published.",
+              },
+            },
+            {
+              name: "cityLabel",
+              type: "text",
+              admin: { description: "The city as a buyer reads it: Bengaluru, Dubai" },
+            },
+            {
+              name: "region",
+              type: "text",
+              admin: { description: "State, emirate or county, when the place search gave one" },
+            },
+            { name: "placeId", type: "text", admin: { hidden: true } },
+            {
+              name: "timeZone",
+              type: "text",
+              admin: {
+                readOnly: true,
+                description: "Read from the pin: the site's own today, for its availability",
+              },
+            },
             { name: "locality", type: "text", required: true },
             { name: "localitySlug", type: "text", index: true, admin: { hidden: true } },
             {
@@ -294,13 +321,24 @@ export const Sites: CollectionConfig = {
               ],
               admin: { description: "The owner chooses. A private price is never a penalty." },
             },
-            { name: "rate", type: "number", min: 0, label: "Rate a month, in rupees" },
+            { name: "rate", type: "number", min: 0, label: "Rate a month, in the currency below" },
+            {
+              name: "currency",
+              type: "text",
+              required: true,
+              defaultValue: "INR",
+              admin: { description: "ISO currency code the owner quotes in: INR, AED, GBP" },
+              validate: (value: unknown) =>
+                typeof value === "string" && isCurrency(value)
+                  ? true
+                  : "Use a currency code such as INR or AED.",
+            },
             { name: "minPeriod", type: "text", admin: { description: "e.g. 3 months" } },
             {
               name: "productionCost",
               type: "text",
               label: "Printing and mounting",
-              admin: { description: "e.g. ₹ 18,000 once, by the owner" },
+              admin: { description: "e.g. 18,000 once, by the owner" },
             },
             { name: "taxesNote", type: "text", defaultValue: "Taxes extra" },
             { name: "notAccepted", type: "text", label: "Categories not accepted" },

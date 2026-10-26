@@ -43,7 +43,13 @@ export const Enquiries: CollectionConfig = {
     { name: "dateFrom", type: "date", required: true },
     { name: "dateTo", type: "date", required: true },
     { name: "brand", type: "text", required: true, label: "Brand and category" },
-    { name: "budget", type: "number", min: 0, label: "Budget a month, in rupees" },
+    { name: "budget", type: "number", min: 0, label: "Budget a month, in the currency below" },
+    {
+      name: "budgetCurrency",
+      type: "text",
+      defaultValue: "INR",
+      admin: { description: "ISO code" },
+    },
     {
       name: "artwork",
       type: "select",

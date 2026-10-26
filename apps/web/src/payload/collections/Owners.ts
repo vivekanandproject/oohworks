@@ -1,7 +1,6 @@
 import type { CollectionConfig, FieldAccess } from "payload";
 import { isOps, isSuperAdmin } from "../access";
 import { slugify } from "../hooks";
-import { CITY_SELECT } from "../../lib/sites/taxonomy";
 
 const staffOnly: FieldAccess = ({ req }) => Boolean(req.user);
 
@@ -27,11 +26,10 @@ export const Owners: CollectionConfig = {
     { name: "slug", type: "text", unique: true, index: true, admin: { position: "sidebar" } },
     {
       name: "city",
-      type: "select",
-      options: CITY_SELECT,
+      type: "text",
       admin: {
         description:
-          "The OOHWORKS city the company is in, when it is in one. Set from the place below.",
+          "The city the company is in, in lower case with hyphens, as in a site's address. Set from the place below.",
       },
     },
     {

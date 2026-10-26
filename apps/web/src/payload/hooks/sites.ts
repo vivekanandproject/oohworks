@@ -3,7 +3,8 @@ import { APIError, type CollectionAfterChangeHook, type CollectionBeforeChangeHo
 import { deliverMail } from "../mailer";
 import { siteUrl } from "../../lib/hosting";
 import { pingIndexNow } from "../../lib/indexnow";
-import { formatDef } from "../../lib/sites/taxonomy";
+import { cityDef, formatDef } from "../../lib/sites/taxonomy";
+import { countryOrDefault, timeZoneAt } from "../../lib/world/countries";
 import { slugify } from "./index";
 
 /** Crockford base 32 without i, l, o and u: the alphabet of a permanent unit id. */
@@ -103,6 +104,16 @@ export const siteBeforeChange: CollectionBeforeChangeHook = async ({
     d.heightMm = Math.round(merged.height * MM[unit]);
   }
   if (merged.locality) d.localitySlug = slugify(merged.locality);
+  // The city in the address is made once from its name and kept, so old addresses keep working.
+  if (merged.city) d.city = slugify(String(merged.city));
+  if (operation === "update" && originalDoc?._status === "published" && originalDoc.city)
+    d.city = originalDoc.city as string;
+  if (merged.country) d.country = String(merged.country).toLowerCase();
+  if (!merged.cityLabel && merged.city) d.cityLabel = cityDef(String(merged.city))?.label ?? null;
+  if (typeof merged.lat === "number" && typeof merged.lng === "number")
+    d.timeZone = timeZoneAt(merged.lat, merged.lng, merged.country as string | undefined);
+  if (!merged.currency)
+    d.currency = countryOrDefault(merged.country as string | undefined).currency;
   const format = formatDef(merged.format);
   if (format && merged.road && merged.width && merged.height) {
     d.title = `${merged.width} × ${merged.height} ${unit} ${format.inSentence}, ${merged.road}`;

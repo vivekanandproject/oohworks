@@ -236,8 +236,27 @@ export interface Site {
      */
     exchanges?: string | null;
   };
+  /**
+   * ISO country code in lower case, as in the address: in, ae, gb
+   */
   country: string;
-  city: 'bengaluru' | 'mumbai' | 'delhi-ncr' | 'hyderabad' | 'pune' | 'chennai';
+  /**
+   * The city in the address, in lower case with hyphens (bengaluru, dubai). It never changes once published.
+   */
+  city: string;
+  /**
+   * The city as a buyer reads it: Bengaluru, Dubai
+   */
+  cityLabel?: string | null;
+  /**
+   * State, emirate or county, when the place search gave one
+   */
+  region?: string | null;
+  placeId?: string | null;
+  /**
+   * Read from the pin: the site's own today, for its availability
+   */
+  timeZone?: string | null;
   locality: string;
   localitySlug?: string | null;
   /**
@@ -272,11 +291,15 @@ export interface Site {
   priceDisplay: 'exact' | 'from' | 'on_request';
   rate?: number | null;
   /**
+   * ISO currency code the owner quotes in: INR, AED, GBP
+   */
+  currency: string;
+  /**
    * e.g. 3 months
    */
   minPeriod?: string | null;
   /**
-   * e.g. ₹ 18,000 once, by the owner
+   * e.g. 18,000 once, by the owner
    */
   productionCost?: string | null;
   taxesNote?: string | null;
@@ -343,9 +366,9 @@ export interface Owner {
   name: string;
   slug?: string | null;
   /**
-   * The OOHWORKS city the company is in, when it is in one. Set from the place below.
+   * The city the company is in, in lower case with hyphens, as in a site's address. Set from the place below.
    */
-  city?: ('bengaluru' | 'mumbai' | 'delhi-ncr' | 'hyderabad' | 'pune' | 'chennai') | null;
+  city?: string | null;
   /**
    * Where the company says it is based. It can be anywhere in the world.
    */
@@ -608,6 +631,10 @@ export interface Enquiry {
   dateTo: string;
   brand: string;
   budget?: number | null;
+  /**
+   * ISO code
+   */
+  budgetCurrency?: string | null;
   artwork: 'ready' | 'in_progress' | 'not_started';
   message?: string | null;
   status: 'pending' | 'sent' | 'replied' | 'closed';
@@ -642,6 +669,10 @@ export interface Message {
         site: number | Site;
         availability?: ('available' | 'unavailable' | 'other_dates') | null;
         quote?: number | null;
+        /**
+         * ISO code; the site's own
+         */
+        quoteCurrency?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1502,6 +1533,10 @@ export interface SitesSelect<T extends boolean = true> {
       };
   country?: T;
   city?: T;
+  cityLabel?: T;
+  region?: T;
+  placeId?: T;
+  timeZone?: T;
   locality?: T;
   localitySlug?: T;
   road?: T;
@@ -1514,6 +1549,7 @@ export interface SitesSelect<T extends boolean = true> {
   lastVerifiedOn?: T;
   priceDisplay?: T;
   rate?: T;
+  currency?: T;
   minPeriod?: T;
   productionCost?: T;
   taxesNote?: T;
@@ -1622,6 +1658,7 @@ export interface EnquiriesSelect<T extends boolean = true> {
   dateTo?: T;
   brand?: T;
   budget?: T;
+  budgetCurrency?: T;
   artwork?: T;
   message?: T;
   status?: T;
@@ -1648,6 +1685,7 @@ export interface MessagesSelect<T extends boolean = true> {
         site?: T;
         availability?: T;
         quote?: T;
+        quoteCurrency?: T;
         id?: T;
       };
   updatedAt?: T;

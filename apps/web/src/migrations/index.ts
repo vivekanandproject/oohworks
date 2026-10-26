@@ -7,6 +7,7 @@ import * as migration_20261018_175731_kit_reading from './20261018_175731_kit_re
 import * as migration_20261018_182001_photo_checks from './20261018_182001_photo_checks';
 import * as migration_20261023_185130_article_discoverability from './20261023_185130_article_discoverability';
 import * as migration_20261026_155336_media_hero_md from './20261026_155336_media_hero_md';
+import * as migration_20261026_193240_global_places_currency from './20261026_193240_global_places_currency';
 
 export const migrations = [
   {
@@ -52,6 +53,11 @@ export const migrations = [
   {
     up: migration_20261026_155336_media_hero_md.up,
     down: migration_20261026_155336_media_hero_md.down,
-    name: '20261026_155336_media_hero_md'
+    name: '20261026_155336_media_hero_md',
+  },
+  {
+    up: migration_20261026_193240_global_places_currency.up,
+    down: migration_20261026_193240_global_places_currency.down,
+    name: '20261026_193240_global_places_currency'
   },
 ];
