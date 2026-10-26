@@ -307,54 +307,6 @@ export function photoUrls(site: Site, media?: Map<number, Media>): string[] {
   });
 }
 
-export interface CityStatus {
-  slug: string;
-  label: string;
-  /**
-   * open: the city hub is published, and its count is shown. live: real sites are listed but fewer
-   * than a hub needs, so the page says so in words. joining: no real site yet.
-   */
-  status: "open" | "live" | "joining";
-  /** Shown only when the city is open. */
-  count: number;
-  href: string | null;
-}
-
-/**
- * Where each launch city stands, for the home page. Sample sites never count. During a build with no
- * database every city is "joining" and the page fills in on its first refresh; at run time a database
- * error is a real error.
- */
-export async function cityBoard(): Promise<CityStatus[]> {
-  let listings: Listing[];
-  try {
-    listings = (await catalogue()).listings.filter((l) => !l.sample);
-  } catch (error) {
-    if (process.env.NEXT_PHASE !== "phase-production-build") throw error;
-    listings = [];
-  }
-  return CITIES.map((c) => {
-    const hub: Hub = { kind: "city", city: c.slug };
-    const status = hubStatus(listings, hub);
-    if (status.published)
-      return {
-        slug: c.slug,
-        label: c.label,
-        status: "open",
-        count: status.indexable,
-        href: hubPath(hub),
-      };
-    const any = listings.some((l) => l.city === c.slug);
-    return {
-      slug: c.slug,
-      label: c.label,
-      status: any ? "live" : "joining",
-      count: 0,
-      href: any ? `/search/?city=${c.slug}` : null,
-    };
-  });
-}
-
 /** Sites by unit id, in the order asked for. Ids that match nothing, or a site taken down, are left out. */
 export async function listingsFor(ids: string[]): Promise<Listing[]> {
   if (ids.length === 0) return [];

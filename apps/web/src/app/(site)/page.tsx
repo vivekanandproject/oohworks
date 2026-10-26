@@ -19,7 +19,6 @@ import { PERSONAS } from "@/components/home/personas";
 import { PieceCard } from "@/components/editorial/PieceBits";
 import { latestForHome } from "@/lib/editorial/queries";
 import { CHARTER } from "@/lib/site";
-import { cityBoard, type CityStatus } from "@/lib/sites/queries";
 import { JsonLd, SITE_NAME, alternates, organizationJsonLd, webSiteJsonLd } from "@/lib/seo";
 
 /** Cached, then refreshed every minute and whenever something is published. */
@@ -95,11 +94,39 @@ const CHECKS: { kind: BadgeKind; label: string; how: string }[] = [
   },
 ];
 
-const CITY_WORDS: Record<CityStatus["status"], string> = {
-  open: "Open",
-  live: "First sites listed",
-  joining: "Owners joining",
-};
+/** Where owners can list. Every country is welcome; these name the markets by region, and say where search opens first. */
+const REGIONS: { name: string; countries: string[]; note: string }[] = [
+  {
+    name: "South Asia",
+    countries: ["India", "Sri Lanka", "Bangladesh", "Nepal"],
+    note: "Search opens in India first",
+  },
+  {
+    name: "Middle East",
+    countries: ["United Arab Emirates", "Saudi Arabia", "Qatar", "Oman"],
+    note: "Owners welcome now",
+  },
+  {
+    name: "Europe",
+    countries: ["United Kingdom", "Germany", "France", "Netherlands"],
+    note: "Owners welcome now",
+  },
+  {
+    name: "The Americas",
+    countries: ["United States", "Canada", "Mexico", "Brazil"],
+    note: "Owners welcome now",
+  },
+  {
+    name: "Africa",
+    countries: ["Nigeria", "Kenya", "South Africa", "Egypt"],
+    note: "Owners welcome now",
+  },
+  {
+    name: "Asia Pacific",
+    countries: ["Singapore", "Malaysia", "Indonesia", "Australia"],
+    note: "Owners welcome now",
+  },
+];
 
 const OWNER_FACTS = [
   {
@@ -125,7 +152,7 @@ const OWNER_FACTS = [
 ];
 
 export default async function HomePage() {
-  const [latest, cities] = await Promise.all([latestForHome(3), cityBoard()]);
+  const latest = await latestForHome(3);
   return (
     <Shell>
       <JsonLd data={[organizationJsonLd(), webSiteJsonLd()]} />
@@ -245,55 +272,43 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* Cities opening: honest status in words until a city's hub opens */}
-      <section className="border-hairline border-b" data-section="cities">
+      {/* Countries: owners anywhere, grouped by region, with where search opens first */}
+      <section className="border-hairline border-b" data-section="countries">
         <Container className="py-12 lg:py-16">
           <Reveal>
-            <p className="t-label text-ink-muted">Where we are open</p>
-            <h2 className="t-display-md mt-3">Opening city by city</h2>
+            <p className="t-label text-ink-muted">Where we work</p>
+            <h2 className="t-display-md mt-3">Countries worldwide</h2>
             <p className="t-body text-ink-muted mt-3 max-w-[60ch]">
-              Bengaluru opens first. A city opens when enough verified sites are listed to be worth
-              searching, and every site in it has a real photo, an exact location and a named owner.
+              OOHWORKS is one map for out-of-home in every country. Media owners anywhere can open a
+              company page and send their media kit today. Search opens in India first, and each
+              country follows as its owners list and verify their sites.
             </p>
           </Reveal>
           <Reveal stagger>
-            <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
-              {cities.map((c, i) => (
+            <ul className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-3 lg:gap-x-8">
+              {REGIONS.map((r, i) => (
                 <li
-                  key={c.slug}
-                  className="border-hairline bg-paper-raised flex flex-col rounded-md border p-4 sm:p-5"
+                  key={r.name}
+                  className="border-hairline border-t pt-4"
                   data-stagger-item
-                  data-city={c.slug}
+                  data-region={r.name}
                   style={at(i)}
                 >
-                  <div className="flex items-baseline justify-between gap-3">
-                    <h3 className="t-display-sm">{c.label}</h3>
-                    {c.status === "open" ? (
-                      <span className="t-data text-ink-muted font-mono">
-                        {c.count.toLocaleString("en-IN")} sites
-                      </span>
-                    ) : null}
-                  </div>
-                  <p className="t-small text-ink-muted mt-1">{CITY_WORDS[c.status]}</p>
-                  <div className="mt-auto pt-4">
-                    {c.href ? (
-                      <a href={c.href} className="oh-link t-body">
-                        {c.status === "open" ? `Sites in ${c.label}` : "See what is listed"}
-                      </a>
-                    ) : (
-                      <a href={`/search/?city=${c.slug}`} className="oh-link t-body" rel="nofollow">
-                        Tell me when it opens
-                      </a>
-                    )}
-                  </div>
+                  <h3 className="t-body-strong">{r.name}</h3>
+                  <ul className="t-body mt-3 grid gap-1.5">
+                    {r.countries.map((c) => (
+                      <li key={c}>{c}</li>
+                    ))}
+                  </ul>
+                  <p className="t-small text-ink-muted mt-3">{r.note}</p>
                 </li>
               ))}
             </ul>
           </Reveal>
-          <p className="t-body text-ink-muted mt-6">
-            Own sites in one of these cities?{" "}
+          <p className="t-body text-ink-muted mt-8">
+            Your country not named here? Every country is welcome.{" "}
             <a href="/list-your-sites/" className="oh-link">
-              List them free
+              List your sites free
             </a>
             .
           </p>

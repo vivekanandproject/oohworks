@@ -218,18 +218,17 @@ test.describe("how it works, for you", () => {
     await expect(page.locator(".persona-panel:visible")).toHaveAttribute("id", "for-digital");
   });
 
-  test("the cities board says where each city stands, in words until it opens", async ({
+  test("the countries section groups regions and says where search opens first", async ({
     page,
   }) => {
     await page.goto("/");
-    const cards = page.locator("[data-section='cities'] [data-city]");
-    await expect(cards).toHaveCount(6);
-    await expect(cards.first()).toContainText("Bengaluru");
-    // Sample sites never count, and no city has the 25 verified sites a hub needs, so every city is
-    // described in words and none shows a count. (Another test file may briefly add one real site.)
-    for (const card of await cards.all())
-      await expect(card).toContainText(/Owners joining|First sites listed/);
-    await expect(page.locator("[data-section='cities']")).not.toContainText(/\d+ sites/);
+    const section = page.locator("[data-section='countries']");
+    await expect(section.getByRole("heading", { name: "Countries worldwide" })).toBeVisible();
+    await expect(section.locator("[data-region]")).toHaveCount(6);
+    await expect(section.locator("[data-region='South Asia']")).toContainText(
+      "Search opens in India first",
+    );
+    await expect(page.getByText("Opening city by city")).toHaveCount(0);
   });
 });
 
