@@ -37,11 +37,17 @@ variable "billing_account" {
 provider "google" {
   project = var.project_id
   region  = "asia-south1"
+  # The budget API refuses user credentials without a project to bill the request to.
+  user_project_override = true
+  billing_project       = var.project_id
 }
 
 provider "google-beta" {
   project = var.project_id
   region  = "asia-south1"
+  # The budget API refuses user credentials without a project to bill the request to.
+  user_project_override = true
+  billing_project       = var.project_id
 }
 
 module "ohworks" {

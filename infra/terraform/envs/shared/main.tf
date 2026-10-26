@@ -130,6 +130,62 @@ resource "google_project_iam_member" "deploy" {
   member  = "serviceAccount:${google_service_account.deploy.email}"
 }
 
+# Builds from a machine (infra/deploy.sh) run on Cloud Build as their own account: the organisation
+# gives Google's default accounts no roles, and this one may only push images, write its logs and
+# read the uploaded source, never the state bucket.
+resource "google_project_service" "cloudbuild" {
+  service            = "cloudbuild.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_storage_bucket" "build_source" {
+  name                        = "${var.project_id}-build-source"
+  location                    = var.region
+  uniform_bucket_level_access = true
+  public_access_prevention    = "enforced"
+  lifecycle_rule {
+    condition {
+      age = 7
+    }
+    action {
+      type = "Delete"
+    }
+  }
+  depends_on = [google_project_service.apis]
+}
+
+resource "google_service_account" "build" {
+  account_id   = "cloud-build"
+  display_name = "Cloud Build for infra/deploy.sh"
+}
+
+resource "google_storage_bucket_iam_member" "build_source" {
+  bucket = google_storage_bucket.build_source.name
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${google_service_account.build.email}"
+}
+
+resource "google_artifact_registry_repository_iam_member" "build_push" {
+  location   = google_artifact_registry_repository.images.location
+  repository = google_artifact_registry_repository.images.name
+  role       = "roles/artifactregistry.writer"
+  member     = "serviceAccount:${google_service_account.build.email}"
+}
+
+resource "google_project_iam_member" "build_logs" {
+  project = var.project_id
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.build.email}"
+}
+
+output "build_service_account" {
+  value = google_service_account.build.email
+}
+
+output "build_source_bucket" {
+  value = google_storage_bucket.build_source.name
+}
+
 output "state_bucket" {
   value = google_storage_bucket.state.name
 }

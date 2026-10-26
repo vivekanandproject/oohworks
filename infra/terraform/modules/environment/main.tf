@@ -72,6 +72,9 @@ resource "google_sql_database_instance" "db" {
   deletion_protection = var.deletion_protection
 
   settings {
+    # Postgres 16 otherwise defaults to Enterprise Plus, which offers neither the shared-core nor the
+    # custom machines and costs several times more.
+    edition           = "ENTERPRISE"
     tier              = var.db_tier
     availability_type = "ZONAL"
     disk_size         = var.db_disk_gb
@@ -182,9 +185,9 @@ locals {
   # The web service never needs the super admin's first password; only the release job does.
   web_secrets     = setsubtract(local.all_secrets, toset(local.release_secrets))
   release_job_env = local.all_secrets
-  # In production the origin secret is checked (Cloudflare adds it); a staff-only environment sits
-  # behind Google sign-in instead, and its run.app address is the way in.
-  checked_secrets = var.public ? local.web_secrets : setsubtract(local.web_secrets, toset(["ORIGIN_SECRET"]))
+  # In production the origin secret is checked once Cloudflare adds it (origin_check); a staff-only
+  # environment sits behind Google sign-in instead, and its run.app address is the way in.
+  checked_secrets = var.public && var.origin_check ? local.web_secrets : setsubtract(local.web_secrets, toset(["ORIGIN_SECRET"]))
 }
 
 resource "google_cloud_run_v2_service" "web" {
@@ -196,6 +199,8 @@ resource "google_cloud_run_v2_service" "web" {
   deletion_protection = var.deletion_protection
   launch_stage        = var.public ? "GA" : "BETA"
   iap_enabled         = !var.public
+  # Public without an allUsers grant, which the organisation's domain-restricted sharing refuses.
+  invoker_iam_disabled = var.public
 
   template {
     service_account = google_service_account.web.email
@@ -262,15 +267,8 @@ resource "google_cloud_run_v2_service" "web" {
   depends_on = [google_secret_manager_secret_version.generated, google_secret_manager_secret_iam_member.web]
 }
 
-# Production: anyone may reach it (Cloudflare in front, the origin secret checked by the app).
-resource "google_cloud_run_v2_service_iam_member" "public" {
-  count    = var.public ? 1 : 0
-  project  = var.project_id
-  location = var.region
-  name     = google_cloud_run_v2_service.web.name
-  role     = "roles/run.invoker"
-  member   = "allUsers"
-}
+# Production: anyone may reach it (invoker_iam_disabled above; Cloudflare in front, the origin
+# secret checked by the app once origin_check is on).
 
 # Staging and previews: Google sign-in for the listed staff, then the identity-aware proxy calls the service.
 resource "google_cloud_run_v2_service_iam_member" "iap_invoker" {
@@ -360,7 +358,7 @@ resource "google_billing_budget" "monthly" {
 
   amount {
     specified_amount {
-      currency_code = "INR"
+      currency_code = var.budget_currency
       units         = tostring(var.budget_monthly_inr)
     }
   }

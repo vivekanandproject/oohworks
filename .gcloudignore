@@ -1,0 +1,4 @@
+# What `gcloud builds submit` leaves out of the upload: everything git ignores, plus what the image
+# build ignores (.dockerignore).
+#!include:.gitignore
+#!include:.dockerignore

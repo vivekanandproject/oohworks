@@ -76,6 +76,12 @@ variable "public" {
   type        = bool
 }
 
+variable "origin_check" {
+  description = "Mount ORIGIN_SECRET on a public service, so the app refuses requests that did not come through Cloudflare. Leave off until Cloudflare (or a load balancer) adds the header, or every page answers 403."
+  type        = bool
+  default     = true
+}
+
 variable "optional_secrets" {
   description = "Secrets you have given a value with `gcloud secrets versions add`, mounted as environment variables of the same name. A secret listed here with no value stops the deploy, so add each one only once it has a value."
   type        = list(string)
@@ -89,8 +95,15 @@ variable "budget_billing_account" {
 }
 
 variable "budget_monthly_inr" {
-  type    = number
-  default = 10000
+  description = "The monthly budget, in budget_currency (named for INR, the plan's currency)."
+  type        = number
+  default     = 10000
+}
+
+variable "budget_currency" {
+  description = "Must be the billing account's own currency, or Google refuses the budget."
+  type        = string
+  default     = "INR"
 }
 
 variable "registry_project" {

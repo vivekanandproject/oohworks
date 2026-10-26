@@ -1,0 +1,36 @@
+# Builds the web and release images on Google's machines (no Docker on this Mac) and pushes them to
+# Artifact Registry. Run by infra/deploy.sh; the GitHub deploy workflow builds its own.
+#   gcloud builds submit --config infra/cloudbuild.yaml --substitutions _REGISTRY=...,_TAG=... .
+
+steps:
+  - id: web
+    name: gcr.io/cloud-builders/docker
+    env: ["DOCKER_BUILDKIT=1"]
+    args:
+      [
+        "build",
+        "--build-arg",
+        "NEXT_PUBLIC_SENTRY_DSN=${_SENTRY_DSN}",
+        "-t",
+        "${_REGISTRY}/web:${_TAG}",
+        ".",
+      ]
+  # Same machine, so every layer up to the build is reused.
+  - id: release
+    name: gcr.io/cloud-builders/docker
+    env: ["DOCKER_BUILDKIT=1"]
+    args: ["build", "--target", "release", "-t", "${_REGISTRY}/release:${_TAG}", "."]
+
+images:
+  - "${_REGISTRY}/web:${_TAG}"
+  - "${_REGISTRY}/release:${_TAG}"
+
+substitutions:
+  _SENTRY_DSN: ""
+
+options:
+  # The Next.js build needs more memory than the default machine has.
+  machineType: E2_HIGHCPU_8
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 2400s

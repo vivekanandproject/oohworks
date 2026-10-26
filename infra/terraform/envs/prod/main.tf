@@ -34,14 +34,56 @@ variable "billing_account" {
   default     = ""
 }
 
+# Sized for launch (26 Oct 2026): a shared-core database and no warm instance, about INR 1,500 to
+# 2,500 a month. For real traffic: db_tier "db-custom-2-8192", point-in-time recovery on,
+# min_instances 1, budget 80000.
+variable "db_tier" {
+  type    = string
+  default = "db-g1-small"
+}
+
+variable "db_point_in_time_recovery" {
+  type    = bool
+  default = false
+}
+
+variable "min_instances" {
+  type    = number
+  default = 0
+}
+
+variable "budget_monthly_inr" {
+  description = "In budget_currency."
+  type        = number
+  default     = 3000
+}
+
+variable "budget_currency" {
+  description = "The billing account's currency; the oohworks.co account bills in MYR (set in terraform.tfvars)."
+  type        = string
+  default     = "INR"
+}
+
+variable "origin_check" {
+  description = "Turn on once Cloudflare in front adds X-Origin-Secret; until then the run.app address serves the site."
+  type        = bool
+  default     = false
+}
+
 provider "google" {
   project = var.project_id
   region  = "asia-south1"
+  # The budget API refuses user credentials without a project to bill the request to.
+  user_project_override = true
+  billing_project       = var.project_id
 }
 
 provider "google-beta" {
   project = var.project_id
   region  = "asia-south1"
+  # The budget API refuses user credentials without a project to bill the request to.
+  user_project_override = true
+  billing_project       = var.project_id
 }
 
 module "ohworks" {
@@ -52,14 +94,16 @@ module "ohworks" {
   site_url                  = "https://oohworks.co"
   public                    = true
   staff                     = var.staff
-  db_tier                   = "db-custom-2-8192"
-  db_point_in_time_recovery = true
+  origin_check              = var.origin_check
+  db_tier                   = var.db_tier
+  db_point_in_time_recovery = var.db_point_in_time_recovery
   deletion_protection       = true
-  min_instances             = 1
+  min_instances             = var.min_instances
   memory                    = "1Gi"
   optional_secrets          = var.optional_secrets
   budget_billing_account    = var.billing_account
-  budget_monthly_inr        = 80000
+  budget_monthly_inr        = var.budget_monthly_inr
+  budget_currency           = var.budget_currency
 }
 
 output "service_url" {
