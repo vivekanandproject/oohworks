@@ -470,12 +470,19 @@ test.describe("map area", () => {
       { timeout: 20_000 },
     );
 
-    // Moving the map offers a search of what is now in view.
+    // Moving the map offers a search of what is now in view. The drag starts inside the part of the
+    // map the screen shows, wherever the page has placed it.
+    await page.locator("[data-section='live-map']").scrollIntoViewIfNeeded();
     const box = await page.locator("[data-section='live-map']").boundingBox();
     if (!box) throw new Error("the map has no box");
-    await page.mouse.move(box.x + 180, box.y + 300);
+    const view = page.viewportSize() ?? { width: 1280, height: 720 };
+    const top = Math.max(box.y, 0);
+    const bottom = Math.min(box.y + box.height, view.height);
+    const x = box.x + box.width / 2;
+    const y = (top + bottom) / 2;
+    await page.mouse.move(x, y);
     await page.mouse.down();
-    await page.mouse.move(box.x + 240, box.y + 340, { steps: 8 });
+    await page.mouse.move(x + 60, y + 40, { steps: 8 });
     await page.mouse.up();
     await page.locator("[data-action='search-area']").click();
     await expect(page).toHaveURL(/\/search\/\?bbox=[\d.]+,[\d.]+,[\d.]+,[\d.]+&format=hoarding$/);
