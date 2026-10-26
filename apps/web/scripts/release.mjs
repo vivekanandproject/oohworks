@@ -39,6 +39,15 @@ const migrated = spawnSync("pnpm", ["exec", "payload", "migrate"], {
   maxBuffer: 64 * 1024 * 1024,
 });
 const said = `${migrated.stdout ?? ""}${migrated.stderr ?? ""}`;
+// It can also stop without a word and exit 0, for one when it asks whether to go on and nobody is there
+// to answer. A run that reports neither migrations done nor none needed has not run.
+if (!/Migrated:|No migrations to run|Done\./.test(said)) {
+  console.error(
+    `The migrate command ended (status ${migrated.status}, signal ${migrated.signal ?? "none"}) without reporting any migrations. All it said:\n${said || "(nothing)"}`,
+  );
+  console.error('\n"Create or update the tables" did not run, so the release stops here.');
+  process.exit(1);
+}
 if (migrated.status !== 0 || /Error running migration|ERROR/.test(said)) {
   // The first lines name the migration and the last name the cause. The middle is the whole of the SQL.
   const lines = said.trimEnd().split("\n");
